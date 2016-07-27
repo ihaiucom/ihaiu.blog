@@ -1,15 +1,15 @@
 future: true
 permalink: /:title/
-url: http://hustcat.github.io
-name: YY哥
-author: hustcat
+url: http://blog.ihaiu.com
+name: 爱海游
+author: ihaiu
 qq: 
-email: hustcat@gmail.com
-duoshuo: hustcat
+email: ihaiu@qq.com
+duoshuo: 海游
 beian: 
 cnzz: 
-weibo: hustcat
-github: hustcat
+weibo: zengfeng75
+github: ihaiucom
 paginate: 20
 truncate: true
-about: "YY哥(hustcat)"
+about: "爱海游"
