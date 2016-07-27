@@ -9,25 +9,25 @@ comments: no
 
 {{ site.about }}
 
-专业打杂程序员，全栈工程师，擅长打杂，吹牛逼...
+喜欢玩的游戏：
 
-典型的复合型专业人才、涉猎众多交叉学科：
+> LOL, War3《黄金岛》、《金字塔大逃亡》、《元素魔法》、《猫捉老鼠》、《仙境》、《滑冰》主要就是生存类型的
 
-> Linux kernel, MySQL/InnoDB/SQLite/Ceph, Docker/Kubernetes...
+喜欢科幻类型的小说：
+
+> 刘慈欣的所有小说，当然包括《三体》。
+> 阿西莫夫 《银河帝国》系列，《基地》、《永恒的终结》、《神们自己》
+> 特德姜《地狱是上帝不在的地方》、《你一生的故事》、《领悟》
+> 智齿《文明》
+> 《埃德蒙-哈密尔顿_重返群星》
+
+我主要是听小说，推荐听<a href="http://www.ximalaya.com/zhubo/7712455/" target="_blank">大屁股老鼠哈哈笑</a>讲的。我认为有声小说他讲得最好。
 
 格言
 
-> 阅码无数，心中无码
+> 木有呀，木有呀，哥木有格言
 
 ---
-###经历
-
-* 2004.09 ~ 2011.04 游学于武汉某985职业技术学院 —— 关山口职业技术学院
-
-* 2011.04 ~ Now     在深圳某国内前三互联网公司，从事搬砖、打杂等相关工作
-
-
-----
 
 ###联系方式：
 
@@ -37,13 +37,5 @@ comments: no
 网站：[{{ site.name }}]({{ site.url }})
 
 邮箱：[{{ site.email }}](mailto:{{ site.email }})
-
-GitHub：[http://github.com/{{ site.github }}](http://github.com/{{ site.github }})
-
-@cnblogs：[hustcat](http://hustcat.cnblogs.com)
-
-----
-
-[![新浪微博](http://service.t.sina.com.cn/widget/qmd/1831504255/02345c5a/1.png)](http://weibo.com/u/1831504255?s=6uyXnP)
 
 ----
