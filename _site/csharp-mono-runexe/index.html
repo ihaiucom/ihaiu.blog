@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="zh-CN" lang="zh-CN">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="author" content="ihaiu" />
+    <title>C#用Mono运行exe程序</title>
+    <!-- <link rel="shortcut icon" href="/favicon.ico" /> -->
+    <link href="/feed/" rel="alternate" title="ihaiu" type="application/atom+xml" />
+    <link rel="stylesheet" href="/media/css/style.css" />
+    <link rel="stylesheet" href="/media/css/highlight.css" />
+    <script type="text/javascript" src="/media/js/jquery-1.7.1.min.js"></script>
+
+    
+    <link rel="shortcut icon" href="/ihaiublog32x32.ico" />
+
+
+<link href="icon32x32.ico" type="image/x-icon" rel="shortcut icon bookmark" />
+<link rel="apple-touch-icon-precomposed" href="/icon60x60.png">
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/ihaiublog72x72.png">
+<link rel="apple-touch-icon-precomposed" sizes="120x120" href="/ihaiublog120x120.png">
+<link rel="apple-touch-icon-precomposed" sizes="152x152" href="/ihaiublog152x152.png">
+
+  </head>
+  <body>
+    <div id="container">
+      <div id="main" role="main">
+        <header>
+
+        <nav>
+        <span><a title="网站首页" class="" href="/">首页</a></span>
+        <span><a title="文章分类" class="" href="/categories/">分类</a></span>
+        <span><a title="标签索引" class="" href="/tags/">标签</a></span>
+        <!--<span><a title="友情链接" class="" href="/links/">链接</a></span>-->
+        <span><a title="留言交流" class="" href="/guestbook/">留言</a></span>
+        <span><a title="关于站长" class="" href="/about/">关于</a></span>
+        <span><a title="种子订阅" class="" href="/feed/" target="_blank">订阅</a></span>
+        </nav>
+        
+        <h1>C#用Mono运行exe程序</h1>
+        </header>
+        <article class="content">
+        <section class="meta">
+<span class="time">
+  <time datetime="2016-07-28">2016-07-28</time>
+</span>
+
+ | 
+<span class="categories">
+  分类
+  
+  <a href="/categories/#C#" title="C#">C#</a>&nbsp;
+  
+</span>
+
+
+ | 
+<span class="tags">
+  标签
+  
+  <a href="/tags/#C#" title="C#">C#</a>&nbsp;
+  
+  <a href="/tags/#Mono" title="Mono">Mono</a>&nbsp;
+  
+</span>
+
+</section>
+<section class="post">
+<p>在看<a href="https://www.assetstore.unity3d.com/en/#!/content/45836">AssetBundle Manager</a>代码时发现一个可以用C#的Process借助MonoBleedingEdge运行一个exe执行程序。（猜猜exe是C#写的才有效）</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>
+<span class="kd">static</span> <span class="kt">void</span> <span class="nf">Run</span> <span class="o">()</span>
+<span class="o">{</span>
+	<span class="n">string</span> <span class="n">pathToAssetServer</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="na">Combine</span><span class="o">(</span><span class="n">Application</span><span class="o">.</span><span class="na">dataPath</span><span class="o">,</span> <span class="s">"AssetBundleManager/Editor/AssetBundleServer.exe"</span><span class="o">);</span>
+	<span class="n">string</span> <span class="n">pathToApp</span> <span class="o">=</span> <span class="n">Application</span><span class="o">.</span><span class="na">dataPath</span><span class="o">.</span><span class="na">Substring</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="n">Application</span><span class="o">.</span><span class="na">dataPath</span><span class="o">.</span><span class="na">LastIndexOf</span><span class="o">(</span><span class="sc">'/'</span><span class="o">));</span>
+
+	<span class="n">KillRunningAssetBundleServer</span><span class="o">();</span>
+	
+	<span class="n">BuildScript</span><span class="o">.</span><span class="na">WriteServerURL</span><span class="o">();</span>
+	
+    <span class="n">string</span> <span class="n">args</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="na">Combine</span> <span class="o">(</span><span class="n">pathToApp</span><span class="o">,</span> <span class="s">"AssetBundles"</span><span class="o">);</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">string</span><span class="o">.</span><span class="na">Format</span><span class="o">(</span><span class="s">"\"{0}\" {1}"</span><span class="o">,</span> <span class="n">args</span><span class="o">,</span> <span class="n">Process</span><span class="o">.</span><span class="na">GetCurrentProcess</span><span class="o">().</span><span class="na">Id</span><span class="o">);</span>
+    <span class="n">ProcessStartInfo</span> <span class="n">startInfo</span> <span class="o">=</span> <span class="n">ExecuteInternalMono</span><span class="o">.</span><span class="na">GetProfileStartInfoForMono</span><span class="o">(</span><span class="n">MonoInstallationFinder</span><span class="o">.</span><span class="na">GetMonoInstallation</span><span class="o">(</span><span class="s">"MonoBleedingEdge"</span><span class="o">),</span> <span class="s">"4.0"</span><span class="o">,</span> <span class="n">pathToAssetServer</span><span class="o">,</span> <span class="n">args</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+	<span class="n">startInfo</span><span class="o">.</span><span class="na">WorkingDirectory</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="na">Combine</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">Environment</span><span class="o">.</span><span class="na">CurrentDirectory</span><span class="o">,</span> <span class="s">"AssetBundles"</span><span class="o">);</span>
+    <span class="n">startInfo</span><span class="o">.</span><span class="na">UseShellExecute</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+	<span class="n">Process</span> <span class="n">launchProcess</span> <span class="o">=</span> <span class="n">Process</span><span class="o">.</span><span class="na">Start</span><span class="o">(</span><span class="n">startInfo</span><span class="o">);</span>
+	<span class="k">if</span> <span class="o">(</span><span class="n">launchProcess</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">||</span> <span class="n">launchProcess</span><span class="o">.</span><span class="na">HasExited</span> <span class="o">==</span> <span class="kc">true</span> <span class="o">||</span> <span class="n">launchProcess</span><span class="o">.</span><span class="na">Id</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span>
+	<span class="o">{</span>
+		<span class="c1">//Unable to start process</span>
+		<span class="n">UnityEngine</span><span class="o">.</span><span class="na">Debug</span><span class="o">.</span><span class="na">LogError</span> <span class="o">(</span><span class="s">"Unable Start AssetBundleServer process"</span><span class="o">);</span>
+	<span class="o">}</span>
+	<span class="k">else</span>
+	<span class="o">{</span>
+		<span class="c1">//We seem to have launched, let's save the PID</span>
+		<span class="n">instance</span><span class="o">.</span><span class="na">m_ServerPID</span> <span class="o">=</span> <span class="n">launchProcess</span><span class="o">.</span><span class="na">Id</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+</section>
+<section align="right">
+<br/>
+<span>
+	<a  href="/github-blog/" class="pageNav"  >上一篇</a>
+	&nbsp;&nbsp;&nbsp;
+	<a   class="pageNavInvalid"  >下一篇</a>
+</span>
+</section>
+
+	
+	<div class="ds-thread" data-thread-key="201607281112" data-url="http://blog.ihaiu.com/csharp-mono-runexe/" data-title="C#用Mono运行exe程序" />
+		
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"blogihaiu"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = 'http://static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		|| document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?aa2fdee733dec8a2399b5bc0efbfd843";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-81411377-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
+        </article>
+      </div>
+
+    <footer>
+        <p>
+          <script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?aa2fdee733dec8a2399b5bc0efbfd843";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+        </p>
+        <p><small>
+             <a href="/about/">ihaiu</a>
+             | <a href="http://www.ihaiu.com" target="_blank">@爱海游</a>
+
+
+             | <script type="text/javascript">var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");document.write(unescape("%3Cspan id='cnzz_stat_icon_1260003113'%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s4.cnzz.com/z_stat.php%3Fid%3D1260003113%26show%3Dpic' type='text/javascript'%3E%3C/script%3E"));</script>
+
+         </small></p>
+    </footer>
+
+    </div>
+  </body>
+</html>
