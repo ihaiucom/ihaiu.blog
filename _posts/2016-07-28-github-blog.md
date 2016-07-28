@@ -7,7 +7,7 @@ tags: github blog 博客
 excerpt: Github写博客
 thread: 10001
 author: 大海明月
-authorlink: zengfeng75@qq.com
+authorlink: 593705098
 thumbnail: /assets/docpic/github.jpeg
 ---
 
