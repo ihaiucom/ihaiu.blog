@@ -53,6 +53,17 @@ a {
       margin-top: 1rem;
       margin-left: 0; } }
 
+.page-header .btn
+{
+  min-width: 10rem;
+}
+
+.page-header .iconbtn
+{
+  color: white;
+  text-decoration: none;
+}
+
 .page-header {
   color: #fff;
   text-align: center;
@@ -223,7 +234,9 @@ a {
 .site-footer {
   padding-top: 2rem;
   margin-top: 2rem;
-  border-top: solid 1px #eff0f1; }
+  border-top: solid 1px #eff0f1; 
+  text-align: center;
+}
 
 .site-footer-owner {
   display: block;

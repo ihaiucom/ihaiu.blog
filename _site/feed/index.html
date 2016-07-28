@@ -7,7 +7,7 @@
     <title>爱海游</title>
     <link href="http://blog.ihaiu.com/feed/" rel="self" />
     <link href="http://blog.ihaiu.com" />
-    <lastBuildDate>2016-07-28T21:02:28+08:00</lastBuildDate>
+    <lastBuildDate>2016-07-28T23:40:34+08:00</lastBuildDate>
     <webMaster>ihaiu@qq.com</webMaster>
     
     <item>
@@ -73,15 +73,13 @@
       <pubDate>2016-07-28T11:22:10+08:00</pubDate>
       <author>ihaiu</author>
       <guid>http://blog.ihaiu.com/jekyll</guid>
-      <content:encoded><![CDATA[<h2 id="jekyll">安装jekyll遇到的坑</h2>
+      <content:encoded><![CDATA[<h2 id="jekyll-1">安装jekyll遇到的坑 1</h2>
 <blockquote>
   <p>gem install jekyll <br />
 <br />
 调用这个命令一直没有反应，后来网上找到的解决方案是替换 gem sources <br />
 <a href="http://www.tuicool.com/articles/7Vz6BzJ">http://www.tuicool.com/articles/7Vz6BzJ</a></p>
 </blockquote>
-
-<p><br /><br /></p>
 
 <div class="language-ruby highlighter-rouge"><pre class="highlight"><code>
 <span class="n">gem</span> <span class="n">sources</span> <span class="o">--</span><span class="n">remove</span> <span class="n">https</span><span class="ss">:/</span><span class="o">/</span><span class="n">rubygems</span><span class="p">.</span><span class="nf">org</span><span class="o">/</span>
@@ -93,6 +91,19 @@
 
 </code></pre>
 </div>
+<p><br /><br /></p>
+
+<h2 id="jekyll-2">安装jekyll遇到的坑 2</h2>
+<blockquote>
+  <p>gem install jekyll <br />
+<br />
+ERROR:  While executing gem … (Errno::EPERM) <br />
+    Operation not permitted - /usr/bin/kramdown <br />
+<br />
+解决方案是 
+sudo gem install -n /usr/local/bin jekyll</p>
+</blockquote>
+
 <p><br /><br /></p>
 
 <h2 id="section">高亮代码片段 1</h2>
