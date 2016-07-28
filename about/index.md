@@ -4,6 +4,7 @@ layout: page
 comments: no
 ---
 
+---
 ###自我介绍
 
 {{ site.about }}
@@ -36,3 +37,5 @@ comments: no
 网站：[{{ site.name }}]({{ site.url }})
 
 邮箱：[{{ site.email }}](mailto:{{ site.email }})
+
+----
