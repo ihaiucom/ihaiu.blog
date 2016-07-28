@@ -6,6 +6,9 @@ categories: Github博客
 tags: github blog 博客
 excerpt: Github写博客
 thread: 10001
+author: 大海明月
+authorlink: zengfeng75@qq.com
+thumbnail: /assets/docpic/github.jpeg
 ---
 
 <br>
