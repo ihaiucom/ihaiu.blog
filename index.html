@@ -29,10 +29,13 @@ layout: page
 
 
 
-    <div class="c-con" >   
+    <div class="c-con" >  
+          {% if post.thumbnail %}
           <a href="{{ post.url }}#content" class="disp_a" rel="bookmark" title="">  
               <img src="{{ post.thumbnail }}" alt="{{ post.title }}" />  
           </a>
+          {% endif %}
+
           {{ post.excerpt | remove: '<p>' | remove: '</p>' }} &raquo;
           <a href="{{ post.url }}#content" class="more-link">Read More ></a><div class="cls"></div>
     </div>
