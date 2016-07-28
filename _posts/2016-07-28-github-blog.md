@@ -2,7 +2,7 @@
 layout: post
 title: Github写博客
 date: 2016-07-28 4:19:06
-categories: Distributed
+categories: Github博客
 tags: github blog 博客
 excerpt: Github写博客
 thread: 10001
