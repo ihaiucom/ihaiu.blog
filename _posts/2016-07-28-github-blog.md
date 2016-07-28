@@ -8,10 +8,9 @@ excerpt: Github写博客
 thread: 10001
 ---
 
-## Heartbeat Interval and Election Timeout
-
-
-## related posts
+<br>
+<br>
+<br>
 
 * [搭建一个免费的，无限流量的Blog----github Pages和Jekyll入门](http://www.ruanyifeng.com/blog/2012/08/blogging_with_jekyll.html)
 * [YAML 语言教程](http://www.ruanyifeng.com/blog/2016/07/yaml.html)

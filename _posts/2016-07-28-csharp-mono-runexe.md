@@ -10,8 +10,6 @@ thread: 201607281112
 
 在看[AssetBundle Manager](https://www.assetstore.unity3d.com/en/#!/content/45836)代码时发现一个可以用C#的Process借助MonoBleedingEdge运行一个exe执行程序。（猜猜exe是C#写的才有效）
 
-
-
 ```java
 
 static void Run ()
