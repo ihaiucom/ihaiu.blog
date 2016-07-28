@@ -8,6 +8,7 @@ excerpt:
 thread: 201607281112
 author: 大海明月
 authorlink: zengfeng75@qq.com
+thumbnail: /assets/docpic/mono.jpeg
 ---
 
 在看[AssetBundle Manager](https://www.assetstore.unity3d.com/en/#!/content/45836)代码时发现一个可以用C#的Process借助MonoBleedingEdge运行一个exe执行程序。（猜猜exe是C#写的才有效）
