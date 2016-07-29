@@ -633,7 +633,7 @@ a.more-link:hover {
     line-height: 28px;
     font-size: 14px;
     margin-top: 5px;
-    /*border-bottom: 1px dotted #DFDFDF;*/
+    border-bottom: 0px dotted #DFDFDF;
     padding-bottom: 5px;
     overflow: hidden;
     text-overflow: ellipsis
