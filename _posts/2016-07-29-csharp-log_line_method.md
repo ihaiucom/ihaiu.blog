@@ -18,7 +18,7 @@ thumbnail:
 
 我当时给出的方案是几年前我写ASP服务端时用的方法，代码如下：
 
-{% highlight bash lineno %}
+{% highlight csharp lineno %}
 void Log(string format, params object[] arg)
 {
 	var sf = new System.Diagnostics.StackFrame(1, true);
@@ -39,7 +39,7 @@ void Log(string format, params object[] arg)
 
 晚上闲着无聊随手翻了一下MSDN，看到一篇Caller Information的文档，可以使用如下Attribute实现这个功能，效率也会更高：
 
-{% highlight bash lineno %}
+{% highlight csharp lineno %}
 public void TraceMessage(string message,
         [CallerMemberName] string memberName = "",
         [CallerFilePath] string sourceFilePath = "",
@@ -58,3 +58,4 @@ public void TraceMessage(string message,
 <p>提到Unity3d的log文件，其实没必要自己获取这些，使用Debug.Log写日志，会自动记录。 </p>
 
 <p>在我的项目里面，使用 Application.RegisterLogCallback 注册了一个回调函数，就实现了这些功能。 </p>
+<br><br>
