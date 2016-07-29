@@ -655,4 +655,10 @@ a.more-link:hover {
   line-height:3rem;
 }
 
+.content .post h2
+{
+  font-size: 1.3rem;
+  color: #699981;
+}
+
 
