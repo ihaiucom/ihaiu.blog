@@ -620,7 +620,7 @@ a.more-link:hover {
   }
 }
 
-@media screen and (max-width:960px) {
+/*@media screen and (max-width:960px) {*/
   .post_box {
     margin-bottom: 70px;
     position: relative;
@@ -647,6 +647,6 @@ a.more-link:hover {
   .c-bot {
     height: auto
   }
-}
+/*}*/
 
 
