@@ -20,6 +20,10 @@ thumbnail: /assets/docpic/assetbundle.png
 * [加载模块深度解析（二）Mesh](http://blog.uwa4d.com/archives/LoadingPerformance_Mesh.html)
 * [加载模块深度解析（三）Shader](http://blog.uwa4d.com/archives/LoadingPerformance_Shader.html)
 * [Unity3D asset bundle 格式简析](http://blog.codingnow.com/2014/08/unity3d_asset_bundle.html)
+* [YAML Class ID Reference](http://docs.unity3d.com/Manual/ClassIDReference.html)
+* [AssetBundlePatch 对 Unity3d 的 AssetBundle进行差异更新](https://github.com/dpull/AssetBundlePatch)
+* [disunity](https://github.com/ata4/disunity)
+
 
 
 <br><br> 
