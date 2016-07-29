@@ -23,6 +23,7 @@ thumbnail: /assets/docpic/assetbundle.png
 * [YAML Class ID Reference](http://docs.unity3d.com/Manual/ClassIDReference.html)
 * [AssetBundlePatch 对 Unity3d 的 AssetBundle进行差异更新](https://github.com/dpull/AssetBundlePatch)
 * [disunity](https://github.com/ata4/disunity)
+* [LZMA SDK](http://www.7-zip.org/sdk.html)
 
 
 
