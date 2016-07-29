@@ -182,9 +182,9 @@ a {
   margin-left: 0px;
   margin-right: 0px
   color: #819198;
-  border: 0.1rem solid #eee; 
+  border: 0.1rem solid #dce6f0; 
   border-left: 0.5rem solid #dce6f0; 
-  /*background-color: #F2F6FB; */
+  background-color: #F2F6FB; 
 }
   .main-content blockquote > :first-child {
     margin-top: 0; }
