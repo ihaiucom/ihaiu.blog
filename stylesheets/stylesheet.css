@@ -521,7 +521,7 @@ a {
 .c-con blockquote
 {
   color: #333;
-  display: inline;
+  display: none;
   background-color: white;
 }
 
