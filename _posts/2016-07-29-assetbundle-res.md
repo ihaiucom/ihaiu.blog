@@ -26,8 +26,8 @@ thumbnail: /assets/docpic/assetbundle.png
 
 ###问题--Unity3D 5 打包AssetBundle加载发现C#脚本丢失
 
-> 原因：是多个Prefab用了同一个C#组件，然后打包的时候没有忽略C#。 这样就设置成了 prefabA.assetbunld、 prefabB.assetbunld、 code.assetbunld。 但是Unity对代码是不会生成AssetBunld的，所以code.assetbundle不会生成出来。 但是prefabA.assetbunld和prefabB.assetbunld中用到的code序列化以为它单独打包了。所以实例化后就会发现Prefab的C#组件丢失 <br>
+> <b>原因：</b>是多个Prefab用了同一个C#组件，然后打包的时候没有忽略C#。 这样就设置成了 prefabA.assetbunld、 prefabB.assetbunld、 code.assetbunld。 但是Unity对代码是不会生成AssetBunld的，所以code.assetbundle不会生成出来。 但是prefabA.assetbunld和prefabB.assetbunld中用到的code序列化以为它单独打包了。所以实例化后就会发现Prefab的C#组件丢失 <br>
 > <br>
-> 解决：打包AssetBundle时忽略掉依赖的C#文件 <br>
+> <b>解决：</b>打包AssetBundle时忽略掉依赖的C#文件 <br>
 
 <br><br> <br><br>
