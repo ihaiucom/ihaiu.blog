@@ -11,7 +11,7 @@ authorlink: 593705098
 thumbnail: /assets/docpic/mono.jpeg
 ---
 
-在看[AssetBundle Manager](https://www.assetstore.unity3d.com/en/#!/content/45836)代码时发现一个可以用C#的Process借助MonoBleedingEdge运行一个exe执行程序。（猜猜exe是C#写的才有效）
+在看<a href="https://www.assetstore.unity3d.com/en/#!/content/45836" targets="_blank">AssetBundle Manager</a>代码时发现一个可以用C#的Process借助MonoBleedingEdge运行一个exe执行程序。（猜猜exe是C#写的才有效）
 
 ```java
 
