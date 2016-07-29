@@ -4,7 +4,7 @@ title: AssetBundle学习资源汇总
 date: 2016-07-29 16:35:30
 categories: Unity
 tags: AssetBundle
-excerpt: Unity3D 5.3 新版AssetBundle使用方案及策略
+excerpt:
 thread: 20160728163530
 author: 大海明月
 authorlink: 593705098
