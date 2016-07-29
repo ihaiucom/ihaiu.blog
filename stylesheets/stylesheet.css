@@ -516,6 +516,18 @@ a {
   font-weight: normal;
 }
 
+.c-con blockquote
+{
+  color: #333;
+  display: none;
+  background-color: white;
+}
+
+.c-con p
+{
+  display: none;
+}
+
 
 .more-link {
   float: right;
