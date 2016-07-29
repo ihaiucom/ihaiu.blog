@@ -1,6 +1,6 @@
 ---
 layout: post
-title: [转载]C#打印当前行号和函数名和Unity log
+title: 【转载】C#打印当前行号和函数名和Unity log
 date: 2016-07-29 20:01:30
 categories: C#
 tags: C# StackFrame 
