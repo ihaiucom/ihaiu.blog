@@ -181,7 +181,8 @@ a {
   padding: 1rem 1rem;
   margin-left: 0;
   color: #819198;
-  border-left: 0.1rem solid #dce6f0; 
+  border: 0.1rem solid #dce6f0; 
+  border-left: 0.3rem solid #dce6f0; 
   background-color: #F2F6FB; 
 }
   .main-content blockquote > :first-child {
