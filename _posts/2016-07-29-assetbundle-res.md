@@ -19,6 +19,7 @@ thumbnail: /assets/docpic/assetbundle.png
 * [加载模块深度解析（一）Texture](http://blog.uwa4d.com/archives/LoadingPerformance_Texture.html)
 * [加载模块深度解析（二）Mesh](http://blog.uwa4d.com/archives/LoadingPerformance_Mesh.html)
 * [加载模块深度解析（三）Shader](http://blog.uwa4d.com/archives/LoadingPerformance_Shader.html)
+* [Unity3D asset bundle 格式简析](http://blog.codingnow.com/2014/08/unity3d_asset_bundle.html)
 
 
 <br><br> 
