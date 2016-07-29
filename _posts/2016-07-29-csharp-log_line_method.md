@@ -19,7 +19,6 @@ thumbnail:
 我当时给出的方案是几年前我写ASP服务端时用的方法，代码如下：
 
 
-{% highlight aspx-cs lineanchors %}
 void Log(string format, params object[] arg)
 {
 	var sf = new System.Diagnostics.StackFrame(1, true);
@@ -34,13 +33,11 @@ void Log(string format, params object[] arg)
 	);
 	// ...
 }
-{% endhighlight %}
 
 <br><br>
 
 晚上闲着无聊随手翻了一下MSDN，看到一篇Caller Information的文档，可以使用如下Attribute实现这个功能，效率也会更高：
 
-{% highlight aspx-cs lineanchors %}
 public void TraceMessage(string message,
         [CallerMemberName] string memberName = "",
         [CallerFilePath] string sourceFilePath = "",
@@ -51,7 +48,6 @@ public void TraceMessage(string message,
     Trace.WriteLine("source file path: " + sourceFilePath);
     Trace.WriteLine("source line number: " + sourceLineNumber);
 }
-{% endhighlight %}
 
 <br><br>
 <p>不过这些Attribute是.Net4.5提供的，而杨教授弄这个是为Unity3d，自然不支持了。</p>
