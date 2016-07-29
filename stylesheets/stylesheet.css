@@ -182,8 +182,7 @@ a {
   margin-left: 0;
   color: #819198;
   border-left: 0.1rem solid #dce6f0; 
-  background: #F2F6FBFF; 
-  margin: 2rem;
+  background-color: #F2F6FBFF; 
 }
   .main-content blockquote > :first-child {
     margin-top: 0; }
