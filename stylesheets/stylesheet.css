@@ -521,13 +521,13 @@ a {
 .c-con blockquote
 {
   color: #333;
-  display: none;
+  display: inline;
   background-color: white;
 }
 
 .c-con p
 {
-  display: none;
+  display: inline;
 }
 
 
