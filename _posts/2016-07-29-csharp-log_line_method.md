@@ -19,7 +19,7 @@ thumbnail:
 我当时给出的方案是几年前我写ASP服务端时用的方法，代码如下：
 
 
-{% highlight bash lineanchors %}
+{% highlight aspx-cs lineanchors %}
 void Log(string format, params object[] arg)
 {
 	var sf = new System.Diagnostics.StackFrame(1, true);
@@ -40,7 +40,7 @@ void Log(string format, params object[] arg)
 
 晚上闲着无聊随手翻了一下MSDN，看到一篇Caller Information的文档，可以使用如下Attribute实现这个功能，效率也会更高：
 
-{% highlight bash lineanchors %}
+{% highlight aspx-cs lineanchors %}
 public void TraceMessage(string message,
         [CallerMemberName] string memberName = "",
         [CallerFilePath] string sourceFilePath = "",
