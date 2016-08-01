@@ -1,5 +1,5 @@
 {% if site.duoshuo %}
-	<div class="ds-share flat" data-thread-key="{{ page.thread }}" data-title="{{ page.title }}" data-images="{{ page.thumbnail }}" data-content="{{ page.thumbnail }}" data-url="{{ page.url }}">
+	<div class="ds-share flat" data-thread-key="{{ page.thread }}" data-title="{{ page.title }}" data-images="{{ page.thumbnail }}" data-content="{{ site.url }}{{ page.thumbnail }}" data-url="{{ site.url }}{{ page.url }}">
 	    <div class="ds-share-inline">
 	      <ul  class="ds-share-icons-16">
 	      	
