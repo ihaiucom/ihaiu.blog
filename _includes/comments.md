@@ -1,5 +1,13 @@
 {% if site.duoshuo %}
-	<div class="ds-share flat" data-thread-key="{{ page.thread }}" data-title="{{ page.title }}" data-images="{{ page.thumbnail }}" data-content="{{ site.url }}{{ page.thumbnail }}" data-url="{{ site.url }}{{ page.url }}">
+	<div class="ds-share flat" data-thread-key="{{ page.thread }}" data-title="{{ page.title }}" data-content="{{ page.excerpt }}" data-url="{{ site.url }}{{ page.url }}"
+
+	{% if page.thumbnail %}
+	data-images="{{ site.url }}{{ page.thumbnail }}" 
+	{% else %}
+	data-images="{{ site.url }}/assets/icon152.png" 
+	{% endif %}	
+
+	>
 	    <div class="ds-share-inline">
 	      <ul  class="ds-share-icons-16">
 	      	
@@ -14,7 +22,7 @@
 	      </div>
 	    </div>
 	 </div>
-	 
+
 	{% if page.thread %}
 	<div class="ds-thread" data-thread-key="{{ page.thread }}" data-url="{{ site.url }}{{ page.url }}" data-title="{{ page.title }}" />
 	{% else %}
