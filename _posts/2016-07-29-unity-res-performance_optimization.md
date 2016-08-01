@@ -15,6 +15,8 @@ thumbnail: /assets/docpic/unity-performance_optimization.png
 
 * [Unity游戏优化 安装包大小优化以及性能优化](http://www.dpull.com/blog/2015-04-30-unity_optimize)
 * [Unity foreach 造成额外的GC开销](http://www.dpull.com/blog/2015-06-04-unity_mono_foreach)
+* [总结使用Unity 3D优化游戏运行性能的经验](http://gamerboom.com/archives/76214)
+
 
 
 * [加载模块深度解析（一）Texture](http://blog.uwa4d.com/archives/LoadingPerformance_Texture.html)
