@@ -4,7 +4,7 @@
 	{% if page.shareexcerpt %}
 	data-content="{{ page.shareexcerpt }}" 
 	{% else %}
-	data-content="爱海游" 
+	data-content="" 
 	{% endif %}	
 
 	{% if page.thumbnail %}
