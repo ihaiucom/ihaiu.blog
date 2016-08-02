@@ -4,7 +4,7 @@
 	{% if page.shareexcerpt %}
 	data-content="{{ page.shareexcerpt }}" 
 	{% else %}
-	data-content="" 
+	data-content="{{ page.title.replace('Github', 'ABC')}}" 
 	{% endif %}	
 
 	{% if page.thumbnail %}
