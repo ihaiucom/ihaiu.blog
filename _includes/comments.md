@@ -1,5 +1,11 @@
 {% if site.duoshuo %}
-	<div class="ds-share flat" data-thread-key="{{ page.thread }}" data-title="{{ page.title }}" data-content="{{ page.excerpt }}" data-url="{{ site.url }}{{ page.url }}"
+	<div class="ds-share flat" data-thread-key="{{ page.thread }}" data-title="{{ page.title }}" data-url="{{ site.url }}{{ page.url }}"
+
+	{% if page.shareexcerpt %}
+	data-content="{{ page.shareexcerpt }}" 
+	{% else %}
+	data-content="爱海游" 
+	{% endif %}	
 
 	{% if page.thumbnail %}
 	data-images="{{ site.url }}{{ page.thumbnail }}" 

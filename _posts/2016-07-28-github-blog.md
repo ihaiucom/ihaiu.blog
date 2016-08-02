@@ -4,7 +4,8 @@ title: Github写博客
 date: 2016-07-28 4:19:06
 categories: Github博客
 tags: github blog 博客
-excerpt: Github写博客
+excerpt: 搭建一个免费的，无限流量的Blog
+shareexcerpt: 搭建一个免费的，无限流量的Blog
 thread: 10001
 author: 大海明月
 authorlink: 593705098
