@@ -8,6 +8,8 @@
 	{% endif %}	
 
 	>
+
+
 	    <div class="ds-share-inline">
 	      <ul  class="ds-share-icons-16">
 	      	
@@ -18,8 +20,7 @@
 	        <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
 	      	
 	      </ul>
-	      <div class="ds-share-icons-more">
-	      </div>
+	      <div class="ds-share-icons-more"></div>
 	    </div>
 	 </div>
 
