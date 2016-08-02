@@ -1,10 +1,10 @@
 {% if site.duoshuo %}
-	<div class="ds-share flat" data-thread-key="{{ page.thread }}" data-title="{{ page.title }}" data-url="{{ site.url }}{{ page.url }}"
+	<div class="ds-share flat" data-thread-key="{{ page.thread }}" data-title="{{ page.title.replace('Github', 'ABC') }}" data-url="{{ site.url }}{{ page.url }}"
 
 	{% if page.shareexcerpt %}
 	data-content="{{ page.shareexcerpt }}" 
 	{% else %}
-	data-content="{{ page.title.replace('Github', 'ABC')}}" 
+	data-content="" 
 	{% endif %}	
 
 	{% if page.thumbnail %}
