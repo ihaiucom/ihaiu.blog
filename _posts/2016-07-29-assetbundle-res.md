@@ -25,7 +25,7 @@ thumbnail: /assets/docpic/assetbundle.png
 * [AssetBundlePatch 对 Unity3d 的 AssetBundle进行差异更新](https://github.com/dpull/AssetBundlePatch)
 * [disunity](https://github.com/ata4/disunity)
 * [LZMA SDK](http://www.7-zip.org/sdk.html)
-
+* [[官方教程] UNITE 2015 视频分享 国内专场 - Unity资源的优化管理](http://forum.china.unity3d.com/thread-7197-1-1.html)
 
 
 <br><br> 
