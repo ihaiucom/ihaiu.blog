@@ -17,9 +17,7 @@ thumbnail: /assets/icon/icon76.png
 ## 步骤
 
 > 打包AssetBundle
-
 > 加载
-
 > 热更新
 
 
