@@ -28,9 +28,9 @@ git push origin gh-pages
 
 
 <br><br>
-## C# 泛型
+## Csharp 泛型&lt;T&gt; 尖括号需要用专一字符
 <pre class="brush: csharp; ">
-public class ConfigSet<T>
+public class ConfigSet&lt;T&gt;
 {
 	public T GetConfig(int id)
 	{
