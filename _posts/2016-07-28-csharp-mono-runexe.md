@@ -18,7 +18,6 @@ sh_csharp: true
 
 
 <pre class="brush: csharp; ">
-
 static void Run ()
 {
 	string pathToAssetServer = Path.Combine(Application.dataPath, "AssetBundleManager/Editor/AssetBundleServer.exe");
