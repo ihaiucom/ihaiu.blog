@@ -15,7 +15,6 @@ sh: true
 sh_js: true
 ---
 
-
 <pre class="brush: js; ">
 
 // 模板
