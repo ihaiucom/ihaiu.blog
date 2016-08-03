@@ -25,5 +25,3 @@ thumbnail: /assets/docpic/unity-performance_optimization.png
 * [加载模块深度解析（三）Shader](http://blog.uwa4d.com/archives/LoadingPerformance_Shader.html)
 
 
-
-<br><br> 
