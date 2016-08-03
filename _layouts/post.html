@@ -30,12 +30,16 @@ shareexcerpt:
 <section class="post">
 {{ content }}
 </section>
-<section align="right">
-<br/>
-<span>
-	上一篇: <a {% if page.previous %} href="{{ page.previous.url }}#content" class="pageNav"{% endif %} {% unless page.previous %} class="pageNavInvalid" {% endunless %} >{{ page.previous.title }}</a>
-	<br/>
-	下一篇: <a {% if page.next %} href="{{ page.next.url }}#content" class="pageNav"{% endif %} {% unless page.next %} class="pageNavInvalid" {% endunless %} >{{ page.next.title }}</a>
-</span>
+<section class="page">
+
+	{% if page.previous %} 
+  <span><a href="{{ page.previous.url }}#content" class="pageNav" {% unless page.previous %} class="pageNavInvalid" {% endunless %} >上一篇: {{ page.previous.title }}</a></span>
+  <br/>
+  {% endif %}
+
+  {% if page.next %}
+	<span><a href="{{ page.next.url }}#content" class="pageNav" {% unless page.next %} class="pageNavInvalid" {% endunless %} >下一篇: {{ page.next.title }}</a></span>
+  {% endif %} 
+
 </section>
 {% include comments.md %}
