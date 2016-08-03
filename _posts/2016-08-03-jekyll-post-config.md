@@ -16,7 +16,6 @@ sh_js: true
 ---
 
 <pre class="brush: js; ">
-
 // 模板
 layout: post
 
