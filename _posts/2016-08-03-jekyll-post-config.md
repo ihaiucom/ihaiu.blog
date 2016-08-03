@@ -12,12 +12,12 @@ authorlink: 593705098
 thumbnail: /assets/icon/icon76.png
 
 sh: true
-sh_bash: true
+sh_js: true
 ---
 
 <br><br>
 
-<pre class="brush: bash; ">
+<pre class="brush: js; ">
 
 // 模板
 layout: post
