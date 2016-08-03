@@ -28,7 +28,7 @@ git push origin gh-pages
 
 
 <br><br>
-## Csharp 泛型&lt;T&gt; 尖括号需要用专一字符
+## Csharp 泛型&lt;T&gt; 尖括号需要用转义字符 &amp;lt T &amp;gt;
 <pre class="brush: csharp; ">
 public class ConfigSet&lt;T&gt;
 {
@@ -41,10 +41,11 @@ public class ConfigSet&lt;T&gt;
 
 
 <br><br>
-## Css 泛型
+## Css 
 <pre class="brush: css; ">
 * {
-  box-sizing: border-box; }
+  box-sizing: border-box; 
+}
 
 body {
   padding: 0;
