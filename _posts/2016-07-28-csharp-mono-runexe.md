@@ -9,11 +9,15 @@ thread: 201607281112
 author: 大海明月
 authorlink: 593705098
 thumbnail: /assets/docpic/mono.jpeg
+
+sh: true
+sh_csharp: true
 ---
 
 在看<a href="https://www.assetstore.unity3d.com/en/#!/content/45836" targets="_blank">AssetBundle Manager</a>代码时发现一个可以用C#的Process借助MonoBleedingEdge运行一个exe执行程序。（猜猜exe是C#写的才有效）
 
-```java
+
+<pre class="brush: csharp; ">
 
 static void Run ()
 {
@@ -41,4 +45,4 @@ static void Run ()
 		instance.m_ServerPID = launchProcess.Id;
 	}
 }
-```
+</pre>
