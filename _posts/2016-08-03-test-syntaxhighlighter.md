@@ -25,9 +25,8 @@ git add .
 git commit -am"syntaxhighlighter"
 git push origin gh-pages
 </pre>
-
-
 <br><br>
+
 ## Csharp 泛型&lt;T&gt; 尖括号需要用转义字符 &amp;lt T &amp;gt;
 <pre class="brush: csharp; ">
 public class ConfigSet&lt;T&gt;
@@ -38,9 +37,8 @@ public class ConfigSet&lt;T&gt;
 	}
 }
 </pre>
-
-
 <br><br>
+
 ## Css 
 <pre class="brush: css; ">
 * {
@@ -96,6 +94,5 @@ a {
     }
 }
 </pre>
-
 
 <br><br> 
