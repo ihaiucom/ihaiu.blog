@@ -9,13 +9,7 @@ shareexcerpt:
   <time datetime="{{ page.date | date:"%Y-%m-%d" }}">{{ page.date | date:"%Y-%m-%d" }}</time>
 </span>
 
-{% if page.author %}
- | 
-<span class="categories">
-  发布
- <a href="tencent://message/?uin={{ page.authorlink }}" title="发布:{{ page.author }} QQ:{{ page.authorlink }}" rel="author">{{ page.author }}</a>&nbsp;
-</span>
-{% endif %}
+
 
 {% if page.categories.size != 0 %}
  | 
