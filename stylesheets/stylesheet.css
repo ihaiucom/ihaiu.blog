@@ -650,9 +650,11 @@ a.more-link:hover {
 /*}*/
 
 
-.content .post
+.content .post li
 {
-  line-height:3rem;
+  /*line-height:3rem;*/
+  margin-top: 0.2rem;
+  margin-bottom: 0.2rem;
 }
 
 .content .post h2
