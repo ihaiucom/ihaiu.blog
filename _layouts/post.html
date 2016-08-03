@@ -25,6 +25,14 @@ shareexcerpt:
   <a href="/tags/#{{ tag }}" title="{{ tag }}">{{ tag }}</a>&nbsp;
   {% endfor %}
 </span>
+
+
+{% if page.author %}
+ | 
+<span class="categories">
+  发布
+ <a href="tencent://message/?uin={{ page.authorlink }}" title="发布:{{ page.author }} QQ:{{ page.authorlink }}" rel="author">{{ page.author }}</a>&nbsp;
+</span>
 {% endif %}
 </section>
 <section class="post">
