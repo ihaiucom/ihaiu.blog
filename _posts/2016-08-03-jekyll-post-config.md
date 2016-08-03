@@ -15,7 +15,6 @@ sh: true
 sh_js: true
 ---
 
-<br><br>
 
 <pre class="brush: js; ">
 
