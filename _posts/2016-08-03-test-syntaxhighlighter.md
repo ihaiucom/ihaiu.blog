@@ -17,7 +17,6 @@ sh_css: true
 sh_bash: true
 ---
 
-<br><br>
 
 ## shell、bash
 <pre class="brush: bash; ">
