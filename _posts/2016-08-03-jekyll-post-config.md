@@ -1,6 +1,6 @@
 ---
 layout: post
-title: post config
+title: jekyll post config
 date: 2016-08-03 23:15:22
 categories: jekyll
 tags: jekyll post
