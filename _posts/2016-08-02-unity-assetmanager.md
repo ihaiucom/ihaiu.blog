@@ -8,7 +8,8 @@ excerpt: 打包AssetBundle、加载、热更新
 shareexcerpt: 打包AssetBundle、加载、热更新
 thread: 20160802143613
 author: 大海明月
-authorlink: 593705098
+authorQQ: 593705098
+authorEmail: zengfeng75@qq.com
 thumbnail: /assets/icon/icon76.png
 ---
 

@@ -8,7 +8,8 @@ excerpt: 测试代码高亮syntaxhighlighter
 shareexcerpt: 测试代码高亮syntaxhighlighter
 thread: 20160803225210
 author: 大海明月
-authorlink: 593705098
+authorQQ: 593705098
+authorEmail: zengfeng75@qq.com
 thumbnail: /assets/docpic/syntaxhighlighter.png
 
 sh: true

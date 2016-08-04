@@ -8,7 +8,8 @@ excerpt: 优化的重点分为两部分，安装包大小优化以及性能优�
 shareexcerpt: 优化的重点分为两部分，安装包大小优化以及性能优化。
 thread: 20160728164810
 author: 大海明月
-authorlink: 593705098
+authorQQ: 593705098
+authorEmail: zengfeng75@qq.com
 thumbnail: /assets/docpic/unity-performance_optimization.png
 ---
 

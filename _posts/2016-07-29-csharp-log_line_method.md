@@ -7,7 +7,8 @@ tags: C# StackFrame
 excerpt:
 thread: 20160728200130
 author: 大海明月
-authorlink: 593705098
+authorQQ: 593705098
+authorEmail: zengfeng75@qq.com
 thumbnail:
 
 sh: true

@@ -8,7 +8,8 @@ excerpt: 写博客post文件的配置选项
 shareexcerpt: 写博客post文件的配置选项
 thread: 20160803231522
 author: 大海明月
-authorlink: 593705098
+authorQQ: 593705098
+authorEmail: zengfeng75@qq.com
 thumbnail: /assets/icon/icon76.png
 
 sh: true
@@ -43,11 +44,14 @@ thumbnail: /assets/icon/icon76.png
 // 用于显示评论和分享的ID，一般用创建时间
 thread: 20160803231522
 
-// 发布作者
+// 发布者
 author: 大海明月
 
-// 发布作者QQ
-authorlink: 593705098
+// 发布者QQ
+authorQQ: 593705098
+
+// 发布者Email
+authorEmail: zengfeng75@qq.com
 
 // 加载代码高亮syntaxhighlighter
 sh: true

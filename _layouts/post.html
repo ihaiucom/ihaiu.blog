@@ -12,7 +12,10 @@ shareexcerpt:
  | 
 <span class="categories">
   发布
- <a href="tencent://message/?uin={{ page.authorlink }}" title="发布:{{ page.author }} QQ:{{ page.authorlink }}" rel="author">{{ page.author }}</a>&nbsp;
+  <a href="tencent://message/?uin={{ page.authorQQ }}" title="发布:{{ page.author }} QQ:{{ page.authorQQ }}" rel="author">{{ page.author }}</a>&nbsp;
+  {% if page.authorEmail %}
+  <a href="mailto:{{ page.authorEmail }}" title="发布:{{ page.author }} Email:{{ page.authorEmail }}" rel="author">{{ page.authorEmail }}</a>&nbsp;
+  {% endif %}
 </span>
 {% endif %}
 

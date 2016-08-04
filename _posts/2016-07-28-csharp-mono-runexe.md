@@ -7,7 +7,8 @@ tags: C# Mono
 excerpt: 
 thread: 201607281112
 author: 大海明月
-authorlink: 593705098
+authorQQ: 593705098
+authorEmail: zengfeng75@qq.com
 thumbnail: /assets/docpic/mono.jpeg
 
 sh: true

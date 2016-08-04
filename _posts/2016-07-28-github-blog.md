@@ -8,7 +8,8 @@ excerpt: 搭建一个免费的，无限流量的Blog
 shareexcerpt: 搭建一个免费的，无限流量的Blog
 thread: 10001
 author: 大海明月
-authorlink: 593705098
+authorQQ: 593705098
+authorEmail: zengfeng75@qq.com
 thumbnail: /assets/docpic/github.jpeg
 ---
 
