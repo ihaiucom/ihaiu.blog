@@ -16,7 +16,7 @@ thumbnail:
 
 
 
-<p style="color:#666;">来源：http://www.cnblogs.com/xvqm00/archive/2009/02/19/1394093.html</p>
+<p style="color:#AAA;">来源：http://www.cnblogs.com/xvqm00/archive/2009/02/19/1394093.html</p>
 
 <p>DateTime.ToString()函数有四个重载。一般用得多的就是不带参数的那个了。殊不知，DateTime.ToString(string format)功能更强大，能输出不同格式的日期。以下把一些情况罗列出来，供大家参考。有些在MSDN上有的就没有列出来了。</p>
 
