@@ -10,16 +10,17 @@ thread: 20160811103011
 author: 大海明月
 authorQQ: 593705098
 authorEmail: zengfeng75@qq.com
-thumbnail: /assets/icon/icon76.png
+thumbnail: 
 
 ---
 
 
 
-<p>来源：http://www.cnblogs.com/xvqm00/archive/2009/02/19/1394093.html</p>
+<p style="color:#666;">来源：http://www.cnblogs.com/xvqm00/archive/2009/02/19/1394093.html</p>
 
 <p>DateTime.ToString()函数有四个重载。一般用得多的就是不带参数的那个了。殊不知，DateTime.ToString(string format)功能更强大，能输出不同格式的日期。以下把一些情况罗列出来，供大家参考。有些在MSDN上有的就没有列出来了。</p>
 
+<br><br>
 <ol>
   <li>y代表年份，注意是小写的y，大写的Ｙ并不代表年份。</li>
   <li>M表示月份。</li>
@@ -28,9 +29,9 @@ thumbnail: /assets/icon/icon76.png
   <li>m表示分钟。</li>
   <li>s表示秒。注意S并不代表什么。</li>
 </ol>
+<br><br>
 
-
-<table >
+<table style="font-size: 1rem;">
   <thead>
     <tr>
       <th>格式</th>
