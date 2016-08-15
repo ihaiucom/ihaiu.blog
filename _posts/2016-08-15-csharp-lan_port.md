@@ -318,10 +318,12 @@ namespace UdpServer
 </pre>
 
 
+客户端截图
 <p><img src="/assets/docpic/2016-08-15-csharp-lan_port-1.png"></p>
 
 
-<pre class="brush: shell; ">
+服务器截图
+<pre>
 192.168.1.9
 192.168.2.1
 MyIPAddress=192.168.1.9
