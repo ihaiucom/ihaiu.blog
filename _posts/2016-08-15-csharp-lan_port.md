@@ -13,6 +13,7 @@ thumbnail:
 
 sh: true
 sh_csharp: true
+sh_bash: true
 ---
 
 
