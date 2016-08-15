@@ -32,7 +32,7 @@ http://blog.csdn.net/jcx5083761/article/details/8552727
 </pre>
 
 <pre class="brush: csharp; ">
-public void Request<T>(List<T> EntityList)  where T : class  
+public void Request&lt;T&gt;(List&lt;T&gt; EntityList)  where T : class  
 {  
   
 } 
