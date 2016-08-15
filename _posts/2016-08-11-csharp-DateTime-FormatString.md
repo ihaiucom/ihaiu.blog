@@ -4,7 +4,7 @@ title: 【转载】用DateTime.ToString(string format)输出不同格式的日�
 date: 2016-08-11 10:30:11
 categories: C#
 tags: C# DateTime Format
-excerpt: ateTime.ToString()函数有四个重载。一般用得多的就是不带参数的那个了
+excerpt: DateTime.ToString()函数有四个重载。一般用得多的就是不带参数的那个了
 shareexcerpt: ateTime.ToString()函数有四个重载。一般用得多的就是不带参数的那个了
 thread: 20160811103011
 author: 大海明月
