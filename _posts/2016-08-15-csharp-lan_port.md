@@ -22,7 +22,7 @@ sh_csharp: true
 <pre class="brush: csharp; ">
 private static IEnumerator LanDiscoveryThread(ushort port, int listenWaitTime)
 {
-    List<string> localSubNet = new List<string>();
+    List&lt;string&gt; localSubNet = new List&lt;string&gt;();
     NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
 
     foreach (var netInterface in interfaces)
@@ -92,6 +92,11 @@ private static IEnumerator LanDiscoveryThread(ushort port, int listenWaitTime)
 
 }
 </pre>
+
+
+
+
+
 
 ## 相关文档
 
