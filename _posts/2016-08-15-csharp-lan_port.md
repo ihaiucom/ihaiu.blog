@@ -95,7 +95,7 @@ private static IEnumerator LanDiscoveryThread(ushort port, int listenWaitTime)
 
 <p>192.168.1.255 感觉被路由器给屏蔽了，在Mac上ping只返回自己电脑的ip，在Windows上ping返回超时。所以该用下面的方法自己遍历一边IP </p>
 
-## 客户端
+<h2 class="nav1">客户端</h2>
 
 <pre class="brush: csharp; ">
 using UnityEngine;
@@ -211,7 +211,7 @@ public class GetLanHost : MonoBehaviour
 
 
 
-## 服务器
+<h2 class="nav1">服务器</h2>
 
 <pre class="brush: csharp; ">
 using System;
