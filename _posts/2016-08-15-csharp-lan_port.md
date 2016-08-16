@@ -9,7 +9,7 @@ thread: 20160815173100
 author: 大海明月
 authorQQ: 593705098
 authorEmail: zengfeng75@qq.com
-thumbnail:
+thumbnail:/assets/docpic/2016-08-15-csharp-lan_port-1.png
 
 sh: true
 sh_csharp: true
