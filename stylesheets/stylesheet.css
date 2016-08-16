@@ -656,6 +656,11 @@ a.more-link:hover {
   margin-bottom: 2.5rem;
 }
 
+.content .post
+{
+  color: #333;
+}
+
 .content .post li
 {
   /*line-height:3rem;*/
