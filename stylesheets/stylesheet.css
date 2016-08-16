@@ -697,3 +697,12 @@ a.more-link:hover {
        padding: 8px 0px 5px 5px
        text-shadow: 2px 2px 3px #222222;
   }
+
+  #tag_cloud a
+  {
+    line-height: 2rem; 
+    display: block; 
+    float: left; 
+    padding: 0.5rem 1rem;
+    margin: 0.2rem 1rem;
+  }
