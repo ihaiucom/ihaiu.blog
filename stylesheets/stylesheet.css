@@ -654,12 +654,14 @@ a.more-link:hover {
 .content .meta
 {
   margin-bottom: 2.5rem;
+  color: #999;
 }
 
-.content .post
+.content .meta a
 {
-  color: #333;
+  color: #9AC;
 }
+
 
 .content .post li
 {
