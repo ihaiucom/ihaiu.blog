@@ -18,6 +18,8 @@ layout: page
   <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
   </li>
 {% endfor %}
+<br />
+<br />
 {% endfor %}
 </ul>
 
