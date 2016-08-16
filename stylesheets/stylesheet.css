@@ -675,3 +675,31 @@ a.more-link:hover {
   margin-bottom: 2rem;
 }
 
+
+.content .post .nav1 {
+  background: #2B6600;
+  border-radius: 6px 6px 6px 6px;
+  box-shadow: 0 0 0 1px #5F5A4B, 1px 1px 6px 1px rgba(10, 10, 0, 0.5);
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: bold;
+  height: 24px;
+  line-height: 23px;
+  margin: 12px 0px;
+  padding: 5px 0px 5px 10px;
+  text-shadow: 2px 2px 3px #222222;
+}
+
+.content .post .nav2 {
+       background: #2B6695;
+       border-radius: 6px 6px 6px 6px;
+       box-shadow: 0 0 0 1px #5F5A4B, 1px 1px 6px 1px rgba(10, 10, 0, 0.5);
+       color: #FFFFFF;
+       font-size: 17px;
+       font-weight: bold;
+       height: 25px;
+       line-height: 25px;
+       margin: 18px 0px;
+       padding: 8px 0px 5px 5px
+       text-shadow: 2px 2px 3px #222222;
+  }

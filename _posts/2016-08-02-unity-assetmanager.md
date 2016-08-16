@@ -14,7 +14,7 @@ thumbnail: /assets/icon/icon76.png
 ---
 
 
-## 步骤
+<h2 class="nav1">步骤</h2>
 
 > 打包AssetBundle <br>
 > 加载 <br>
@@ -24,7 +24,7 @@ thumbnail: /assets/icon/icon76.png
 <br><br> 
 
 
-## 加载模式
+<h2 class="nav1">加载模式</h2>
 > 开发模式 <br>
 > 发布模式 <br>
 > 测试AssetBundle模式 <br>
