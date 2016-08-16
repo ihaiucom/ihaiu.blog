@@ -7,6 +7,7 @@ layout: page
 {% for tag in site.tags %}
 <a class="nav2" href="#{{ tag[0] }}" title="{{ tag[0] }}" rel="{{ tag[1].size }}">{{ tag[0] }}</a>
 {% endfor %}
+<div class="cls"></div>
 </div>
 
 <ul class="listing">
