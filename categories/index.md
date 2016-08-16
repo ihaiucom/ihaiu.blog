@@ -10,7 +10,6 @@ layout: page
 <div class="cls"></div>
 </div>
 <br />
-<br />
 
 <ul class="listing">
 {% for cat in site.categories %}
