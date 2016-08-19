@@ -18,9 +18,7 @@ sh_csharp: true
 <p style="color:#AAA;">来源：<a href="http://www.cnblogs.com/luluping/archive/2009/04/30/1446665.html" target="_blank" style="color:#AAA;">http://www.cnblogs.com/luluping/archive/2009/04/30/1446665.html</a></p>
 
 <div id="cnblogs_post_body" style="margin-bottom: 20px; word-break: break-word;">
-    <h2 style="margin-top: 10px; font-size: 21px;">
-        <font size="2">C#格式化数值结果表</font>
-    </h2>
+    <h2 class="nav1">C#格式化数值结果表</h2>
     <div class="postbody" style="padding: 20px 10px 4px; margin: 10px 0px; line-height: 1.5;">
         <table cellspacing="0" cellpadding="3" width="474" height="203">
             <tbody>
@@ -143,9 +141,7 @@ sh_csharp: true
             </tbody>
         </table>
     </div>
-    <h3 style="font-size: 16px;">
-        <font face="Verdana" size="2">Strings</font>
-    </h3>
+    <h2 class="nav1">Strings</h2>
     <p style="margin: 10px auto;">
         <font size="2">There really isn&#39;t any formatting within a strong, beyond it&#39;s alignment. Alignment works for any argument being printed in a String.Format call.</font>
     </p>
@@ -180,9 +176,8 @@ sh_csharp: true
             </tr>
         </tbody>
     </table>
-    <h3 style="font-size: 16px;">
-        <font face="Verdana" size="2">Numbers</font>
-    </h3>
+
+    <h2 class="nav1">Numbers</h2>
     <p style="margin: 10px auto;">
         <font size="2">Basic number formatting specifiers:</font>
     </p>
@@ -508,9 +503,8 @@ sh_csharp: true
     <p style="margin: 10px auto;">
         <font size="2">The group separator is especially useful for formatting currency values which require that negative values be enclosed in parentheses. This currency formatting example at the bottom of this document makes it obvious:</font>
     </p>
-    <h3 style="font-size: 16px;">
-        <font face="Verdana" size="2">Dates</font>
-    </h3>
+
+    <h2 class="nav1">Dates</h2>
     <p style="margin: 10px auto;">
         <font size="2">Note that date formatting is especially dependant on the system&#39;s regional settings; the example strings here are from my local locale.</font>
     </p>
@@ -689,9 +683,9 @@ sh_csharp: true
     <p style="margin: 10px auto;">
         <font size="2">The &#39;U&#39; specifier seems broken; that string certainly isn&#39;t sortable.</font>
     </p>
-    <p style="margin: 10px auto;">
-        <strong><font size="2">Custom date formatting:</font></strong>
-    </p>
+
+    <h2 class="nav1">Custom date formatting:</h2>
+
     <p style="margin: 10px auto;">
         <font size="2">&nbsp;</font>
     </p>
@@ -979,9 +973,8 @@ sh_csharp: true
             </tr>
         </tbody>
     </table>
-    <h3 style="font-size: 16px;">
-        <font face="Verdana" size="2">Enumerations</font>
-    </h3>
+
+    <h2 class="nav1">Enumerations</h2>
     <p style="margin: 10px auto;">
         <font size="2">&nbsp;</font>
     </p>
@@ -1029,9 +1022,8 @@ sh_csharp: true
             </tr>
         </tbody>
     </table>
-    <h3 style="font-size: 16px;">
-        <font face="Verdana" size="2">Some Useful Examples</font>
-    </h3>
+
+    <h2 class="nav1">Some Useful Examples</h2>
     <p style="margin: 10px auto;">
         <font face="Courier New" size="2">String.Format(&quot;{0:＄#,##0.00;(＄#,##0.00);Zero}&quot;, value);</font>
     </p>
@@ -1050,9 +1042,8 @@ sh_csharp: true
         <p style="margin: 10px auto;">
             <font size="2">&nbsp;</font>
         </p>
-        <p style="margin: 10px auto;">
-            <strong><font size="2">变量.ToString()</font></strong>
-        </p>
+
+    	<h2 class="nav1">变量.ToString()</h2>
         <p style="margin: 10px auto;">
             <br/><font size="2">字符型转换 转为字符串<br/>12345.ToString(&quot;n&quot;); //生成 12,345.00<br/>12345.ToString(&quot;C&quot;); //生成 ￥12,345.00<br/>12345.ToString(&quot;e&quot;); //生成 1.234500e+004<br/>12345.ToString(&quot;f4&quot;); //生成 12345.0000<br/>12345.ToString(&quot;x&quot;); //生成 3039 (16进制)<br/>12345.ToString(&quot;p&quot;); //生成 1,234,500.00%</font>
         </p>
