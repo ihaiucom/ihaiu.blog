@@ -17,7 +17,6 @@ thumbnail: /assets/docpic/unity-performance_optimization.png
 * [Unity开发者的C#内存管理（中篇）](http://www.cnblogs.com/yishansong/p/4344299.html)
 
 
-<br><br>
 * [UWA：简单优化、优化简单](https://zhuanlan.zhihu.com/uwa4d)
 * [Unity 性能优化总结—CPU篇](https://zhuanlan.zhihu.com/p/21913747?refer=uwa4d)
 * [Unity内存优化总结（上）](https://zhuanlan.zhihu.com/p/21913770?refer=uwa4d)
@@ -25,13 +24,11 @@ thumbnail: /assets/docpic/unity-performance_optimization.png
 
 
 
-<br><br>
 * [Unity游戏优化 安装包大小优化以及性能优化](http://www.dpull.com/blog/2015-04-30-unity_optimize)
 * [Unity foreach 造成额外的GC开销](http://www.dpull.com/blog/2015-06-04-unity_mono_foreach)
 * [总结使用Unity 3D优化游戏运行性能的经验](http://gamerboom.com/archives/76214)
 
 
-<br><br>
 * [加载模块深度解析（一）Texture](http://blog.uwa4d.com/archives/LoadingPerformance_Texture.html)
 * [加载模块深度解析（二）Mesh](http://blog.uwa4d.com/archives/LoadingPerformance_Mesh.html)
 * [加载模块深度解析（三）Shader](http://blog.uwa4d.com/archives/LoadingPerformance_Shader.html)
