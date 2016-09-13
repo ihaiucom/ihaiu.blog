@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 获取路径中的位置
-date: 2016-08-02 14:36:13
+date: 2016-09-13 17:36:13
 categories: 算法
 tags: Unity Path
 excerpt: 已知一条路径，已知路径点。假设s点到e点的距离用百分比t (0–1)。求t在指定值位置的坐标?
