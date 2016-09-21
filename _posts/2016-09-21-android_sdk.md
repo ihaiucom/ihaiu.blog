@@ -20,7 +20,7 @@ sh_csharp: true
 
 
 
-<h2 class="nav2">中国科学院开源协会</h2>
+<h2 class="nav2">一:中国科学院开源协会</h2>
 <table>
     <tr>
         <th>IPV4/IPV6</th>
@@ -44,7 +44,9 @@ sh_csharp: true
 </table>
 
 
-<h2 class="nav2">其他提供</h2>
+<br>
+
+<h2 class="nav2">二：其他提供</h2>
 <table>
     <tr>
         <th>提供</th>
@@ -83,21 +85,24 @@ sh_csharp: true
     </tr>
 </table>
 
+<br>
+<br>
 
 <h2 class="nav1">设置</h2>
 <p>
-1.打开设置面板 <br>
+<h3>打开设置面板 </h3>
 <img src="/assets/docpic/android_sdk_1.png">
 </p>
-
+<br>
 
 <p>
-2.设置镜像，（记住:(1)把http://去掉; (2)勾选Force） <br>
+<h3>设置镜像，（记住:(1)把http://去掉; (2)勾选Force） </h3>
 <img src="/assets/docpic/android_sdk_2.png">
 </p>
+<br>
 
 
 <p>
-3. Reload<br>
+<h3>Reload </h3>
 <img src="/assets/docpic/android_sdk_3.png">
 </p>
