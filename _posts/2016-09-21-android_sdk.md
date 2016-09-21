@@ -4,8 +4,8 @@ title: Android SDK 更新镜像服务器
 date: 2016-09-21 12:10:00
 categories: Android
 tags: Android SDK
-excerpt: Android SDK 在线更新镜像服务器资源 大连东软信息学院镜像服务器地址: - http://mirrors.neusoft.edu.cn 端口：80
-shareexcerpt:  Android SDK 在线更新镜像服务器资源 大连东软信息学院镜像服务器地址: - http://mirrors.neusoft.edu.cn 端口：80
+excerpt: Android SDK 在线更新镜像服务器资源
+shareexcerpt:  Android SDK 在线更新镜像服务器资源
 thread: 201609211200
 author: 大海明月
 authorQQ: 593705098
