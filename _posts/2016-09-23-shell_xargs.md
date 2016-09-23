@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 【笔记】Mac Shell xargs 再命令行前加命令文本
+title: 【笔记】Mac Shell xargs 在命令行前加命令文本
 date: 2016-09-23 10:46:30
 categories: shell
 tags: mac shell
