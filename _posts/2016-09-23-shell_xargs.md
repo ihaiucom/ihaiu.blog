@@ -33,7 +33,15 @@ svn status|grep ! |awk '{print $2}'|xargs svn del
 
 
 <p> </p>
-<h2 class="nav1">实例--杀死查找的所有进程</h2>
+<h2 class="nav1">实例--杀死查找的所有java进程</h2>
 <pre>
 ps -ef|grep java|awk '{print$2}'|xargs kill -9 
 </pre>
+
+
+<p> </p>
+<h2 class="nav1">实例--杀死查找的所有game进程</h2>
+<pre>
+ps -ef|grep game.|awk '{print$2}'|xargs kill -9 
+</pre>
+
