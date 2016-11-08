@@ -16,11 +16,11 @@ sh_csharp: true
 ---
 
 <p>
-	<img src="/assets/docpic/unity-sprite_border_shader.png"> </img>
+	<img src="/assets/docpic/unity-sprite_border_shader.png" />
 </p>
 
 <p>
-	<img src="/assets/docpic/unity-sprite_border_shader2.png"> </img>
+	<img src="/assets/docpic/unity-sprite_border_shader2.png" />
 </p>
 
 <pre class="brush: csharp; ">
