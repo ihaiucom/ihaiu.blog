@@ -9,18 +9,18 @@ thread: 20161108193600
 author: 大海明月
 authorQQ: 593705098
 authorEmail: zengfeng75@qq.com
-thumbnail: assets/docpic/unity-sprite_border_shader.png
+thumbnail: /assets/docpic/unity-sprite_border_shader.png
 
 sh: true
 sh_csharp: true
 ---
 
 <p>
-	<img src="assets/docpic/unity-sprite_border_shader.png"> </img>
+	<img src="/assets/docpic/unity-sprite_border_shader.png"> </img>
 </p>
 
 <p>
-	<img src="assets/docpic/unity-sprite_border_shader2.png"> </img>
+	<img src="/assets/docpic/unity-sprite_border_shader2.png"> </img>
 </p>
 
 <pre class="brush: csharp; ">
