@@ -15,15 +15,18 @@ sh: false
 sh_csharp: true
 ---
 
-
+<pre>
 curl -O http://mirrors.kernel.org/gnu/m4/m4-1.4.13.tar.gz
 tar -xzvf m4-1.4.13.tar.gz
 cd m4-1.4.13
 ./configure --prefix=/usr/local
 make
 sudo make install
+</pre>
+<br>
+<br>
 
-
+<pre>
 cd ..
 curl -O http://mirrors.kernel.org/gnu/autoconf/autoconf-2.65.tar.gz
 tar -xzvf autoconf-2.65.tar.gz
@@ -31,6 +34,11 @@ cd autoconf-2.65
 ./configure --prefix=/usr/local
 make
 sudo make install
+</pre>
+<br>
+<br>
+
+<pre>
 cd ..
 curl -O http://mirrors.kernel.org/gnu/automake/automake-1.11.tar.gz
 tar xzvf automake-1.11.tar.gz
@@ -38,6 +46,13 @@ cd automake-1.11
 ./configure --prefix=/usr/local
 make
 sudo make install
+</pre>
+<br>
+<br>
+
+
+
+<pre>
 cd ..
 curl -O http://mirrors.kernel.org/gnu/libtool/libtool-2.2.6b.tar.gz
 tar xzvf libtool-2.2.6b.tar.gz
@@ -47,7 +62,16 @@ make
 
 sudo make install
 
+</pre>
+<br>
+<br>
+
+<pre>
 curl http://pkgconfig.freedesktop.org/releases/pkg-config-0.28.tar.gz -o pkg-config-0.28.tar.gz
 tar -zxvf pkg-config-0.28.tar.gz
 cd pkg-config-0.28
 ./configure --with-internal-glib
+
+</pre>
+<br>
+<br>
