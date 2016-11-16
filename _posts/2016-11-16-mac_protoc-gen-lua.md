@@ -16,17 +16,18 @@ sh_csharp: true
 ---
 
 <p>
-## 下载
+
+<h3>下载</h3>
 
 * 源码 		<a href="https://github.com/google/protobuf/tree/v2.5.0" target="_blank">https://github.com/google/protobuf/tree/v2.5.0</a> <br>
 
 
 * 编译好的Bin (不想编译源码的可以下载) 		<a href="https://github.com/google/protobuf/releases" target="_blank">https://github.com/google/protobuf/releases</a> <br>
 
-# 我们这里安装的是protoc 2.5 <a href="https://github.com/google/protobuf/releases/tag/v2.5.0" target="_blank">https://github.com/google/protobuf/releases/tag/v2.5.0</a> <br>
+* 我们这里安装的是protoc 2.5 <a href="https://github.com/google/protobuf/releases/tag/v2.5.0" target="_blank">https://github.com/google/protobuf/releases/tag/v2.5.0</a> <br>
 
 
-#<a href="http://www.cnblogs.com/ghj1976/p/5435565.html" target="_blank">需要安装3.0的可以看看这里</a>
+* <a href="http://www.cnblogs.com/ghj1976/p/5435565.html" target="_blank">需要安装3.0的可以看看这里</a> <br>
 
 <p>
 
@@ -68,11 +69,11 @@ sudo python setup.py install
 
 
 
-<h2 class="nav1">2.安装 protoc-gen-lua</h2>
+<h2 class="nav1">3.安装 protoc-gen-lua</h2>
 下载 <a href="https://github.com/sean-lin/protoc-gen-lua">https://github.com/sean-lin/protoc-gen-lua </a> 并解压
 
 <br>
-<h3>将plugin/protoc-gen-lua创建一个链接到/usr/local/bin </h3>
+<h3>(1)将plugin/protoc-gen-lua创建一个链接到/usr/local/bin </h3>
 <pre>
 cd /usr/local/bin
 sudo ln -s xxxxx/protoc-gen-lua-master/plugin/protoc-gen-lua
@@ -81,7 +82,7 @@ sudo ln -s xxxxx/protoc-gen-lua-master/plugin/protoc-gen-lua
 
 <br>
 <br>
-<h3>创建example/build_lua.sh </h3>
+<h3>(2)创建example/build_lua.sh </h3>
 <pre>
 protoc --lua_out=./ *.proto
 # 把下面的注释去掉，可以拷贝到你的项目目录
@@ -89,7 +90,7 @@ protoc --lua_out=./ *.proto
 </pre>
 
 <br>
-<h3>测试 </h3>
+<h3>(3)测试 </h3>
 <pre>
 #先加上执行权限
 chmod +x ./build_lua.sh  
