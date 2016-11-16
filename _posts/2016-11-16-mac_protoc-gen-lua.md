@@ -35,9 +35,9 @@ sh_csharp: true
 
 
 <h2 class="nav2">步奏</h2>
-* 安装 protoc
-* 安装 protoc python
-* 安装 protoc-gen-lua
+* 安装 protoc <br>
+* 安装 protoc python <br>
+* 安装 protoc-gen-lua <br>
 
 <br>
 
