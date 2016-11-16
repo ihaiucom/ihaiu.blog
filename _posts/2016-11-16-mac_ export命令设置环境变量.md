@@ -21,29 +21,31 @@ sh_csharp: true
 <pre>
 export TEST_ENV='test_enviroment'
 evn
-	//  输错可以看到多了 TEST_ENV
-	<pre>
-	TERM_PROGRAM=Apple_Terminal
-	SHELL=/bin/bash
-	TERM=xterm-256color
-	TMPDIR=/var/folders/7n/5z1svm_n0nndw5vqdct3kh940000gn/T/
-	Apple_PubSub_Socket_Render=/private/tmp/com.apple.launchd.znQyJYjsql/Render
-	TERM_PROGRAM_VERSION=361.1
-	TERM_SESSION_ID=49EE5104-9974-4515-8CA2-8A19D32250FB
-	USER=zengfeng
-	SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.EHX84vGXeo/Listeners
-	__CF_USER_TEXT_ENCODING=0x1F5:0x19:0x34
-	PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/usr/local/mysql/bin/:/Applications/adt-bundle-mac-x86_64-24/sdk/platform-tools:/Applications/adt-bundle-mac-x86_64-24/sdk/tools:/usr/local/local:
-	PWD=/usr/local/bin
-	LANG=zh_CN.UTF-8
-	XPC_FLAGS=0x0
-	XPC_SERVICE_NAME=0
-	SHLVL=1
-	HOME=/Users/zengfeng
-	TEST_ENV=test_enviroment // 多了这条
-	LOGNAME=zengfeng
-	_=/usr/bin/env
-	</pre>
+	
+</pre>
+
+//  输错可以看到多了 TEST_ENV
+<pre>
+TERM_PROGRAM=Apple_Terminal
+SHELL=/bin/bash
+TERM=xterm-256color
+TMPDIR=/var/folders/7n/5z1svm_n0nndw5vqdct3kh940000gn/T/
+Apple_PubSub_Socket_Render=/private/tmp/com.apple.launchd.znQyJYjsql/Render
+TERM_PROGRAM_VERSION=361.1
+TERM_SESSION_ID=49EE5104-9974-4515-8CA2-8A19D32250FB
+USER=zengfeng
+SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.EHX84vGXeo/Listeners
+__CF_USER_TEXT_ENCODING=0x1F5:0x19:0x34
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/usr/local/mysql/bin/:/Applications/adt-bundle-mac-x86_64-24/sdk/platform-tools:/Applications/adt-bundle-mac-x86_64-24/sdk/tools:/usr/local/local:
+PWD=/usr/local/bin
+LANG=zh_CN.UTF-8
+XPC_FLAGS=0x0
+XPC_SERVICE_NAME=0
+SHLVL=1
+HOME=/Users/zengfeng
+TEST_ENV=test_enviroment // 多了这条
+LOGNAME=zengfeng
+_=/usr/bin/env
 </pre>
 
 
@@ -51,10 +53,12 @@ evn
 
 <pre>
 export PATH=$PATH:/Users/zengfeng/workspaces/bin
-	// 输错
-	<pre>
-		PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/usr/local/mysql/bin/:/Applications/adt-bundle-mac-x86_64-24/sdk/platform-tools:/Applications/adt-bundle-mac-x86_64-24/sdk/tools:/usr/local/local::/Users/zengfeng/workspaces/bin
-	</pre>
+echo $PATH
+</pre>
+
+// 输错
+<pre>
+	PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/usr/local/mysql/bin/:/Applications/adt-bundle-mac-x86_64-24/sdk/platform-tools:/Applications/adt-bundle-mac-x86_64-24/sdk/tools:/usr/local/local::/Users/zengfeng/workspaces/bin
 </pre>
 
 
