@@ -91,9 +91,11 @@ protoc --lua_out=./ *.proto
 <br>
 <h3>测试 </h3>
 <pre>
-chmod +x ./build_lua.sh  //先加上执行权限
+#先加上执行权限
+chmod +x ./build_lua.sh  
 
-./build_lua.sh // 可以看到成功生存了一个person_pb.lua文件
+./build_lua.sh 
+#可以看到成功生存了一个person_pb.lua文件
 </pre>
 
 
