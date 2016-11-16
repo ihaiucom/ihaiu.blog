@@ -47,7 +47,7 @@ evn
 </pre>
 
 
-<h2 class="nav">用来设在PATH</h2>
+<h2 class="nav1">用来设在PATH</h2>
 
 <pre>
 export PATH=$PATH:/Users/zengfeng/workspaces/bin
