@@ -139,16 +139,18 @@ Shader "Sprites/Border"
 				outCol.a *= _BlurPower;
 
 				fixed4 finalCol;
-				finalCol.rgb = outCol.rgb * outCol.a;
-				finalCol.a = outCol.a;
 
+				//finalCol.rgb = outCol.rgb * outCol.a;
+				//finalCol.a = outCol.a;
+				
+				finalCol.rgb = outCol.rgb * min(1, outCol.a);
+				finalCol.a = min(1, outCol.a);
 
 
 				#ifdef NEEDPIC_ON
 				finalCol.rgb += color.rgb * step(outCol.a, 0);
 				finalCol.a += lerp( outCol.a, color.a, _BlurColorMix);
 				#endif
-
 
 
 				return finalCol;
