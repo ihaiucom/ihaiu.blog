@@ -31,10 +31,6 @@ sh_csharp: true
 
 <p>
 
-<h2 class="nav1">各种坑</h2>
-<a href="http://blog.csdn.net/zhangyuehuan/article/details/51226066" target="_blank">mac 上protobuf-2.6.0安装步骤</a> <br>
-
-<br>
 <br>
 
 
