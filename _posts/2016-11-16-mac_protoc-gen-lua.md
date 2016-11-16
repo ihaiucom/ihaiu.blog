@@ -57,8 +57,13 @@ cd /usr/local/bin
 sudo ln -s xxxxx/bin/protoc
 </pre>
 
+<h3>测试 </h3>
+<pre>
+protoc --version
+#有输出版本号表示成功
+</pre>
 
-<br>
+
 <br>
 
 <h2 class="nav1">2.安装 protoc python</h2>
@@ -70,6 +75,7 @@ python setup.py build
 sudo python setup.py install
 </pre>
 
+<br>
 
 
 <h2 class="nav1">3.安装 protoc-gen-lua</h2>
