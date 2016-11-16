@@ -18,13 +18,14 @@ sh_csharp: true
 生命周期只在你当前终端有效
 
 
+<h2 class="nav1">用来添加一个新的环境变量</h2>
 <pre>
 export TEST_ENV='test_enviroment'
 evn
 	
 </pre>
 
-//  输错可以看到多了 TEST_ENV
+//  输出可以看到多了 TEST_ENV
 <pre>
 TERM_PROGRAM=Apple_Terminal
 SHELL=/bin/bash
@@ -56,7 +57,7 @@ export PATH=$PATH:/Users/zengfeng/workspaces/bin
 echo $PATH
 </pre>
 
-// 输错
+// 输出
 <pre>
 	PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/usr/local/mysql/bin/:/Applications/adt-bundle-mac-x86_64-24/sdk/platform-tools:/Applications/adt-bundle-mac-x86_64-24/sdk/tools:/usr/local/local::/Users/zengfeng/workspaces/bin
 </pre>
