@@ -17,7 +17,7 @@ sh_csharp: true
 
 <p>
 
-<h3>下载</h3>
+<h3 class="nav2">下载</h3>
 
 * 源码 		<a href="https://github.com/google/protobuf/tree/v2.5.0" target="_blank">https://github.com/google/protobuf/tree/v2.5.0</a> <br>
 
@@ -33,6 +33,13 @@ sh_csharp: true
 
 <br>
 
+
+<h2 class="nav2">步奏</h2>
+* 安装 protoc
+* 安装 protoc python
+* 安装 protoc-gen-lua
+
+<br>
 
 
 <h2 class="nav1">1.安装 protoc</h2>
