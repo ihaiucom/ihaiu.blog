@@ -15,6 +15,7 @@ sh: false
 sh_csharp: true
 ---
 
+生命周期只在你当前终端有效
 
 
 <pre>
