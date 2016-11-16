@@ -51,7 +51,7 @@ sh_csharp: true
 在这里我直接提供编译好的 <a href="/assets/down/protobuf2.5.0.zip" target="_blank">protobuf2.5.0.zip</a>
 </p>
 
-<h3>将protoc创建一个链接到/usr/local/bin </h3>
+<h3>将protoc创建一个链接到 /usr/local/bin </h3>
 <pre>
 cd /usr/local/bin
 sudo ln -s xxxxx/bin/protoc
