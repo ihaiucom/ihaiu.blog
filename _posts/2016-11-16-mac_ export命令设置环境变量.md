@@ -4,7 +4,7 @@ title: 【笔记】export 命令设置环境变量
 date: 2016-11-16 22:31:00
 categories: mac
 tags: mac export
-excerpt: 
+excerpt: export 命令设置环境变量, 生命周期只在你当前终端有效
 thread: 20161116223100
 author: 大海明月
 authorQQ: 593705098
