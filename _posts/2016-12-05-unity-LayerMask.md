@@ -1,7 +1,7 @@
 ---
 layout: post
 title: [转]Unity3D中Layers和LayerMask解析
-date: 2016-08-02 14:36:13
+date: 2016-12-05 16:45:00
 categories: Unity
 tags: Unity
 excerpt: Unity中是用int32来表示32个Layer层。int32表示二进制一共有32位（0—31）
