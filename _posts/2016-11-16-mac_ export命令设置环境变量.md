@@ -1,0 +1,66 @@
+---
+layout: post
+title: 【笔记】export 命令设置环境变量
+date: 2016-11-16 22:31:00
+categories: mac
+tags: mac export
+excerpt: export 命令设置环境变量, 生命周期只在你当前终端有效
+thread: 20161116223100
+author: 大海明月
+authorQQ: 593705098
+authorEmail: zengfeng75@qq.com
+thumbnail:
+
+sh: false
+sh_csharp: true
+---
+
+生命周期只在你当前终端有效
+
+
+<h2 class="nav1">用来添加一个新的环境变量</h2>
+<pre>
+export TEST_ENV='test_enviroment'
+evn
+	
+</pre>
+
+//  输出可以看到多了 TEST_ENV
+<pre>
+TERM_PROGRAM=Apple_Terminal
+SHELL=/bin/bash
+TERM=xterm-256color
+TMPDIR=/var/folders/7n/5z1svm_n0nndw5vqdct3kh940000gn/T/
+Apple_PubSub_Socket_Render=/private/tmp/com.apple.launchd.znQyJYjsql/Render
+TERM_PROGRAM_VERSION=361.1
+TERM_SESSION_ID=49EE5104-9974-4515-8CA2-8A19D32250FB
+USER=zengfeng
+SSH_AUTH_SOCK=/private/tmp/com.apple.launchd.EHX84vGXeo/Listeners
+__CF_USER_TEXT_ENCODING=0x1F5:0x19:0x34
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/usr/local/mysql/bin/:/Applications/adt-bundle-mac-x86_64-24/sdk/platform-tools:/Applications/adt-bundle-mac-x86_64-24/sdk/tools:/usr/local/local:
+PWD=/usr/local/bin
+LANG=zh_CN.UTF-8
+XPC_FLAGS=0x0
+XPC_SERVICE_NAME=0
+SHLVL=1
+HOME=/Users/zengfeng
+TEST_ENV=test_enviroment // 多了这条
+LOGNAME=zengfeng
+_=/usr/bin/env
+</pre>
+
+
+<h2 class="nav1">用来设在PATH</h2>
+
+<pre>
+export PATH=$PATH:/Users/zengfeng/workspaces/bin
+echo $PATH
+</pre>
+
+// 输出
+<pre>
+	PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/git/bin:/usr/local/mysql/bin/:/Applications/adt-bundle-mac-x86_64-24/sdk/platform-tools:/Applications/adt-bundle-mac-x86_64-24/sdk/tools:/usr/local/local::/Users/zengfeng/workspaces/bin
+</pre>
+
+
+
