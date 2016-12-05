@@ -73,9 +73,9 @@ LayerMask mask = 1 << 2; 表示开启Layer2。
 
 LayerMask mask = 0 << 5;表示关闭Layer5。
 
-LayerMask mask = 1<<2|1<<8;表示开启Layer2和Layer8。
+LayerMask mask = 1 << 2|1 << 8;表示开启Layer2和Layer8。
 
-LayerMask mask = 0<<3|0<<7;表示关闭Layer3和Layer7。
+LayerMask mask = 0 << 3|0 << 7;表示关闭Layer3和Layer7。
 
 </pre>
 
@@ -85,9 +85,9 @@ LayerMask mask = 0<<3|0<<7;表示关闭Layer3和Layer7。
 
 <pre>
 
-LayerMask mask = ~（1<<3|1<<7）;表示关闭Layer3和Layer7。
+LayerMask mask = ~（1 << 3|1 << 7）;表示关闭Layer3和Layer7。
 
-LayerMask mask = 1<<2|0<<4;表示开启Layer2并且同时关闭Layer4.
+LayerMask mask = 1 << 2|0 << 4;表示开启Layer2并且同时关闭Layer4.
 
 </pre>
 
@@ -100,7 +100,7 @@ using UnityEngine;
 using System.Collections;
 
 public class example : MonoBehaviour {
-    LayerMask mask =  ~（1<<3|1<<7）;
+    LayerMask mask =  ~（1 << 3|1 << 7）;
     void Update() {
         if (Physics.Raycast(transform.position, transform.forward, 100, mask.value))
             Debug.Log("Hit something");
