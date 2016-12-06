@@ -10,11 +10,12 @@ thread: 201612061630
 author: 大海明月
 authorQQ: 593705098
 authorEmail: zengfeng75@qq.com
-thumbnail: 
+thumbnail: /assets/docpic/unity-game-layer.png
 
 sh: true
 sh_csharp: true
 ---
+<p><img src="/assets/docpic/unity-game-layer.png" /></p>
 
 <h2 class="nav1">文件描述</h2>
 <p>数据代码</p>
