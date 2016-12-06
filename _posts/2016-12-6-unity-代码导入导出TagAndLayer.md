@@ -16,7 +16,7 @@ sh: true
 sh_csharp: true
 ---
 
-<h2 class=".nav1">文件描述</h2>
+<h2 class="nav1">文件描述</h2>
 <p>数据代码</p>
 <table>
 	<tr>
@@ -56,7 +56,7 @@ sh_csharp: true
 </table>
 
 
-<h2 class=".nav">Assets/Game/Script/Unity/GameLayer.cs</h2>
+<h2 class="nav1">Assets/Game/Script/Unity/GameLayer.cs</h2>
 
 
 <pre class="brush: csharp; ">
@@ -109,7 +109,7 @@ namespace Games
 
 </pre>
 
-<h2 class=".nav2">Assets/Game/Script/Unity/GameLayer_Editor.cs</h2>
+<h2 class="nav2">Assets/Game/Script/Unity/GameLayer_Editor.cs</h2>
 
 
 <pre class="brush: csharp; ">
@@ -220,7 +220,7 @@ namespace Games
 
 
 
-<h2 class=".nav1">Assets/Game/Script/Unity/GameTag.cs</h2>
+<h2 class="nav1">Assets/Game/Script/Unity/GameTag.cs</h2>
 <pre class="brush: csharp; ">
 namespace Games
 {
@@ -252,7 +252,7 @@ namespace Games
 
 
 
-<h2 class=".nav2">Assets/Game/Script/Unity/GameTag_Editor.cs</h2>
+<h2 class="nav2">Assets/Game/Script/Unity/GameTag_Editor.cs</h2>
 <pre class="brush: csharp; ">
 #if UNITY_EDITOR
 using UnityEngine;
@@ -366,7 +366,7 @@ namespace Games
 
 
 
-<h2 class=".nav1">Assets/Game/Script/Unity/GameSortingLayer.cs</h2>
+<h2 class="nav1">Assets/Game/Script/Unity/GameSortingLayer.cs</h2>
 <pre class="brush: csharp; ">
 namespace Games
 {
@@ -384,7 +384,7 @@ namespace Games
 
 
 
-<h2 class=".nav2">Assets/Game/Script/Unity/GameSortingLayer_Editor.cs</h2>
+<h2 class="nav2">Assets/Game/Script/Unity/GameSortingLayer_Editor.cs</h2>
 <pre class="brush: csharp; ">
 #if UNITY_EDITOR
 using UnityEngine;
