@@ -56,6 +56,59 @@ sh_csharp: true
 </table>
 
 
+<h2 class=".nav">Assets/Game/Script/Unity/GameLayer.cs</h2>
+
+
+<pre class="brush: csharp; ">
+namespace Games
+{
+	public partial class GameLayer
+	{
+		#region Unity Default Lock
+		public const int Default			=	1 &lt;&lt; 0;
+		public const int TransparentFX			=	1 &lt;&lt; 1;
+		public const int Ignore_Raycast			=	1 &lt;&lt; 2;
+		public const int Layer3			=	1 &lt;&lt; 3;
+		public const int Water			=	1 &lt;&lt; 4;
+		public const int UI			=	1 &lt;&lt; 5;
+		public const int Layer6			=	1 &lt;&lt; 6;
+		public const int Layer7			=	1 &lt;&lt; 7;
+		#endregion
+
+
+		public const int War_Terrain			=	1 &lt;&lt; 8;
+		public const int War_Unit			=	1 &lt;&lt; 9;
+		public const int War_Obstacle			=	1 &lt;&lt; 10;
+		public const int Layer11			=	1 &lt;&lt; 11;
+		public const int Layer12			=	1 &lt;&lt; 12;
+		public const int Layer13			=	1 &lt;&lt; 13;
+		public const int Layer14			=	1 &lt;&lt; 14;
+		public const int Layer15			=	1 &lt;&lt; 15;
+		public const int Layer16			=	1 &lt;&lt; 16;
+		public const int Layer17			=	1 &lt;&lt; 17;
+		public const int Layer18			=	1 &lt;&lt; 18;
+		public const int Layer19			=	1 &lt;&lt; 19;
+		public const int Layer20			=	1 &lt;&lt; 20;
+		public const int Layer21			=	1 &lt;&lt; 21;
+		public const int Layer22			=	1 &lt;&lt; 22;
+		public const int Layer23			=	1 &lt;&lt; 23;
+		public const int Layer24			=	1 &lt;&lt; 24;
+		public const int Layer25			=	1 &lt;&lt; 25;
+		public const int Layer26			=	1 &lt;&lt; 26;
+		public const int Layer27			=	1 &lt;&lt; 27;
+		public const int Layer28			=	1 &lt;&lt; 28;
+		public const int Layer29			=	1 &lt;&lt; 29;
+		public const int Layer30			=	1 &lt;&lt; 30;
+		public const int Layer31			=	1 &lt;&lt; 31;
+
+
+		public static int           customBeginIndex = 8;
+		public static string[]      customLayers = {&quot;War_Terrain&quot;,&quot;War_Unit&quot;,&quot;War_Obstacle&quot;,&quot;Layer11&quot;,&quot;Layer12&quot;,&quot;Layer13&quot;,&quot;Layer14&quot;,&quot;Layer15&quot;,&quot;Layer16&quot;,&quot;Layer17&quot;,&quot;Layer18&quot;,&quot;Layer19&quot;,&quot;Layer20&quot;,&quot;Layer21&quot;,&quot;Layer22&quot;,&quot;Layer23&quot;,&quot;Layer24&quot;,&quot;Layer25&quot;,&quot;Layer26&quot;,&quot;Layer27&quot;,&quot;Layer28&quot;,&quot;Layer29&quot;,&quot;Layer30&quot;,&quot;Layer31&quot;};
+	}
+}
+
+</pre>
+
 <h2 class=".nav2">Assets/Game/Script/Unity/GameLayer_Editor.cs</h2>
 
 
