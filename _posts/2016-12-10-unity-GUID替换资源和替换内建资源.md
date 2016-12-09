@@ -23,7 +23,7 @@ sh_csharp: true
 <p><img src="/assets/docpic/unity_guid_demo_user_after.jpg" /></p>
 
 <p></p>
-<p>为了方便查找替换，我参看了 <a href="http://blog.csdn.net/u010019717/article/details/52763318" target="_blank" >Unity GUID替换Editor</a>和 改写了下面这个工具。</p>
+<p>为了方便查找替换，我参看了 <a href="http://blog.csdn.net/u010019717/article/details/52763318" target="_blank" >Unity GUID替换Editor</a> 改写了下面这个工具。</p>
 <p><a href="/assets/down/builtin_unity_5.4.unitypackage" target="_blank" >GUID替换资源和替换内建资源工具</a></p>
 <p><a href="https://pan.baidu.com/s/1o7IfwZS" target="_blank" >builtin_unity_5.4.unitypackage （百度云下载 https://pan.baidu.com/s/1o7IfwZS）</a></p>
 
@@ -31,6 +31,8 @@ sh_csharp: true
 <p>里面的Shader是5.4.0版本的，你可以到官网下载自己需要的版本替换</p>
 
 
+<p></p>
+<p></p>
 <h2 class="nav1">内建资源截图 </h2>
 <p><img src="/assets/docpic/unity_builtin_images.jpg" /></p>
 <p><img src="/assets/docpic/unity_builtin_material.jpg" /></p>
@@ -51,6 +53,12 @@ sh_csharp: true
 <p><a href="http://blog.uwa4d.com/archives/957.html" target="_blank">资源管理 Q3 </a></p>
 <p><a href="http://blog.uwa4d.com/archives/QA_ResourceManagement.html" target="_blank">关于Unity中的资源管理，你可能遇到这些问题 </a></p>
 <p><a href="http://blog.uwa4d.com/archives/QA_Memory-1.html" target="_blank">关于Unity内存优化，你可能遇到这些问题 </a></p>
+
+
+<p></p>
+<h2 class="nav1">工具下载 </h2>
+<p><a href="/assets/down/builtin_unity_5.4.unitypackage" target="_blank" >GUID替换资源和替换内建资源工具</a></p>
+<p><a href="https://pan.baidu.com/s/1o7IfwZS" target="_blank" >builtin_unity_5.4.unitypackage （百度云下载 https://pan.baidu.com/s/1o7IfwZS）</a></p>
 
 
 <br>
