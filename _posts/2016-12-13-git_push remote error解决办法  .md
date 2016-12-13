@@ -52,4 +52,4 @@ error: failed to push some refs to 'git@127.0.0.1:repositories/test.git'
 </pre>
 
 <p></p>
-<p>这样就可以通过git push提交自己的稳定更新，要想在push后在remote端看到更新的效果，执行git reset –hard即可。</p>
+<p>这样就可以通过git push提交自己的稳定更新，要想在push后在remote端看到更新的效果，执行git reset --hard即可。</p>
