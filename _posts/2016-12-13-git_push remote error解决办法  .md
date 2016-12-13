@@ -4,7 +4,7 @@ title: 【转】git push remote error解决办法
 date: 2016-12-13 3:10:00
 categories: git
 tags: git
-excerpt: Mac 下配置 Git 服务器
+excerpt: git push remote error解决办法  
 thread: 2016121331000
 author: 大海明月
 authorQQ: 593705098
