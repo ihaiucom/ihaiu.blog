@@ -23,6 +23,7 @@ cd ~/
 mkdir svn
 cd svn
 svnadmin create projectdir
+</pre>
 </p> projectdir 是你的项目名称</p>
 <p> </p>
 <p> </p>
