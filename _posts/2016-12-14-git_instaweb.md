@@ -21,20 +21,20 @@ sh_csharp: true
 git instaweb --httpd=webrick --port=8080
 </pre>
 <p></p>
-<p><img src="/assets/docpic/gitweb_1.png"/></p>
+<p style="border: 1px solid;"><img src="/assets/docpic/gitweb_1.png"/></p>
 <p></p>
 
 <p>默认hb的值是编码过的。我们可以直接用版本路径明文</p>
-<p><img src="/assets/docpic/gitweb_4.png"/></p>
+<p style="border: 1px solid;"><img src="/assets/docpic/gitweb_4.png"/></p>
 <p></p>
 <p>使用明码路径</p>
-<p><img src="/assets/docpic/gitweb_5.png"/></p>
+<p style="border: 1px solid;"><img src="/assets/docpic/gitweb_5.png"/></p>
 <p></p>
 
 
 <p>我们可以通过不同的tag访问不同的版本</p>
-<p><img src="/assets/docpic/gitweb_2.jpg"/></p>
-<p><img src="/assets/docpic/gitweb_3.jpg"/></p>
+<p style="border: 1px solid;"><img src="/assets/docpic/gitweb_2.jpg"/></p>
+<p style="border: 1px solid;"><img src="/assets/docpic/gitweb_3.jpg"/></p>
 <p></p>
 
 <h2 class="nav1">停止服务器</h2>
