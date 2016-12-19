@@ -17,7 +17,7 @@ sh_csharp: true
 
 
 <h2 class="nav1">安装gitweb</h2>
-<p>下载git源码 <a href="https://github.com/git/git" >https://github.com/git/git</a> 进入到git目录执行以下命令 /Users/git/repositories换成你git项目存放目录</p>
+<p>下载git源码 <a href="https://github.com/git/git" >https://github.com/git/git</a> 进入到git目录执行以下命令。  /Users/git/repositories换成你git项目存放目录</p>
 <pre>
 git clone git@github.com:git/git.git
 cd git/
