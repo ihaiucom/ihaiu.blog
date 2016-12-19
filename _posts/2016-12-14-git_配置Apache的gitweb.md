@@ -4,7 +4,7 @@ title:  配置Apache的gitweb
 date: 2016-12-14 1:10:00
 categories: git
 tags: git
-excerpt: git instaweb --httpd=webrick --port=8080
+excerpt: 在apache2/extra/目录下创建 http-git.config
 thread: 20161214011000
 author: 大海明月
 authorQQ: 593705098
@@ -17,7 +17,7 @@ sh_csharp: true
 
 
 <h2 class="nav1">安装gitweb</h2>
-<p>下载git源码 <href="https://github.com/git/git" >https://github.com/git/git</a> 进入到git目录执行以下命令 /Users/git/repositories换成你git项目存放目录</p>
+<p>下载git源码 <a href="https://github.com/git/git" >https://github.com/git/git</a> 进入到git目录执行以下命令 /Users/git/repositories换成你git项目存放目录</p>
 <pre>
 git clone git@github.com:git/git.git
 cd git/
@@ -88,7 +88,7 @@ Server compiled with....
 
         # 首页文件名称配置
         DirectoryIndex gitweb.cgi
-        
+
     &lt;/Directory&gt;
 &lt;/VirtualHost&gt;
 </pre>
