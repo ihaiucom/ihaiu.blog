@@ -74,12 +74,21 @@ Server compiled with....
     ServerName gitserver
     DocumentRoot /var/www/gitweb
     &lt;Directory /var/www/gitweb&gt;
+        # 访问权限配置--不可以访问目录
         Options ExecCGI +FollowSymLinks +SymLinksIfOwnerMatch
+        # 访问权限配置--可以访问目录
+        #Options Indexes FollowSymLinks Multiviews
+
         AllowOverride All
         order allow,deny
         Allow from all
+
+        # 使用 cgi 访问
         AddHandler cgi-script cgi
+
+        # 首页文件名称配置
         DirectoryIndex gitweb.cgi
+        
     &lt;/Directory&gt;
 &lt;/VirtualHost&gt;
 </pre>
@@ -116,6 +125,20 @@ LoadModule cgi_module libexec/apache2/mod_cgi.so
 </pre>
 <p> </p>
 <p> </p>
+
+
+
+<p>检测一下配置是否有问题</p>
+<pre>
+sudo apachectl -t
+</pre>
+
+<p>Syntax OK表示没有错误</p>
+
+
+<p> </p>
+<p> </p>
+
 
 
 
