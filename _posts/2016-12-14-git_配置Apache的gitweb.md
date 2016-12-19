@@ -135,20 +135,32 @@ sudo apachectl -t
 
 <p>Syntax OK表示没有错误</p>
 
-
 <p> </p>
 <p> </p>
 
+
+
+<p>重启Apache</p>
+<pre>
+# 停止
+sudo apachectl stop
+
+#启动
+sudo apachectl start
+</pre>
+
+<p> </p>
+<p> </p>
 
 
 
 <h2 class="nav1">配置/etc/gitweb.conf</h2>
 <pre>
 # git 项目存放目录
-$projectroot = "/Users/git/repositories"
+$projectroot = "/Users/git/repositories";
 
 # 如果你的访问网页，发现没有项目，可以配置一下git程序路径
-$GIT = "/usr/bin/git"
+$GIT = "/usr/bin/git";
 </pre>
 <p> </p>
 <p> </p>
