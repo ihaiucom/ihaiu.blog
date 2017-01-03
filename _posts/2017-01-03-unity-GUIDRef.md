@@ -15,8 +15,11 @@ thumbnail: /assets/docpic/unity_guidref_1.png
 sh: true
 sh_csharp: true
 ---
+<div>
+来先看<a href="/assets/demos/GUIDRef/index.html" target="_blank">Demo</a> <br>
+网页css使用了uwa的
+</div>
 
-来先看<a href="/assets/demos/GUIDRef/index.html" target="_blank">Demo</a>
 <br>
 
 <h2 class="nav1">工具的作用 </h2>
