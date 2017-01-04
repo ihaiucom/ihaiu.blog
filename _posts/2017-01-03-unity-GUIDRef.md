@@ -52,7 +52,8 @@ sh_csharp: true
 
 <br>
 <h2 class="nav1">工具下载 </h2>
-<p><a href="/assets/down/ihaiu.GUIDRef.unitypackage" target="_blank" >GUID查看项目资源使用情况工具</a></p>
+<p><a href="/assets/down/ihaiu.GUIDRef.unitypackage" target="_blank" >本地下载</a></p>
+<p><a href="https://github.com/ihaiucom/ihaiu.GUIDRef" target="_blank" >Github</a></p>
 
 
 <br>
