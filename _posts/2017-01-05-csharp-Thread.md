@@ -4,8 +4,8 @@ title: c#使用多线程的几种方式示例详解
 date: 2017-01-03 20:50:00
 categories: C#
 tags: C# Unity Thread
-excerpt: GUID查看项目资源使用情况
-shareexcerpt: GUID查看项目资源使用情况
+excerpt: ThreadStart是一个委托，这个委托的定义为void ThreadStart()，没有参数与返回值。ParameterThreadStart委托定义为void ParameterizedThreadStart(object state)，有一个参数但是没有返回值。
+shareexcerpt: ThreadStart是一个委托，这个委托的定义为void ThreadStart()，没有参数与返回值。ParameterThreadStart委托定义为void ParameterizedThreadStart(object state)，有一个参数但是没有返回值。
 thread: 20170103205000
 author: 大海明月
 authorQQ: 593705098
@@ -715,13 +715,86 @@ public class TestThreadInvokeCallback : MonoBehaviour {
 
 </pre>
 
-[out] WaitOne(0)
+[out] 
 <pre>
 52：11：4363 [Main]  BeginInvoke Before
 52：11：4419 [Task]  任务开始 线程休眠2500毫秒
 52：13：9475 [Task]  任务完成
 52：13：9483 [CallBack]  任务完成，结果：9854
 </pre>
+
+
+
+
+<br>
+<br>
+<h2 class="nav2">5、其他组件的BeginXXX和EndXXX方法</h2>
+<p>在其他的.net组件中也有类似BeginInvoke和EndInvoke的方法，如System.Net.HttpWebRequest类的BeginGetResponse和EndGetResponse方法。其使用方法类似于委托类型的BeginInvoke和EndInvoke方法，例如：</p>
+<br>
+<pre class="brush: csharp; ">
+using UnityEngine;
+using System.Collections;
+using System;
+using System.Net;
+using System.IO;
+
+public class TestThreadHttpWebRequest : MonoBehaviour {
+
+    public string url = "http://blog.ihaiu.com";
+    public void Test()
+    {
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+        //异步请求
+        IAsyncResult asyncResult = request.BeginGetResponse(requestCompleted, request);
+        Log("Main", "任务开始");
+    }
+
+
+    //回调函数 此方法不是在Main线程运行
+    private void requestCompleted(IAsyncResult asyncResult)
+    {
+        if (asyncResult == null || asyncResult.AsyncState==null)
+        {
+            Log("Callback", "回调失败");
+            return;
+        }
+        HttpWebRequest hwr = asyncResult.AsyncState as HttpWebRequest;
+        HttpWebResponse response = (HttpWebResponse)hwr.EndGetResponse(asyncResult);
+        StreamReader sr = new StreamReader(response.GetResponseStream());
+        string str = sr.ReadToEnd();
+
+        Log("Callback","返回流长度:" + str.Length + "  " + str);
+
+
+    }
+
+
+
+    private void Log(string threadName, string msg)
+    {
+        Debug.LogFormat("{0} [{1}]  {2}", time, threadName, msg);
+    }
+
+
+
+    public string time
+    {
+        get
+        {
+            return DateTime.Now.ToString("mm：ss：ffff");
+        }
+    }
+}
+
+
+</pre>
+
+[out] 
+<pre>
+30：13：8687 [Main]  任务开始
+30：14：0108 [Callback]  返回流长度:14278  &lt;!DOCTYPE html&gt;&lt;!--STATUS OK--&gt;
+</pre>
+
 
 <br>
 <br>
