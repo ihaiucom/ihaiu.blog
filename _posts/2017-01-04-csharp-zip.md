@@ -21,10 +21,10 @@ sh_csharp: true
 <br>
 <h2 class="nav1">相关文档 </h2>
 <p><a href="http://blog.csdn.net/cleopard/article/details/42156393" target="_blank" >参考文档《C#实现Zip压缩解压实例》他这个有几个Bug</a></p>
-<p><a href="https://github.com/icsharpcode/SharpZipLib/tree/master/Documentation" target="_blank" >SharpZipLib.chm</a></p>
-<p><a href="http://icsharpcode.github.io/SharpZipLib/" target="_blank" >SharpZipLib 下载</a></p>
-<p><a href="https://sourceforge.net/projects/sharpdevelop/files/SharpZipLib/0.86/SharpZipLib_0860_Bin.zip/download" target="_blank" >SharpZipLib Dll 官网下载</a></p>
-<p><a href="/assets/down/SharpZipLib_0860_Bin.zip" target="_blank" >SharpZipLib Dll 本地下载</a></p>
+<p><a href="https://github.com/icsharpcode/SharpZipLib/tree/master/Documentation" target="_blank" >[官网下载]SharpZipLib.chm</a></p>
+<p><a href="http://icsharpcode.github.io/SharpZipLib/" target="_blank" >[官网下载]SharpZipLib</a></p>
+<p><a href="https://sourceforge.net/projects/sharpdevelop/files/SharpZipLib/0.86/SharpZipLib_0860_Bin.zip/download" target="_blank" >[官网下载] SharpZipLib Dll</a></p>
+<p><a href="/assets/down/SharpZipLib_0860_Bin.zip" target="_blank" >[本地下载]SharpZipLib Dll </a></p>
 
 
 <br>
