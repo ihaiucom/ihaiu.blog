@@ -630,6 +630,99 @@ public class TestThreadInvokeWaitOne : MonoBehaviour {
 08：14：2563 [Main]  result=2920
 </pre>
 
+
+<br>
+<br>
+<h2 class="nav2">4、使用回调方式返回结果</h2>
+<p>要注意的是“my.BeginInvoke(3,300, MethodCompleted, my)”，BeginInvoke方法的参数传递方式：<br>
+前面一部分(3,300)是其委托本身的参数。<br>
+倒数第二个参数(MethodCompleted)是回调方法委托类型，他是回调方法的委托，此委托没有返回值，有一个IAsyncResult类型的参数，当method方法执行完后，系统会自动调用MethodCompleted方法。<br>
+最后一个参数(my)需要向MethodCompleted方法中传递一些值，一般可以传递被调用方法的委托，这个值可以使用IAsyncResult.AsyncState属性获得。</p>
+<br>
+<pre class="brush: csharp; ">
+using UnityEngine;
+using System.Collections;
+using System.Threading;
+using System;
+
+public class TestThreadInvokeCallback : MonoBehaviour {
+    
+
+    public void Test()
+    {
+        NewTaskDelegate task = newTask;
+
+        Log("Main", "BeginInvoke Before");
+        IAsyncResult asyncResult = task.BeginInvoke(2, 500, onCallBack, task);
+//        //等待异步执行完成
+//        while(!asyncResult.AsyncWaitHandle.WaitOne(500))
+//        {
+//            Log("Main", "asyncResult.IsCompleted=" + asyncResult.IsCompleted);
+//        }
+//
+//        Log("Main", "EndInvoke Before");
+//        // 由于异步调用已经完成，因此， EndInvoke会立刻返回结果
+//        // 当有回调调用EndInvoke后 Main线程不能再调用EndInvoke方法
+//        int result = task.EndInvoke(asyncResult);
+//
+//        Log("Main", "result=" + result);
+    }
+
+    //回调方法 此方法不是Main线程的
+    private void onCallBack(IAsyncResult asyncResult)
+    {
+        if (asyncResult == null || asyncResult.AsyncState == null)
+        {
+            Log("CallBack", "回调失败！！！");
+            return;
+        }
+
+
+        int result = (asyncResult.AsyncState as NewTaskDelegate).EndInvoke(asyncResult);
+        Log("CallBack", "任务完成，结果：" + result);
+
+    }
+
+
+    private delegate int NewTaskDelegate(int second, int millisecond);
+    private int newTask(int second, int millisecond)
+    {
+        Log("Task", "任务开始 线程休眠" + (second * 1000 + millisecond) + "毫秒");
+        Thread.Sleep(second * 1000 + millisecond);
+        System.Random random = new System.Random();
+        int n = random.Next(10000);
+        Log("Task", "任务完成");
+        return n;
+    }
+
+
+    private void Log(string threadName, string msg)
+    {
+        Debug.LogFormat("{0} [{1}]  {2}", time, threadName, msg);
+    }
+
+
+
+    public string time
+    {
+        get
+        {
+            return DateTime.Now.ToString("mm：ss：ffff");
+        }
+    }
+
+}
+
+</pre>
+
+[out] WaitOne(0)
+<pre>
+52：11：4363 [Main]  BeginInvoke Before
+52：11：4419 [Task]  任务开始 线程休眠2500毫秒
+52：13：9475 [Task]  任务完成
+52：13：9483 [CallBack]  任务完成，结果：9854
+</pre>
+
 <br>
 <br>
 <h2 class="nav1">相关文档 </h2>
