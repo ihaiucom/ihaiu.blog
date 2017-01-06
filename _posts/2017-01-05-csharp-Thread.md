@@ -39,6 +39,9 @@ sh_csharp: true
 <p><a href="http://www.wxzzz.com/643.html" target="_blank" >C# 多线程 Thread.Abort()</a></p>
 <p><a href="http://www.wxzzz.com/689.html" target="_blank" >C# CancellationTokenSource 终止线程</a></p>
 <p><a href="http://www.wxzzz.com/1832.html" target="_blank" >C# 使用Semaphore（信号量）控制多线程</a></p>
+<p><a href="http://www.wxzzz.com/640.html" target="_blank" >C# AutoResetEvent 的使用方法</a></p>
+
+<p><a href="http://www.wxzzz.com/1349.html" target="_blank" >WPF 多线程异常抛送到UI线程</a></p>
 
 <br>
 <br>
