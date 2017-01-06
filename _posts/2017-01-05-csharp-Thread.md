@@ -1,7 +1,7 @@
 ---
 layout: post
 title: c#使用多线程的几种方式示例详解
-date: 2017-01-03 20:50:00
+date: 2017-01-05 20:50:00
 categories: C#
 tags: C# Unity Thread
 excerpt: ThreadStart是一个委托，这个委托的定义为void ThreadStart()，没有参数与返回值。ParameterThreadStart委托定义为void ParameterizedThreadStart(object state)，有一个参数但是没有返回值。
