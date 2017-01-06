@@ -4,8 +4,8 @@ title: C#实现Zip压缩解压实例
 date: 2017-01-04 20:50:00
 categories: C#
 tags: C# Zip
-excerpt: ThreadStart是一个委托，这个委托的定义为void ThreadStart()，没有参数与返回值。ParameterThreadStart委托定义为void ParameterizedThreadStart(object state)，有一个参数但是没有返回值。
-shareexcerpt: ThreadStart是一个委托，这个委托的定义为void ThreadStart()，没有参数与返回值。ParameterThreadStart委托定义为void ParameterizedThreadStart(object state)，有一个参数但是没有返回值。
+excerpt: C#使用SharpZipLib实现zip压缩
+shareexcerpt: C#使用SharpZipLib实现zip压缩
 thread: 20170103205000
 author: 大海明月
 authorQQ: 593705098
