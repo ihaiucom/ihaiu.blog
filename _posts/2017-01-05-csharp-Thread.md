@@ -10,7 +10,7 @@ thread: 20170103205000
 author: 大海明月
 authorQQ: 593705098
 authorEmail: zengfeng75@qq.com
-thumbnail: /assets/docpic/unity_guidref_1.png
+thumbnail: 
 
 sh: true
 sh_csharp: true
@@ -356,6 +356,279 @@ public class TestThreadDelegate : MonoBehaviour
 
 </pre>
 
+
+
+<br>
+<br>
+
+<h2 class="nav1">(5)使用委托开启多线程(多线程深入) </h2>
+<h2 class="nav2">1、用委托(Delegate)的BeginInvoke和EndInvoke方法操作线程</h2>
+<p>BeginInvoke方法可以使用线程异步地执行委托所指向的方法。然后通过EndInvoke方法获得方法的返回值（EndInvoke方法的返回值就是被调用方法的返回值），或是确定方法已经被成功调用。</p>
+
+<br>
+<pre class="brush: csharp; ">
+using UnityEngine;
+using System.Collections;
+using System.Threading;
+using System;
+
+public class TestThreadInvoke : MonoBehaviour {
+    
+
+    public void Test()
+    {
+        NewTaskDelegate task = newTask;
+
+        Log("Main", "BeginInvoke Before");
+        IAsyncResult asyncResult = task.BeginInvoke(2000, null, null);
+
+
+        Log("Main", "EndInvoke Before");
+        //EndInvoke方法将被阻塞2秒
+        int result = task.EndInvoke(asyncResult);
+
+        Log("Main", "result=" + result);
+    }
+
+    private delegate int NewTaskDelegate(int ms);
+    private int newTask(int ms)
+    {
+        Log("Task", "任务开始");
+        Thread.Sleep(ms);
+        System.Random random = new System.Random();
+        int n = random.Next(10000);
+        Log("Task", "任务完成");
+        return n;
+    }
+
+
+    private void Log(string threadName, string msg)
+    {
+        Debug.LogFormat("{0} [{1}]  {2}", time, threadName, msg);
+    }
+
+
+
+    public string time
+    {
+        get
+        {
+            return DateTime.Now.ToString("mm：ss：ffff");
+        }
+    }
+
+}
+
+
+
+</pre>
+
+
+<br>
+
+[out]
+<pre>
+33：39：8422 [Main]  BeginInvoke Before
+33：39：8535 [Task]  任务开始
+33：39：8534 [Main]  EndInvoke Before
+33：41：8590 [Task]  任务完成
+33：41：8595 [Main]  result=8484
+
+</pre>
+
+
+<br>
+<br>
+<h2 class="nav2">2、使用IAsyncResult.IsCompleted属性来判断异步调用是否完成</h2>
+<br>
+<pre class="brush: csharp; ">
+using UnityEngine;
+using System.Collections;
+using System.Threading;
+using System;
+
+public class TestThreadInvokeIsCompleted : MonoBehaviour {
+    
+
+    public void Test()
+    {
+        NewTaskDelegate task = newTask;
+
+        Log("Main", "BeginInvoke Before");
+        IAsyncResult asyncResult = task.BeginInvoke(2000, null, null);
+        //等待异步执行完成
+        while(!asyncResult.IsCompleted)
+        {
+            Log("Main", "asyncResult.IsCompleted=" + asyncResult.IsCompleted);
+            Thread.Sleep(500);
+        }
+
+        Log("Main", "EndInvoke Before");
+        // 由于异步调用已经完成，因此， EndInvoke会立刻返回结果
+        int result = task.EndInvoke(asyncResult);
+
+        Log("Main", "result=" + result);
+    }
+
+    private delegate int NewTaskDelegate(int ms);
+    private int newTask(int ms)
+    {
+        Log("Task", "任务开始");
+        Thread.Sleep(ms);
+        System.Random random = new System.Random();
+        int n = random.Next(10000);
+        Log("Task", "任务完成");
+        return n;
+    }
+
+
+    private void Log(string threadName, string msg)
+    {
+        Debug.LogFormat("{0} [{1}]  {2}", time, threadName, msg);
+    }
+
+
+
+    public string time
+    {
+        get
+        {
+            return DateTime.Now.ToString("mm：ss：ffff");
+        }
+    }
+
+}
+
+</pre>
+
+<br>
+
+[out]
+<pre>
+44：42：9893 [Main]  BeginInvoke Before
+44：42：9946 [Task]  任务开始
+44：42：9943 [Main]  asyncResult.IsCompleted=False
+44：43：4965 [Main]  asyncResult.IsCompleted=False
+44：43：9977 [Main]  asyncResult.IsCompleted=False
+44：44：4996 [Main]  asyncResult.IsCompleted=False
+44：45：0006 [Task]  任务完成
+44：45：0010 [Main]  asyncResult.IsCompleted=False
+44：45：5025 [Main]  EndInvoke Before
+44：45：5038 [Main]  result=2526
+
+</pre>
+
+
+
+<br>
+<br>
+<h2 class="nav2">3、使用WaitOne方法等待异步方法执行完成</h2>
+<p>WaitOne的第一个参数表示要等待的毫秒数，在指定时间之内，WaitOne方法将一直等待，直到异步调用完成，并发出通知，WaitOne方法才返回true。当等待指定时间之后，异步调用仍未完成，WaitOne方法返回false，如果指定时间为0，表示不等待，如果为-1，表示永远等待，直到异步调用完成。</p>
+<br>
+<pre class="brush: csharp; ">
+using UnityEngine;
+using System.Collections;
+using System.Threading;
+using System;
+
+public class TestThreadInvokeWaitOne : MonoBehaviour {
+    
+
+    public void Test()
+    {
+        NewTaskDelegate task = newTask;
+
+        Log("Main", "BeginInvoke Before");
+        IAsyncResult asyncResult = task.BeginInvoke(2000, null, null);
+        //等待异步执行完成
+        while(!asyncResult.AsyncWaitHandle.WaitOne(500))
+        {
+            Log("Main", "asyncResult.IsCompleted=" + asyncResult.IsCompleted);
+        }
+
+        Log("Main", "EndInvoke Before");
+        // 由于异步调用已经完成，因此， EndInvoke会立刻返回结果
+        int result = task.EndInvoke(asyncResult);
+
+        Log("Main", "result=" + result);
+    }
+
+    private delegate int NewTaskDelegate(int ms);
+    private int newTask(int ms)
+    {
+        Log("Task", "任务开始");
+        Thread.Sleep(ms);
+        System.Random random = new System.Random();
+        int n = random.Next(10000);
+        Log("Task", "任务完成");
+        return n;
+    }
+
+
+    private void Log(string threadName, string msg)
+    {
+        Debug.LogFormat("{0} [{1}]  {2}", time, threadName, msg);
+    }
+
+
+
+    public string time
+    {
+        get
+        {
+            return DateTime.Now.ToString("mm：ss：ffff");
+        }
+    }
+
+}
+
+
+</pre>
+
+<br>
+
+[out]
+<pre>
+04：27：0838 [Main]  BeginInvoke Before
+04：27：0894 [Task]  任务开始
+04：27：5896 [Main]  asyncResult.IsCompleted=False
+04：28：0907 [Main]  asyncResult.IsCompleted=False
+04：28：5914 [Main]  asyncResult.IsCompleted=False
+04：29：0930 [Main]  asyncResult.IsCompleted=False
+04：29：0939 [Task]  任务完成
+04：29：0943 [Main]  EndInvoke Before
+04：29：0954 [Main]  result=3246
+</pre>
+
+
+[out] WaitOne(-1)
+<pre>
+06：20：8036 [Main]  BeginInvoke Before
+06：20：8114 [Task]  任务开始
+06：22：8166 [Task]  任务完成
+06：22：8172 [Main]  EndInvoke Before
+06：22：8181 [Main]  result=2112
+</pre>
+
+
+[out] WaitOne(0)
+<pre>
+08：12：2329 [Main]  BeginInvoke Before
+08：12：2388 [Task]  任务开始
+
+// 这里相当于每帧调用一次
+08：12：2398 [Main]  asyncResult.IsCompleted=False
+08：12：2406 [Main]  asyncResult.IsCompleted=False
+.
+.
+.
+08：14：2183 [Main]  asyncResult.IsCompleted=False
+
+08：14：2422 [Task]  任务完成
+08：14：2193 [Main]  asyncResult.IsCompleted=False
+08：14：2550 [Main]  EndInvoke Before
+08：14：2563 [Main]  result=2920
+</pre>
 
 <br>
 <br>
