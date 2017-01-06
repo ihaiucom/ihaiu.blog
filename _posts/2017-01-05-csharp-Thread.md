@@ -16,9 +16,22 @@ sh: true
 sh_csharp: true
 ---
 
+
+<p><a href="#index_1">(1)不需要传递参数,也不需要返回参数</a></p>
+<p><a href="#index_2">(2)需要传递单个参数</a></p>
+<p><a href="#index_3">(3)使用专门的线程类(常用) </a></p>
+<p><a href="#index_4">(4)使用匿名方法(常用) </a></p>
+<p><a href="#index_5">(5)使用委托开启多线程(多线程深入) </a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_5_1">1、用委托(Delegate)的BeginInvoke和EndInvoke方法操作线程 </a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_5_1">2、使用IAsyncResult.IsCompleted属性来判断异步调用是否完成 </a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_5_1">3、使用WaitOne方法等待异步方法执行完成 </a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_5_1">4、使用回调方式返回结果 </a></p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_5_1">5、其他组件的BeginXXX和EndXXX方法 </a></p>
+<p><a href="#index_xgwd">相关文档 </a></p>
+<br>
 <br>
 
-<h2 class="nav1">(1)不需要传递参数,也不需要返回参数 </h2>
+<h2 class="nav1" id="index_1">(1)不需要传递参数,也不需要返回参数 </h2>
 <p>ThreadStart是一个委托，这个委托的定义为void ThreadStart()，没有参数与返回值。</p>
 
 <br>
@@ -104,7 +117,7 @@ data=i--2
 <br>
 <br>
 
-<h2 class="nav1">(2)需要传递单个参数 </h2>
+<h2 class="nav1" id="index_2">(2)需要传递单个参数 </h2>
 <p>ParameterThreadStart委托定义为void ParameterizedThreadStart(object state)，有一个参数但是没有返回值。</p>
 
 <br>
@@ -165,7 +178,7 @@ Calculate 2 01/05/2017 17:02:03
 <br>
 <br>
 
-<h2 class="nav1">(3)使用专门的线程类(常用) </h2>
+<h2 class="nav1"  id="index_3">(3)使用专门的线程类(常用) </h2>
 <p>使用线程类可以有多个参数与多个返回值，十分灵活！</p>
 
 <br>
@@ -266,7 +279,7 @@ Calculate Result=60
 <br>
 <br>
 
-<h2 class="nav1">(4)使用匿名方法(常用) </h2>
+<h2 class="nav1"  id="index_4">(4)使用匿名方法(常用) </h2>
 <p>使用匿名方法启动线程可以有多个参数和返回值，而且使用非常方便！</p>
 
 <br>
@@ -361,8 +374,8 @@ public class TestThreadDelegate : MonoBehaviour
 <br>
 <br>
 
-<h2 class="nav1">(5)使用委托开启多线程(多线程深入) </h2>
-<h2 class="nav2">1、用委托(Delegate)的BeginInvoke和EndInvoke方法操作线程</h2>
+<h2 class="nav1"  id="index_5">(5)使用委托开启多线程(多线程深入) </h2>
+<h2 class="nav2"  id="index_5_1">1、用委托(Delegate)的BeginInvoke和EndInvoke方法操作线程</h2>
 <p>BeginInvoke方法可以使用线程异步地执行委托所指向的方法。然后通过EndInvoke方法获得方法的返回值（EndInvoke方法的返回值就是被调用方法的返回值），或是确定方法已经被成功调用。</p>
 
 <br>
@@ -439,7 +452,7 @@ public class TestThreadInvoke : MonoBehaviour {
 
 <br>
 <br>
-<h2 class="nav2">2、使用IAsyncResult.IsCompleted属性来判断异步调用是否完成</h2>
+<h2 class="nav2" id="index_5_2">2、使用IAsyncResult.IsCompleted属性来判断异步调用是否完成</h2>
 <br>
 <pre class="brush: csharp; ">
 using UnityEngine;
@@ -522,7 +535,7 @@ public class TestThreadInvokeIsCompleted : MonoBehaviour {
 
 <br>
 <br>
-<h2 class="nav2">3、使用WaitOne方法等待异步方法执行完成</h2>
+<h2 class="nav2" id="index_5_3">3、使用WaitOne方法等待异步方法执行完成</h2>
 <p>WaitOne的第一个参数表示要等待的毫秒数，在指定时间之内，WaitOne方法将一直等待，直到异步调用完成，并发出通知，WaitOne方法才返回true。当等待指定时间之后，异步调用仍未完成，WaitOne方法返回false，如果指定时间为0，表示不等待，如果为-1，表示永远等待，直到异步调用完成。</p>
 <br>
 <pre class="brush: csharp; ">
@@ -633,7 +646,7 @@ public class TestThreadInvokeWaitOne : MonoBehaviour {
 
 <br>
 <br>
-<h2 class="nav2">4、使用回调方式返回结果</h2>
+<h2 class="nav2" id="index_5_4">4、使用回调方式返回结果</h2>
 <p>要注意的是“my.BeginInvoke(3,300, MethodCompleted, my)”，BeginInvoke方法的参数传递方式：<br>
 前面一部分(3,300)是其委托本身的参数。<br>
 倒数第二个参数(MethodCompleted)是回调方法委托类型，他是回调方法的委托，此委托没有返回值，有一个IAsyncResult类型的参数，当method方法执行完后，系统会自动调用MethodCompleted方法。<br>
@@ -728,7 +741,7 @@ public class TestThreadInvokeCallback : MonoBehaviour {
 
 <br>
 <br>
-<h2 class="nav2">5、其他组件的BeginXXX和EndXXX方法</h2>
+<h2 class="nav2" id="index_5_5">5、其他组件的BeginXXX和EndXXX方法</h2>
 <p>在其他的.net组件中也有类似BeginInvoke和EndInvoke的方法，如System.Net.HttpWebRequest类的BeginGetResponse和EndGetResponse方法。其使用方法类似于委托类型的BeginInvoke和EndInvoke方法，例如：</p>
 <br>
 <pre class="brush: csharp; ">
@@ -798,7 +811,7 @@ public class TestThreadHttpWebRequest : MonoBehaviour {
 
 <br>
 <br>
-<h2 class="nav1">相关文档 </h2>
+<h2 class="nav1" id="index_xgwd">相关文档 </h2>
 <p><a href="http://www.jb51.net/article/46234.htm" target="_blank" >c#使用多线程的几种方式示例详解</a></p>
 <p><a href="http://www.jb51.net/article/45820.htm" target="_blank" >c#多线程中Lock()关键字的用法小结</a></p>
 
