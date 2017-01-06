@@ -34,6 +34,12 @@ sh_csharp: true
 <p><a href="http://www.jb51.net/article/46234.htm" target="_blank" >c#使用多线程的几种方式示例详解</a></p>
 <p><a href="http://www.jb51.net/article/45820.htm" target="_blank" >c#多线程中Lock()关键字的用法小结</a></p>
 <p><a href="http://blog.csdn.net/tianmuxia/article/details/17675681/" target="_blank" >C#的async和await</a></p>
+<p><a href="http://www.wxzzz.com/683.html" target="_blank" >C# Task 用法</a></p>
+<p><a href="http://www.wxzzz.com/1828.html" target="_blank" >C#中的Monitor与Lock的区别</a></p>
+<p><a href="http://www.wxzzz.com/643.html" target="_blank" >C# 多线程 Thread.Abort()</a></p>
+<p><a href="http://www.wxzzz.com/689.html" target="_blank" >C# CancellationTokenSource 终止线程</a></p>
+<p><a href="http://www.wxzzz.com/1832.html" target="_blank" >C# 使用Semaphore（信号量）控制多线程</a></p>
+
 <br>
 <br>
 
