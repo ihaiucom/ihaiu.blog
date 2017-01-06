@@ -17,7 +17,7 @@ sh_csharp: true
 ---
 
 
-<h2 class="nav1">目录 </h2>
+<h2 class="nav1">索引 </h2>
 <p><a href="#index_1">(1)不需要传递参数,也不需要返回参数</a></p>
 <p><a href="#index_2">(2)需要传递单个参数</a></p>
 <p><a href="#index_3">(3)使用专门的线程类(常用) </a></p>
