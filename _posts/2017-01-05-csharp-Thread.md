@@ -17,6 +17,7 @@ sh_csharp: true
 ---
 
 
+<h2 class="nav1">目录 </h2>
 <p><a href="#index_1">(1)不需要传递参数,也不需要返回参数</a></p>
 <p><a href="#index_2">(2)需要传递单个参数</a></p>
 <p><a href="#index_3">(3)使用专门的线程类(常用) </a></p>
@@ -27,7 +28,12 @@ sh_csharp: true
 <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_5_1">3、使用WaitOne方法等待异步方法执行完成 </a></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_5_1">4、使用回调方式返回结果 </a></p>
 <p>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#index_5_1">5、其他组件的BeginXXX和EndXXX方法 </a></p>
-<p><a href="#index_xgwd">相关文档 </a></p>
+<br>
+
+<h2 class="nav1" id="index_xgwd">相关文档 </h2>
+<p><a href="http://www.jb51.net/article/46234.htm" target="_blank" >c#使用多线程的几种方式示例详解</a></p>
+<p><a href="http://www.jb51.net/article/45820.htm" target="_blank" >c#多线程中Lock()关键字的用法小结</a></p>
+<p><a href="http://blog.csdn.net/tianmuxia/article/details/17675681/" target="_blank" >C#的async和await</a></p>
 <br>
 <br>
 
@@ -807,13 +813,6 @@ public class TestThreadHttpWebRequest : MonoBehaviour {
 30：13：8687 [Main]  任务开始
 30：14：0108 [Callback]  返回流长度:14278  &lt;!DOCTYPE html&gt;&lt;!--STATUS OK--&gt;
 </pre>
-
-
-<br>
-<br>
-<h2 class="nav1" id="index_xgwd">相关文档 </h2>
-<p><a href="http://www.jb51.net/article/46234.htm" target="_blank" >c#使用多线程的几种方式示例详解</a></p>
-<p><a href="http://www.jb51.net/article/45820.htm" target="_blank" >c#多线程中Lock()关键字的用法小结</a></p>
 
 
 <br>
