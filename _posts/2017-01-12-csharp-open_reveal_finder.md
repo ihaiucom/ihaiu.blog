@@ -16,7 +16,7 @@ sh: true
 sh_csharp: true
 ---
 
-<p>最近写了一个下载器(<a href="http://blog.ihaiu.com/unity-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD/#content">多线程下载</a>)，想实现打开文件所在位置。网上找了一些资源可以实现定位到文件夹，但不能定位文件。</>
+<p>最近写了一个下载器(<a href="http://blog.ihaiu.com/unity-%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8B%E8%BD%BD/#content">多线程下载</a>)，想实现打开文件所在位置。网上找了一些资源可以实现定位到文件夹，但不能定位文件。</p>
 
 <h2 class="nav1">网络上的资料--实现定位到文件夹 </h2>
 <pre>
