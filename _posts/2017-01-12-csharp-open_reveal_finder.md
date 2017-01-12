@@ -36,7 +36,7 @@ sh_csharp: true
 <p>看Windows可以用Explorer来实现，我想Mac的Finder应该有对应的方式。于是找呀找 没发现有Finder的执行文件。后来就想open命令，找到了open命令所在位置"/usr/bin/open"。之前一直用open xxx，目录还好，文件可是会直接打开文件的。于是网上找open命令的参数，找了半天没找到。是我傻X了，用 open --help不就行。于是就找到了 open -R xxxx</p>
 
 <br>
-<p>open -r</p>
+<p>open --help</p>
 <pre>
 open: unrecognized option `--help'
 Usage: open [-e] [-t] [-f] [-W] [-R] [-n] [-g] [-h] [-b &lt;bundle identifier&gt;] [-a &lt;application&gt;] [filenames] [--args arguments]
