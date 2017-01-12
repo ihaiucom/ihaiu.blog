@@ -77,7 +77,7 @@ System.Diagnostics.Process.Start( "/usr/bin/open", "-R /Users/macserver/Download
 <br>
 <br>
 <h2 class="nav1">最终</h2>
-<pre>
+<pre class="brush: csharp; ">
     public static void RevealInFinder(string path)
     {
         #if UNITY_STANDALONE_OSX
