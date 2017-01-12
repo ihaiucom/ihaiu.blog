@@ -25,9 +25,13 @@ sh_csharp: true
 <br>
 <br>
 
-<h2 class="nav1">网络上的资料--Windows实现方式，没做测试 </h2>
+<h2 class="nav1">网络上的资料--Windows实现方式 </h2>
 <pre>
-	System.Diagnostics.Process.Start("Explorer.exe","c:\\windows");
+  // 打开文件
+  System.Diagnostics.Process.Start("Explorer.exe","c:\\windows\text.txt");
+
+  // 定位到文件
+	System.Diagnostics.Process.Start("Explorer.exe","/select, \"c:\\windows\text.txt\"");
 </pre>
 <br>
 <br>
@@ -78,14 +82,16 @@ System.Diagnostics.Process.Start( "/usr/bin/open", "-R /Users/macserver/Download
 <br>
 <h2 class="nav1">最终</h2>
 <pre class="brush: csharp; ">
-    public static void RevealInFinder(string path)
-    {
-        #if UNITY_STANDALONE_OSX
-        System.Diagnostics.Process.Start( "/usr/bin/open", "-R " + path);
 
-        #elif UNITY_STANDALONE_WIN
-        System.Diagnostics.Process.Start("Explorer.exe", path);
-        #endif
-    }
+        public void RevealInFinder(string path)
+        {
+            #if UNITY_STANDALONE_OSX
+            System.Diagnostics.Process.Start( "/usr/bin/open", "-R " + path);
+
+            #elif UNITY_STANDALONE_WIN
+            path = path.Replace("/", "\\");
+            System.Diagnostics.Process.Start("Explorer.exe", "select, \"" +path+ "\"");
+            #endif
+        }
 </pre>
 
