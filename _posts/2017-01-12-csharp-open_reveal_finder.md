@@ -90,7 +90,7 @@ System.Diagnostics.Process.Start( "/usr/bin/open", "-R /Users/macserver/Download
 
             #elif UNITY_STANDALONE_WIN
             path = path.Replace("/", "\\");
-            System.Diagnostics.Process.Start("Explorer.exe", "select, \"" +path+ "\"");
+            System.Diagnostics.Process.Start("Explorer.exe", "/select, \"" +path+ "\"");
             #endif
         }
 </pre>
