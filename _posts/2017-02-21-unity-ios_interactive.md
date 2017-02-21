@@ -118,11 +118,11 @@ public class TestUnity2iOS : MonoBehaviour
 
 <h2 class="nav1">实例二: IOS回调Unity方法 </h2>
 <p>
-void	UnitySendMessage(const char* obj, const char* method, const char* msg);  <br>
-这方法在发布后的xcode项目 Classes/Unity/UnityInterface.h里。用来调用Unity里的方法。<br>
-	obj:为场景中GameObject名称<br>
-	method:挂载在该GameObject里其中MonoBehaviour的一个方法名称<br>
-	msg:传递的参数<br>
+void	UnitySendMessage(const char* obj, const char* method, const char* msg);  <br><br>
+这方法在发布后的xcode项目 Classes/Unity/UnityInterface.h里。用来调用Unity里的方法。<br><br>
+	obj: 为场景中GameObject名称<br><br>
+	method: 挂载在该GameObject里其中MonoBehaviour的一个方法名称<br><br>
+	msg: 传递的参数<br><br>
 </p>
 <br>
 
@@ -341,7 +341,7 @@ public class TestUnity2iOS : MonoBehaviour
             GUI.Label(new Rect(0, 250, 200, 50), "add result=" + addResult);
         }
 
-        
+
         if (GUI.Button(new Rect(0, 300, 200, 50), "callback "))
         {
             callResult = Unity2iOS.Callback("http://blog.ihaiu.com");
