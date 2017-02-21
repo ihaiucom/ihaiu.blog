@@ -17,6 +17,10 @@ sh_csharp: true
 sh_cpp: true
 ---
 
+<h2 class="nav1">索引 </h2>
+<p><a href="#demo_1">实例一: Unity调用IOS里的方法 </a></p>
+<p><a href="#demo_2">实例二: IOS回调Unity方法 </a></p>
+<p><a href="#demo_3">实例三: Unity调用IOS方法并返回结果 </a></p>
 
 
 <h2 class="nav1">交互流程 </h2>
@@ -30,7 +34,10 @@ sh_cpp: true
 2. 创建目录 Assets/Plugins/iOS <br>
 
 
-<h2 class="nav1">实例一: Unity调用IOS里的方法 </h2>
+
+
+
+<h2 class="nav1" id="demo_1">实例一: Unity调用IOS里的方法 </h2>
 <p>1. 在Assets/Plugins/iOS目录创建两个文件: Test.h, Test.m </p>
 <p>2. 在Assets目录创建两个文件: Unity2iOS.cs, TestUnity2iOS.cs </p>
 <br>
@@ -116,7 +123,7 @@ public class TestUnity2iOS : MonoBehaviour
 
 
 
-<h2 class="nav1">实例二: IOS回调Unity方法 </h2>
+<h2 class="nav1" id="demo_2">实例二: IOS回调Unity方法 </h2>
 <p>
 void	UnitySendMessage(const char* obj, const char* method, const char* msg);  <br><br>
 这方法在发布后的xcode项目 Classes/Unity/UnityInterface.h里。用来调用Unity里的方法。<br><br>
@@ -220,7 +227,7 @@ public class TestUnity2iOS : MonoBehaviour
 
 
 
-<h2 class="nav1">实例三: Unity调用IOS方法并返回结果 </h2>
+<h2 class="nav1" id="demo_3">实例三: Unity调用IOS方法并返回结果 </h2>
 
 
 
