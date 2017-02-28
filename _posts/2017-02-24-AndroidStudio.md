@@ -21,3 +21,6 @@ sh_cpp: true
 <!-- <h2 class="nav1">Build Settings </h2> -->
 <a href="http://blog.csdn.net/sinat_23079759/article/details/53043689?locationNum=15&fps=1" target="_blank">android studio如何导入和运行调试unity导出的项目，并查看log日志？（或者说：android studio如何导入eclipse项目？） </a> <br><br>
 <a href="http://www.cnblogs.com/wuya/p/android-studio-gradle-export-jar-assets.html" target="_blank">android studio 使用gradle 导出jar包，并打包assets目录</a> <br><br>
+<a href="http://www.open-open.com/lib/view/open1434523603692.html" target="_blank">Android Studio中如何打JAR包</a> <br><br>
+
+
