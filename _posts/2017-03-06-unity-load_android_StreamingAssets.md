@@ -53,7 +53,7 @@ public class TestAssetBundle : MonoBehaviour {
 
 
 
-<h2 class="nav1">自己写一个Android SDK </h2>
+<h2 class="nav1">自己写一个Android SDK ， Copy 雨松的代码</h2>
 
 <pre class="brush: java; ">
 package com.ihaiu.assetloadsdk;
