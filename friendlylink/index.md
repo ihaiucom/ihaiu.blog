@@ -24,6 +24,15 @@ thread: 20170310
             </a>
           </li>
 
+           <li title="tolua" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/topameng/tolua" draggable="false">
+              <image src='/assets/friendlylink/ulua.png' class="thumb"></image>
+              <span class="title">蒙哥tolua</span>
+            </a>
+          </li>
+
+
+
 
            <li title="QianKangLai Blog" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://qiankanglai.me/" draggable="false">
