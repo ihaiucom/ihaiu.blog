@@ -1,7 +1,6 @@
 ---
 title: 开源分享
-layout: page
-comments: no
+layout: post
 ---
 
 
