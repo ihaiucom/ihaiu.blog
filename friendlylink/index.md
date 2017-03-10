@@ -36,7 +36,7 @@ thread: 20170310
 
            <li title="SoulGame" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="https://zhuanlan.zhihu.com/soulgame" draggable="false">
-              <image src='/assets/friendlylink/soulgame.png' class="thumb"></image>
+              <image src='/assets/friendlylink/soulgame.jpeg' class="thumb"></image>
               <span class="title">SoulGame</span>
             </a>
           </li>
