@@ -10,6 +10,13 @@ thread: 20170310
           <!-- <div class="gap"></div> -->
 
 
+           <li title="菜鸟教程" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.runoob.com/" draggable="false">
+              <image src='/assets/friendlylink/runoob.ico' class="thumb"></image>
+              <span class="title">菜鸟教程</span>
+            </a>
+          </li>
+
            <li title="UWA Blog" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://blog.uwa4d.com/" draggable="false">
               <image src='/assets/friendlylink/uwa.png' class="thumb"></image>
