@@ -1,10 +1,12 @@
 --------------------------------------------------------------------------------
 --      Copyright (c) 2015 , 蒙占志(topameng) topameng@gmail.com
 --      All rights reserved.
---
---      Use, modification and distribution are subject to the "New BSD License"
---      as listed at <url: http://www.opensource.org/licenses/bsd-license.php >.
+--      Use, modification and distribution are subject to the "MIT License"
 --------------------------------------------------------------------------------
+local setmetatable = setmetatable
+local UpdateBeat = UpdateBeat
+local CoUpdateBeat = CoUpdateBeat
+local Time = Time
 
 Timer = 
 {
@@ -16,6 +18,7 @@ Timer =
 	func	 = nil,	
 }
 
+local Timer = Timer
 local mt = {}
 mt.__index = Timer
 
@@ -101,7 +104,6 @@ function Timer:Update()
 	end
 end
 
-
 --给协同使用的帧计数timer
 FrameTimer = 
 {	
@@ -112,6 +114,7 @@ FrameTimer =
 	running	 	= false,
 }
 
+local FrameTimer = FrameTimer
 local mt2 = {}
 mt2.__index = FrameTimer
 
@@ -172,6 +175,7 @@ CoTimer =
 	func	 = nil,	
 }
 
+local CoTimer = CoTimer
 local mt3 = {}
 mt3.__index = CoTimer
 

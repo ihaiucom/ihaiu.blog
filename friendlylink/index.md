@@ -68,7 +68,21 @@ thread: 20170310
             </a>
           </li>
 
+
           
+
+        </ol>
+</div>
+
+
+<div class="" >
+        <ol>
+          
+           <li title="Kenshin Cui's Blog" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/kenshincui/" draggable="false">
+              <span class="title">Kenshin Cui's Blog</span>
+            </a>
+          </li>
 
         </ol>
 </div>

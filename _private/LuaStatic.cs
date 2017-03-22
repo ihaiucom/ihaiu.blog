@@ -109,6 +109,8 @@ namespace LuaInterface
 			fileName = LuaDLL.lua_tostring(L, 1);
 			fileName = fileName.Replace('.', '/');
 			fileName += ".lua";
+
+			/*
 			// Load with Unity3D resources			
             byte[] text = Load(fileName);
 
@@ -116,9 +118,24 @@ namespace LuaInterface
 			{
 				return 0;
 			}
-			
 			LuaDLL.luaL_loadbuffer(L, text, text.Length, fileName);
-			
+			*/
+            LuaScriptMgr mgr = LuaScriptMgr.GetMgrFromLuaState(L);
+            if (mgr == null) return 0;
+
+            LuaDLL.lua_pushstdcallcfunction(L, mgr.lua.tracebackFunction);
+            int oldTop = LuaDLL.lua_gettop(L);
+
+            byte[] text = LuaStatic.Load(fileName);
+            if (text == null) {
+                Debugger.LogError("Loader lua file failed: {0}", fileName);
+                LuaDLL.lua_pop(L, 1);
+                return 0;
+            }
+            if (LuaDLL.luaL_loadbuffer(L, text, text.Length, fileName) != 0) {
+                mgr.lua.ThrowExceptionFromError(oldTop);
+                LuaDLL.lua_pop(L, 1);
+            }
 			return 1;
 		}
 		
@@ -138,7 +155,6 @@ namespace LuaInterface
 
 			if( text == null )
 			{
-				Debug.Log(string.Format("<color=red> [LuaStatic.dofile] text=null fileName={0} </color>", fileName));
 				return LuaDLL.lua_gettop(L) - n;
 			}
 
