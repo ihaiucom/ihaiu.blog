@@ -81,9 +81,12 @@ thread: 20170310
         </ol>
 </div>
 
+<br>
+<br>
+<br>
 
 <div class="" >
-        <ol>
+        <ul>
           
            <li title="Kenshin Cui's Blog" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/kenshincui/" draggable="false">
@@ -91,5 +94,5 @@ thread: 20170310
             </a>
           </li>
 
-        </ol>
+        </ul>
 </div>
