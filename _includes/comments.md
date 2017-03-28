@@ -30,7 +30,7 @@
 	    </div>
 	 </div>
 
-	{% if page.thread %}
+<!-- 	{% if page.thread %}
 	<div class="ds-thread" data-thread-key="{{ page.thread }}" data-url="{{ site.url }}{{ page.url }}" data-title="{{ page.title }}" />
 	{% else %}
 	<div class="ds-thread" />
@@ -46,7 +46,7 @@
 		|| document.getElementsByTagName('body')[0]).appendChild(ds);
 	})();
 	</script>
-	{% endif %}
+	{% endif %} -->
 
 
 {% if page.thread %}
