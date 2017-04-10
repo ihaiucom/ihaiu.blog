@@ -93,6 +93,16 @@ thread: 20170310
               <span class="title">Kenshin Cui's Blog</span>
             </a>
           </li>
+          
+           <li title="TheCodeWay" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://thecodeway.com/blog/" draggable="false">
+              <span class="title">TheCodeWay</span>
+            </a>
+          </li>
+
+          
 
         </ul>
+
+
 </div>
