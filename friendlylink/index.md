@@ -90,17 +90,59 @@ thread: 20170310
           
            <li title="Kenshin Cui's Blog" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/kenshincui/" draggable="false">
-              <span class="title">Kenshin Cui's Blog</span>
+              <span class="title">Kenshin Cui's Blog (IOS)</span>
             </a>
           </li>
           
            <li title="TheCodeWay" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://thecodeway.com/blog/" draggable="false">
-              <span class="title">TheCodeWay</span>
+              <span class="title">TheCodeWay (图形算法)</span>
+            </a>
+          </li>
+          
+          
+           <li title="逆时针の风" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/JimmyZheng/" draggable="false">
+              <span class="title">逆时针の风 (线程、Stream)</span>
+            </a>
+          </li>
+          
+           <li title="Jim's GameDev Blog" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://chengkehan.github.io/" draggable="false">
+              <span class="title">Jim's GameDev Blog (GPUSkinning, 收藏)</span>
+            </a>
+          </li>
+
+
+           <li title="Gu Lu's Blog" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.gulu-dev.com/" draggable="false">
+              <span class="title">Gu Lu's Blog (优化)</span>
+            </a>
+          </li>
+
+
+           <li title="Candycat Blog" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/candycat1992" draggable="false">
+              <span class="title">Candycat Blog csdn (Shader)</span>
+            </a>
+          </li>
+
+           <li title="Candycat Blog" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://candycat1992.github.io/" draggable="false">
+              <span class="title">Candycat Blog github (Shader)</span>
+            </a>
+          </li>
+
+           <li title="linux_wuliqiang" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.chinaunix.net/uid-20622737-id-3161025.html" draggable="false">
+              <span class="title">linux_wuliqiang (贝塞尔曲线)</span>
             </a>
           </li>
 
           
+          
+
+
 
         </ul>
 
