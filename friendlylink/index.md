@@ -139,6 +139,19 @@ thread: 20170310
             </a>
           </li>
 
+           <li title="贝塞尔曲线的数学原理" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/likendsl/article/details/7852658" draggable="false">
+              <span class="title">贝塞尔曲线的数学原理 (线性、二次方、三次方)</span>
+            </a>
+          </li>
+
+           <li title="贝塞尔曲线的数学原理" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://zh.wikipedia.org/wiki/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A" draggable="false">
+              <span class="title">贝塞尔曲线的数学原理 (维基百科)</span>
+            </a>
+          </li>
+
+
           
           
 
