@@ -24,6 +24,7 @@ sh_java: true
 <p><a target="_blank" href="https://zh.wikipedia.org/wiki/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A">贝塞尔曲线(维基百科)</a></p>
 <p><a target="_blank" href="http://www.cs.mtu.edu/~shene/COURSES/cs3621/NOTES/spline/Bezier/de-casteljau.html">Finding a Point on a Bézier Curve: De Casteljau's Algorithm</a></p>
 <p><a target="_blank" href="http://www.bubuko.com/infodetail-1010160.html">贝塞尔曲线 (iTweenPath经过路径点的曲线)</a></p>
+<p><a target="_blank" href="http://as3.iteye.com/blog/865587">匀速贝塞尔曲线运动的实现</a></p>
 
 <br>
 <br>
