@@ -152,8 +152,76 @@ thread: 20170310
           </li>
 
 
+           <li title="初中数学教学视频" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/playlist402404502.html" draggable="false">
+              <span class="title">初中数学教学视频 (一元一次方程, 一元二次方程, 二元一次方程组, 三元一次方程组, 一元一次不等式)</span>
+            </a>
+          </li>
+
+
+           <li title="高一数学知识点精讲" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/a_19rrh9rtf5.html" draggable="false">
+              <span class="title">高一数学知识点精讲</span>
+            </a>
+          </li>
+
+          <li title="高一数学知识点难点解析" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/a_19rrhaduzp.html" draggable="false">
+              <span class="title">高一数学知识点难点解析</span>
+            </a>
+          </li>
           
           
+           <li title="林成龙：高中数学 " data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/u/2482761994/a" draggable="false">
+              <span class="title">林成龙：高中数学</span>
+            </a>
+          </li>
+
+           <li title="林成龙：高中数学 三角函数" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/a_19rrh9a41d.html" draggable="false">
+              <span class="title">林成龙：高中数学 三角函数</span>
+            </a>
+          </li>
+
+           <li title="林成龙：高中数学 数列" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/a_19rrh9aq3p.html" draggable="false">
+              <span class="title">林成龙：高中数学 数列</span>
+            </a>
+          </li>
+
+           <li title="林成龙：高中数学 数列" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/a_19rrh9aq3p.html" draggable="false">
+              <span class="title">林成龙：高中数学 数列</span>
+            </a>
+          </li>
+
+           <li title="林成龙：高中数学 导数" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/a_19rrh9ah2p.html" draggable="false">
+              <span class="title">林成龙：高中数学 导数</span>
+            </a>
+          </li>
+          
+
+           <li title="林成龙：高中数学 向量" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/a_19rrh9aq25.html" draggable="false">
+              <span class="title">林成龙：高中数学 向量</span>
+            </a>
+          </li>
+          
+
+           <li title="林成龙：高中数学 直线与圆" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/a_19rrh9904h.html" draggable="false">
+              <span class="title">林成龙：高中数学 直线与圆</span>
+            </a>
+          </li>
+          
+
+           <li title="林成龙：高中数学 立体几何" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.iqiyi.com/u/2482761994" draggable="false">
+              <span class="title">林成龙：高中数学 立体几何</span>
+            </a>
+          </li>
 
 
 
