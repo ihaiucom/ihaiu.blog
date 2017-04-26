@@ -4,8 +4,8 @@ title: C# 位运算
 date: 2017-04-26 13:00:00
 categories: C#
 tags: C# Mac
-excerpt: open -R path
-shareexcerpt: open -R path
+excerpt: C# 位运算
+shareexcerpt: C# 位运算
 thread: 20170426130000
 author: 大海明月
 authorQQ: 593705098
