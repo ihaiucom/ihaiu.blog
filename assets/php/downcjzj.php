@@ -111,12 +111,14 @@ preg_match_all("/\<td\ class=\"L\"\>\<a\ href=\"(.*?)\"\>(.*?)\<\/a\>\<\/td\>/xs
 $count = count($matches[1]);
 
 $isDown = $get_begin == "" || is_null($get_begin);
+$filters = ["没有更新", "无更新", "的求一下月票", "求票", "感谢大家", "感谢，", "及感谢", "11月份，雄起！求保底月票", "最后的一个月", "请假", "总结", "选票", "今天再请一天假"];
+$filtersCount = count($filters);
 for($i = 0; $i < $count; $i ++)
 {
   $name = $matches[2][$i];
   if($isDown == false)
   {
-    if(strpos($name, $get_begin))
+    if(strpos($name, $get_begin) !== false)
     {
         $isDown = true;
     }
@@ -125,24 +127,27 @@ for($i = 0; $i < $count; $i ++)
       continue;
     }
   }
-  // echo strpos($name, "请假") . "   " . (!empty(strpos($name, "请假")) ? 1 : 0). "\n";
-  if(!empty(strpos($name, "没有更新")) || !empty(strpos($name, "无更新")) || !empty(strpos($name, "的求一下月票")) 
-    || !empty(strpos($name, "求票")) 
-    || !empty(strpos($name, "感谢大家"))
-    || !empty(strpos($name, "感谢，"))
-    || !empty(strpos($name, "及感谢"))
-    || !empty(strpos($name, "11月份，雄起！求保底月票"))
-    || !empty(strpos($name, "最后的一个月"))
-    || !empty(strpos($name, "请假"))
-    || !empty(strpos($name, "总结"))
-    || !empty(strpos($name, "选票"))
-    
-    )
+
+  $isContinue = false;
+  for($f = 0; $f < $filtersCount; $f ++)
+  {
+    if(strpos($name, $filters[$f]) !== false)
+    {
+
+      $isContinue = true;
+      break;
+    }
+  }
+
+  if ($isContinue) 
   {
     continue;
   }
 
+
+
   $name = preg_replace("/[\.,\?,\,]/", " ",$name);
+  $name = preg_replace("/\//", "-",$name);
   $url = $get_url . $matches[1][$i];
 
 
