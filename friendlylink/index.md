@@ -133,6 +133,14 @@ thread: 20170310
             </a>
           </li>
 
+
+
+           <li title="豆腐脑我只认咸的" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/mooke" draggable="false">
+              <span class="title">豆腐脑我只认咸的 (游戏架构设计, 游戏开发笔记)</span>
+            </a>
+          </li>
+
            <li title="linux_wuliqiang" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://blog.chinaunix.net/uid-20622737-id-3161025.html" draggable="false">
               <span class="title">linux_wuliqiang (贝塞尔曲线)</span>
@@ -150,6 +158,8 @@ thread: 20170310
               <span class="title">贝塞尔曲线的数学原理 (维基百科)</span>
             </a>
           </li>
+
+
 
 
            <li title="初中数学教学视频" data-fid="1" data-index="1" draggable="true">
@@ -224,6 +234,44 @@ thread: 20170310
           </li>
 
 
+
+        </ul>
+
+
+</div>
+
+
+<br>
+<br>
+<br>
+
+<h2>技能框架设计</h2>
+<div class="" >
+        <ul>
+
+           <li title="游戏开发笔记（九）——技能系统" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/mooke/article/details/9771545" draggable="false">
+              <span class="title">游戏开发笔记（九）——技能系统</span>
+            </a>
+          </li>
+          
+           <li title="如何设计一个易扩展的游戏技能系统？" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.gameres.com/450054.html" draggable="false">
+              <span class="title">如何设计一个易扩展的游戏技能系统？</span>
+            </a>
+          </li>
+          
+           <li title="技能系统设计：技能模块同步的实现 " data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://bbs.gameres.com/thread_485421.html" draggable="false">
+              <span class="title">技能系统设计：技能模块同步的实现 </span>
+            </a>
+          </li>
+          
+           <li title="游戏编程干货：游戏技能系统全解析 " data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.gameres.com/485378.html" draggable="false">
+              <span class="title">游戏编程干货：游戏技能系统全解析 </span>
+            </a>
+          </li>
 
         </ul>
 
