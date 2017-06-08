@@ -159,6 +159,13 @@ thread: 20170310
 
 
 
+           <li title="一个壮族小伙的技术博客" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/ychellboy/" draggable="false">
+              <span class="title">一个壮族小伙的技术博客 (网络游戏服务器构架设计)</span>
+            </a>
+          </li>
+
+
 
         </ul>
 
@@ -184,6 +191,112 @@ thread: 20170310
           </li>
 
           
+        </ul>
+</div>
+
+
+
+<br>
+<br>
+<br>
+
+<h2>服务器架构设计</h2>
+<div class="" >
+        <ul>
+
+           <li title="游戏开发笔记（三）——通用代码库" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/mooke/article/details/8680020" draggable="false">
+              <span class="title">游戏开发笔记（三）——通用代码库</span>
+            </a>
+          </li>
+
+           <li title="游戏开发笔记（四）——游戏程序简介" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/mooke/article/details/8826691" draggable="false">
+              <span class="title">游戏开发笔记（四）——游戏程序简介</span>
+            </a>
+          </li>
+
+           <li title="游戏开发笔记（五）——服务端系统分层" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/mooke/article/details/8868613" draggable="false">
+              <span class="title">游戏开发笔记（五）——服务端系统分层</span>
+            </a>
+          </li>
+
+           <li title="游戏开发笔记（六）——服务端架构设计" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/mooke/article/details/8913051" draggable="false">
+              <span class="title">游戏开发笔记（六）——服务端架构设计</span>
+            </a>
+          </li>
+          
+           <li title="游戏开发笔记（十）——移动功能设计" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/mooke/article/details/50822111" draggable="false">
+              <span class="title">游戏开发笔记（十）——移动功能设计</span>
+            </a>
+          </li>
+
+
+          <br>
+          
+           <li title="网络游戏服务器构架设计（一）：前言" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/ychellboy/archive/2012/08/14/2638847.html" draggable="false">
+              <span class="title">网络游戏服务器构架设计（一）：前言</span>
+            </a>
+          </li>
+          
+           <li title="网络游戏服务器构架设计（二）：刀剑Online - 连接负载服务器CLS" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/ychellboy/archive/2012/08/20/2648073.html" draggable="false">
+              <span class="title">网络游戏服务器构架设计（二）：刀剑Online - 连接负载服务器CLS</span>
+            </a>
+          </li>
+          
+           <li title="网络游戏服务器构架设计（三）：刀剑Online - 总控服务器、场景服务器" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/ychellboy/archive/2012/09/17/2675347.html" draggable="false">
+              <span class="title">网络游戏服务器构架设计（三）：刀剑Online - 总控服务器、场景服务器</span>
+            </a>
+          </li>
+          
+           <li title="网络游戏服务器构架设计（四）：云风的轨迹" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/ychellboy/archive/2012/10/15/2723470.html" draggable="false">
+              <span class="title">网络游戏服务器构架设计（四）：云风的轨迹</span>
+            </a>
+          </li>
+
+        </ul>
+</div>
+
+
+<br>
+<br>
+<br>
+
+<h2>UI架构设计</h2>
+<div class="" >
+        <ul>
+
+           <li title="游戏UI框架设计(一) : 架构设计理论篇" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/LiuGuozhu/p/6416098.html" draggable="false">
+              <span class="title">游戏UI框架设计(一) : 架构设计理论篇</span>
+            </a>
+          </li>
+
+           <li title="游戏UI框架设计(二) : 最简版本设计" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/LiuGuozhu/p/6421685.html" draggable="false">
+              <span class="title">游戏UI框架设计(二) : 最简版本设计</span>
+            </a>
+          </li>
+          
+           <li title="游戏UI框架设计(三) : 窗体的层级管理" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/LiuGuozhu/p/6476079.html" draggable="false">
+              <span class="title">游戏UI框架设计(三) : 窗体的层级管理</span>
+            </a>
+          </li>
+          
+           <li title="游戏UI框架设计(四) : 模态窗体管理 " data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/LiuGuozhu/p/6517791.html" draggable="false">
+              <span class="title">游戏UI框架设计(四) : 模态窗体管理</span>
+            </a>
+          </li>
+
         </ul>
 </div>
 
@@ -224,6 +337,24 @@ thread: 20170310
 </div>
 
 
+
+
+<br>
+<br>
+<br>
+
+<h2>战场框架设计</h2>
+<div class="" >
+        <ul>
+
+           <li title="游戏开发笔记（八）——场景对象管理" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/mooke/article/details/9615491" draggable="false">
+              <span class="title">游戏开发笔记（八）——场景对象管理</span>
+            </a>
+          </li>
+
+        </ul>
+</div>
 
 
 
