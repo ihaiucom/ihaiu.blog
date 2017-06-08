@@ -261,6 +261,15 @@ thread: 20170310
             </a>
           </li>
 
+
+          <br>
+          
+           <li title="云风 开发笔记 (1) Agent" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.codingnow.com/2011/11/dev_note_1.html" draggable="false">
+              <span class="title">云风 开发笔记 (1) Agent</span>
+            </a>
+          </li>
+
         </ul>
 </div>
 
