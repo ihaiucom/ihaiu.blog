@@ -96,7 +96,7 @@ thread: 20170310
               <span class="title">云风的 BLOG</span>
             </a>
           </li>
-          
+
            <li title="云风的个人空间 : 开发笔记" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://blog.codingnow.com/cloud/DevNotes" draggable="false">
               <span class="title">云风的个人空间 : 开发笔记</span>
@@ -270,9 +270,22 @@ thread: 20170310
 
           <br>
           
+          
+           <li title="云风的个人空间 : 开发笔记" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.codingnow.com/cloud/DevNotes" draggable="false">
+              <span class="title">云风的个人空间 : 开发笔记</span>
+            </a>
+          </li>
+          
            <li title="云风 开发笔记 (1) Agent" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://blog.codingnow.com/2011/11/dev_note_1.html" draggable="false">
               <span class="title">云风 开发笔记 (1) Agent</span>
+            </a>
+          </li>
+          
+           <li title="云风 Skynet 设计综述" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.codingnow.com/2012/09/the_design_of_skynet.html" draggable="false">
+              <span class="title">云风 Skynet 设计综述</span>
             </a>
           </li>
 
@@ -387,23 +400,7 @@ thread: 20170310
             </a>
           </li>
 
-           <li title="MOBA游戏里的网络同步技术 -- Unite2017陈实分享" data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu" href="http://gad.qq.com/article/detail/7211752" draggable="false">
-              <span class="title">MOBA游戏里的网络同步技术 -- Unite2017陈实分享</span>
-            </a>
-          </li>
-          
-           <li title="技能系统设计：技能模块同步的实现 " data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu" href="http://bbs.gameres.com/thread_485421.html" draggable="false">
-              <span class="title">技能系统设计：技能模块同步的实现 </span>
-            </a>
-          </li>
-          
-           <li title="游戏编程干货：游戏技能系统全解析 " data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu" href="http://www.gameres.com/485378.html" draggable="false">
-              <span class="title">游戏编程干货：游戏技能系统全解析 </span>
-            </a>
-          </li>
+        
 
         </ul>
 </div>
