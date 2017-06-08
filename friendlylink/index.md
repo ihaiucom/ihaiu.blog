@@ -97,6 +97,12 @@ thread: 20170310
             </a>
           </li>
           
+           <li title="云风的个人空间 : 开发笔记" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.codingnow.com/cloud/DevNotes" draggable="false">
+              <span class="title">云风的个人空间 : 开发笔记</span>
+            </a>
+          </li>
+          
            
            <li title="腾讯GAD 程序文章" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://gad.qq.com/program/wz" draggable="false">
