@@ -77,7 +77,7 @@ if(is_array($_GET) && count($_GET)>0)//判断是否有Get参数
 
 
 
-$root = "cjzj";
+$root = __DIR__ ."/cjzj";
 if(is_dir($root))
 {
   if($get_replace)
@@ -111,7 +111,7 @@ preg_match_all("/\<td\ class=\"L\"\>\<a\ href=\"(.*?)\"\>(.*?)\<\/a\>\<\/td\>/xs
 $count = count($matches[1]);
 
 $isDown = $get_begin == "" || is_null($get_begin);
-$filters = ["没有更新", "无更新", "的求一下月票", "求票", "感谢大家", "感谢，", "及感谢", "11月份，雄起！求保底月票", "最后的一个月", "请假", "总结", "选票", "今天再请一天假"];
+$filters = ["今天的三更完毕", "双倍月票最后一天了", "封推感言", "今天就这一章了", "没有更新", "无更新", "的求一下月票", "求票", "感谢大家", "感谢，", "及感谢", "11月份，雄起！求保底月票", "最后的一个月", "请假", "总结", "选票", "今天再请一天假"];
 $filtersCount = count($filters);
 for($i = 0; $i < $count; $i ++)
 {
@@ -147,11 +147,16 @@ for($i = 0; $i < $count; $i ++)
 
 
   $name = preg_replace("/[\.,\?,\,]/", " ",$name);
-  $name = preg_replace("/\//", "-",$name);
+  $name = preg_replace("/\//", "",$name);
+  $name = preg_replace("/\，/", "",$name);
+  $name = preg_replace("/\！/", "",$name);
+  $name = preg_replace("/\（/", "",$name);
+  $name = preg_replace("/\）/", "",$name);
   $url = $get_url . $matches[1][$i];
 
 
-  echo $i . " " . $name . " " . $url . "<br>\n";
+  echo $i . " " . $name . " " . $url . "   " . "<br>\n";
+  // continue;
   $content=file_get_contents($url );
   // echo $content;
   preg_match("/id=\"contents\"\>(.*?)\<\/dd\>/s", $content, $matcheBody);
@@ -165,6 +170,7 @@ for($i = 0; $i < $count; $i ++)
   // $body = str_replace("最快更新，无弹窗阅读请。", " \r\n", $body);
   $body = str_replace("<a href=http://www.qidian.com>起点中文网www.qidian.com欢迎广大书友光临阅读，最新、最快、最火的连载作品尽在起点原创！&lt;/a&gt;;", " \r\n", $body);
   $body = str_replace("ps：  第一更到。今天，月票能涨到450吗？", " \r\n", $body);
+
 
 
   $body = $name . "\r\n" . $body;
