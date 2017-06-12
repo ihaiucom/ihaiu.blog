@@ -103,6 +103,13 @@ thread: 20170310
             </a>
           </li>
           
+
+           <li title="unity开发经验 " data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://unity.jb51.net/chengxukaifa/kaifajingyan/list_25_1.html" draggable="false">
+              <span class="title">unity开发经验 </span>
+            </a>
+          </li>
+
            
            <li title="腾讯GAD 程序文章" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://gad.qq.com/program/wz" draggable="false">
@@ -177,6 +184,33 @@ thread: 20170310
            <li title="陆泽西 (Jesse Lu)" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://www.luzexi.com/" draggable="false">
               <span class="title">陆泽西 (Jesse Lu) (Unity,Unity3DAIBehaviorTree)</span>
+            </a>
+          </li>
+
+
+
+           <li title="葱烧烙饼的博客" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.luzexi.com/" draggable="false">
+              <span class="title">葱烧烙饼的博客 (Unity,Unity异常)</span>
+            </a>
+          </li>
+
+           <li title="慕容小匹夫" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/murongxiaopifu/" draggable="false">
+              <span class="title">慕容小匹夫 (Unity, C#)</span>
+            </a>
+          </li>
+
+           <li title="OneV's Den" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://onevcat.com/" draggable="false">
+              <span class="title">OneV's Den(Unity, ios)</span>
+            </a>
+          </li>
+
+          
+           <li title="凉鞋" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://liangxiegame.com/tag/unity_framework/" draggable="false">
+              <span class="title">凉鞋(Unity框架搭建)</span>
             </a>
           </li>
 
@@ -527,6 +561,43 @@ thread: 20170310
               <span class="title">Vulkan in Unity -- Unite2017 ARM 李陈鲁</span>
             </a>
           </li>
+          
+        </ul>
+</div>
+
+
+<br>
+<br>
+<br>
+
+<h2>Unity 异常</h2>
+<div class="" >
+        <ul>
+
+           <li title="Unity3D引擎崩溃、异常、警告、BUG与提示总结及解决方法" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://unity.jb51.net/chengxukaifa/kaifajingyan/1247.html" draggable="false">
+              <span class="title">Unity3D引擎崩溃、异常、警告、BUG与提示总结及解决方法</span>
+            </a>
+          </li>
+
+           <li title="Unity3D引擎崩溃、异常、警告、BUG与提示总结及解决方法(2)" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://unity.jb51.net/chengxukaifa/kaifajingyan/1247_2.html" draggable="false">
+              <span class="title">Unity3D引擎崩溃、异常、警告、BUG与提示总结及解决方法(2)</span>
+            </a>
+          </li>
+
+           <li title="[Unity3D]引擎崩溃、异常、警告、BUG与提示总结及解决方法" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.sina.com.cn/s/blog_5b6cb9500101ai9h.html" draggable="false">
+              <span class="title">[Unity3D]引擎崩溃、异常、警告、BUG与提示总结及解决方法</span>
+            </a>
+          </li>
+
+           <li title="[Unity3D]关于NaN（Not a Number)的问题 " data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.sina.com.cn/s/blog_5b6cb9500101cd9e.html" draggable="false">
+              <span class="title">[Unity3D]关于NaN（Not a Number)的问题 </span>
+            </a>
+          </li>
+
           
         </ul>
 </div>
