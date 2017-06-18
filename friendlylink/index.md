@@ -214,6 +214,22 @@ thread: 20170310
             </a>
           </li>
 
+          
+           <li title="IT周见智" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/xiaozhi_5638/" draggable="false">
+              <span class="title">IT周见智(Http Socket Server, TCP UDP, .Net开发笔记, 依赖倒置, 函数绘制)</span>
+            </a>
+          </li>
+
+
+          
+           <li title="晓峰" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/wei2yi/" draggable="false">
+              <span class="title">晓峰(Html5 Socket, Web Server)</span>
+            </a>
+          </li>
+
+
 
         </ul>
 
@@ -622,6 +638,86 @@ thread: 20170310
         </ul>
 </div>
 
+
+
+<br>
+<br>
+<br>
+
+<h2>Http Server</h2>
+<div class="" >
+        <ul>
+
+           <li title="HTTP请求模型和头信息参考" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://transcoder.tradaquan.com/tc?srd=1&dict=32&h5ad=1&bdenc=1&lid=15329250045448736980&title=C%E4%B8%AD%E4%BD%BF%E7%94%A8Socket%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95Web%E6%9C%8D%E5%8A%A1%E5%99%A8-%E5%91%A8%E8%A7%81%E6%99%BA-%E5%8D%9A%E5%AE%A2%E5%9B%AD&nsrc=IlPT2AEptyoA_yixCFOxXnANedT62v3IEQGG_ytK1DK6mlrte4viZQRAUDb9OTrIBUTbx7aHdsoYwk_d07YlzBAxrKh6sVsf9mjb9ffshh7_JQpJut9s" draggable="false">
+              <span class="title">HTTP请求模型和头信息参考</span>
+            </a>
+          </li>
+
+           <li title="C#中使用Socket实现简单Web服务器" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/xiaozhi_5638/p/3917943.html" draggable="false">
+              <span class="title">C#中使用Socket实现简单Web服务器</span>
+            </a>
+          </li>
+
+           <li title="C#中使用Socket请求Web服务器过程" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/xiaozhi_5638/p/3912668.html" draggable="false">
+              <span class="title">C#中使用Socket请求Web服务器过程</span>
+            </a>
+          </li>
+          
+        </ul>
+</div>
+
+
+
+<br>
+<br>
+<br>
+
+<h2>Html Socket</h2>
+<div class="" >
+        <ul>
+
+           <li title="HTML5 WebSocket" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.runoob.com/html/html5-websocket.html" draggable="false">
+              <span class="title">HTML5 WebSocket</span>
+            </a>
+          </li>
+
+           <li title="认识HTML5的WebSocket" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/wei2yi/archive/2011/03/23/1992830.html" draggable="false">
+              <span class="title">认识HTML5的WebSocket</span>
+            </a>
+          </li>
+
+           <li title="Socket.IO站点" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://socket.io/" draggable="false">
+              <span class="title">Socket.IO站点</span>
+            </a>
+          </li>
+
+           <li title="WebSocket的Wikipedia" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://en.wikipedia.org/wiki/WebSockets" draggable="false">
+              <span class="title">WebSocket的Wikipedia</span>
+            </a>
+          </li>
+
+           <li title="WebSockets.org站点：" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.websockets.org/" draggable="false">
+              <span class="title">WebSockets.org站点：</span>
+            </a>
+          </li>
+
+           <li title="Dojo WebSocket站点" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.sitepen.com/blog/2010/10/31/dojo-websocket/" draggable="false">
+              <span class="title">Dojo WebSocket站点</span>
+            </a>
+          </li>
+
+        </ul>
+</div>
+
 <br>
 <br>
 <br>
@@ -645,6 +741,12 @@ thread: 20170310
            <li title="贝塞尔曲线的数学原理" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="https://zh.wikipedia.org/wiki/%E8%B2%9D%E8%8C%B2%E6%9B%B2%E7%B7%9A" draggable="false">
               <span class="title">贝塞尔曲线的数学原理 (维基百科)</span>
+            </a>
+          </li>
+
+           <li title="线段与多边形关系的算法" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/xiaozhi_5638/p/4165353.html" draggable="false">
+              <span class="title">线段与多边形关系的算法</span>
             </a>
           </li>
 
