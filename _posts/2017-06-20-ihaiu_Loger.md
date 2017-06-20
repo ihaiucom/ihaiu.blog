@@ -16,8 +16,12 @@ sh: true
 sh_csharp: true
 ---
 
-# Loger
-## Definition
+
+<a href="https://github.com/ihaiucom/ihaiu.Loger" target="_bank">https://github.com/ihaiucom/ihaiu.Loger</a>
+<br>
+
+
+<h2 class="nav1">Definition </h2>
 C# Log 用来适配 Console.WriteLine 和 Unity Debug
 
 ## dll
@@ -26,7 +30,7 @@ C# Log 用来适配 Console.WriteLine 和 Unity Debug
 用于Console输出Log <a href="https://github.com/ihaiucom/ihaiu.Loger/blob/master/IhaiuLog/IhaiuLog/bin/Release/IhaiuLog.dll" target="_bank">IhaiuLog.dll</a>
 
 
-## Test Unity
+<h2 class="nav1">Test Unity </h2>
 ![](https://github.com/ihaiucom/ihaiu.Loger/blob/master/Test/doc/ihaiu.loger_unity.jpg?raw=true) 
 
 
@@ -35,7 +39,7 @@ C# Log 用来适配 Console.WriteLine 和 Unity Debug
 
 
 
-## Test Console
+<h2 class="nav1">Test Console </h2>
 ![](https://github.com/ihaiucom/ihaiu.Loger/blob/master/Test/doc/ihaiu.loger_console_1.png) 
 
 
@@ -43,8 +47,10 @@ C# Log 用来适配 Console.WriteLine 和 Unity Debug
 
 
 
-## Api
+<h2 class="nav1">Api</h2>
 
+
+<pre class="brush: csharp; ">
 // Log
 
 public static void Log                  (object message);
@@ -54,7 +60,6 @@ public static void LogTag               (object tag,    object message);
 public static void Log                  (bool   isopen, object tag,     object message);
 
 
-<br>
 
 // LogFormat
 
@@ -66,7 +71,7 @@ public static void LogFormat            (bool isopen, object tag, string format,
 
 
 // 其他的 Warning,Error Api也是一样的。
-
+</pre>
 
 
 
@@ -74,7 +79,3 @@ public static void LogFormat            (bool isopen, object tag, string format,
 
 你可以取实现自己的ILogHandle,比如把Log输出到文件。
 
-
-
-<br>
-<a href="https://github.com/ihaiucom/ihaiu.Loger" target="_bank">https://github.com/ihaiucom/ihaiu.Loger</a>
