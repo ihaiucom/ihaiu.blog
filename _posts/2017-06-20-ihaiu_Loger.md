@@ -75,6 +75,9 @@ public static void LogFormat            (bool isopen, object tag, string format,
 // 其他的 Warning,Error Api也是一样的。
 </pre>
 
+bool isopen 参数的目的是控制某个模块的log是否输出
+
+object tag 参数的目的是为了方便查找某个模块的Log过滤
 
 
 ![](https://github.com/ihaiucom/ihaiu.Loger/blob/master/Test/doc/ihaiu.Loger.png?raw=true) 
