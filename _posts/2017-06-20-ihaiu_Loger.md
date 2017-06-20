@@ -31,6 +31,7 @@ C# Log 用来适配 Console.WriteLine 和 Unity Debug
 
 
 <h2 class="nav1">Test Unity </h2>
+
 ![](https://github.com/ihaiucom/ihaiu.Loger/blob/master/Test/doc/ihaiu.loger_unity.jpg?raw=true) 
 
 
@@ -40,10 +41,11 @@ C# Log 用来适配 Console.WriteLine 和 Unity Debug
 
 
 <h2 class="nav1">Test Console </h2>
-![](https://github.com/ihaiucom/ihaiu.Loger/blob/master/Test/doc/ihaiu.loger_console_1.png) 
+
+![](https://github.com/ihaiucom/ihaiu.Loger/blob/master/Test/doc/ihaiu.loger_console_1.png?raw=true) 
 
 
-![](https://github.com/ihaiucom/ihaiu.Loger/blob/master/Test/doc/ihaiu.loger_console_2.jpg) 
+![](https://github.com/ihaiucom/ihaiu.Loger/blob/master/Test/doc/ihaiu.loger_console_2.jpg?raw=true) 
 
 
 
