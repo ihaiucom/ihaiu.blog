@@ -6,6 +6,17 @@ thread: 20170310
 
 
 <table>
+
+  <tr>
+      <td><a target="_blank" href="https://github.com/ihaiucom/ihaiu.Loger">ihaiu.Loger (C# Log 用来适配 Console.WriteLine 和 Unity Debug)</a></td>
+      <td><a target="_blank" href="https://github.com/ihaiucom/ihaiu.Loger">https://github.com/ihaiucom/ihaiu.Loger</a></td>
+  </tr>
+
+  <tr>
+      <td><a target="_blank" href="https://github.com/ihaiucom/ihaiu.Bezier">ihaiu.Bezier (贝塞尔曲线)</a></td>
+      <td><a target="_blank" href="https://github.com/ihaiucom/ihaiu.Bezier">https://github.com/ihaiucom/ihaiu.Bezier</a></td>
+  </tr>
+
   <tr>
       <td><a target="_blank" href="http://blog.ihaiu.com/unity-GUIDRef">ihaiu.GUIDRef (查看项目资源使用情况)</a></td>
       <td><a target="_blank" href="http://blog.ihaiu.com/unity-GUIDRef">http://blog.ihaiu.com/unity-GUIDRef</a></td>
