@@ -29,7 +29,7 @@ sh_java: true
 
 
     <!-- 渲染模块/不透明渲染 -->
-    <tr style="font-weight:bold;">
+    <tr style="background-color: #AADDFF; font-weight:bold;">
         <td>Render.OpaqueGeometry</td>
         <td>不透明渲染</td>
     </tr>
