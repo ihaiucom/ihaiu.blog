@@ -25,6 +25,7 @@ sh_java: true
 <br>
 
 <table>
+    <!-- 渲染模块 -->
     <tr>
         <td>Camera.Render</td>
         <td>渲染模块</td>
@@ -34,22 +35,38 @@ sh_java: true
     <tr>
         <td colspan="2">
             <table>
-                <tr>
-                    <td>Camera.Render</td>
-                    <td>渲染模块</td>
-                </tr>
-
-
-                <tr>
-                    <td colspan="2">
-                        
-                    </td>
-                </tr>
-
+                <!-- 不透明渲染 -->
                 <tr>
                     <td>Render.OpaqueGeometry</td>
                     <td>不透明渲染</td>
                 </tr>
+
+                <tr>
+                    <td colspan="2">
+                        <table>
+                             <tr>
+                                <td>MeshRenderer.Render</td>
+                                <td>非蒙皮网格渲染</td>
+                            </tr>
+
+                             <tr>
+                                <td>Mesh.DrawVBO</td>
+                                <td>Draw Call</td>
+                            </tr>
+                            
+                             <tr>
+                                <td>MeshShinning.Render</td>
+                                <td>蒙皮网格渲染</td>
+                            </tr>
+
+                             <tr>
+                                <td>Material.SetPassFast</td>
+                                <td>场景中不同材质数量造成</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
 
                 <tr>
                     <td>Render.TransparentGeometry</td>
@@ -73,29 +90,7 @@ sh_java: true
             </table>
         </td>
     </tr>
-
-    <tr>
-        <td>Render.OpaqueGeometry</td>
-        <td>不透明渲染</td>
-    </tr>
-
-    <tr>
-        <td>Render.TransparentGeometry</td>
-        <td>半透明渲染</td>
-    </tr>
-
-
-
-    <tr>
-        <td>Culing</td>
-        <td>相机裁剪</td>
-    </tr>
-
-
-    <tr>
-        <td>Camera.ImageEffects</td>
-        <td>图形后期处理</td>
-    </tr>
+  
 
 
 </table>
