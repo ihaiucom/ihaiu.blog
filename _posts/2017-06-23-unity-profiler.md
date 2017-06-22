@@ -156,8 +156,8 @@ sh_java: true
 <p><img src="/assets/docpic/unity_profiler_09.png" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_10.png" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_11.png" style="border: solid 1px #666;" /></p>
-<p><img src="/assets/docpic/unity_profiler_12.png" style="border: solid 1px #666;" /></p>
-<p><img src="/assets/docpic/unity_profiler_13.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_12.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_13.jpg" style="border: solid 1px #666;" /></p>
 
 
 <h1 class="nav1">渲染模块,如何优化?</h1>
@@ -165,6 +165,7 @@ sh_java: true
 <br>
 <h3>问题方向</h3>
 <p><img src="/assets/docpic/unity_profiler_14.jpg" style="border: solid 1px #666;" /></p>
+
 <p><img src="/assets/docpic/unity_profiler_15.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_16.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_17.png" style="border: solid 1px #666;" /></p>
@@ -172,7 +173,7 @@ sh_java: true
 <p><img src="/assets/docpic/unity_profiler_19.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_20.jpg" style="border: solid 1px #666;" /></p>
 
-<h3>定量实验分析</h3>
+<h1 class="nav2">定量实验分析 不透明物体渲染性能实验</h1>
 <p><img src="/assets/docpic/unity_profiler_21.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_22.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_23.jpg" style="border: solid 1px #666;" /></p>
@@ -180,7 +181,7 @@ sh_java: true
 <p>横坐标：物体面片数。</p>
 <p>柱状图：不同颜色材质数量</p>
 <p>发现1：随着材质数的增加，渲染耗时也增加；物体面片数的增加，渲染耗时并不那么明显。</p>
-<p>发现2：60个物体图和120个物体图对比，可以发现因为CallDraw数量的增加，对渲染耗时有比较大的影响。</p>
+<p>发现2：60个物体图和120个物体图对比，可以发现因为Draw Call数量的增加，对渲染耗时有比较大的影响。</p>
 <br>
 <p><img src="/assets/docpic/unity_profiler_24.jpg" style="border: solid 1px #666;" /></p>
 
