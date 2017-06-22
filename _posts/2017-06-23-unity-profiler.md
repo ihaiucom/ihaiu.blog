@@ -76,21 +76,29 @@ sh_java: true
 
      <tr style="background-color: #AAFFDD; ">
         <td>ParticleSystem.SubmitVBO</td>
-        <td>粒子系统渲染</td>
+        <td>粒子系统渲染,提交粒子系统VBO的操作</td>
     </tr>
     
      <tr style="background-color: #AAFFDD; ">
         <td>BatchRenderer.Add</td>
-        <td>UGUI一般藏在这里面</td>
+        <td>UGUI一般藏在这里面, Canvas绑定了Camera的会显示在这里面。没有绑定Camera的Canvas不会显示在这里（Camera.Render）</td>
     </tr>
 
 
     <!-- 渲染模块/相机裁剪 -->
     <tr> <td colspan="2" height="3px"> </td> </tr>
 
-    <tr>
+    <tr style="background-color: #88CCEE; font-weight:bold;">
         <td>Culing</td>
         <td>相机裁剪</td>
+    </tr>
+
+    <tr> <td colspan="2" height="3px"> </td> </tr>
+
+
+     <tr style="background-color: #AADDFF; ">
+        <td>ParticleSystem.ScheduleGeometryJobs</td>
+        <td>这个函数不仅出现在Render.TransparentGeometry，也会出现在Culing里。通常他的时间占比比较高（2%-3%左右）</td>
     </tr>
 
     <!-- 渲染模块/图形后期处理 -->
@@ -106,16 +114,19 @@ sh_java: true
 
 </table>
 <br>
+<br>
 
 <!-- 渲染模块 -->
 <h1 class="nav1">渲染模块</h1>
 <p><img src="/assets/docpic/unity_profiler_00.png" style="border: solid 1px #666;" /></p>
 
 <!-- 渲染模块/不透明渲染 -->
+<br>
 <h1 class="nav2">渲染模块/不透明渲染</h1>
 <p><img src="/assets/docpic/unity_profiler_01.png" style="border: solid 1px #666;" /></p>
 
 <!-- 渲染模块/不透明渲染/Material.SetPassFast -->
+<br>
 <h3>Material.SetPassFast</h3>
 <p><img src="/assets/docpic/unity_profiler_02.png" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_03.png" style="border: solid 1px #666;" /></p>
@@ -126,13 +137,24 @@ sh_java: true
 
 
 <!-- 渲染模块/半透明渲染 -->
+<br>
 <h1 class="nav2">渲染模块/半透明渲染</h1>
 <p><img src="/assets/docpic/unity_profiler_06.jpg" style="border: solid 1px #666;" /></p>
 
+<!-- 渲染模块/相机裁剪 -->
+<br>
+<h1 class="nav2">渲染模块/相机裁剪</h1>
+<p><img src="/assets/docpic/unity_profiler_07.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_08.jpg" style="border: solid 1px #666;" /></p>
 
 
 
+
+<br>
+<br>
 <h2 class="nav1">相关文档</h2>
 <p><a target="_blank" href="https://v.qq.com/x/page/y051477ktzc.html">UWA六月直播季第二弹之Unity引擎渲染效率全解析 </a></p>
 <p><a target="_blank" href="https://v.qq.com/x/page/r0329jx2ijw.html">UWA直播回顾| UGUI性能优化技巧</a></p>
+<p><a target="_blank" href="http://www.cnblogs.com/zhaoqingqing/p/5059479.html">Unity Profiler 性能分析</a></p>
+
 <br>
