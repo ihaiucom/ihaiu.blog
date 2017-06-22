@@ -25,16 +25,14 @@ sh_java: true
         <th>Camera.Render</th>
         <th>渲染模块</th>
     </tr>
-     <hr style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#987cb9" SIZE="3" />
 
 
 
     <!-- 渲染模块/不透明渲染 -->
-    <tr>
+    <tr style="font-weight:bold;">
         <td>Render.OpaqueGeometry</td>
         <td>不透明渲染</td>
     </tr>
-    <tr> <td colspan="2" height="2px"> <hr style="border:1 dashed #987cb9" width="80%" color="#987cb9" SIZE="1" /> </td> </tr>
 
 
      <tr>
@@ -59,13 +57,13 @@ sh_java: true
 
 
     <!-- 渲染模块/半透明渲染 -->
-    <tr> <td colspan="2" height="3px"> <HR style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#987cb9" SIZE="3"> </td> </tr>
+    <tr> <td colspan="2" height="3px"> </td> </tr>
 
     <tr>
         <td>Render.TransparentGeometry</td>
         <td>半透明渲染</td>
     </tr>
-    <tr> <td colspan="2" height="2px"> <HR style="border:1 dashed #987cb9" width="80%" color="#987cb9" SIZE="1" /> </td> </tr>
+    <tr> <td colspan="2" height="3px"> </td> </tr>
 
      <tr>
         <td>Mesh.DrawVBO</td>
@@ -89,7 +87,7 @@ sh_java: true
 
 
     <!-- 渲染模块/相机裁剪 -->
-    <tr> <td colspan="2" height="3px"> <hr style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#987cb9" SIZE="3" /> </td> </tr>
+    <tr> <td colspan="2" height="3px"> </td> </tr>
 
     <tr>
         <td>Culing</td>
@@ -97,7 +95,7 @@ sh_java: true
     </tr>
 
     <!-- 渲染模块/图形后期处理 -->
-    <tr> <td colspan="2" height="3px"> <hr style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#987cb9" SIZE="3" /> </td> </tr>
+    <tr> <td colspan="2" height="3px"> </td> </tr>
 
     <tr>
         <td>Camera.ImageEffects</td>
