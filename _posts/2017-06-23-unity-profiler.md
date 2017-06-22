@@ -19,7 +19,7 @@ sh_java: true
 
 <br>
 
-<table width="95%" style="word-wrap:break-word;">
+<table width="95%" style="word-wrap:break-word;table-layout:fixed;">
     <!-- 渲染模块 -->
     <tr>
         <th>Camera.Render</th>
