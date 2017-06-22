@@ -65,6 +65,27 @@ sh_java: true
         <td>Render.TransparentGeometry</td>
         <td>半透明渲染</td>
     </tr>
+    <tr> <td colspan="2" height="2px"> <HR style="border:1 dashed #987cb9" width="80%" color=#987cb9 SIZE=1> </td> </tr>
+
+     <tr>
+        <td>Mesh.DrawVBO</td>
+        <td>NGUI 一般藏在这里面</td>
+    </tr>
+    
+     <tr>
+        <td>ParticleSystem.ScheduleGeometryJobs</td>
+        <td>粒子系统</td>
+    </tr>
+
+     <tr>
+        <td>ParticleSystem.SubmitVBO</td>
+        <td>粒子系统渲染</td>
+    </tr>
+    
+     <tr>
+        <td>BatchRenderer.Add</td>
+        <td>UGUI一般藏在这里面</td>
+    </tr>
 
 
     <!-- 渲染模块/相机裁剪 -->
@@ -94,7 +115,7 @@ sh_java: true
 <p><img src="/assets/docpic/unity_profiler_00.png" style="border: solid 1px #666;" /></p>
 
 <!-- 渲染模块/不透明渲染 -->
-<h1 class="nav2">渲染模块/半透明渲染</h1>
+<h1 class="nav2">渲染模块/不透明渲染</h1>
 <p><img src="/assets/docpic/unity_profiler_01.png" style="border: solid 1px #666;" /></p>
 
 <!-- 渲染模块/不透明渲染/Material.SetPassFast -->
@@ -108,6 +129,7 @@ sh_java: true
 
 
 <!-- 渲染模块/半透明渲染 -->
+<h1 class="nav2">渲染模块/半透明渲染</h1>
 <p><img src="/assets/docpic/unity_profiler_06.png" style="border: solid 1px #666;" /></p>
 
 
