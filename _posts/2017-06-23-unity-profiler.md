@@ -29,28 +29,28 @@ sh_java: true
 
 
     <!-- 渲染模块/不透明渲染 -->
-    <tr style="background-color: #AADDFF; font-weight:bold;">
+    <tr style="background-color: #88CCEE; font-weight:bold;">
         <td>Render.OpaqueGeometry</td>
         <td>不透明渲染</td>
     </tr>
 
 
-     <tr>
+     <tr style="background-color: #AADDFF; ">
         <td>MeshRenderer.Render</td>
         <td>非蒙皮网格渲染</td>
     </tr>
 
-     <tr>
+     <tr style="background-color: #AADDFF; ">
         <td>Mesh.DrawVBO</td>
         <td>Draw Call</td>
     </tr>
     
-     <tr>
+     <tr style="background-color: #AADDFF; ">
         <td>MeshShinning.Render</td>
         <td>蒙皮网格渲染</td>
     </tr>
 
-     <tr>
+     <tr style="background-color: #AADDFF; ">
         <td>Material.SetPassFast</td>
         <td>场景中不同材质数量造成；和DrawCall类似，如果两个相同材质物体中间有一个其他材质的物体，就无法合批，这个材质就会成2个SetPassFast</td>
     </tr>
@@ -59,28 +59,27 @@ sh_java: true
     <!-- 渲染模块/半透明渲染 -->
     <tr> <td colspan="2" height="3px"> </td> </tr>
 
-    <tr>
+    <tr style="background-color: #88EECC; font-weight:bold;">
         <td>Render.TransparentGeometry</td>
         <td>半透明渲染</td>
     </tr>
-    <tr> <td colspan="2" height="3px"> </td> </tr>
 
-     <tr>
+     <tr style="background-color: #AAFFDD; ">
         <td>Mesh.DrawVBO</td>
         <td>NGUI 一般藏在这里面</td>
     </tr>
     
-     <tr>
+     <tr style="background-color: #AAFFDD; ">
         <td>ParticleSystem.ScheduleGeometryJobs</td>
         <td>粒子系统</td>
     </tr>
 
-     <tr>
+     <tr style="background-color: #AAFFDD; ">
         <td>ParticleSystem.SubmitVBO</td>
         <td>粒子系统渲染</td>
     </tr>
     
-     <tr>
+     <tr style="background-color: #AAFFDD; ">
         <td>BatchRenderer.Add</td>
         <td>UGUI一般藏在这里面</td>
     </tr>
