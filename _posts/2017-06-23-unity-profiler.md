@@ -1,0 +1,102 @@
+---
+layout: post
+title: Unity profiler 性能查看器里面描述的含义
+date: 2017-06-23 13:51:00
+categories: Unity
+tags: Unity 优化 profiler
+excerpt: Unity profiler 性能查看器里面描述的含义
+shareexcerpt: Unity profiler 性能查看器里面描述的含义
+thread: 2017031012510000
+author: 大海明月
+authorQQ: 593705098
+authorEmail: zengfeng75@qq.com
+thumbnail:
+
+sh: true
+sh_csharp: true
+sh_java: true
+---
+
+
+<h2 class="nav1">相关文档</h2>
+<p><a target="_blank" href="https://v.qq.com/x/page/y051477ktzc.html">UWA六月直播季第二弹之Unity引擎渲染效率全解析 </a></p>
+<p><a target="_blank" href="https://v.qq.com/x/page/r0329jx2ijw.html">UWA直播回顾| UGUI性能优化技巧</a></p>
+<br>
+<br>
+
+<table>
+    <tr>
+        <td>Camera.Render</td>
+        <td>渲染模块</td>
+    </tr>
+
+
+    <tr>
+        <td colspan="2">
+            <table>
+                <tr>
+                    <td>Camera.Render</td>
+                    <td>渲染模块</td>
+                </tr>
+
+
+                <tr>
+                    <td colspan="2">
+                        
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>Render.OpaqueGeometry</td>
+                    <td>不透明渲染</td>
+                </tr>
+
+                <tr>
+                    <td>Render.TransparentGeometry</td>
+                    <td>半透明渲染</td>
+                </tr>
+
+
+
+                <tr>
+                    <td>Culing</td>
+                    <td>相机裁剪</td>
+                </tr>
+
+
+                <tr>
+                    <td>Camera.ImageEffects</td>
+                    <td>图形后期处理</td>
+                </tr>
+
+
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td>Render.OpaqueGeometry</td>
+        <td>不透明渲染</td>
+    </tr>
+
+    <tr>
+        <td>Render.TransparentGeometry</td>
+        <td>半透明渲染</td>
+    </tr>
+
+
+
+    <tr>
+        <td>Culing</td>
+        <td>相机裁剪</td>
+    </tr>
+
+
+    <tr>
+        <td>Camera.ImageEffects</td>
+        <td>图形后期处理</td>
+    </tr>
+
+
+</table>
+
