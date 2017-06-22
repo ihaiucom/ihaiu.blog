@@ -93,7 +93,6 @@ sh_java: true
         <td>相机裁剪</td>
     </tr>
 
-    <tr> <td colspan="2" height="3px"> </td> </tr>
 
 
      <tr style="background-color: #AADDFF; ">
