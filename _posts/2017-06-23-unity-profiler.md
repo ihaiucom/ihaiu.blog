@@ -157,6 +157,32 @@ sh_java: true
 <p><img src="/assets/docpic/unity_profiler_10.png" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_11.png" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_12.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_13.png" style="border: solid 1px #666;" /></p>
+
+
+<h1 class="nav1">渲染模块,如何优化?</h1>
+<p>根据上面提到的查看profiler，定位问题出在哪个定方。然后去对美术效果做删减，让美术效果和运行效率做一个平衡。</p>
+<br>
+<h3>问题方向</h3>
+<p><img src="/assets/docpic/unity_profiler_14.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_15.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_16.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_17.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_18.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_19.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_20.jpg" style="border: solid 1px #666;" /></p>
+
+<h3>定量实验分析</h3>
+<p><img src="/assets/docpic/unity_profiler_21.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_22.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_23.jpg" style="border: solid 1px #666;" /></p>
+<p>纵坐标：渲染耗时 单位毫秒。</p>
+<p>横坐标：物体面片数。</p>
+<p>柱状图：不同颜色材质数量</p>
+<p>发现1：随着材质数的增加，渲染耗时也增加；物体面片数的增加，渲染耗时并不那么明显。</p>
+<p>发现2：60个物体图和120个物体图对比，可以发现因为CallDraw数量的增加，对渲染耗时有比较大的影响。</p>
+<br>
+<p><img src="/assets/docpic/unity_profiler_24.jpg" style="border: solid 1px #666;" /></p>
 
 
 
@@ -167,5 +193,3 @@ sh_java: true
 <p><a target="_blank" href="https://v.qq.com/x/page/y051477ktzc.html">UWA六月直播季第二弹之Unity引擎渲染效率全解析 </a></p>
 <p><a target="_blank" href="https://v.qq.com/x/page/r0329jx2ijw.html">UWA直播回顾| UGUI性能优化技巧</a></p>
 <p><a target="_blank" href="http://www.cnblogs.com/zhaoqingqing/p/5059479.html">Unity Profiler 性能分析</a></p>
-
-<br>
