@@ -19,7 +19,7 @@ sh_java: true
 
 <br>
 
-<table>
+<table width="95%">
     <!-- 渲染模块 -->
     <tr>
         <th>Camera.Render</th>
