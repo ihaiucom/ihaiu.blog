@@ -17,11 +17,6 @@ sh_csharp: true
 sh_java: true
 ---
 
-
-<h2 class="nav1">相关文档</h2>
-<p><a target="_blank" href="https://v.qq.com/x/page/y051477ktzc.html">UWA六月直播季第二弹之Unity引擎渲染效率全解析 </a></p>
-<p><a target="_blank" href="https://v.qq.com/x/page/r0329jx2ijw.html">UWA直播回顾| UGUI性能优化技巧</a></p>
-<br>
 <br>
 
 <table>
@@ -32,65 +27,53 @@ sh_java: true
     </tr>
 
 
+    <!-- 不透明渲染 -->
     <tr>
-        <td colspan="2">
-            <table>
-                <!-- 不透明渲染 -->
-                <tr>
-                    <td>Render.OpaqueGeometry</td>
-                    <td>不透明渲染</td>
-                </tr>
-
-                <tr>
-                    <td colspan="2">
-                        <table>
-                             <tr>
-                                <td>MeshRenderer.Render</td>
-                                <td>非蒙皮网格渲染</td>
-                            </tr>
-
-                             <tr>
-                                <td>Mesh.DrawVBO</td>
-                                <td>Draw Call</td>
-                            </tr>
-                            
-                             <tr>
-                                <td>MeshShinning.Render</td>
-                                <td>蒙皮网格渲染</td>
-                            </tr>
-
-                             <tr>
-                                <td>Material.SetPassFast</td>
-                                <td>场景中不同材质数量造成</td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <td>Render.TransparentGeometry</td>
-                    <td>半透明渲染</td>
-                </tr>
-
-
-
-                <tr>
-                    <td>Culing</td>
-                    <td>相机裁剪</td>
-                </tr>
-
-
-                <tr>
-                    <td>Camera.ImageEffects</td>
-                    <td>图形后期处理</td>
-                </tr>
-
-
-            </table>
-        </td>
+        <td>Render.OpaqueGeometry</td>
+        <td>不透明渲染</td>
     </tr>
-  
+
+     <tr>
+        <td>MeshRenderer.Render</td>
+        <td>非蒙皮网格渲染</td>
+    </tr>
+
+     <tr>
+        <td>Mesh.DrawVBO</td>
+        <td>Draw Call</td>
+    </tr>
+    
+     <tr>
+        <td>MeshShinning.Render</td>
+        <td>蒙皮网格渲染</td>
+    </tr>
+
+     <tr>
+        <td>Material.SetPassFast</td>
+        <td>场景中不同材质数量造成</td>
+    </tr>
+
+
+    <!-- 半透明渲染 -->
+    <tr>
+        <td>Render.TransparentGeometry</td>
+        <td>半透明渲染</td>
+    </tr>
+
+
+    <!-- 相机裁剪 -->
+    <tr>
+        <td>Culing</td>
+        <td>相机裁剪</td>
+    </tr>
+
+    <!-- 图形后期处理 -->
+    <tr>
+        <td>Camera.ImageEffects</td>
+        <td>图形后期处理</td>
+    </tr>
+
+
 
 
 </table>
@@ -99,3 +82,11 @@ sh_java: true
 <p><img src="/assets/docpic/unity_profiler_00.png" style="border: solid 1px #666;" /></p>
 
 <p><img src="/assets/docpic/unity_profiler_01.png" style="border: solid 1px #666;" /></p>
+
+
+
+
+<h2 class="nav1">相关文档</h2>
+<p><a target="_blank" href="https://v.qq.com/x/page/y051477ktzc.html">UWA六月直播季第二弹之Unity引擎渲染效率全解析 </a></p>
+<p><a target="_blank" href="https://v.qq.com/x/page/r0329jx2ijw.html">UWA直播回顾| UGUI性能优化技巧</a></p>
+<br>
