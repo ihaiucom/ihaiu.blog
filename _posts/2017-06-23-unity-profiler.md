@@ -99,11 +99,11 @@ sh_java: true
      <tr style="background-color: #AADDFF; ">
         <td>ParticleSystem.ScheduleGeometryJobs</td>
         <td>
-        这个函数不仅出现在Render.TransparentGeometry，也会出现在Culing里。通常他的时间占比比较高（2%-3%左右）。<br>
-        如果粒子系统没有在摄像视窗内就不会有；如果在摄像机视窗内部的粒子系统越多,消耗越大。所以与摄像机视窗内粒子系统个数成正比。<br>
-        主线程：ParticleSystem.ScheduleGeometryJobs<br>
-        子线程：ParticleSystem.GeometryJobs<br>
-        分析：  主线程做任务调度，子线程做粒子模拟
+        这个函数不仅出现在Render.TransparentGeometry，也会出现在Culing里。通常他的时间占比比较高（2%-3%左右）。<br><br>
+        如果粒子系统没有在摄像视窗内就不会有；如果在摄像机视窗内部的粒子系统越多,消耗越大。所以与摄像机视窗内粒子系统个数成正比。<br><br>
+        主线程：ParticleSystem.ScheduleGeometryJobs<br><br>
+        子线程：ParticleSystem.GeometryJobs<br><br>
+        分析：  主线程做任务调度，子线程做粒子模拟<br>
         </td>
     </tr>
 
