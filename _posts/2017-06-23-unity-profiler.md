@@ -120,15 +120,15 @@ sh_java: true
 <h3>Material.SetPassFast</h3>
 <p><img src="/assets/docpic/unity_profiler_02.png" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_03.png" style="border: solid 1px #666;" /></p>
-<p><img src="/assets/docpic/unity_profiler_04.png" style="border: solid 1px #666;" /></p>
-<p><img src="/assets/docpic/unity_profiler_05.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_04.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_05.jpg" style="border: solid 1px #666;" /></p>
 <p>Render State包含深度测试、半透明渲染、Blend混合、材质Texture修改和绑定.<br>所以优化不仅要控制DrawCall，还有控制Material的数量，不能太多。</p>
 
 
 
 <!-- 渲染模块/半透明渲染 -->
 <h1 class="nav2">渲染模块/半透明渲染</h1>
-<p><img src="/assets/docpic/unity_profiler_06.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_06.jpg" style="border: solid 1px #666;" /></p>
 
 
 
