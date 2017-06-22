@@ -95,3 +95,7 @@ sh_java: true
 
 </table>
 
+
+<p><img src="/assets/docpic/unity_profiler_00.png" style="border: solid 1px #666;" /></p>
+
+<p><img src="/assets/docpic/unity_profiler_01.png" style="border: solid 1px #666;" /></p>
