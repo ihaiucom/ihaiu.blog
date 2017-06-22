@@ -98,7 +98,13 @@ sh_java: true
 
      <tr style="background-color: #AADDFF; ">
         <td>ParticleSystem.ScheduleGeometryJobs</td>
-        <td>这个函数不仅出现在Render.TransparentGeometry，也会出现在Culing里。通常他的时间占比比较高（2%-3%左右）</td>
+        <td>
+        这个函数不仅出现在Render.TransparentGeometry，也会出现在Culing里。通常他的时间占比比较高（2%-3%左右）。<br>
+        如果粒子系统没有在摄像视窗内就不会有；如果在摄像机视窗内部的粒子系统越多,消耗越大。所以与摄像机视窗内粒子系统个数成正比。<br>
+        主线程：ParticleSystem.ScheduleGeometryJobs<br>
+        子线程：ParticleSystem.GeometryJobs<br>
+        分析：  主线程做任务调度，子线程做粒子模拟
+        </td>
     </tr>
 
     <!-- 渲染模块/图形后期处理 -->
@@ -145,7 +151,13 @@ sh_java: true
 <br>
 <h1 class="nav2">渲染模块/相机裁剪</h1>
 <p><img src="/assets/docpic/unity_profiler_07.jpg" style="border: solid 1px #666;" /></p>
-<p><img src="/assets/docpic/unity_profiler_08.jpg" style="border: solid 1px #666;" /></p>
+
+<h3>ParticleSystem.ScheduleGeometryJobs</h3>
+<p><img src="/assets/docpic/unity_profiler_08.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_09.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_10.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_11.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_12.png" style="border: solid 1px #666;" /></p>
 
 
 
