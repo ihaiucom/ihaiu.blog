@@ -22,10 +22,10 @@ sh_java: true
 <table>
     <!-- 渲染模块 -->
     <tr>
-        <td>Camera.Render</td>
-        <td>渲染模块</td>
+        <th>Camera.Render</th>
+        <th>渲染模块</th>
     </tr>
-    <tr> <td colspan="2" height="3px"> <hr style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#987cb9" SIZE="3" /> </td> </tr>
+     <hr style="FILTER: alpha(opacity=100,finishopacity=0,style=3)" width="80%" color="#987cb9" SIZE="3" />
 
 
 
