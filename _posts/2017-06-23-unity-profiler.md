@@ -186,11 +186,7 @@ sh_java: true
 <p>发现2：60个物体图和120个物体图对比，可以发现因为Draw Call数量的增加，对渲染耗时有比较大的影响。</p>
 <br>
 <p><img src="/assets/docpic/unity_profiler_24.jpg" style="border: solid 1px #666;" /></p>
-
-<br>
-<br>
-<h3 >不透明物体渲染在不同机型定量实验</h3>
-<p><img src="/assets/docpic/unity_profiler_24.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_25.jpg" style="border: solid 1px #666;" /></p>
 <p>为什么小于5毫秒呢？<br>
 因为游戏一般以30帧为界限。<br>
 假如游戏设定帧频为30帧，那么每帧的时间是33毫秒。<br>
@@ -201,7 +197,7 @@ sh_java: true
 因为开启了多线程渲染，主线程中提交DrawCall与图像API的交互操作转移到了渲染线程。使得用Camera.Render衡量不准确。
 </p>
 <br>
-<p><img src="/assets/docpic/unity_profiler_25.jpg" style="border: solid 1px #666;" /></p>
+
 <p><img src="/assets/docpic/unity_profiler_26.jpg" style="border: solid 1px #666;" /></p>
 
 <p>横向表头：面片数</p>
