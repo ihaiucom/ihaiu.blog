@@ -173,6 +173,8 @@ sh_java: true
 <p><img src="/assets/docpic/unity_profiler_19.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_20.jpg" style="border: solid 1px #666;" /></p>
 
+<br>
+<br>
 <h1 class="nav2">定量实验分析 不透明物体渲染性能实验</h1>
 <p><img src="/assets/docpic/unity_profiler_21.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_22.jpg" style="border: solid 1px #666;" /></p>
@@ -184,6 +186,35 @@ sh_java: true
 <p>发现2：60个物体图和120个物体图对比，可以发现因为Draw Call数量的增加，对渲染耗时有比较大的影响。</p>
 <br>
 <p><img src="/assets/docpic/unity_profiler_24.jpg" style="border: solid 1px #666;" /></p>
+
+<br>
+<br>
+<h3 >不透明物体渲染在不同机型定量实验</h3>
+<p><img src="/assets/docpic/unity_profiler_24.jpg" style="border: solid 1px #666;" /></p>
+<p>为什么小于5毫秒呢？<br>
+因为游戏一般以30帧为界限。<br>
+假如游戏设定帧频为30帧，那么每帧的时间是33毫秒。<br>
+在这33毫秒中分配给渲染大概是15毫秒。<br>
+在这15毫秒中要做：不透明物体渲染、半透明物体渲染、阴影、粒子系统、图像后处理等。<br>
+所以分配给不透明物体渲染的时间大概在3-5毫秒。<br><br>
+在本次测试中不开启多线程渲染，为什么呢？<br>
+因为开启了多线程渲染，主线程中提交DrawCall与图像API的交互操作转移到了渲染线程。使得用Camera.Render衡量不准确。
+</p>
+<br>
+<p><img src="/assets/docpic/unity_profiler_25.jpg" style="border: solid 1px #666;" /></p>
+<p>横向表头：面片数</p>
+<p>纵向表头：物体数量</p>
+<p>boady：渲染耗时，小于5毫秒用红色标识。可以看到在红米2中没有小于5毫秒的情况</p>
+<p>可以看到在红米2中没有小于5毫秒的情况，因此在红米2上建议采用面片数量小于600的模型，物体数量小于60个。</p>
+<br>
+<p><img src="/assets/docpic/unity_profiler_26.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_27.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_28.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_29.jpg" style="border: solid 1px #666;" /></p>
+<br>
+<br>
+<h1 class="nav2">定量实验分析 不透明物体渲染性能实验</h1>
+<p><img src="/assets/docpic/unity_profiler_30.jpg" style="border: solid 1px #666;" /></p>
 
 
 
