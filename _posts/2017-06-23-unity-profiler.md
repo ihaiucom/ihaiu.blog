@@ -202,12 +202,14 @@ sh_java: true
 </p>
 <br>
 <p><img src="/assets/docpic/unity_profiler_25.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_26.jpg" style="border: solid 1px #666;" /></p>
+
 <p>横向表头：面片数</p>
 <p>纵向表头：物体数量</p>
 <p>boady：渲染耗时，小于5毫秒用红色标识。可以看到在红米2中没有小于5毫秒的情况</p>
 <p>可以看到在红米2中没有小于5毫秒的情况，因此在红米2上建议采用面片数量小于600的模型，物体数量小于60个。</p>
 <br>
-<p><img src="/assets/docpic/unity_profiler_26.jpg" style="border: solid 1px #666;" /></p>
+
 <p><img src="/assets/docpic/unity_profiler_27.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_28.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_29.jpg" style="border: solid 1px #666;" /></p>
