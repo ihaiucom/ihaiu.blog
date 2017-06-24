@@ -7,8 +7,20 @@ comments: no
 ---
 <table>
 	<tr>
+		<td>姓名:</td>
+		<td>曾峰</td>
+	</tr>
+	<tr>
 		<td>网名:</td>
 		<td>大海明月</td>
+	</tr>
+	<tr>
+		<td>行业:</td>
+		<td>游戏</td>
+	</tr>
+	<tr>
+		<td>位置:</td>
+		<td>上海</td>
 	</tr>
 	<tr>
 		<td>QQ:</td>
