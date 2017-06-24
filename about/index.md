@@ -38,8 +38,67 @@ thread: 10075
 </table>
 <br><br>
 
-##喜欢玩的游戏
+喜欢玩的游戏
 ---
+
+<div id="about">
+	<div class="grid">
+		<ol>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false">
+              <image src='/assets/about/game_lol.jpg' class="thumb"></image>
+              <span class="title">英雄联盟</span>
+            </a>
+          </li>
+
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false">
+              <image src='/assets/about/game_wzly.jpg' class="thumb"></image>
+              <span class="title">王者荣耀</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false">
+              <image src='/assets/about/game_wzly.png' class="thumb"></image>
+              <span class="title">王者荣耀</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false">
+              <image src='/assets/about/game_jnbg.jpeg' class="thumb"></image>
+              <span class="title">纪念碑谷</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false">
+              <image src='/assets/about/game_sklt.jpeg' class="thumb"></image>
+              <span class="title">时空旅途</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false">
+              <image src='/assets/about/game_mkzz.jpg' class="thumb"></image>
+              <span class="title">蘑菇战争</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false">
+              <image src='/assets/about/game_xxkcj.jpg' class="thumb"></image>
+              <span class="title">小小空城计</span>
+            </a>
+          </li>
+
+		</ol>
+	</div>
+</div>
+
 > LOL <br>
 > War3 《黄金岛》、《金字塔大逃亡》、《元素魔法》、《猫捉老鼠》、《仙境》、《滑冰》主要就是生存类型的
 
