@@ -105,6 +105,349 @@ thread: 10075
 }
 </style>
 
+
+
+喜欢科幻类型的小说
+---
+
+
+<div class="ss">
+	<div class="grid">
+		<ol>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/244443">
+              <image src='/assets/about/ss_zc_wm.jpg' class="thumb"></image>
+              <span class="title">智齿_文明</span>
+            </a>
+          </li>
+
+
+		</ol>
+	</div>
+</div>
+
+<br>
+
+
+<div class="ss">
+	<div class="grid">
+		<ol>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.pan6.com/thread-54676-1-1.html">
+              <image src='/assets/about/ss_st.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_三体</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4231247">
+              <image src='/assets/about/ss_lcx_sjym.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_时间移民</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4177638">
+              <image src='/assets/about/ss_lcx_my.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_命运</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4217886">
+              <image src='/assets/about/ss_lcx_tyzl.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_太原之恋</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4169245">
+              <image src='/assets/about/ss_lcx_qw.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_纤维</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4193171">
+              <image src='/assets/about/ss_lcx_wgjt.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_微观尽头</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4160965">
+              <image src='/assets/about/ss_lcx_xs.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_信使</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/469302">
+              <image src='/assets/about/ss_lcx_fzp.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_圆圆的肥皂泡</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4389305">
+              <image src='/assets/about/ss_lcx_jmmg.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_魔鬼积木</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/430055">
+              <image src='/assets/about/ss_lcx_syrl.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_赡养人类</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4261169">
+              <image src='/assets/about/ss_lcx_grymx.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_guang荣与梦想</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/408815">
+              <image src='/assets/about/ss_lcx_ts.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_坍缩</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3042652">
+              <image src='/assets/about/ss_lcx_dstdyj.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_带上她的眼睛</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4364796">
+              <image src='/assets/about/ss_lcx_dqdp.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_地球大炮</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/401953">
+              <image src='/assets/about/ss_lcx_ssz.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_思想者</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/411646">
+              <image src='/assets/about/ss_lcx_wjy.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_微纪元</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/244034">
+              <image src='/assets/about/ss_lcx_hdhd.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_混沌蝴蝶</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/244100">
+              <image src='/assets/about/ss_jdt_rhtsz.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_人和吞食者</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/419485">
+              <image src='/assets/about/ss_lcx_mzh.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_梦之海</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2655312">
+              <image src='/assets/about/ss_lcx_san.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_山</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/244101">
+              <image src='/assets/about/ss_lcx_sy.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_诗云</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3067996">
+              <image src='/assets/about/ss_lcx_dh.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_地火</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3050594">
+              <image src='/assets/about/ss_lcx_zwd.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_朝闻道</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/244174">
+              <image src='/assets/about/ss_lcx_qssd.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_球状闪电</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/244099">
+              <image src='/assets/about/ss_lcx_bej.jpg' class="thumb"></image>
+              <span class="title">刘慈欣_白垩纪往事</span>
+            </a>
+          </li>
+
+
+		</ol>
+	</div>
+</div>
+
+<br>
+
+<div class="ss">
+	<div class="grid">
+		<ol>
+
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/244444">
+              <image src='/assets/about/ss_yhdg_1.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_基地</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/248329">
+              <image src='/assets/about/ss_yhdg_2.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_基地与帝国</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/257872">
+              <image src='/assets/about/ss_yhdg_3.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_第二基地</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/348697">
+              <image src='/assets/about/ss_yhdg_4.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫（银河帝国04）基地前奏</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2718928">
+              <image src='/assets/about/ss_yhdg_5.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫 迈向基地</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3101736">
+              <image src='/assets/about/ss_yhdg_6.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫 基地边缘</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3706471">
+              <image src='/assets/about/ss_yhdg_7.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫 基地与地球</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2796971">
+              <image src='/assets/about/ss_ajmf_yhdzj.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_永恒的终结</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4474664">
+              <image src='/assets/about/ss_ajmf_smzj.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_神们自己</span>
+            </a>
+          </li>
+          
+
+		</ol>
+	</div>
+</div>
+
+
+<br>
+
+<div class="ss">
+	<div class="grid">
+		<ol>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3408225">
+              <image src='/assets/about/ss_jdt_nysdgs.jpg' class="thumb"></image>
+              <span class="title">特德姜_你一生的故事</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3327256">
+              <image src='/assets/about/ss_jdt_bbrt.jpg' class="thumb"></image>
+              <span class="title">特德姜_巴比伦塔</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3373245">
+              <image src='/assets/about/ss_jdt_lw.jpg' class="thumb"></image>
+              <span class="title">特德姜_领悟</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3506332">
+              <image src='/assets/about/ss_jdt_dysd.jpg' class="thumb"></image>
+              <span class="title">特德姜_地狱是上帝不在的地方</span>
+            </a>
+          </li>
+
+		</ol>
+	</div>
+</div>
+
+
+<br>
+<div class="ss">
+	<div class="grid">
+		<ol>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2678858">
+              <image src='/assets/about/ss_cfqx.jpg' class="thumb"></image>
+              <span class="title">埃德蒙-哈密尔顿_重返群星</span>
+            </a>
+          </li>
+
+		</ol>
+	</div>
+</div>
+
+
+
+<br><br>
 喜欢玩的游戏
 ---
 
@@ -159,6 +502,7 @@ thread: 10075
 	</div>
 </div>
 
+---
 
 <div id="war">
 	<div class="grid">
@@ -297,179 +641,4 @@ thread: 10075
 		</ol>
 	</div>
 </div>
-
-
 <br><br>
-
-喜欢科幻类型的小说
----
-
-<div class="ss">
-	<div class="grid">
-		<ol>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.pan6.com/thread-54676-1-1.html">
-              <image src='/assets/about/ss_st.jpg' class="thumb"></image>
-              <span class="title">三体</span>
-            </a>
-          </li>
-
-
-
-		</ol>
-	</div>
-</div>
-
-
-<div class="ss">
-	<div class="grid">
-		<ol>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.pan6.com/thread-54676-1-1.html">
-              <image src='/assets/about/ss_st.jpg' class="thumb"></image>
-              <span class="title">三体</span>
-            </a>
-          </li>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/244444">
-              <image src='/assets/about/ss_yhdg_1.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫_基地</span>
-            </a>
-          </li>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/248329">
-              <image src='/assets/about/ss_yhdg_2.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫_基地与帝国</span>
-            </a>
-          </li>
-          
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/257872">
-              <image src='/assets/about/ss_yhdg_3.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫_第二基地</span>
-            </a>
-          </li>
-          
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/348697">
-              <image src='/assets/about/ss_yhdg_4.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫（银河帝国04）基地前奏</span>
-            </a>
-          </li>
-          
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2718928">
-              <image src='/assets/about/ss_yhdg_5.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫 迈向基地</span>
-            </a>
-          </li>
-          
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3101736">
-              <image src='/assets/about/ss_yhdg_6.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫 基地边缘</span>
-            </a>
-          </li>
-          
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3706471">
-              <image src='/assets/about/ss_yhdg_7.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫 基地与地球</span>
-            </a>
-          </li>
-          
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2796971">
-              <image src='/assets/about/ss_ajmf_yhdzj.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫_永恒的终结</span>
-            </a>
-          </li>
-          
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4474664">
-              <image src='/assets/about/ss_ajmf_smzj.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫_神们自己</span>
-            </a>
-          </li>
-          
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4474664">
-              <image src='/assets/about/ss_ajmf_smzj.jpg' class="thumb"></image>
-              <span class="title">阿西莫夫_神们自己</span>
-            </a>
-          </li>
-
-		</ol>
-	</div>
-</div>
-
-
-<div class="ss">
-	<div class="grid">
-		<ol>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3408225">
-              <image src='/assets/about/ss_jdt_nysdgs.jpg' class="thumb"></image>
-              <span class="title">特德姜_你一生的故事</span>
-            </a>
-          </li>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3327256">
-              <image src='/assets/about/ss_jdt_bbrt.jpg' class="thumb"></image>
-              <span class="title">特德姜_巴比伦塔</span>
-            </a>
-          </li>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3373245">
-              <image src='/assets/about/ss_jdt_lw.jpg' class="thumb"></image>
-              <span class="title">特德姜_领悟</span>
-            </a>
-          </li>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3506332">
-              <image src='/assets/about/ss_jdt_dysd.jpg' class="thumb"></image>
-              <span class="title">特德姜_地狱是上帝不在的地方</span>
-            </a>
-          </li>
-
-		</ol>
-	</div>
-</div>
-
-
-
-<div class="ss">
-	<div class="grid">
-		<ol>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2678858">
-              <image src='/assets/about/ss_cfqx.jpg' class="thumb"></image>
-              <span class="title">埃德蒙-哈密尔顿_重返群星</span>
-            </a>
-          </li>
-
-		</ol>
-	</div>
-</div>
-
-
-> ~ 刘慈欣的所有小说，当然包括《三体》。 <br>
-> ~ 阿西莫夫 《银河帝国》系列，《基地》、《永恒的终结》、《神们自己》 <br>
-> ~ 特德姜《地狱是上帝不在的地方》、《你一生的故事》、《领悟》 <br>
-> ~ 智齿《文明》 <br>
-> ~《埃德蒙-哈密尔顿_重返群星》 <br>
-
-> 我主要是听小说，推荐听<a href="http://www.ximalaya.com/zhubo/7712455/" target="_blank">大屁股老鼠哈哈笑</a>讲的。我认为有声小说他讲得最好。
-
-
-<br><br>
----
