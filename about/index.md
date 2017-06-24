@@ -122,6 +122,20 @@ thread: 10075
             </a>
           </li>
 
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/5326859">
+              <image src='/assets/about/ss_wsl_fy.jpg' class="thumb"></image>
+              <span class="title">倪匡_卫斯理（007）蜂云</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/5136966">
+              <image src='/assets/about/ss_wsl_dxrr.jpg' class="thumb"></image>
+              <span class="title">倪匡_卫斯理（006）地心烘炉</span>
+            </a>
+          </li>
+
 
 		</ol>
 	</div>
@@ -430,6 +444,7 @@ thread: 10075
 
 
 <br>
+
 <div class="ss">
 	<div class="grid">
 		<ol>
@@ -438,6 +453,21 @@ thread: 10075
             <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2678858">
               <image src='/assets/about/ss_cfqx.jpg' class="thumb"></image>
               <span class="title">埃德蒙-哈密尔顿_重返群星</span>
+            </a>
+          </li>
+
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://book.qidian.com/info/2892286">
+              <image src='/assets/about/ss_ch_cjzj.jpg' class="thumb"></image>
+              <span class="title">彩虹-重生之超级战舰</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://book.qidian.com/info/3530381">
+              <image src='/assets/about/ss_ch_dqjy.jpg' class="thumb"></image>
+              <span class="title">彩虹-地球纪元</span>
             </a>
           </li>
 
