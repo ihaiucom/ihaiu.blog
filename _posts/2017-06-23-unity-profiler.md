@@ -296,6 +296,9 @@ sh_java: true
 <p><img src="/assets/docpic/unity_profiler_54.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_55.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_56.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_57.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_58.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_59.jpg" style="border: solid 1px #666;" /></p>
 
 <br>
 <br>
