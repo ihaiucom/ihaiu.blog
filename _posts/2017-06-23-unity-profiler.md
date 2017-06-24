@@ -299,6 +299,11 @@ sh_java: true
 <p><img src="/assets/docpic/unity_profiler_57.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_58.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_59.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_60.jpg" style="border: solid 1px #666;" /></p>
+<br>
+<br>
+<h2 class="nav1">GPU 像素填充率及Over Draw</h2>
+<p><img src="/assets/docpic/unity_profiler_60.jpg" style="border: solid 1px #666;" /></p>
 
 <br>
 <br>
