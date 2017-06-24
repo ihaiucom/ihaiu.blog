@@ -1,4 +1,7 @@
-
+.grid
+{
+  border: 1px #d8d8d8 solid;
+}
 
 .grid > ol {
   list-style: none;
