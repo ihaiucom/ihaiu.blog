@@ -224,13 +224,6 @@ thread: 10075
           </li>
 
 			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://fight.pcgames.com.cn/warcraft/msdtxz/rpggl/1104/2186885.html">
-              <image src='/assets/about/war_boom.jpg' class="thumb"></image>
-              <span class="title">BOOM海战</span>
-            </a>
-          </li>
-
-			<li data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://war3.uuu9.com/ch/">
               <image src='/assets/about/war_3c.jpg' class="thumb"></image>
               <span class="title">澄海3C</span>
