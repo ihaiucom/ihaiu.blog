@@ -292,6 +292,10 @@ sh_java: true
 <br>
 <h1 class="nav2">定量实验分析 多线程性能提升实验</h1>
 <p><img src="/assets/docpic/unity_profiler_52.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_53.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_54.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_55.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_56.jpg" style="border: solid 1px #666;" /></p>
 
 <br>
 <br>
