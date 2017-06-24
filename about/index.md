@@ -55,13 +55,6 @@ thread: 10075
 
 			<li data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu"  draggable="false">
-              <image src='/assets/about/game_wzly.jpg' class="thumb"></image>
-              <span class="title">王者荣耀</span>
-            </a>
-          </li>
-
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false">
               <image src='/assets/about/game_wzly.png' class="thumb"></image>
               <span class="title">王者荣耀</span>
             </a>
