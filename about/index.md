@@ -456,7 +456,7 @@ thread: 10075
             </a>
           </li>
 
-          
+
 			<li data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://book.qidian.com/info/2892286">
               <image src='/assets/about/ss_ch_cjzj.jpg' class="thumb"></image>
@@ -478,6 +478,7 @@ thread: 10075
 
 
 <br><br>
+
 喜欢玩的游戏
 ---
 
