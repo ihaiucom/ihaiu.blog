@@ -1,6 +1,6 @@
 
 
-#about .grid > ol {
+#about .grid  ol {
   list-style: none;
   /*margin: -10px auto 50px;*/
   max-width: 1160px;
@@ -11,7 +11,7 @@
 }
 
 
-#about .grid > ol > div {
+#about .grid  ol  div {
   float: left;
   height: 125px;
   margin: 0px;
@@ -19,7 +19,7 @@
   width: 15%;
 }
 
-#about .grid > ol > li {
+#about .grid  ol > li {
   float: left;
   height: 125px;
   margin: 10px;
@@ -27,7 +27,7 @@
   width: 100px;
 }
 
-#about .grid > ol > li > a {
+#about .grid  ol  li  a {
   color: #3c3c3c;
   display: block;
   height: 100%;
@@ -35,7 +35,7 @@
   width: 100%;
 }
 
-#about .grid > ol > li > a > .thumb {
+#about .grid  ol  li  a  .thumb {
   background: no-repeat white;
   display: block;
   height: 100px;
@@ -43,11 +43,11 @@
   /*border: 1px #d8d8d8 solid;
   box-sizing: border-box;*/
 }
-#about .grid > ol > li > a {
+#about .grid  ol > li > a {
   color: #3c3c3c;
 }
 
-#about .grid > ol > li > a > .title {
+#about .grid  ol  li  a  .title {
   background: #FFFFFF;
   bottom: 0;
   display: block;
