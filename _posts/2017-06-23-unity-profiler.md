@@ -213,8 +213,16 @@ sh_java: true
 <br>
 <h1 class="nav2">定量实验分析 不透明物体渲染性能实验</h1>
 <p><img src="/assets/docpic/unity_profiler_30.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_31.jpg" style="border: solid 1px #666;" /></p>
 
-
+<p>纵向表头：渲染耗时</p>
+<p>横向表头：粒子系统数量</p>
+<p>柱状图：单个粒子系统的粒子统数量</p>
+<p>红米2中可以看到：</p>
+<p>粒子系统数量越多，消耗越大。</p>
+<p>粒子系统中的粒子数量越多，消耗越大。</p>
+<br>
+<p><img src="/assets/docpic/unity_profiler_32.jpg" style="border: solid 1px #666;" /></p>
 
 
 <br>
