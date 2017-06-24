@@ -230,12 +230,6 @@ thread: 10075
             </a>
           </li>
 
-			<li data-fid="1" data-index="1" draggable="true">
-            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://war3.uuu9.com/ch/">
-              <image src='/assets/about/war_3c.jpg' class="thumb"></image>
-              <span class="title">澄海3C</span>
-            </a>
-          </li>
 
 			<li data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://war3.uuu9.com/Soft/2007/200708/5582.shtml">
