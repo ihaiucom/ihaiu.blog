@@ -28,7 +28,7 @@ comments: no
 	</tr>
 	<tr>
 		<td>Email:</td>
-		<td>zengfeng75@qq.com</td>
+		<td><a href="mailto:zengfeng75@qq.com" title="发布:大海明月 Email:zengfeng75@qq.com" rel="author">zengfeng75@qq.com</a></td>
 	</tr>
 	<tr>
 		<td>Web:</td>
