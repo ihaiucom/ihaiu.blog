@@ -24,7 +24,7 @@ comments: no
 	</tr>
 	<tr>
 		<td>QQ:</td>
-		<td><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=593705098&site=qq&menu=yes">593705098</a></td>
+		<td><a href="tencent://message/?uin=593705098" title="发布:大海明月 QQ:593705098" rel="author">593705098</a></td>
 	</tr>
 	<tr>
 		<td>Email:</td>
