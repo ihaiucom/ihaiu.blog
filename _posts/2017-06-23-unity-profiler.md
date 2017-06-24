@@ -109,7 +109,7 @@ sh_java: true
     <!-- 渲染模块/图形后期处理 -->
     <tr> <td colspan="2" height="3px"> </td> </tr>
 
-    <tr>
+    <tr style="background-color: #88EECC; font-weight:bold;">
         <td>Camera.ImageEffects</td>
         <td>图形后期处理</td>
     </tr>
