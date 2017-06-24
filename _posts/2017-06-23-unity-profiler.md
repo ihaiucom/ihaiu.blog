@@ -315,6 +315,32 @@ sh_java: true
 <p><img src="/assets/docpic/unity_profiler_69.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_70.jpg" style="border: solid 1px #666;" /></p>
 <p><img src="/assets/docpic/unity_profiler_71.jpg" style="border: solid 1px #666;" /></p>
+<br>
+<br>
+<h2 class="nav1">GPU MipMap</h2>
+<p><img src="/assets/docpic/unity_profiler_72.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_73.jpg" style="border: solid 1px #666;" /></p>
+
+<br>
+<br>
+<h2 class="nav1">GPU Culling</h2>
+<p><img src="/assets/docpic/unity_profiler_74.jpg" style="border: solid 1px #666;" /></p>
+<p>Occlusion Culling, Unity Camrea的功能。对场景中静态的物体预计算，然后在动态渲染的时候查预算的数据分析静态物体是否被其他静态物体遮挡。如果遮挡了，就把该物体刨除掉从而降低Draw Call。但是查询CullQueryPortalVisibityUmbra是有一定开销的</p>
+<p><img src="/assets/docpic/unity_profiler_75.jpg" style="border: solid 1px #666;" /></p>
+<p>有些特殊情况，我们对比开启和关闭Occlusion Culling发现：</p>
+<p>Occlusion Culling 开启有一定的开销</p>
+<p>Draw Call并没有什么变化</p>
+<p>因此在这种情况下，可以不开启</p>
+<br>
+
+
+<p><img src="/assets/docpic/unity_profiler_76.jpg" style="border: solid 1px #666;" /></p>
+<p>减少Draw Call的几种方法</p>
+<p>Static Batching:对于静态物体</p>
+<p>Dynamic Batching:对于动态物体</p>
+<p>GPU Instancing:Unity5.4以后的版本，支持GPU3.1，对CPU没有开销，在GUP有一点点Shader开销。</p>
+<p>Static Batching和Dynamic Batching对CUP和内存都有而外的开销，他们对对顶点重新计算</p>
+<br>
 
 <br>
 <br>
