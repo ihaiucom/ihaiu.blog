@@ -160,7 +160,7 @@ thread: 10075
 </div>
 
 
-<div id="game">
+<div id="war">
 	<div class="grid">
 		<ol>
 
