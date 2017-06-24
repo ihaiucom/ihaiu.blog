@@ -5,7 +5,20 @@ comments: no
 ---
 
 ---
-###自我介绍
+<table>
+	<tr>
+		<td>网名:</td>
+		<td>大海明月</td>
+	</tr>
+	<tr>
+		<td>QQ:</td>
+		<td>593705098</td>
+	</tr>
+	<tr>
+		<td>Email:</td>
+		<td>zengfeng75@qq.com</td>
+	</tr>
+</table>
 
 
 <h1 class="nav1">喜欢玩的游戏</h1>
