@@ -223,7 +223,75 @@ sh_java: true
 <p>粒子系统中的粒子数量越多，消耗越大。</p>
 <br>
 <p><img src="/assets/docpic/unity_profiler_32.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_33.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_34.jpg" style="border: solid 1px #666;" /></p>
 
+<p>横向表头：单个粒子系统的粒子统数量</p>
+<p>纵向表头：粒子系统数量</p>
+<p>boady：渲染耗时，小于5毫秒用红色标识。可以看到在红米2中小于5毫秒的情况设置是30个粒子系统，单个粒子系统的粒子个数40</p>
+<br>
+<p><img src="/assets/docpic/unity_profiler_35.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_36.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_37.jpg" style="border: solid 1px #666;" /></p>
+
+<br>
+<br>
+<h1 class="nav2">定量实验分析 Shadow</h1>
+<p><img src="/assets/docpic/unity_profiler_38.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_39.jpg" style="border: solid 1px #666;" /></p>
+<p>纵向表头：Camera.Render渲染总耗时 （毫秒）</p>
+<p>横向表头：物体的个数</p>
+<p>柱状图：表示低、中、高三种分辨率的ShadowMap</p>
+<p>红米2测试，面片数选择500个</p>
+<p>ShadowMap分辨率 （低、中）和（高）有很大的差距</p>
+<p>ShadowMap分辨率 （低）和（中）差距不是很大</p>
+<br>
+
+<p><img src="/assets/docpic/unity_profiler_40.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_41.jpg" style="border: solid 1px #666;" /></p>
+<p>横向表头：单个物体的面片数量</p>
+<p>纵向表头：物体数量</p>
+<p>boady：渲染耗时，小于5毫秒用红色标识。可以看到在红米2中没有小于5毫秒的情况,因此在红米2上建议不要开启实时阴影。</p>
+<br>
+
+<p><img src="/assets/docpic/unity_profiler_42.jpg" style="border: solid 1px #666;" /></p>
+<p>红米note2中最大支持面片数为1500个的物体20个。</p>
+<br>
+
+<p><img src="/assets/docpic/unity_profiler_43.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_44.jpg" style="border: solid 1px #666;" /></p>
+
+<br>
+<br>
+<h1 class="nav2">定量实验分析 PBR与简单光照对比</h1>
+<p><img src="/assets/docpic/unity_profiler_45.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_46.jpg" style="border: solid 1px #666;" /></p>
+<p>纵向表头：Camera.Render渲染总耗时 （毫秒）</p>
+<p>横向表头：物体的个数</p>
+<p>蓝色：diffuse材质，没有贴图</p>
+<p>红色：diffuse材质，有贴图</p>
+<p>灰色：pdr材质</p>
+<br>
+<p>发现：pdr材质比diffuse耗时高一些，没有高很多，60个物体高2ms，300个物体高4ms。</p>
+<p>为什么呢？</p>
+<p>因为pdr的主要工作在gpu</p>
+<br>
+
+<p><img src="/assets/docpic/unity_profiler_47.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_48.jpg" style="border: solid 1px #666;" /></p>
+<p>横向表头：单个物体的面片数量</p>
+<p>纵向表头：物体数量</p>
+<p>boady：渲染耗时，小于5毫秒用红色标识。可以看到在红米2中没有小于5毫秒的情况,因此在红米2上建议不要使用pdr。</p>
+<br>
+
+<p><img src="/assets/docpic/unity_profiler_49.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_50.jpg" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_profiler_51.jpg" style="border: solid 1px #666;" /></p>
+
+<br>
+<br>
+<h1 class="nav2">定量实验分析 多线程性能提升实验</h1>
+<p><img src="/assets/docpic/unity_profiler_52.jpg" style="border: solid 1px #666;" /></p>
 
 <br>
 <br>
@@ -231,3 +299,4 @@ sh_java: true
 <p><a target="_blank" href="https://v.qq.com/x/page/y051477ktzc.html">UWA六月直播季第二弹之Unity引擎渲染效率全解析 </a></p>
 <p><a target="_blank" href="https://v.qq.com/x/page/r0329jx2ijw.html">UWA直播回顾| UGUI性能优化技巧</a></p>
 <p><a target="_blank" href="http://www.cnblogs.com/zhaoqingqing/p/5059479.html">Unity Profiler 性能分析</a></p>
+<p><a target="_blank" href="https://sanwen.net/a/hhczzoo.html">PBR的基本理论</a></p>
