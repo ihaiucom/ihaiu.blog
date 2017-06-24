@@ -24,7 +24,7 @@ comments: no
 	</tr>
 	<tr>
 		<td>QQ:</td>
-		<td>593705098</td>
+		<td><a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=593705098&site=qq&menu=yes">593705098</a></td>
 	</tr>
 	<tr>
 		<td>Email:</td>
