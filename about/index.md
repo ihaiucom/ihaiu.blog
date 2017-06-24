@@ -304,6 +304,164 @@ thread: 10075
 喜欢科幻类型的小说
 ---
 
+<div class="ss">
+	<div class="grid">
+		<ol>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.pan6.com/thread-54676-1-1.html">
+              <image src='/assets/about/ss_st.jpg' class="thumb"></image>
+              <span class="title">三体</span>
+            </a>
+          </li>
+
+
+
+		</ol>
+	</div>
+</div>
+
+
+<div class="ss">
+	<div class="grid">
+		<ol>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.pan6.com/thread-54676-1-1.html">
+              <image src='/assets/about/ss_st.jpg' class="thumb"></image>
+              <span class="title">三体</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/244444">
+              <image src='/assets/about/ss_yhdg_1.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_基地</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/248329">
+              <image src='/assets/about/ss_yhdg_2.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_基地与帝国</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/257872">
+              <image src='/assets/about/ss_yhdg_3.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_第二基地</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/348697">
+              <image src='/assets/about/ss_yhdg_4.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫（银河帝国04）基地前奏</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2718928">
+              <image src='/assets/about/ss_yhdg_5.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫 迈向基地</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3101736">
+              <image src='/assets/about/ss_yhdg_6.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫 基地边缘</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3706471">
+              <image src='/assets/about/ss_yhdg_7.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫 基地与地球</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2796971">
+              <image src='/assets/about/ss_ajmf_yhdzj.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_永恒的终结</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4474664">
+              <image src='/assets/about/ss_ajmf_smzj.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_神们自己</span>
+            </a>
+          </li>
+          
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/4474664">
+              <image src='/assets/about/ss_ajmf_smzj.jpg' class="thumb"></image>
+              <span class="title">阿西莫夫_神们自己</span>
+            </a>
+          </li>
+
+		</ol>
+	</div>
+</div>
+
+
+<div class="ss">
+	<div class="grid">
+		<ol>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3408225">
+              <image src='/assets/about/ss_jdt_nysdgs.jpg' class="thumb"></image>
+              <span class="title">特德姜_你一生的故事</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3327256">
+              <image src='/assets/about/ss_jdt_bbrt.jpg' class="thumb"></image>
+              <span class="title">特德姜_巴比伦塔</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3373245">
+              <image src='/assets/about/ss_jdt_lw.jpg' class="thumb"></image>
+              <span class="title">特德姜_领悟</span>
+            </a>
+          </li>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/3506332">
+              <image src='/assets/about/ss_jdt_dysd.jpg' class="thumb"></image>
+              <span class="title">特德姜_地狱是上帝不在的地方</span>
+            </a>
+          </li>
+
+		</ol>
+	</div>
+</div>
+
+
+
+<div class="ss">
+	<div class="grid">
+		<ol>
+
+			<li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.ximalaya.com/7712455/album/2678858">
+              <image src='/assets/about/ss_cfqx.jpg' class="thumb"></image>
+              <span class="title">埃德蒙-哈密尔顿_重返群星</span>
+            </a>
+          </li>
+
+		</ol>
+	</div>
+</div>
+
+
 > ~ 刘慈欣的所有小说，当然包括《三体》。 <br>
 > ~ 阿西莫夫 《银河帝国》系列，《基地》、《永恒的终结》、《神们自己》 <br>
 > ~ 特德姜《地狱是上帝不在的地方》、《你一生的故事》、《领悟》 <br>
