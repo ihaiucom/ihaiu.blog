@@ -112,7 +112,7 @@ thread: 10075
 ---
 
 
-<div class="ss">
+<div class="ss" id="ss">
 	<div class="grid">
 		<ol>
 
