@@ -5,6 +5,17 @@ comments: yes
 thread: 10075
 ---
 
+---
+<table>
+  
+  <tr>
+    <td>SETI QQ群:</td>
+    <td>486119189</td>
+  </tr>
+ 
+</table>
+<br><br>
+
 
 <style type="text/css">
 
