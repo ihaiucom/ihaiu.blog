@@ -85,6 +85,68 @@ thread: 10075
 
 
 
+
+<div class="ss" id="ss">
+  <div class="grid">
+    <ol>
+
+      <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="https://v.qq.com/x/page/t0302kb702t.html">
+              <image src='/assets/about/v_10jiyi.jpeg' class="thumb"></image>
+              <span class="title">10部记忆移植电影连成一个故事</span>
+            </a>
+          </li>
+
+          
+
+      <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://www.7791.com.cn/video/75202.html">
+              <image src='http://img.7791.com.cn/pic/uploadimg/2017-1/05430101586A63AF641DA418248A52E5.jpg' class="thumb"></image>
+              <span class="title">15分钟看完脑洞机器人剧西部世界</span>
+            </a>
+          </li>
+
+      <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://v.qq.com/boke/gplay/35833166a9718ad1d3ab2333ed6ab85c_c1j000001up8s87_5_g0306vez1yi.html">
+              <image src='http://vpic.video.qq.com/21684792/g0306vez1yi_160_90_3.jpg' class="thumb"></image>
+              <span class="title">7分钟看完世界奇妙物语最新篇</span>
+            </a>
+          </li>
+
+
+      <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="http://v.qq.com/boke/gplay/35833166a9718ad1d3ab2333ed6ab85c_c1j000001up8s87_7_m0164hagtx4.html">
+              <image src='/assets/about/v_3tjpeg.jpg' class="thumb"></image>
+              <span class="title">12分钟看完90万字科幻神作《三体》</span>
+            </a>
+          </li>
+
+
+      <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="https://v.qq.com/x/page/b0347b5uxym.html">
+              <image src='/assets/about/v_3tjpeg.jpg' class="thumb"></image>
+              <span class="title">三分钟科幻动作电影精彩剪辑，每个画面都那么震撼</span>
+            </a>
+          </li>
+
+      <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu"  draggable="false" href="https://v.qq.com/x/page/m0503a24oa7.html">
+              <image src='/assets/about/v_hy.jpeg' class="thumb"></image>
+              <span class="title">10分钟带你看完火影续集博人传！终极剧透！</span>
+            </a>
+          </li>
+
+
+
+
+    </ol>
+  </div>
+</div>
+
+
+
+
+
 喜欢科幻类型的小说
 ---
 ---
