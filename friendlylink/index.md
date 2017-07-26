@@ -90,6 +90,15 @@ thread: 20170310
 <h2>博客</h2>
 <div class="" >
         <ul>
+
+        
+        
+          
+           <li title="Lua入门系列" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.jellythink.com/archives/882" draggable="false">
+              <span class="title">Lua入门系列</span>
+            </a>
+          </li>
           
            <li title="云风的 BLOG" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://blog.codingnow.com/" draggable="false">
