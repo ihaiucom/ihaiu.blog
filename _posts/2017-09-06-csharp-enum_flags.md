@@ -96,6 +96,11 @@ namespace Games.Wars
         {
             return (int)(RelationType.Enemy & relation) != 0;
         }
+
+        public static bool RContain(this RelationType relation, RelationType item)
+        {
+            return (int)(item & relation) != 0;
+        }
     }
 }
 
