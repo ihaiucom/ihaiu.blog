@@ -244,6 +244,21 @@ thread: 20170310
           </li>
 
 
+          
+           <li title="Cxihu田树东的游戏开发备忘录" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/cxihu/article/list/1" draggable="false">
+              <span class="title">Cxihu田树东的游戏开发备忘录( Socket, C#, Unity)</span>
+            </a>
+          </li>
+
+          
+           <li title="skywind" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://my.csdn.net/skywind" draggable="false">
+              <span class="title">skywind( 同步， 算法， AI)</span>
+            </a>
+          </li>
+
+
 
         </ul>
 
@@ -251,6 +266,36 @@ thread: 20170310
 </div>
 
 
+
+
+
+<br>
+<br>
+<br>
+
+<h2>设计模式</h2>
+<div class="" >
+        <ul>
+
+           <li title="23种设计模式" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/cxihu/article/details/50792266" draggable="false">
+              <span class="title">23种设计模式</span>
+            </a>
+          </li>
+
+
+           <li title="Design Patterns Written in Unity3D" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/ihaiucom/learn.Design-Pattern/tree/master/Design-Pattern" draggable="false">
+              <span class="title">Design Patterns Written in Unity3D</span>
+            </a>
+          </li>
+
+
+
+
+          
+        </ul>
+</div>
 
 
 
@@ -472,6 +517,11 @@ thread: 20170310
             </a>
           </li>
 
+           <li title="A* Pathfinding Project Pro" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://www.assetstore.unity3d.com/en/#!/content/87744" draggable="false">
+              <span class="title">A* Pathfinding Project Pro</span>
+            </a>
+          </li>
         
 
         </ul>
@@ -486,6 +536,117 @@ thread: 20170310
 <h2>同步</h2>
 <div class="" >
         <ul>
+
+           <li title="帧同步实例 Lockstep Sample" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://bitbucket.org/brimock/" draggable="false">
+              <span class="title">帧同步实例 Lockstep</span>
+            </a>
+          </li>
+
+
+           <li title="帧同步实例 Lockstep Sample" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://clintonbrennan.com/2013/12/lockstep-implementation-in-unity3d/" draggable="false">
+              <span class="title">帧同步实例 Lockstep 英文文档</span>
+            </a>
+          
+           <li title="手游帧同步的研究" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/langresser_king/article/details/46756393" draggable="false">
+              <span class="title">手游帧同步的研究</span>
+            </a>
+
+           <li title="帧同步在竞技类网络游戏中的应用" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/cxihu/article/details/52103467" draggable="false">
+              <span class="title">帧同步在竞技类网络游戏中的应用</span>
+            </a>
+
+
+           <li title="动作手游实时PVP帧同步方案（客户端）" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/jxw167/article/details/71602447" draggable="false">
+              <span class="title">动作手游实时PVP帧同步方案（客户端）</span>
+            </a>
+
+            
+           <li title="1500 Archers on a 28.8: Network Programming in Age of Empires and Beyond" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://www.gamasutra.com/view/feature/131503/1500_archers_on_a_288_network_.php?page=1" draggable="false">
+              <span class="title">1500 Archers on a 28.8: Network Programming in Age of Empires and Beyond</span>
+            </a>
+
+
+           <li title="Unity 3d 帧同步">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/l_jinxiong/article/details/48917715" draggable="false">
+              <span class="title">Unity 3d 帧同步</span>
+            </a>
+
+           <li title="Unity 3d 帧同步 服务端">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/caolaoyao/AsycServer" draggable="false">
+              <span class="title">Unity 3d 帧同步 服务端</span>
+            </a>
+
+           <li title="Unity 3d 帧同步 客户端">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/caolaoyao/AsycClient" draggable="false">
+              <span class="title">Unity 3d 帧同步 客户端</span>
+            </a>
+           <li title="[半闲之人] 使用UGUI实现虚拟摇杆【项目示例]">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.manew.com/thread-42473-1-1.html" draggable="false">
+              <span class="title">[半闲之人] 使用UGUI实现虚拟摇杆【项目示例]</span>
+            </a>
+           <li title="[半闲之人] 通过Zxing生成和识别二维码">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.manew.com/thread-47945-1-1.html" draggable="false">
+              <span class="title">[半闲之人] 通过Zxing生成和识别二维码</span>
+            </a>
+
+
+          
+           <li title="再谈网游同步技术：实时动作游戏同步方式和传输协议选择" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/sgnyyy/article/details/50417183" draggable="false">
+              <span class="title">再谈网游同步技术：实时动作游戏同步方式和传输协议选择</span>
+            </a>
+          </li>
+          
+           <li title="帧间同步模式：《帧锁定同步算法》（2007）" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/skywind/article/details/6179506" draggable="false">
+              <span class="title">帧间同步模式：《帧锁定同步算法》（2007）</span>
+            </a>
+          </li>
+
+           <li title="玩法规避模式：《网络游戏同步法则》" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.360doc.com/content/11/0306/08/110467_98532515.shtml" draggable="false">
+              <span class="title">玩法规避模式：《网络游戏同步法则》（2005）</span>
+            </a>
+          </li>
+
+
+
+           <li title="预测插值模式：《影子跟随算法》（2007）" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://chanye.07073.com/guonei/1185703.html" draggable="false">
+              <span class="title">预测插值模式：《影子跟随算法》（2007）</span>
+            </a>
+          </li>
+
+
+           <li title="Unity3D客户端实时同步技术 网格" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/jxw167/article/details/68923373" draggable="false">
+              <span class="title">Unity3D客户端实时同步技术 网格</span>
+            </a>
+          </li>
+
+
+           <li title="Unity3D 多人网络游戏-客户端于服务器的同步" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/shuaishuai721/article/details/40656925" draggable="false">
+              <span class="title">Unity3D 多人网络游戏-客户端于服务器的同步 Unity Network Demo</span>
+            </a>
+          </li>
+
+
+           <li title="unity3d network 批量同步（插值平滑）子物体位置和旋转" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://blog.csdn.net/qq_16072507/article/details/65446189" draggable="false">
+              <span class="title">unity3d network 批量同步（插值平滑）子物体位置和旋转</span>
+            </a>
+          </li>
+
+
+
+
 
            <li title="位置同步策略" data-fid="1" data-index="1" draggable="true">
             <a target="_blank" contextmenu="thumb-menu" href="http://blog.codingnow.com/2012/03/dev_note_12.html" draggable="false">
@@ -544,6 +705,54 @@ thread: 20170310
         </ul>
 </div>
 
+
+
+
+
+
+<br>
+<br>
+<br>
+
+<h2>Unity Astore</h2>
+<div class="" >
+        <ul>
+
+
+          <li title="Forge Networking Remastered" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://www.assetstore.unity3d.com/en/#!/content/38344" draggable="false">
+              <span class="title">网络同步 Forge Networking Remastered</span>
+            </a>
+          </li>
+
+           <li title="Master Server Framework" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://www.assetstore.unity3d.com/en/#!/content/71391" draggable="false">
+              <span class="title">网络同步 Master Server Framework</span>
+            </a>
+          </li>
+
+           <li title="Netnology Network Library" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://www.assetstore.unity3d.com/en/#!/content/25059" draggable="false">
+              <span class="title">网络同步 Netnology Network Library</span>
+            </a>
+          </li>
+
+           <li title="Netnology Network Library" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://www.assetstore.unity3d.com/en/#!/content/25059" draggable="false">
+              <span class="title">网络同步 Netnology Network Library</span>
+            </a>
+          </li>
+
+           <li title="操作交互手势 Fingers - Touch Gestures for Unity" data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://www.assetstore.unity3d.com/en/#!/content/41076" draggable="false">
+              <span class="title">操作交互手势 Fingers - Touch Gestures for Unity</span>
+            </a>
+          </li>
+
+
+
+        </ul>
+</div>
 
 
 <br>
