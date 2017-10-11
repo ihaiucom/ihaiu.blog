@@ -575,10 +575,6 @@ thread: 20170310
               <span class="title">[云图] A*寻路 基础到入门-2战术寻路</span>
             </a>
           </li>
-          
-          
-        
-
         </ul>
 </div>
 
@@ -726,8 +722,6 @@ thread: 20170310
               <span class="title">游戏编程干货：游戏技能系统全解析 </span>
             </a>
           </li>
-
-
         </ul>
 </div>
 
