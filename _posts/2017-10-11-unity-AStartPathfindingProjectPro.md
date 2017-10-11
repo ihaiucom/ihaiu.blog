@@ -1,11 +1,11 @@
 ---
 layout: post
-title: A* Pathfinding Project Pro 文档收集
+title: AStar Pathfinding Project Pro 文档收集
 date: 2017-09-06 13:00:00
 categories: 寻路
-tags: C# Pathfinding Astart Pathfinding
-excerpt: A* Pathfinding Project Pro 文档收集
-shareexcerpt: A* Pathfinding Project Pro 文档收集
+tags: C# Pathfinding AStar Pathfinding
+excerpt: AStar Pathfinding Project Pro 文档收集
+shareexcerpt: AStar Pathfinding Project Pro 文档收集
 thread: 20171011000000
 author: 大海明月
 authorQQ: 593705098
