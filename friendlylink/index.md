@@ -507,6 +507,26 @@ thread: 20170310
 <br>
 <br>
 
+<h2>AI</h2>
+<div class="" >
+        <ul>
+
+           
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://m.manew.com/thread-50154-1-1.html" draggable="false">
+              <span class="title">[书籍推荐] Unity3D人工智能编程精粹.pdf</span>
+            </a>
+          </li>
+          
+
+        </ul>
+</div>
+
+
+<br>
+<br>
+<br>
+
 <h2>寻路</h2>
 <div class="" >
         <ul>
@@ -522,6 +542,41 @@ thread: 20170310
               <span class="title">A* Pathfinding Project Pro</span>
             </a>
           </li>
+
+
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://m.manew.com/thread-106441-1-1.html" draggable="false">
+              <span class="title">[蛮牛干货] 如何将influence map的机制融入到当前较火的unity寻路插件A* pathfinding project里</span>
+            </a>
+          </li>
+
+
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.cnblogs.com/Keyle/p/4784299.html" draggable="false">
+              <span class="title">[Get Started with the A* Pathfinding Project</span>
+            </a>
+          </li>
+
+
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.manew.com/blog-31221-42054.html" draggable="false">
+              <span class="title">Unity AstarPathfinding 即A*寻路的 学习使用及注意事项</span>
+            </a>
+          </li>
+
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://m.manew.com/thread-48872-1-1.html" draggable="false">
+              <span class="title">[云图] A*寻路 基础到入门-2战术寻路</span>
+            </a>
+          </li>
+          
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://m.manew.com/thread-48872-1-1.html" draggable="false">
+              <span class="title">[云图] A*寻路 基础到入门-2战术寻路</span>
+            </a>
+          </li>
+          
+          
         
 
         </ul>
@@ -671,6 +726,7 @@ thread: 20170310
               <span class="title">游戏编程干货：游戏技能系统全解析 </span>
             </a>
           </li>
+
 
         </ul>
 </div>
