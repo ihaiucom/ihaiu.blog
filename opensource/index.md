@@ -8,6 +8,11 @@ thread: 20170310
 <table>
 
   <tr>
+      <td><a target="_blank" href="https://pan.baidu.com/s/1geSeW4j">ihaiu.SceneViewEditor.unitypackage (Unity场景视角和摄像机视角互相转换)</a></td>
+      <td><a target="_blank" href="https://pan.baidu.com/s/1geSeW4j">https://pan.baidu.com/s/1geSeW4j</a></td>
+  </tr>
+
+  <tr>
       <td><a target="_blank" href="https://github.com/ihaiucom/ihaiu.Loger">ihaiu.Loger (C# Log 用来适配 Console.WriteLine 和 Unity Debug)</a></td>
       <td><a target="_blank" href="https://github.com/ihaiucom/ihaiu.Loger">https://github.com/ihaiucom/ihaiu.Loger</a></td>
   </tr>
