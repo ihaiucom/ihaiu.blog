@@ -249,9 +249,31 @@ OnLeftRoom
 </pre>
 
 
-<li>CoroutineNode</li>
+<li>TrueSyncManager</li>
 <pre>
-协程节点
+管理、驱动帧同步 
+</pre>
+
+<li>TrueSyncBehaviour</li>
+<pre>
+帧同步行为，继承自 MonoBehaviour, 实现接口 ITrueSyncBehaviourGamePlay, ITrueSyncBehaviourCallbacks
+
+// 该行为的拥有者玩家
+public TSPlayerInfo owner;
+
+// 本地玩家，相当于快捷访问本地玩家
+public TSPlayerInfo localOwner;
+
+// 快捷访问
+TSTransform tsTransform
+TSTransform2D tsTransform2D
+TSRigidBody tsRigidBody
+TSRigidBody2D tsRigidBody2D
+TSCollider tsCollider
+TSCollider2D tsCollider2D
+
+// 基本上就是上面这些属性，实现的接口都是空的没有写业务逻辑
+
 </pre>
 
 
@@ -261,6 +283,134 @@ OnLeftRoom
 在TrueSyncManager.SyncedStartCoroutine 调 StartCoroutine(IEnumerator coroutine) 启动一个协程
 在TrueSyncManager驱动UpdateAllCorutines()
 </pre>
+
+
+
+<li>ITrueSyncBehaviour</li>
+<pre>
+接口 帧同步行为
+就只有一个方法
+// 设置游戏信息 (本地玩家， 玩家数量)
+void SetGameInfo(TSPlayerInfo localOwner, int numberOfPlayers);
+</pre>
+
+
+<li>ITrueSyncBehaviourGamePlay</li>
+<pre>
+接口 玩家操作帧同步行为, 继承自ITrueSyncBehaviour
+
+// 同步 玩家输入操作
+void OnSyncedInput();
+
+
+
+// 同步 读取玩家操作
+void OnSyncedUpdate();
+
+void OnPreSyncedUpdate();
+</pre>
+
+
+<li>ITrueSyncBehaviourCallbacks</li>
+<pre>
+接口 回调同步行为, 继承自ITrueSyncBehaviour
+
+// 开始
+void OnSyncedStart();
+
+
+
+// 开始 -- 只调本地玩家的
+void OnSyncedStartLocalPlayer();
+
+// 游戏暂停
+void OnGamePaused();
+
+// 游戏继续
+void OnGameUnPaused();
+
+// 可以游戏了， 什么时候调用 我也不清楚
+void OnGameEnded();
+
+
+// 有玩家离线时调用
+void OnPlayerDisconnection(int playerId);
+</pre>
+
+
+
+
+
+<li>TSRandom</li>
+<pre>
+随机数
+http://www.codeproject.com/Articles/164087/Random-Number-Generation
+https://github.com/ihaiucom/learn.PhotonTrueSync/blob/master/PhotonGame/Assets/TrueSync/Engine/Math/TSRandom.cs
+
+原理是，传一个因素进去，然后里面生成N数量的数组。每个数有一个公式计算来生成。所以传相同的因素生成的结果是一样的。
+获取随机数的时候根据当前索引mti依次读取数组里面的数。当mti大于N时，内部重新生成默认因素是5489U
+</pre>
+
+<p><a target="_blank" href="http://www.codeproject.com/Articles/164087/Random-Number-Generation">Random-Number-Generation </a></p>
+<p><a target="_blank" href="https://github.com/ihaiucom/learn.PhotonTrueSync/blob/master/PhotonGame/Assets/TrueSync/Engine/Math/TSRandom.cs">TrueSync/Engine/Math/TSRandom.cs</a></p>
+
+
+
+
+
+<li>StateTracker</li>
+<pre>
+状态跟踪
+
+//TSRandom 用到
+StateTracker.AddTracking(r, "mt");
+StateTracker.AddTracking(r, "mti");
+
+//TrueSyncManager 用到
+StateTracker.AddTracking(this, "time");
+
+
+//TSTransform 用到 配合 [AddTracking] Attribute 使用, StateTracker.AddTracking(object obj)通过反射获取obj的成员变量
+StateTracker.AddTracking(this);
+</pre>
+
+
+
+<li>ResourcePool 对象池</li>
+<pre>
+ResourcePool 是一个抽象对象池,他有一个静态对象池列表。他管理所有对象池的清理CleanUpAll();
+
+
+
+
+ResourcePool<T> 是ResourcePool派生类。里面有一个对象栈存储空闲的对象。
+
+// 还回对象
+GiveBack(T obj)
+
+// 获取对象, 如果T是ResourcePoolItem的派生类就会调对象的CleanUp()方法
+T GetNew()
+
+// 实例化对象
+T NewInstance()
+
+
+
+ResourcePoolItem 是对象池对象接口，实现该接口的对象在获取对象时会调CleanUp()方法
+
+
+
+
+【使用】
+internal class ResourcePoolListSyncedData : ResourcePool<List<SyncedData>>
+internal class ResourcePoolStateTrackerState : ResourcePool<StateTracker.State>
+internal class ResourcePoolSyncedData : ResourcePool<SyncedData>
+
+
+
+</pre>
+
+
 
 </ul>
 </div>
