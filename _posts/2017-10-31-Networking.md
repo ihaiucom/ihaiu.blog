@@ -137,5 +137,131 @@ sh_csharp: true
 </li>
 
 
+
+<li data-fid="1" data-index="1" draggable="true">
+<a target="_blank" contextmenu="thumb-menu" href="http://forum.photonengine.com/" draggable="false">
+  <span class="title">Photon forum 论坛 </span>
+</a>
+</li>
+
+
+<li data-fid="1" data-index="1" draggable="true">
+<a target="_blank" contextmenu="thumb-menu" href="https://mp.weixin.qq.com/s?__biz=MzU1NDI4NDIyNg==&mid=100000015&idx=1&sn=abc79b9fb757a296d363ffc60eaddb52&chksm=7be4a4a24c932db4516e070cb9a4a9422be00cbf3f5ef652cc91866af71625f84418805d0d8f&scene=18#rd" draggable="false">
+  <span class="title">Photon产品介绍 </span>
+</a>
+</li>
+
+
 </ul>
 </div>
+
+
+<br>
+<br>
+<h2 class="nav2">Photon IPunCallbacks 调用PhotonNetwork.ConnectUsingSettings(gameVersion);时的回调</h2>
+<div class="" >
+<pre>
+OnPhotonCustomRoomPropertiesChanged
+OnPhotonCustomRoomPropertiesChanged
+OnCreatedRoom
+OnJoinedRoom
+</pre>
+</div>
+
+<br>
+<br>
+<h2 class="nav2">Photon IPunCallbacks 调用CreateRoom时的回调</h2>
+<div class="" >
+<pre>
+OnConnectedToPhoton
+OnConnectedToMaster
+</pre>
+</div>
+
+
+<br>
+<br>
+<h2 class="nav2">Photon IPunCallbacks 调用JoinRandomRoom时的回调</h2>
+<div class="" >
+<pre>
+OnPhotonRandomJoinFailed
+</pre>
+</div>
+
+
+<br>
+<br>
+<h2 class="nav2">Photon IPunCallbacks 调用PhotonNetwork.LeaveRoom时的回调</h2>
+<div class="" >
+<pre>
+OnLeftRoom
+OnConnectedToMaster
+</pre>
+</div>
+
+
+<br>
+<br>
+<h2 class="nav2">Photon IPunCallbacks 自己调用PhotonNetwork.LeaveRoom时的回调</h2>
+<div class="" >
+<pre>
+OnLeftRoom
+OnConnectedToMaster
+</pre>
+</div>
+
+
+<br>
+<br>
+<h2 class="nav2">Photon IPunCallbacks 其他玩家调用PhotonNetwork.LeaveRoom时的回调</h2>
+<div class="" >
+<pre>
+OnPhotonPlayerDisconnected(PhotonPlayer other)
+</pre>
+</div>
+
+
+<br>
+<br>
+<h2 class="nav2">Photon IPunCallbacks 调用PhotonNetwork.LoadLevel;时的回调</h2>
+<div class="" >
+<pre>
+OnLeftRoom
+</pre>
+</div>
+
+
+
+<br>
+<br>
+<h2 class="nav2">TrueSync代码</h2>
+<div class="" >
+<ul>
+
+<li>TrueSyncConfig</li>
+<pre>
+帧同步配置
+</pre>
+
+<li>TrueSyncManager</li>
+<pre>
+管理、驱动帧同步 
+</pre>
+
+
+<li>CoroutineNode</li>
+<pre>
+协程节点
+</pre>
+
+
+<li>CoroutineScheduler</li>
+<pre>
+协程调用
+在TrueSyncManager.SyncedStartCoroutine 调 StartCoroutine(IEnumerator coroutine) 启动一个协程
+在TrueSyncManager驱动UpdateAllCorutines()
+</pre>
+
+</ul>
+</div>
+
