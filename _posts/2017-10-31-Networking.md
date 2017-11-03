@@ -435,9 +435,74 @@ InputDataBase ProvideInputData()
 // 是在lockstep创建的时候传这个方法给他
 void GetLocalData(InputDataBase playerInputData)
 
-// 
+// 帧更新
+// 添加当前时间 time += lockedTimeStep;
+// 非录像模式， 检测GameObject CheckGameObjectsSafeMap();
+// 遍历generalBehaviours普通行为列表，调行为的OnPreSyncedUpdate()。还会调协程更新instance.scheduler.UpdateAllCoroutines();
+// 遍历allInputData,和对应玩家的行为列表behaviorsByPlayer。 调行为的OnPreSyncedUpdate()。还会调协程更新instance.scheduler.UpdateAllCoroutines();
+// 遍历generalBehaviours普通行为列表，调行为的OnSyncedUpdate()。还会调协程更新instance.scheduler.UpdateAllCoroutines();
+// 遍历allInputData,和对应玩家的行为列表behaviorsByPlayer。 调行为的OnSyncedUpdate()。还会调协程更新instance.scheduler.UpdateAllCoroutines();
+// 检测占存行为列表CheckQueuedBehaviours（）。给他们分配拥有者和调同步开始方法
 // 是在lockstep创建的时候传这个方法给他
 void OnStepUpdate(List&lt;InputDataBase&gt; allInputData)
+
+
+// 玩家离线消息处理
+// 调TrueSyncManagedBehaviour.OnPlayerDisconnection(generalBehaviours, behaviorsByPlayer, playerId);
+// 是在lockstep创建的时候传这个方法给他
+ void OnPlayerDisconnection(byte playerId)
+
+
+
+// 游戏开始消息处理
+// 是在lockstep创建的时候传这个方法给他
+        void OnGameStarted() {
+            TrueSyncManagedBehaviour.OnGameStarted(generalBehaviours, behaviorsByPlayer);
+            instance.scheduler.UpdateAllCoroutines();
+
+            CheckQueuedBehaviours();
+        }
+
+
+// 游戏暂停消息处理
+// 是在lockstep创建的时候传这个方法给他
+        void OnGamePaused() {
+            TrueSyncManagedBehaviour.OnGamePaused(generalBehaviours, behaviorsByPlayer);
+            instance.scheduler.UpdateAllCoroutines();
+        }
+
+// 游戏继续消息处理
+        void OnGameUnPaused() {
+            TrueSyncManagedBehaviour.OnGameUnPaused(generalBehaviours, behaviorsByPlayer);
+            instance.scheduler.UpdateAllCoroutines();
+        }
+
+// 游戏结束消息处理
+        void OnGameEnded() {
+            TrueSyncManagedBehaviour.OnGameEnded(generalBehaviours, behaviorsByPlayer);
+            instance.scheduler.UpdateAllCoroutines();
+        }
+
+
+// 移除物理对象事件处理
+// 会移除该对象的GameObject上所有同步行为 调RemoveFromTSMBList
+// PhysicsManager.instance.OnRemoveBody(OnRemovedRigidBody); 在这里注册
+private void OnRemovedRigidBody(IBody body) 
+
+// 从tsmbList列表中，移除behaviours
+private void RemoveFromTSMBList(List<TrueSyncManagedBehaviour> tsmbList, List<TrueSyncBehaviour> behaviours)
+
+// 清理
+// 清理对象池 ResourcePool.CleanUpAll();
+// 清理状态跟踪 StateTracker.CleanUp();
+// 去除实例变量引用 instance = null;
+public static void CleanUp()
+
+
+// Unity的消息。退出应用
+        void OnApplicationQuit() {
+            EndSimulation();
+        }
 </pre>
 
 
