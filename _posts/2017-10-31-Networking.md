@@ -504,7 +504,7 @@ public static void CleanUp()
             EndSimulation();
         }
 
-        
+
 </pre>
 
 
@@ -571,6 +571,24 @@ TSCollider2D tsCollider2D
 // 基本上就是上面这些属性，实现的接口都是空的没有写业务逻辑
 
 </pre>
+
+
+<li>TrueSyncManagedBehaviour</li>
+<pre>
+帧同步行为管理器，实现接口 ITrueSyncBehaviourGamePlay, ITrueSyncBehaviour, ITrueSyncBehaviourCallbacks
+主要是包装了TrueSyncBehaviour/ITrueSyncBehaviour, 实现的接口方法直接掉TrueSyncBehaviour的放方法，TrueSyncBehaviour的OnSyncedStartLocalPlayer 方法该行为是本地用户时才调
+
+// 有一个属性, true是，不会参与帧更新
+    [AddTracking]
+    public bool disabled;
+
+
+后面就是一些全局静态方法，用管理处理列表的事件
+
+
+
+</pre>
+
 
 
 <li>CoroutineScheduler</li>
@@ -687,6 +705,10 @@ StateTracker.AddTracking(this, "time");
 //TSTransform 用到 配合 [AddTracking] Attribute 使用, StateTracker.AddTracking(object obj)通过反射获取obj的成员变量
 StateTracker.AddTracking(this);
 
+// TrueSyncManagedBehaviour 用到
+StateTracker.AddTracking(this);
+StateTracker.AddTracking(trueSyncBehavior);
+
 
 
 
@@ -753,6 +775,51 @@ internal class ResourcePoolSyncedData : ResourcePool&lt;SyncedData&gt;
 </pre>
 
 
+
+
+<li>SerializableDictionary</li>
+<pre>
+public class SerializableDictionary&lt;TKey, TValue&gt; : Dictionary&lt;TKey, TValue&gt;, ISerializationCallbackReceiver
+
+其实就是一个字典Dictionary, 然后实现了Unity的接口ISerializationCallbackReceiver。OnBeforeSerialize、OnAfterDeserialize
+
+派生类
+public class SerializableDictionaryByteByte : SerializableDictionary&lt;byte, byte&gt;
+public class SerializableDictionaryByteByteArray : SerializableDictionary&lt;byte, byte[]&gt;
+public class SerializableDictionaryByteInt : SerializableDictionary&lt;byte, int&gt;
+public class SerializableDictionaryBytePlayer : SerializableDictionary&lt;byte, TSPlayer&gt;
+public class SerializableDictionaryByteString : SerializableDictionary&lt;byte, string&gt;
+public class SerializableDictionaryIntSyncedData : SerializableDictionary&lt;int, SyncedData&gt;
+
+</pre>
+
+
+
+
+
+<li>SyncedInfo</li>
+<pre>
+同步信息，保存了3个属性
+
+  
+    // 玩家ID
+    public byte playerId;
+
+    // 帧
+    public int tick;
+
+    // 校验码
+    public string checksum;
+
+2 个方法
+
+// 序列化
+public static byte[] Encode(SyncedInfo info)
+
+// 解析
+public static SyncedInfo Decode(byte[] infoBytes)
+
+</pre>
 
 </ul>
 </div>
