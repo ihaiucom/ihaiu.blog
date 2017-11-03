@@ -356,6 +356,24 @@ https://github.com/ihaiucom/learn.PhotonTrueSync/blob/master/PhotonGame/Assets/T
 
 
 
+<li>StateTracker.TrackedInfo</li>
+<pre>
+状态跟踪信息， 用来保存对象引用，和对象的成员属性信息MemberInfo
+object relatedObj； 保存对象
+MemberInfo propInfo; 对象的成员属性信息
+</pre>
+
+
+<li>StateTracker.State</li>
+<pre>
+状态跟踪信息， 持有TrackedInfo跟踪信息
+
+// 保存值到value变量
+public void SaveValue()
+
+// 将保存的值用反射赋值给对象
+public void RestoreValue()
+</pre>
 
 
 <li>StateTracker</li>
@@ -372,6 +390,12 @@ StateTracker.AddTracking(this, "time");
 
 //TSTransform 用到 配合 [AddTracking] Attribute 使用, StateTracker.AddTracking(object obj)通过反射获取obj的成员变量
 StateTracker.AddTracking(this);
+
+
+// 这个是核心了， 里面保存了rollbackWindow数量的列表，AddTracking的时候回把StateTracker.State添加到所有列表里
+// SaveState 的时候就保存GenericBufferWindow当前列表的, 保存完后就GenericBufferWindow的索引移动下一个
+// RestoreState 从GenericBufferWindow当前的列表把值恢复
+StateTracker.instance.states = new GenericBufferWindow<List<StateTracker.State>>(rollbackWindow);
 </pre>
 
 
