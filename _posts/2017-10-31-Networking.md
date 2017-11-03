@@ -490,7 +490,7 @@ void OnStepUpdate(List&lt;InputDataBase&gt; allInputData)
 private void OnRemovedRigidBody(IBody body) 
 
 // 从tsmbList列表中，移除behaviours
-private void RemoveFromTSMBList(List<TrueSyncManagedBehaviour> tsmbList, List<TrueSyncBehaviour> behaviours)
+private void RemoveFromTSMBList(List&lt;TrueSyncManagedBehaviour&gt; tsmbList, List&lt;TrueSyncBehaviour&gt; behaviours)
 
 // 清理
 // 清理对象池 ResourcePool.CleanUpAll();
@@ -702,13 +702,13 @@ StateTracker.instance.states = new GenericBufferWindow&lt;List&lt;StateTracker.S
 通用缓存窗口
 
 // StateTracker 用到
-      StateTracker.instance.states = new GenericBufferWindow<List<StateTracker.State>>(rollbackWindow);
+      StateTracker.instance.states = new GenericBufferWindow&lt;List&lt;StateTracker.State&gt;&gt;(rollbackWindow);
 
 // CompoundStats 用到
-      this.bufferStats = new GenericBufferWindow<Stats>(10);
+      this.bufferStats = new GenericBufferWindow&lt;Stats&gt;(10);
 
 // AbstractLockstep 用到  
-      this.bufferSyncedInfo = new GenericBufferWindow<SyncedInfo>(3);
+      this.bufferSyncedInfo = new GenericBufferWindow&lt;SyncedInfo&gt;(3);
 
 
 构造方法： 会创建一个T[size] 的数组buffer，并且实例化T 
