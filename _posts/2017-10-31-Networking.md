@@ -246,13 +246,242 @@ OnLeftRoom
 <li>TrueSyncManager</li>
 <pre>
 管理、驱动帧同步 
+
+//同步全局配置
+static TrueSyncConfig TrueSyncGlobalConfig;
+// 配置
+static TrueSyncConfig Config;
+TrueSyncConfig ActiveConfig;
+// 锁帧
+private AbstractLockstep lockstep;
+// 协程调度
+CoroutineScheduler scheduler;
+
+
+// 玩家预设列表
+GameObject[] playerPrefabs;
+// 
+ private Dictionary&lt;int, List&lt;GameObject&gt;&gt; gameOjectsSafeMap = new Dictionary&lt;int, List&lt;GameObject&gt;&gt;();
+
+
+// 非哪个玩家拥有的行为，叫做普通行为
+List&lt;TrueSyncManagedBehaviour&gt; generalBehaviours = new List&lt;TrueSyncManagedBehaviour&gt;();
+
+// 对应玩家所拥有的行为
+Dictionary&lt;byte, List&lt;TrueSyncManagedBehaviour&gt;&gt; behaviorsByPlayer;
+
+// 一个临时缓存池，用在后面注册行为的时候占存。在帧更新的时候OnStepUpdate调用CheckQueuedBehaviours。分配玩家拥有者和调OnSyncedStart。然后就清理该列表
+List&lt;TrueSyncManagedBehaviour&gt; queuedBehaviours = new List&lt;TrueSyncManagedBehaviour&gt;();
+
+// 保存了所有行为的字典
+Dictionary&lt;ITrueSyncBehaviour, TrueSyncManagedBehaviour&gt; mapBehaviorToManagedBehavior = new Dictionary&lt;ITrueSyncBehaviour, TrueSyncManagedBehaviour&gt;();
+
+// 时间
+FP time = 0;
+static FP Time;
+
+// 帧时间
+static FP DeltaTime;
+
+// 帧
+static int Ticks;
+static int LastSafeTick;
+
+// 重力
+static TSVector Gravity;
+
+// 玩家列表
+static List&lt;TSPlayerInfo&gt; Players；
+
+// 本地玩家
+static TSPlayerInfo LocalPlayer；
+
+
+// 启动状态, 在Update决定什么时候运行lockstep.RunSimulation(true);
+private enum StartState { BEHAVIOR_INITIALIZED, FIRST_UPDATE, STARTED };
+private StartState startState;
+
+
+
+        void Awake() {
+            TrueSyncConfig currentConfig = ActiveConfig;
+            lockedTimeStep = currentConfig.lockedTimeStep;
+
+            // 初始化状态跟踪
+            StateTracker.Init(currentConfig.rollbackWindow);
+            // 初始化随机数
+            TSRandom.Init();
+
+            // 初始化物理管理器
+            if (currentConfig.physics2DEnabled || currentConfig.physics3DEnabled) {
+                PhysicsManager.New(currentConfig);
+                PhysicsManager.instance.LockedTimeStep = lockedTimeStep;
+                PhysicsManager.instance.Init();
+            }
+
+            // 跟踪 时间
+            StateTracker.AddTracking(this, &quot;time&quot;);
+        }
+
+
+
+
+void Start() 做了什么?
+设置instance = this;
+设置Application.runInBackground = true;
+初始化通信PhotonTrueSyncCommunicator 
+创建lockstep
+检测是否是录像模式, 如果是就加载录像
+如果配置了显示TrueSyncStats，那就初始化
+创建协程调度 scheduler = new CoroutineScheduler(lockstep);
+非录像模式下 初始化帧的玩家列表
+初始化场景中现有的帧同步行为 TrueSyncBehaviour
+实例化玩家预设playerPrefabs和同步其行为的拥有者 initBehaviors
+初始化行为拥有者，并分配给对于玩家。没有继承TrueSyncBehaviour的就继续放到普通行为列表。initGeneralBehaviors
+添加物理对象移除监听 PhysicsManager.instance.OnRemoveBody(OnRemovedRigidBody);
+设置启动状态 startState = StartState.BEHAVIOR_INITIALIZED;
+
+
+// 创建ITrueSyncBehaviour的TrueSyncManagedBehaviour
+private TrueSyncManagedBehaviour NewManagedBehavior(ITrueSyncBehaviour trueSyncBehavior)
+
+// 初始化玩家预设和他们的同步行为。行为设置拥有者，并其添加到对应玩家的行为字典里behaviorsByPlayer
+private void initBehaviors()
+
+// 对行为列表分配拥有者， 在Start(), CheckQueuedBehaviours()里调用
+private void initGeneralBehaviors(IEnumerable&lt;TrueSyncManagedBehaviour&gt; behaviours, bool realOwnerId)
+
+// 将注册行为占存列表列queuedBehaviours的行为调initGeneralBehaviors分配拥有者。调SetGameInfo和OnSyncedStart两个方法
+private void CheckQueuedBehaviours()
+
+// 只做一件事，检测启动状态，如果是第一次启动就调lockstep.RunSimulation(true);
+void Update()
+
+
+
+
+
+// 在帧同步调暂停后 恢复继续运行。instance.lockstep.RunSimulation(false);
+public static void RunSimulation()
+
+// 暂停游戏 调instance.lockstep.PauseSimulation();
+public static void PauseSimulation() 
+
+// 结束游戏 调instance.lockstep.EndSimulation();
+public static void EndSimulation()
+
+// 更新一次协程， 主要是物理里调用了。默认的协程更新在 帧更新里OnStepUpdate
+public static void UpdateCoroutines()
+
+// 添加一个协程
+public static void SyncedStartCoroutine(IEnumerator coroutine)
+
+
+
+
+// 实例化一个预设
+// 先势力化一个GameObject
+// 非录像模式将该对象添加到帧记录里。AddGameObjectOnSafeMap(go);
+// 将该对象的帧行为添加到queuedBehaviours，等待帧更新的时候分配拥有者和调度初始化方法
+// 调该对象上组件的初始化方法（ICollider注册到物理管理器里PhysicsManager, TSTransform, TSTransform2D）。InitializeGameObject
+public static GameObject SyncedInstantiate(GameObject prefab)
+public static GameObject SyncedInstantiate(GameObject prefab, TSVector position, TSQuaternion rotation)
+public static GameObject SyncedInstantiate(GameObject prefab, TSVector2 position, TSQuaternion rotation)
+
+// 将势力化的GameObject添加到当前的帧+1列表里
+private static void AddGameObjectOnSafeMap(GameObject go)
+
+// 在帧更新OnStepUpdate的时候掉, 清理销毁掉当前 Ticks + 1里的GameObject。猜测估计是帧回滚的时候把预处理的对象销毁
+private static void CheckGameObjectsSafeMap()
+
+// 调该对象上组件的初始化方法（ICollider注册到物理管理器里PhysicsManager, TSTransform, TSTransform2D）
+private static void InitializeGameObject(GameObject go, TSVector position, TSQuaternion rotation)
+
+// 销毁GameObject
+// 第一步调SyncedDisableBehaviour, 停止更新该对象上的ITrueSyncBehaviour
+// 第二步调 TSCollider和TSCollider2D 调 DestroyTSRigidBody
+public static void SyncedDestroy(GameObject gameObject)
+
+// 将GameObject的ITrueSyncBehaviour的disabled设置为true, 停止对他调帧更新方法 OnSyncedInput，OnSyncUpdate。
+public static void SyncedDisableBehaviour(GameObject gameObject)
+
+// 设置 tsColliderGO.gameObject.SetActive(false);
+// 将物理对象从lockstep销毁 instance.lockstep.Destroy(body);
+private static void DestroyTSRigidBody(GameObject tsColliderGO, IBody body)
+
+// 注册ITrueSyncBehaviour, 将他添加到queuedBehaviours。在下次CheckQueuedBehaviours的时候，也就是在下次帧更新的时候OnStepUpdate，对他分配拥有者，调SetGameInfo和OnSyncedStart两个方法
+public static void RegisterITrueSyncBehaviour(ITrueSyncBehaviour trueSyncBehaviour)
+
+// 注册游戏是否继续的委托。 调委托会返回一个bool值。 true游戏可以继续运行。lockstep里会调该方法检测是否可以继续CheckGameIsReady（）
+public static void RegisterIsReadyChecker(TrueSyncIsReady IsReadyChecker)
+
+// 移除玩家
+// 第一步将该玩家的 行为全部禁止帧更新behaviorsByPlayer[(byte)playerId],disabled = true;
+// 第二步将这些行为的GameObject上拥有TSCollider、TSCollider2D的物理全部掉DestroyTSRigidBody
+public static void RemovePlayer(int playerId)
+
+
+// 检测帧更新时间，时间到就调instance.scheduler.UpdateAllCoroutines();和lockstep.Update();
+// lockedTimeStep，帧同步一帧的时间
+// JitterTimeFactor, 为了避免浮动点数比较造成误差。if (tsDeltaTime &gt;= (lockedTimeStep - JitterTimeFactor))
+// tsDeltaTime, 用的时间还是用Unity的 tsDeltaTime += UnityEngine.Time.deltaTime;
+void FixedUpdate()
+
+// 里面创建一个输入数据结构 return new InputData();  是在lockstep创建的时候传这个方法给他
+InputDataBase ProvideInputData()
+
+// 这个方法会调本地玩家所有帧行为的OnSyncedInput方法
+// 这这个方法生命周期内 TrueSyncInput.CurrentInputData = playerInputData
+// 是在lockstep创建的时候传这个方法给他
+void GetLocalData(InputDataBase playerInputData)
+
+// 
+// 是在lockstep创建的时候传这个方法给他
+void OnStepUpdate(List&lt;InputDataBase&gt; allInputData)
 </pre>
 
 
-<li>TrueSyncManager</li>
+
+<li>ICommunicator</li>
 <pre>
-管理、驱动帧同步 
+接口 通信器
+
+// 往返时间
+int RoundTripTime();
+
+// 操作时间
+void OpRaiseEvent(byte eventCode, object message, bool reliable, int[] toPlayers);
+
+// 添加监听
+void AddEventListener(OnEventReceived onEventReceived);
 </pre>
+
+
+<li>PhotonTrueSyncCommunicator</li>
+<pre>
+帧同步 通信器， 实现ICommunicator接口
+// 往返时间
+int RoundTripTime();
+
+// 操作时间
+void OpRaiseEvent(byte eventCode, object message, bool reliable, int[] toPlayers);
+
+// 添加监听
+void AddEventListener(OnEventReceived onEventReceived);
+</pre>
+
+
+
+<li>OnEventReceived</li>
+<pre>
+代理事件， 接收消息
+
+// byte eventCode 消息编号
+// object content 消息内容
+public delegate void OnEventReceived(byte eventCode, object content);
+</pre>
+
+
 
 <li>TrueSyncBehaviour</li>
 <pre>
@@ -392,12 +621,34 @@ StateTracker.AddTracking(this, "time");
 StateTracker.AddTracking(this);
 
 
+
+
 // 这个是核心了， 里面保存了rollbackWindow数量的列表，AddTracking的时候回把StateTracker.State添加到所有列表里
 // SaveState 的时候就保存GenericBufferWindow当前列表的, 保存完后就GenericBufferWindow的索引移动下一个
 // RestoreState 从GenericBufferWindow当前的列表把值恢复
-StateTracker.instance.states = new GenericBufferWindow<List<StateTracker.State>>(rollbackWindow);
+StateTracker.instance.states = new GenericBufferWindow&lt;List&lt;StateTracker.State&gt;&gt;(rollbackWindow);
 </pre>
 
+
+
+
+<li>GenericBufferWindow</li>
+<pre>
+通用缓存窗口
+
+// StateTracker 用到
+      StateTracker.instance.states = new GenericBufferWindow<List<StateTracker.State>>(rollbackWindow);
+
+// CompoundStats 用到
+      this.bufferStats = new GenericBufferWindow<Stats>(10);
+
+// AbstractLockstep 用到  
+      this.bufferSyncedInfo = new GenericBufferWindow<SyncedInfo>(3);
+
+
+构造方法： 会创建一个T[size] 的数组buffer，并且实例化T 
+
+</pre>
 
 
 <li>ResourcePool 对象池</li>
@@ -407,7 +658,7 @@ ResourcePool 是一个抽象对象池,他有一个静态对象池列表。他管
 
 
 
-ResourcePool<T> 是ResourcePool派生类。里面有一个对象栈存储空闲的对象。
+ResourcePool&lt;T&gt; 是ResourcePool派生类。里面有一个对象栈存储空闲的对象。
 
 // 还回对象
 GiveBack(T obj)
@@ -426,9 +677,9 @@ ResourcePoolItem 是对象池对象接口，实现该接口的对象在获取对
 
 
 【使用】
-internal class ResourcePoolListSyncedData : ResourcePool<List<SyncedData>>
-internal class ResourcePoolStateTrackerState : ResourcePool<StateTracker.State>
-internal class ResourcePoolSyncedData : ResourcePool<SyncedData>
+internal class ResourcePoolListSyncedData : ResourcePool&lt;List&lt;SyncedData&gt;&gt;
+internal class ResourcePoolStateTrackerState : ResourcePool&lt;StateTracker.State&gt;
+internal class ResourcePoolSyncedData : ResourcePool&lt;SyncedData&gt;
 
 
 
