@@ -795,6 +795,46 @@ public class SerializableDictionaryIntSyncedData : SerializableDictionary&lt;int
 
 
 
+<li>InputDataBase</li>
+<pre>
+继承ResourcePoolItem 对象池对象接口
+抽象输入数据，主要定义了几个接口。和一个owerID拥有者属性
+
+    // 序列化
+    public abstract void Serialize(List&lt;byte&gt; bytes);
+
+    // 解析
+    public abstract void Deserialize(byte[] data, ref int offset);
+
+
+    // 是否想等
+    public abstract bool EqualsData(InputDataBase otherBase);
+
+
+    // 清理
+    public abstract void CleanUp();
+
+    // 拷贝
+    public abstract void CopyFrom(InputDataBase fromBase);
+
+</pre>
+
+
+<li>InputData</li>
+<pre>
+继承InputDataBase
+拥有各个基本类型字典
+
+序列化和解析都是对这些解绑类型字典
+每个值的序列化:key, valueType, value
+数组的: key, valueType, length, value[]
+字符串的用char[] 也就是数组
+
+
+然后有各个类型的AddXX和GetXX
+    
+</pre>
+
 
 
 <li>SyncedInfo</li>
@@ -819,6 +859,174 @@ public static byte[] Encode(SyncedInfo info)
 // 解析
 public static SyncedInfo Decode(byte[] infoBytes)
 
+</pre>
+
+
+<li>SyncedData</li>
+<pre>
+同步数据
+
+主要就序列化下面两个方法的数据
+
+    public void GetEncodedHeader(List<byte> bytes)
+    {
+      // 帧
+      Utils.GetBytes(this.tick, bytes);
+      // 拥有者玩家ID
+      bytes.Add(this.inputData.ownerID);
+      // 从哪个玩家掉线
+      bytes.Add(this.dropFromPlayerId);
+      // 是否掉线
+      bytes.Add(this.dropPlayer ? 1 : 0);
+    }
+
+
+    public void GetEncodedActions(List<byte> bytes)
+    {
+      this.inputData.Serialize(bytes);
+    }
+
+</pre>
+
+
+
+<li>TSPlayerInfo</li>
+<pre>
+玩家信息,保存2个属性
+
+    // 玩家ID
+    [SerializeField]
+    internal byte id;
+
+    // 玩家名称
+    [SerializeField]
+    internal string name;
+
+</pre>
+
+
+
+<li>TSPlayer</li>
+<pre>
+玩家
+
+    // 玩家信息
+    [SerializeField]
+    public TSPlayerInfo playerInfo;
+
+    // 掉线次数
+    [NonSerialized]
+    public int dropCount;
+
+    //是否掉线
+    [NonSerialized]
+    public bool dropped;
+
+    // 开始发送同步数据
+    [NonSerialized]
+    public bool sentSyncedStart;
+
+    // 保存玩家整个战斗的操作同步数据, 他是一个字典SerializableDictionary<int, SyncedData>
+    [SerializeField]
+    internal SerializableDictionaryIntSyncedData controls;
+
+    // 最后一次 同步操作数据的帧, AddData(SyncedData data)
+    private int lastTick;
+
+
+    internal TSPlayer(byte id, string name)
+    {
+      // 创建玩家信息
+      this.playerInfo = new TSPlayerInfo(id, name);
+      this.dropCount = 0;
+      this.dropped = false;
+      // 创建玩家操作字典存储器
+      this.controls = new SerializableDictionaryIntSyncedData();
+    }
+
+    // 获取某帧是否有真实同步操作数据
+    public bool IsDataReady(int tick)
+    {
+      return this.controls.ContainsKey(tick) && !this.controls[tick].fake;
+    }
+
+    // 获取某帧是否有模拟同步操作数据, 客户端先行，是客户端预测的操作, 回滚添加的。
+    public bool IsDataDirty(int tick)
+    {
+      bool flag = this.controls.ContainsKey(tick);
+      return flag && this.controls[tick].dirty;
+    }
+
+    // 获取该帧的同步操作数据
+    public SyncedData GetData(int tick)
+    {
+      bool flag = !this.controls.ContainsKey(tick);
+      SyncedData result;
+      if (flag)
+      {
+        // 如果不存在，就查找上一帧是否存在
+        bool flag2 = this.controls.ContainsKey(tick - 1);
+        SyncedData syncedData;
+        if (flag2)
+        {
+          // 如果存在上一帧，就克隆上一帧的同步数据
+          syncedData = this.controls[tick - 1].clone();
+          syncedData.tick = tick;
+        }
+        else
+        {
+          // 否则就新建一个同步数据
+          syncedData = SyncedData.pool.GetNew();
+          syncedData.Init(this.ID, tick);
+        }
+        // 设置为伪造的
+        syncedData.fake = true;
+        // 保存到帧字典
+        this.controls[tick] = syncedData;
+        result = syncedData;
+      }
+      else
+      {
+        // 如果存在该,就返回该帧数据
+        result = this.controls[tick];
+      }
+      return result;
+    }
+
+
+    // 添加存在帧同步数据
+    public void AddData(SyncedData data)
+    {
+      int tick = data.tick;
+      bool flag = this.controls.ContainsKey(tick);
+      if (flag)
+      {
+        // 如果已经存在，就还给对象池
+        SyncedData.pool.GiveBack(data);
+      }
+      else
+      {
+        // 否则 添加到存储里
+        this.controls[tick] = data;
+        // 设置最后存储的帧
+        this.lastTick = tick;
+      }
+    }
+
+
+
+
+</pre>
+
+
+
+<li>ReplayRecord</li>
+<pre>
+录像
+
+负责记录游戏是所有玩家的SynceData
+
+序列化: 各个玩家的所有操作
 </pre>
 
 </ul>
