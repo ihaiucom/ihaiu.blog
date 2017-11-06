@@ -1029,6 +1029,92 @@ public static SyncedInfo Decode(byte[] infoBytes)
 序列化: 各个玩家的所有操作
 </pre>
 
+
+
+
+<li>AbstractLockstep.SimulationState</li>
+<pre>
+帧同步模拟器状态
+private enum SimulationState
+    {
+     // 没启动
+      NOT_STARTED,
+      // 等待玩家
+      WAITING_PLAYERS,
+      // 运行中
+      RUNNING,
+      // 暂停
+      PAUSED,
+      // 结束
+      ENDED
+    }
+</pre>
+
+
+<li>AbstractLockstep</li>
+<pre>
+帧同步抽象基类
+
+// 玩家初始容量
+  private const int INITIAL_PLAYERS_CAPACITY = 4;
+
+// 同步游戏开始编码
+    private const byte SYNCED_GAME_START_CODE = 196;
+
+// 模拟器编码 (0 暂停, 1 第一次启动, 3 End)
+    private const byte SIMULATION_CODE = 197;
+
+// 验证码编码
+    private const byte CHECKSUM_CODE = 198;
+
+// 发送编码
+    private const byte SEND_CODE = 199;
+
+// 模拟器时间--暂停
+    private const byte SIMULATION_EVENT_PAUSE = 0;
+
+// 模拟器时间--运行
+    private const byte SIMULATION_EVENT_RUN = 1;
+
+// 模拟器时间--结束
+    private const byte SIMULATION_EVENT_END = 3;
+
+// 游戏结束前 最大等待所有玩家输入的帧
+    private const int MAX_PANIC_BEFORE_END_GAME = 5;
+
+// 同步信息 缓存窗口
+    private const int SYNCED_INFO_BUFFER_WINDOW = 3;
+
+
+
+// 添加玩家
+// internal Dictionary<byte, TSPlayer> players;
+// internal List<TSPlayer> activePlayers;
+// this.localPlayer = tSPlayer;
+    public void AddPlayer(byte playerId, string playerName, bool isLocal)
+
+
+
+// 更新在线的其他玩家ID列表
+internal void UpdateActivePlayers()
+
+// 运行模拟器
+// TrueSyncStats的Update里检测调 lockstep.RunSimulation(true);
+// CheckGameStart() 里调 RunSimulation(false);
+public void RunSimulation(bool firstRun)
+
+// 更新设置simulationState模拟器状态, 和调对应的回调(OnGameStarted, OnGameUnPaused)
+// RunSimulation() 里调
+// private void OnEventDataReceived(byte eventCode, object content) 里调
+private void Run()
+
+// 发送操作
+// 调通信器 this.communicator.OpRaiseEvent(eventCode, message, reliable, toPlayers);
+private void RaiseEvent(byte eventCode, object message)
+private void RaiseEvent(byte eventCode, object message, bool reliable, int[] toPlayers)
+
+</pre>
+
 </ul>
 </div>
 
