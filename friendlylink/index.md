@@ -266,6 +266,49 @@ thread: 20170310
 </div>
 
 
+<br>
+<br>
+<br>
+
+<h2>工具</h2>
+<div class="" >
+        <ul>
+
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://xlsxwriter.readthedocs.io/index.html" draggable="false">
+              <span class="title">XlsxWriter Python</span>
+            </a>
+          </li>
+
+
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.gocalf.com/blog/python-read-write-excel.html" draggable="false">
+              <span class="title">用Python读写Excel文件</span>
+            </a>
+          </li>
+
+
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://docs.readthedocs.io/en/latest/" draggable="false">
+              <span class="title"> Read The Docs</span>
+            </a>
+          </li>
+
+          
+
+           <li data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://www.cnblogs.com/TsengYuen/archive/2011/02/10/1951004.html" draggable="false">
+              <span class="title">cmd.exe_参数_启动参数</span>
+            </a>
+          </li>
+
+
+
+
+
+          
+        </ul>
+</div>
 
 
 
