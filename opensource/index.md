@@ -23,13 +23,13 @@ thread: 20170310
   </tr>
 
   <tr>
-      <td><a target="_blank" href="http://blog.ihaiu.com/unity-GUIDRef">ihaiu.GUIDRef (查看项目资源使用情况)</a></td>
-      <td><a target="_blank" href="http://blog.ihaiu.com/unity-GUIDRef">http://blog.ihaiu.com/unity-GUIDRef</a></td>
+      <td><a target="_blank" href="http://blog.ihaiu.com/unity-GUIDRef/">ihaiu.GUIDRef (查看项目资源使用情况)</a></td>
+      <td><a target="_blank" href="http://blog.ihaiu.com/unity-GUIDRef/">http://blog.ihaiu.com/unity-GUIDRef</a></td>
   </tr>
 
   <tr>
-      <td><a target="_blank" href="http://blog.ihaiu.com/unity-OpenAsset">ihaiu.OpenAsset (指定IDEA打开指定格式文件)</a></td>
-      <td><a target="_blank" href="http://blog.ihaiu.com/unity-OpenAsset">http://blog.ihaiu.com/unity-OpenAsset</a></td>
+      <td><a target="_blank" href="http://blog.ihaiu.com/unity-OpenAsset/">ihaiu.OpenAsset (指定IDEA打开指定格式文件)</a></td>
+      <td><a target="_blank" href="http://blog.ihaiu.com/unity-OpenAsset/">http://blog.ihaiu.com/unity-OpenAsset</a></td>
   </tr>
 
   <tr>
