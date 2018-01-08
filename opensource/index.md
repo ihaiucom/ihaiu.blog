@@ -8,6 +8,11 @@ thread: 20170310
 <table>
 
   <tr>
+      <td><a target="_blank" href="http://blog.ihaiu.com/cmd-open/#content">cmd open命令</a></td>
+      <td><a target="_blank" href="http://blog.ihaiu.com/cmd-open/#content">http://blog.ihaiu.com/cmd-open/#content</a></td>
+  </tr>
+
+  <tr>
       <td><a target="_blank" href="https://pan.baidu.com/s/1geSeW4j">ihaiu.SceneViewEditor.unitypackage (Unity场景视角和摄像机视角互相转换)</a></td>
       <td><a target="_blank" href="https://pan.baidu.com/s/1geSeW4j">https://pan.baidu.com/s/1geSeW4j</a></td>
   </tr>
