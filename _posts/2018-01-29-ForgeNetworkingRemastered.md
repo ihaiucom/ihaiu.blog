@@ -128,3 +128,19 @@ Program 启动MaterServer的程序
 </li>
 
 </ul>
+
+
+
+<br>
+<br>
+<h2 class="nav1">Class介绍</h2>
+| Class                 | 介绍                                                                                    |
+| --------------------- | --------------------------------------------------------------------------------------- |
+| MultiplayerMenu       | 创建NetWorker入口类，负责创建Host或者链接Server    | 
+| NetworkManager       | 负责：向MasterServer注册, 场景加载，初始化场景中的网络对象, 生成创建网络对象的接口(网络对象工厂)     | 
+| INetworkBehavior     | 网络对象行为接口， Initialize网络对象初始化和注册    | 
+| NetworkBehavior     | 网络对象行为, 实现接口INetworkBehavior, 里面是网络对象创建的初始化管理    | 
+| XXXNetworkBehavior     | 网络对象行为, 实现接口INetworkBehavior或继承NetworkBehavior, 里面是网络对象创建的初始化，主要是RPC方法和其他逻辑    | 
+| NetworkObject     | 网络对象, 负责网络对象的初始和注册同步网络对象, 注册RPC方法，RPC、二进制消息的发送接收, 所有权申请分配 , 销毁，每隔10MS同步对象属性 | 
+| XXXNetworkObject     | 网络对象, 继承NetworkObject, 负责对象具体属性（存储，同步序列化，同步读取，插值） | 
+| NetworkObjectFactory     | 网络对象创建工厂 | 
