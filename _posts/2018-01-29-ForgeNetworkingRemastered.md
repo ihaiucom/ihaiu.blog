@@ -147,3 +147,7 @@ Program 启动MaterServer的程序
 | Rpc     | 存储RPC方法的结构体, 负责RPC方法参数验证、 解析参数、回调方法 | 
 | RpcArgs     | 存储RPC方法参数和RPCInfo | 
 | RPCInfo     | 存储RPC的调用玩家和时间,NetworkingPlayer SendingPlayer | 
+
+
+| CachedUdpClient     | 检测局域网UDP服务器列表 | 
+| NetWorker     | 是TCP和UDP的基类。功能有：检测局域网服务器列表、ping、接收数据和处理  | 
