@@ -156,5 +156,9 @@ Program 启动MaterServer的程序
 
 | NetworkingPlayer     | 玩家, 存储了：IP、PROT、Networker。保存各种状态：Accepted、PendingAccepted、Connected、Disconnected、LastPing、IsHost、IsDisconnecting。功能：UDP可靠消息包处理| 
 | UDPNetworkingPlayer     | 在服务器的UDP的客户端玩家玩家 | 
-| UDPPacketManager     | UDP玩家的包管理 | 
-| UDPPacketComposer     | UDP玩家的包管理 | 
+| UDPPacketManager     | UDP玩家的包管理 , 将UDPPacket添加到对应的UDPPacketGroup里(UDPPacket.groupId)| 
+| UDPPacketGroup     | UDP数据包组，将UDPPacket添加到对应的UDPPacketSequence(UDPPacket.uniqueId) | 
+| UDPPacketSequence     | UDP数据包序列 | 
+| UDPPacketComposer     | UDP一个消息的包管理 | 
+| UDPPacket     | UDP消息的数据分包 | 
+| BaseUDP     | UDP网络的基类， 负责：消息数据包的提取转码（BMSByte->UDPPacket）、确认收到消息事件、存在待发送的UDPPacketComposer | 
