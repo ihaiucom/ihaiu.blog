@@ -150,4 +150,11 @@ Program 启动MaterServer的程序
 
 
 | CachedUdpClient     | 检测局域网UDP服务器列表 | 
-| NetWorker     | 是TCP和UDP的基类。功能有：检测局域网服务器列表、ping、接收数据和处理  | 
+| Cache     | 服务器的一些数据缓存，目前没看到用 | 
+| NetWorker     | 是TCP和UDP的基类。功能有：解析ip、检测局域网服务器列表、ping、ping防火墙、接收数据和处理。存储玩家列表、网络对象列表。查找获取玩家| 
+| CommonServerLogic     | 服务器的辅助类。功能：检测玩家是否可以接收该消息，检测玩家超时， 把玩家放到待踢列表| 
+
+| NetworkingPlayer     | 玩家, 存储了：IP、PROT、Networker。保存各种状态：Accepted、PendingAccepted、Connected、Disconnected、LastPing、IsHost、IsDisconnecting。功能：UDP可靠消息包处理| 
+| UDPNetworkingPlayer     | 在服务器的UDP的客户端玩家玩家 | 
+| UDPPacketManager     | UDP玩家的包管理 | 
+| UDPPacketComposer     | UDP玩家的包管理 | 
