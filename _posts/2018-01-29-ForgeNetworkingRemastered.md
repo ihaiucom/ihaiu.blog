@@ -134,6 +134,8 @@ Program 启动MaterServer的程序
 <br>
 <br>
 <h2 class="nav1">Class介绍</h2>
+
+
 | Class                 | 介绍                                                                                    |
 | --------------------- | --------------------------------------------------------------------------------------- |
 | MultiplayerMenu       | 创建NetWorker入口类，负责创建Host或者链接Server    | 
@@ -149,7 +151,7 @@ Program 启动MaterServer的程序
 | RPCInfo     | 存储RPC的调用玩家和时间,NetworkingPlayer SendingPlayer | 
 
 
-| CachedUdpClient     | 检测局域网UDP服务器列表 | 
+| CachedUdpClient     | 检测局域网UDP服务器列表, UDP真正是Socket通信部分 | 
 | Cache     | 服务器的一些数据缓存，目前没看到用 | 
 | NetWorker     | 是TCP和UDP的基类。功能有：解析ip、检测局域网服务器列表、ping、ping防火墙、接收数据和处理。存储玩家列表、网络对象列表。查找获取玩家| 
 | CommonServerLogic     | 服务器的辅助类。功能：检测玩家是否可以接收该消息，检测玩家超时， 把玩家放到待踢列表| 
@@ -157,8 +159,14 @@ Program 启动MaterServer的程序
 | NetworkingPlayer     | 玩家, 存储了：IP、PROT、Networker。保存各种状态：Accepted、PendingAccepted、Connected、Disconnected、LastPing、IsHost、IsDisconnecting。功能：UDP可靠消息包处理| 
 | UDPNetworkingPlayer     | 在服务器的UDP的客户端玩家玩家 | 
 | UDPPacketManager     | UDP玩家的包管理 , 将UDPPacket添加到对应的UDPPacketGroup里(UDPPacket.groupId)| 
-| UDPPacketGroup     | UDP数据包组，将UDPPacket添加到对应的UDPPacketSequence(UDPPacket.uniqueId) | 
-| UDPPacketSequence     | UDP数据包序列 | 
-| UDPPacketComposer     | UDP一个消息的包管理 | 
+| UDPPacketGroup     | UDP数据包组，将UDPPacket添加到对应的UDPPacketSequence(UDPPacket.uniqueId) , 接收完整包后会回调 UDPClient.PacketSequenceComplete或者UDPServer.PacketSequenceComplete| 
+| UDPPacketSequence     | UDP数据包序列， 存储数据分包，等待所有包都接收完成就算完成(UDPPacket.orderId) | 
+| UDPPacketComposer     | UDP一个消息的包管理。生成消息分包，发送分包消息，统计发送数据大小，完成时清除改消息挂起，玩家线程那会调这里的检测丢包，可靠包需要监听反馈收到然后再检测所有的序号包都发完才结束 | 
 | UDPPacket     | UDP消息的数据分包 | 
 | BaseUDP     | UDP网络的基类， 负责：消息数据包的提取转码（BMSByte->UDPPacket）、确认收到消息事件、存在待发送的UDPPacketComposer | 
+
+| IServer     | 服务器的抽象接口，UDPServer、TcpServer实现这个接口。接口有：黑名单IP列表，踢人，添加到黑名单，提交断线玩家，服务器是否接受连接 | 
+| UDPServer     | UDP服务器， 负责：创建一个CachedUdpClient通信器, 发送消息，接受客户端和接收消息, 踢玩家 | 
+
+
+| CommonServerLogic     | 服务器逻辑的辅助类， 功能：检测玩家是否需要接收消息，检测玩家是否超时 超时的玩家会被踢掉， 将玩家添加到将被踢的列表 | 
