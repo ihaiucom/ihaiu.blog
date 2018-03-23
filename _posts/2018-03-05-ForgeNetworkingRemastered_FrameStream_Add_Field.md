@@ -34,6 +34,8 @@ sh_csharp: true
 <h2 class="nav1">3: 修改写数据，接收数据的地方</h2>
 <p>在FrameStream的CreateFrame方法里添加 (注意新加的不要添加在UniqueId后面，因为还有一个UDPPacketComposer会和他耦合 )</p>
 <p><img src="/assets/docpic/ForgeNetworkingRemastered_FreamStream_Add_RoomId_5.png" style="border: solid 1px #666;" /></p>
+<p>追加一个地方修改</p>
+<p><img src="/assets/docpic/ForgeNetworkingRemastered_FreamStream_Add_RoomId_9.png" style="border: solid 1px #666;" /></p>
 
 <br>
 <p>在FrameStream的ReadFrame方法里修改</p>
