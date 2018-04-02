@@ -28,12 +28,22 @@ ET目录结构
 
 
 
+<br/>
+<br/>
+<br/>
+
+
 ### ETServer/Server/Model ---- 项目目录/核心框架项目
     |__ Base                             	---- 引擎的基本类，ECS的组件开发模式就放在该目录下面
     |__ Component                           ---- 启动服务程序的几个基本组件，一般添加到Game.Scene实体。包括读取启动配置组件、解析启动参数组件、对各个服务进程管理组件等
     |__ Entity                           	---- 实体组件，主要放了Scene，Game全局API
     |__ Module                           	---- 功能模块目录。相当于ET的插件目录
     |__ Other                           	---- 这个估计熊猫也不好启名字，启动程序要用的App配置两个类AppType、Options
+
+
+
+<br/>
+<br/>
 
 
 
