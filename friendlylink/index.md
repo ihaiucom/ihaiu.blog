@@ -622,6 +622,51 @@ thread: 20170310
 </div>
 
 
+<br>
+<br>
+<br>
+
+<h2>网络库</h2>
+<div class="" >
+        <ul>
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/RevenantX/LiteNetLib" draggable="false">
+              <span class="title">LiteNetLib</span>
+            </a>
+            </li>
+
+
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/skywind3000/kcp" draggable="false">
+              <span class="title">kcp</span>
+            </a>
+            </li>
+
+            
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/limpo1989/kcp-csharp" draggable="false">
+              <span class="title">kcp-csharp</span>
+            </a>
+            </li>
+
+            
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/RainsSoft/lidgren-network-gen3" draggable="false">
+              <span class="title">lidgren-network-gen3</span>
+            </a>
+            </li>
+
+
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/egametang/ET" draggable="false">
+              <span class="title">ET</span>
+            </a>
+            </li>
+
+        </ul>
+</div>
+
+
 
 <br>
 <br>
@@ -1128,6 +1173,33 @@ thread: 20170310
 
         </ul>
 </div>
+
+
+
+<br>
+<br>
+<br>
+
+<h2>自动打包工具</h2>
+<div class="" >
+        <ul>
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://jenkins.io/" draggable="false">
+              <span class="title">jenkins</span>
+            </a>
+            </li>
+
+            
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://github.com/FlowCI/docs/blob/master/intro_base.md" draggable="false">
+              <span class="title">flow.ci </span>
+            </a>
+            </li>
+
+         
+        </ul>
+</div>
+
 
 <h2>数学</h2>
 <div class="" >
