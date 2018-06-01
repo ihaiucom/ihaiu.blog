@@ -21,7 +21,7 @@ sh_csharp: true
 <h2 class="nav1">需要注意的问题</h2>
 
 
-<h3>富文本HtmlDivElemen</h2>
+<h3>富文本HtmlDivElemen</h3>
 <p>
 【注意：目前不支持斜体、描边、span标签内嵌的方式】<br>
 【注意：目前不支持文本的垂直居中对齐，开发者可以将(图片的高度-文本的高度)/2的值赋给文本的Y值，进行垂直居中对齐替代设置】<br>
@@ -30,7 +30,7 @@ sh_csharp: true
 <br>
 
 
-<h3>声音</h2>
+<h3>声音</h3>
 <p>
 <a href="https://ldc.layabox.com/doc/?nav=zh-ts-7-1-3" target="_blank">https://ldc.layabox.com/doc/?nav=zh-ts-7-1-3</a>
 </p>
@@ -38,16 +38,18 @@ sh_csharp: true
 
 
 
-<h3>白名单功能</h2>
+<h3>白名单功能</h3>
 <p>
 后续LayaBox会有白名单机制，如果开发者购买了授权或者和LayaBox联合运营产品，便可以去掉LayaBox的logo，如果没有则需要强制增加LayaBox的logo。引擎内部会有检测机制，随机检测，如果检测不通过则无法进入游戏。<br>
 <a href="https://ldc.layabox.com/doc/?nav=zh-ts-7-1-4" target="_blank">https://ldc.layabox.com/doc/?nav=zh-ts-7-1-4</a>
 </p>
 <br>
+<br>
+<br>
 
 
 
-<h3>发布微信2D报错</h2>
+<h2 class="nav1">发布微信2D报错</h2>
 <p>
 发布微信3D示例项目不会报错， 框架程序包占用了2.5M左右<br>
 <p><img src="/assets/docpic/laya_weixin_01.png" style="border: solid 1px #666;" /></p>
