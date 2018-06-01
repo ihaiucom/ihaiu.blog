@@ -48,9 +48,11 @@ bin/libs/min/laya.debugtool.min.js
 <br>
 <br>
 
+
+
+
 <h2 class="nav1">但是此时的包还是很大, 有5.2M左右，已经超过了4M</h2>
 <p><img src="/assets/docpic/laya_weixin_04.png" style="border: solid 1px #666;" /></p>
-</p>
 
 
 <p>

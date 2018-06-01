@@ -47,6 +47,6 @@ sh_csharp: true
 
 <h3>发布微信2D报错</h3>
 <p>
-<a href="https://ldc.layabox.com/doc/?nav=zh-ts-7-1-4" target="_blank">https://ldc.layabox.com/doc/?nav=zh-ts-7-1-4</a>
+<a href="http://blog.ihaiu.com/HTML5LayaAirWeiXin/" target="_blank">http://blog.ihaiu.com/HTML5LayaAirWeiXin/</a>
 </p>
 <br>
