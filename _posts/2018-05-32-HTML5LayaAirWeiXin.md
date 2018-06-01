@@ -44,7 +44,11 @@ bin/libs/min/laya.debugtool.min.js
 发布微信laya会把所有的js合并到 "release/wxgame/code.js" <br>
 所以解决办法是在layaIDE里把2个debugtool给删掉，再发布微信就不会报改错。<br>
 <p><img src="/assets/docpic/laya_weixin_03.png" style="border: solid 1px #666;" /></p>
-<B>但是此时的包还是很大, 有5.2M左右，已经超过了4M</B>
+</p>
+<br>
+<br>
+
+<h2 class="nav1">但是此时的包还是很大, 有5.2M左右，已经超过了4M</h2>
 <p><img src="/assets/docpic/laya_weixin_04.png" style="border: solid 1px #666;" /></p>
 </p>
 
