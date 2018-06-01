@@ -50,7 +50,7 @@ bin/libs/min/laya.debugtool.min.js
 
 
 <p>
-因为 "libs"  目录里的代码都合并到 "code.js" 里了，因此可以把 "libs" 里的文件都删掉<br>
+因为 "libs" 和 "js" 目录里的代码都合并到 "code.js" 里了，因此可以把 这两个目录 里的文件都删掉<br>
 再次编译就正常了
 <p><img src="/assets/docpic/laya_weixin_05.png" style="border: solid 1px #666;" /></p>
 <B>但是此时的包还是很大, 有1.8M左右</B>
