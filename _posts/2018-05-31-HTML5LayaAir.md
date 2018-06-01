@@ -44,48 +44,9 @@ sh_csharp: true
 <a href="https://ldc.layabox.com/doc/?nav=zh-ts-7-1-4" target="_blank">https://ldc.layabox.com/doc/?nav=zh-ts-7-1-4</a>
 </p>
 <br>
-<br>
-<br>
 
-
-
-<h2 class="nav1">发布微信2D报错</h2>
+<h3>发布微信2D报错</h3>
 <p>
-发布微信3D示例项目不会报错， 框架程序包占用了2.5M左右<br>
-<p><img src="/assets/docpic/laya_weixin_01.png" style="border: solid 1px #666;" /></p>
+<a href="https://ldc.layabox.com/doc/?nav=zh-ts-7-1-4" target="_blank">https://ldc.layabox.com/doc/?nav=zh-ts-7-1-4</a>
 </p>
 <br>
-<br>
-
-<p>
-<B>发布微信2D示例项目会报错， 显示ui没有定义</B><br>
-<p><img src="/assets/docpic/laya_weixin_02.png" style="border: solid 1px #666;" /></p>
-</p>
-<br>
-
-<p>报错原因是因为微信不能包含调式这2个文件: bin/libs/laya.debugtool.js</p>
-<pre>
-bin/libs/laya.debugtool.js
-bin/libs/min/laya.debugtool.min.js
-</pre>
-
-<p>
-发布微信laya会把所有的js合并到release/wxgame/code.js<br>
-所以解决办法是在layaIDE里把2个debugtool给删掉，再发布微信就不会报改错。<br>
-<p><img src="/assets/docpic/laya_weixin_03.png" style="border: solid 1px #666;" /></p>
-<B>但是此时的包还是很大, 有5.2M左右，已经超过了4M</B>
-<p><img src="/assets/docpic/laya_weixin_04.png" style="border: solid 1px #666;" /></p>
-</p>
-
-
-<p>
-因为 "libs"  目录里的代码都合并到 "code.js" 里了，因此可以把 "libs" 里的文件都删掉<br>
-再次编译就正常了
-<p><img src="/assets/docpic/laya_weixin_05.png" style="border: solid 1px #666;" /></p>
-<B>但是此时的包还是很大, 有1.8M左右</B>
-<p><img src="/assets/docpic/laya_weixin_06.png" style="border: solid 1px #666;" /></p>
-</p>
-
-
-<br>
-
