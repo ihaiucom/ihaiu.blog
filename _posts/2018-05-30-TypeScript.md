@@ -40,3 +40,15 @@ C:\Users\Administrator\AppData\Roaming\npm\tsc -> C:\Users\Administrator\AppData
 + typescript@2.8.3
 added 1 package from 1 contributor in 12.914s
 </pre>
+<br>
+<br>
+
+
+<h2>检查TypeScript编译环境版本</h2>
+<pre>
+tsc -v
+</pre>
+执行命令后会打印
+<pre>
+Version 2.8.3
+</pre>
