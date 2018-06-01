@@ -34,14 +34,14 @@ sh_csharp: true
 </p>
 <br>
 
-<p>报错原因是因为微信不能包含调式这2个文件: bin/libs/laya.debugtool.js</p>
+<p>报错原因是因为微信不能包含调式这2个文件: </p>
 <pre>
 bin/libs/laya.debugtool.js
 bin/libs/min/laya.debugtool.min.js
 </pre>
 
 <p>
-发布微信laya会把所有的js合并到release/wxgame/code.js<br>
+发布微信laya会把所有的js合并到 "release/wxgame/code.js" <br>
 所以解决办法是在layaIDE里把2个debugtool给删掉，再发布微信就不会报改错。<br>
 <p><img src="/assets/docpic/laya_weixin_03.png" style="border: solid 1px #666;" /></p>
 <B>但是此时的包还是很大, 有5.2M左右，已经超过了4M</B>
