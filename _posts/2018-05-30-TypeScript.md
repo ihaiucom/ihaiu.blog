@@ -52,3 +52,119 @@ tsc -v
 <pre>
 Version 2.8.3
 </pre>
+
+
+
+
+<h2>变量定义 var</h2>
+
+同一个作用域可以多次定义
+<pre>
+var a = 1;
+var a = 2;
+var a = 3;
+</pre>
+<br>
+
+
+同一个作用域可以多次定义, 造成外面一层for没正常运行<br>
+for 不是作用域，他算是f里的函数域
+<pre>
+
+function f()
+{
+   for(var i = 0; i < 2; i ++)
+   {
+       print(`~~ ${i}`);
+       for(var i = 0; i < 3; i ++)
+       {
+             print(`row ${i}`);
+       }
+       log(`##i=${i}`)
+   }
+
+   log(`@@i=${i}`)
+}
+
+</pre>
+
+<pre>
+~~i=0
+row i=0
+row i=1
+row i=2
+##i=3
+@@i=4
+</pre>
+<br>
+
+
+同一个作用域可以在任何地方定义
+<pre>
+var a = 1;
+function f()
+{
+     a = 100;
+     var a;
+
+     print(a); // 100
+}
+
+f();
+print(a); // 1
+</pre>
+<br>
+
+
+
+
+if 不是作用域，他算是f里的函数域
+<pre>
+var a = 1;
+function f(isIn:boolean = false)
+{
+     a = 100;
+     if(isIn)
+     {
+          var a;
+     }
+
+     print(a); // 100
+}
+
+f();
+print(a); // 1
+</pre>
+<br>
+
+
+
+
+setTimeout调的函数里方法的变量，始终都是读取的闭包方法上层定义的变量
+<pre>
+function f()
+{
+        for(var i = 0; i < 10; i ++)
+        {
+            setTimeout(function() {
+                log(i); //打印的始终都是10
+            }, 100 * i);
+        }
+} 
+</pre>
+
+解决方法是, 再封一层闭包
+
+<pre>
+function f()
+{
+        for(var i = 0; i < 10; i ++)
+        {
+            (function(val)
+            {
+                setTimeout(function() { log(val); }, 100 * val);
+            })(i);
+            
+        }
+} 
+</pre>
