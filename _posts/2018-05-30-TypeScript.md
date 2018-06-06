@@ -56,7 +56,7 @@ Version 2.8.3
 
 
 
-<h2>变量定义 var</h2>
+<h2 class="nav1">变量定义 var</h2>
 
 同一个作用域可以多次定义
 <pre>
@@ -68,7 +68,9 @@ var a = 3;
 
 
 同一个作用域可以多次定义, 造成外面一层for没正常运行<br>
-for 不是作用域，他算是f里的函数域
+for 不是作用域，他算是f里的函数域<br>
+用let定义， for里也是一个作用域<br>
+在其他语言， 不允许再定义相同名称的变量
 <pre>
 
 function f()
@@ -99,12 +101,14 @@ row i=2
 <br>
 
 
-同一个作用域可以在任何地方定义
+同一个作用域可以在任何地方定义<br>
+用let定义，是不能在定义之前调用的, 否则编辑器会提示错误<br>
+
 <pre>
 var a = 1;
 function f()
 {
-     a = 100;
+     a = 100; // 可以在定义之前就赋值，运行时他已经定义了， 就算外层有定义a=1，这里的a也是f函数作用域的
      var a;
 
      print(a); // 100
@@ -118,7 +122,9 @@ print(a); // 1
 
 
 
-if 不是作用域，他算是f里的函数域
+if 不是作用域，他算是f里的函数域<br>
+用let定义， if里也是一个作用域。 a = 100; 将会修改闭包方法里定义的a=1<br>
+在其他语言,if里也是一个作用域, 并且在定义变量前 a将用的是闭包方法里声明的变量
 <pre>
 var a = 1;
 function f(isIn:boolean = false)
@@ -129,11 +135,28 @@ function f(isIn:boolean = false)
           var a;
      }
 
-     print(a); // 100
+     log(a); // 100
 }
 
 f();
-print(a); // 1
+log(a); // 1
+</pre>
+
+<pre>
+var a = 1;
+function f(isIn:boolean = false)
+{
+     a = 100;
+     if(isIn)
+     {
+          let a; // 这里的a只在if语句块里有效
+     }
+
+     log(a); // 100
+}
+
+f();
+log(a); // 100
 </pre>
 <br>
 
@@ -153,7 +176,8 @@ function f()
 } 
 </pre>
 
-解决方法是, 再封一层闭包
+解决方法是, 再封一层闭包<br>
+用let定义，编译后的 js 也是这样实现的
 
 <pre>
 function f()
@@ -168,3 +192,72 @@ function f()
         }
 } 
 </pre>
+
+
+
+
+
+<h2 class="nav1">变量定义 let</h2>
+
+let 定义的变量，不可以在区域块外调用，否则会提示错误。<br>
+let 定义的变量，if 、for都将是作用域
+<p><img src="/assets/docpic/typescript_let_1.png" style="border: solid 1px #666;" /></p>
+<br>
+
+不可以在let定义前调用, 否则会提示错误
+<p><img src="/assets/docpic/typescript_let_2.png" style="border: solid 1px #666;" /></p>
+<br>
+
+
+下面这种情况 if外面的 a将是 <b>var a=1</b>那定义的
+<p><img src="/assets/docpic/typescript_let_3.png" style="border: solid 1px #666;" /></p>
+编译后的js
+<p><img src="/assets/docpic/typescript_let_4.png" style="border: solid 1px #666;" /></p>
+<br>
+
+
+
+在同一作用域不可以重复定义let变量
+<p><img src="/assets/docpic/typescript_let_6.png" style="border: solid 1px #666;" /></p>
+编译后的js<br>
+所有可以这么说, let定义的变量，再闭包方法情况下，上下文都有相同的变量名。在编译成js后，将会给他们分别命名
+<p><img src="/assets/docpic/typescript_let_7.png" style="border: solid 1px #666;" /></p>
+<br>
+
+
+<p><img src="/assets/docpic/typescript_let_8.png" style="border: solid 1px #666;" /></p>
+编译后的js<br>
+<p><img src="/assets/docpic/typescript_let_9.png" style="border: solid 1px #666;" /></p>
+<br>
+
+
+在一个嵌套作用域里引入一个新名字的行为称做屏蔽。 它是一把双刃剑，它可能会不小心地引入新问题，同时也可能会解决一些错误。 例如，假设我们现在用 let重写之前的sumMatrix函数。
+
+<p><img src="/assets/docpic/typescript_let_10.png" style="border: solid 1px #666;" /></p>
+编译后的js<br>
+<p><img src="/assets/docpic/typescript_let_11.png" style="border: solid 1px #666;" /></p>
+输出:
+<pre>
+row i=1
+row i=2
+##i=1
+~~i=2
+row i=0
+row i=1
+row i=2
+##i=2
+~~i=3
+row i=0
+row i=1
+row i=2
+##i=3
+sum = 324
+</pre>
+
+<br>
+
+<h3>块级作用域变量的获取<h3>
+
+<p><img src="/assets/docpic/typescript_let_12.png" style="border: solid 1px #666;" /></p>
+编译后的js<br>
+<p><img src="/assets/docpic/typescript_let_13.png" style="border: solid 1px #666;" /></p>
