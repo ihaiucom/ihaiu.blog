@@ -4,8 +4,8 @@ title: Html5学习之LayaAir发布微信2D报错
 date: 2018-05-29 13:00:00
 categories: Html5
 tags: Html5 
-excerpt: Html5学习
-shareexcerpt: Html5学习
+excerpt: Html5学习之LayaAir发布微信
+shareexcerpt: Html5学习之LayaAir发布微信
 thread: 201805152000
 author: 大海明月
 authorQQ: 593705098
@@ -15,6 +15,21 @@ thumbnail:
 sh: true
 sh_csharp: true
 ---
+
+<br>
+<br>
+<h2 class="nav1">相关完档</h2>
+<ul>
+   <li data-fid="1" data-index="1" draggable="true">
+    <a target="_blank" contextmenu="thumb-menu" href="https://mp.weixin.qq.com/s/JV3Rk7pVQ3V4Nvxdz-Ag0A" draggable="false">
+      <span class="title">程序丨腾讯专家与LayaBox官方答疑：H5游戏的制作与优化</span>
+    </a>
+  </li>
+</ul>
+
+<br>
+<br>
+
 
 
 
