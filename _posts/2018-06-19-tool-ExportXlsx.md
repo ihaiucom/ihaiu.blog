@@ -111,8 +111,8 @@ dotnet ./Copy/Copy.dll --setting=./CopyClientSetting.json
 | xlsxDir	 				| xlsx目录(可以用分号';'分割填写多个路径)				| ../Config	 					| 
 | outDir	 				| 配置输出目录											| ../ConfigOut	 				| 
 | exportSettingXlsx	 		| xlsx配置文件 (可以配置扩展数据结构和设置忽略文件)		| ../Config/ExportSetting.xlsx	| 
-| settingStructSheet		| ExportSetting.xlsx "数据结构"表单 					| StructSheet					| 
-| settingStructSheet		| ExportSetting.xlsx "忽略列Excel文件"表单 				| IgnoreSheet					| 
+| settingStructSheet		| ExportSetting.xlsx "数据结构"标签 					| StructSheet					| 
+| settingStructSheet		| ExportSetting.xlsx "忽略列Excel文件"标签 				| IgnoreSheet					| 
 | templateDir				| 生成代码模板											| ./Template					| 
 | csvSeparator				| csv分隔符												| \t							| 
 | csvSeparatorReplace		| xlsx文件内容如果有用到csv分隔符时，用该配置替换		| 								| 
@@ -207,4 +207,13 @@ dst: 目标路径
 
 | 一级分隔符	 				| ; 		| 
 | 二级分隔符	 				| : 		| 
+
+
+
+<br>
+<br>
+<h2 class="nav1">配置忽略文件</h2>
+
+<p>到<b> ../Config/ExportSetting.xlsx </b> <b>IgnoreSheet</b>标签</p>
+<p><img src="/assets/docpic/exportxlsx_07.png" style="border: solid 1px #666;" /></p>
 
