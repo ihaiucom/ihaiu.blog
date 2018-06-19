@@ -138,3 +138,73 @@ disableoverwrites: 如果目标文件已存在，将忽略
 src: 源路径
 dst: 目标路径
 </pre>
+
+
+<br>
+<br>
+<h2 class="nav1">xlsx文件表头</h2>
+
+<p><img src="/assets/docpic/exportxlsx_03.png" style="border: solid 1px #666;" /></p>
+
+<p>
+表头有3行，他们是必须的:
+</p>
+
+
+| type	 				| 类型 		| 
+| cn	 				| 中文 		| 
+| field	 				| 字段行 	| 
+
+
+<p>
+如果要修改行的顺序, 可以修改ExportXlsxSetting.json 
+</p>
+
+<p><img src="/assets/docpic/exportxlsx_04.png" style="border: solid 1px #666;" /></p>
+
+
+<br>
+<br>
+<h2 class="nav1">xlsx表头 类型</h2>
+
+默认支持的类型有:
+
+| string 	| 
+| int    	| 
+| int64    	| 
+| float    	| 
+| double    | 
+| boolean   | 
+
+
+默认支持的数组类型有:
+
+| string[] 		| 
+| int[]    		| 
+| int64[]    	| 
+| float[]    	| 
+| double[]    	| 
+| boolean[]   	| 
+
+
+可以看出只要有支持的类型就可以加中括号<b>[]</b>表示数组
+
+
+<br>
+<br>
+<h2 class="nav1">扩展 自定义数据结构类型</h2>
+
+<p>到<b> ../Config/ExportSetting.xlsx </b> 文件下添加自己的数据结构</p>
+<p style="color: red">注意: 自定义的数据结构一定要以DT开头</p>
+<p><img src="/assets/docpic/exportxlsx_05.png" style="border: solid 1px #666;" /></p>
+<p>使用就和其他的一样</p>
+<p><img src="/assets/docpic/exportxlsx_06.png" style="border: solid 1px #666;" /></p>
+
+
+<br>
+<br>
+<h2 class="nav1">数据里的分割符</h2>
+
+| 一级分隔符	 				| ; 		| 
+| 二级分隔符	 				| : 		| 
+
