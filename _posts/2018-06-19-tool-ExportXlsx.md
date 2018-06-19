@@ -74,7 +74,7 @@ Copy: 负责将生成的文件拷贝到项目目录
 </pre>
 
 <br>
-<h2 class="nav1">ExportXlsx.bat</h2>
+<h2 class="nav2">ExportXlsx.bat</h2>
 <pre>
 dotnet ./ExportXlsx/ExportXlsx.dll --optionSetting=./ExportXlsxSetting.json
 </pre>
@@ -83,7 +83,7 @@ dotnet ./ExportXlsx/ExportXlsx.dll --optionSetting=./ExportXlsxSetting.json
 
 
 <br>
-<h2 class="nav1">CopyClient.bat</h2>
+<h2 class="nav2">CopyClient.bat</h2>
 <pre>
 dotnet ./Copy/Copy.dll --setting=./CopyClientSetting.json
 </pre>
@@ -93,7 +93,7 @@ dotnet ./Copy/Copy.dll --setting=./CopyClientSetting.json
 
 
 <br>
-<h2 class="nav1">生成配置--客户端.bat</h2>
+<h2 class="nav2">生成配置--客户端.bat</h2>
 <pre>
 dotnet ./ExportXlsx/ExportXlsx.dll --optionSetting=./ExportXlsxSetting.json
 dotnet ./Copy/Copy.dll --setting=./CopyClientSetting.json
@@ -135,6 +135,6 @@ disableoverwrites: 如果目标文件已存在，将忽略
 
 <pre>
 // 支持文件和目录
-src: 源文路径
+src: 源路径
 dst: 目标路径
 </pre>
