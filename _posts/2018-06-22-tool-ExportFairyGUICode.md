@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 生成FairyGUI代码(TypeScript)
-date: 2018-06-19 20:50:00
+date: 2018-06-22 20:50:00
 categories: tool
 tags: tool
 excerpt: 生成FairyGUI代码(TypeScript)
