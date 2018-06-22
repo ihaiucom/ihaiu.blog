@@ -124,7 +124,24 @@ dotnet ./Copy/Copy.dll --setting=./CopyClientSetting.json
 <br>
 <h2 class="nav1">CopyClientSetting.json 介绍</h2>
 
-<p><img src="/assets/docpic/exportxlsx_02.png" style="border: solid 1px #666;" /></p>
+<pre>
+{
+	// 可覆盖列表
+  "enableoverwrites": [
+  	{
+  		"src":"./FairyGUICode/TS/Generates", 
+  		"dst":"./FairyGUICode2/fgui/Generates"
+  	}
+  ],
+  	// 目标目录没有该文件才复制
+  "disableoverwrites": [
+  	{
+      "src":"./FairyGUICode/TS/Extends", 
+      "dst":"./FairyGUICode2/fgui/Extends"
+    }
+  ]
+}
+</pre>
 
 <pre>
 enableoverwrites: 可覆盖文件
@@ -178,7 +195,7 @@ namespace fgui.BlackSkin
 		public m_title : fairygui.GTextField;
 
 		
-		public static URL:string = "uiL://s1uxc7tgjmop0";
+		public static URL:string = &quot;uiL://s1uxc7tgjmop0&quot;;
 
 		
 
@@ -191,13 +208,11 @@ namespace fgui.BlackSkin
 		{
 			super.constructFromXML(xml);
 			
-			this.m_button = this.getController("button");
-			this.m_grayed = this.getController("grayed");
+			this.m_button = this.getController(&quot;button&quot;);
+			this.m_grayed = this.getController(&quot;grayed&quot;);
 
 			
-			this.m_title = <fairygui.GTextField><any>(this.getChild("title"));
-			
-			
+			this.m_title = &lt;fairygui.GTextField&gt;&lt;any&gt;(this.getChild(&quot;title&quot;));
 		}
 	}
 }
