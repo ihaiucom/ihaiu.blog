@@ -117,6 +117,8 @@ dotnet ./Copy/Copy.dll --setting=./CopyClientSetting.json
 | codeMemberNamePrefix		| 代码的成员变量前缀 									| m_							| 
 | codeIgnoreNoname			| 是否忽略nxxx的变量 									| true							| 
 | codeIgnorIllegalClassName	| 是否忽略非法类名的组件								| false							| 
+| codeIgnorNoExported		| 忽略没设置导出的组件									| true							| 
+| codeExportDepend			| 导出依赖的组件										| true							| 
 | codeUseOtherPkgType		| 成员变量类型是否可以用其他包组件的类名				| true							| 
 
 
