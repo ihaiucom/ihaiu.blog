@@ -33,6 +33,7 @@ sh_csharp: true
 * Signal、Event: 消息、事件
 * LocalStorage 本地缓存
 * TickManager、TickHandler
+* SoundManager: 声音管理器
 
 
 ---
@@ -57,3 +58,14 @@ sh_csharp: true
 * 多语言工具： 约定配置表里的多语言字段前缀，生成多语言编辑Excel。再导出对应语言包
 * 协议生成工具： 生成协议数据结构代码，生成处理器、发送器
 * UI代码生成工具: 根据UI生成代码视图控制器
+
+
+---
+
+
+
+## 客户端框架之通常数据
+
+* Channel: 渠道配置
+* User: 用户账号数据
+* Setting: 用户设置数据
