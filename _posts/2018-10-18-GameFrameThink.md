@@ -46,3 +46,13 @@ sh_csharp: true
 * MWindow, MSubwindow: UI模块窗口基类、子窗口基类
 * MModel: 模块数据
 * SystemMessage 系统消息: Toast 浮动消息、 Alert 单个按钮对话框、 Confirm 两个按钮对话框、GlobalModalWaiting 等待转圈
+
+
+---
+
+
+## 客户端框架之基本工具
+
+* 配置生成工具：生成csv / json, 生成代码数据结构、解析器
+* 多语言工具： 约定配置表里的多语言字段前缀，生成多语言编辑Excel。再导出对应语言包
+* 协议生成工具： 生成协议数据结构代码，生成处理器、发送器
