@@ -82,5 +82,9 @@ sh_csharp: true
 
 
 * ResConfig: 资源配置
+* GlobalConfig: 全局数值配置
 * MsgConfig: 消息配置
-* MsgProtoErrorConfig: 协议错误码消息 
+* MsgProtoErrorConfig: 协议错误码消息
+* TextCode: 代码文本
+* UICode: UI文本
+
