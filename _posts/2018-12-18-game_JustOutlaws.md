@@ -26,6 +26,6 @@ sh_csharp: true
 密码: ihaiu
 
 <a href="https://v.youku.com/v_show/id_XMzk2NzkwMjYxMg==.html" target="_blank">https://v.youku.com/v_show/id_XMzk2NzkwMjYxMg==.html</a> <br>
-(如果本也不显示视频播放器，可直接点击改链接去视频网站观看)<br>
+(如果本页不显示视频播放器或者显示线路异常，可直接点击改链接去视频网站观看)<br>
 
 <embed src='http://player.youku.com/player.php/sid/XMzk2NzkwMjYxMg==/v.swf' allowFullScreen='true' quality='high' width='480' height='400' align='middle' allowScriptAccess='always' type='application/x-shockwave-flash' />
