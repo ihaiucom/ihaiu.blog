@@ -25,4 +25,4 @@ sh_csharp: true
 ### 英雄-关卡展示
 密码: ihaiu
 
-<embed src='http://player.youku.com/player.php/sid/XMzk2NzkwMjYxMg==/v.swf' allowFullScreen='true' quality='high' width='480' height='400' align='middle' allowScriptAccess='always' type='application/x-shockwave-flash'></embed>
+<embed src='http://player.youku.com/player.php/sid/XMzk2NzkwMjYxMg==/v.swf' allowFullScreen='true' quality='high' width='480' height='400' align='middle' allowScriptAccess='always' type='application/x-shockwave-flash' />
