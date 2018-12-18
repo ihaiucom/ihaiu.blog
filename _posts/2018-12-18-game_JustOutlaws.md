@@ -25,6 +25,7 @@ sh_csharp: true
 ### 英雄-关卡展示
 密码: ihaiu
 
-<a href="https://v.youku.com/v_show/id_XMzk2NzkwMjYxMg==.html" target="_blank">https://v.youku.com/v_show/id_XMzk2NzkwMjYxMg==.html</a><br>
+<a href="https://v.youku.com/v_show/id_XMzk2NzkwMjYxMg==.html" target="_blank">https://v.youku.com/v_show/id_XMzk2NzkwMjYxMg==.html</a> <br>
+(如果本也不显示视频播放器，可直接点击改链接去视频网站观看)<br>
 
-<iframe height=498 width=510 src='http://player.youku.com/embed/XMzk2NzkwMjYxMg==' frameborder=0 'allowfullscreen' /></iframe>
+<embed src='http://player.youku.com/player.php/sid/XMzk2NzkwMjYxMg==/v.swf' allowFullScreen='true' quality='high' width='480' height='400' align='middle' allowScriptAccess='always' type='application/x-shockwave-flash' />
