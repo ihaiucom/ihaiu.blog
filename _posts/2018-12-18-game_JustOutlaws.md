@@ -23,7 +23,7 @@ sh_csharp: true
 <br>
 
 ### 英雄-关卡展示
-密码: ihaiu
+
 
 <a href="https://www.iqiyi.com/w_19s3xcb7a9.html" target="_blank">https://www.iqiyi.com/w_19s3xcb7a9.html</a> <br>
 (如果本页不显示视频播放器或者显示线路异常，可直接点击改链接去视频网站观看)<br>
