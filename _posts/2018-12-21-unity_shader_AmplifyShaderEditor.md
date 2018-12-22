@@ -4,8 +4,8 @@ title: Unity Shader 之 Amplify Shader Editor
 date: 2018-12-21 9:50:00
 categories: game
 tags: game
-excerpt: 游戏视频之Juest Outlaws
-shareexcerpt: 游戏视频之Juest Outlaws
+excerpt: Unity Shader 之 Amplify Shader Editor
+shareexcerpt: Unity Shader 之 Amplify Shader Editor
 thread: 20181018160000
 author: 大海明月
 authorQQ: 593705098
