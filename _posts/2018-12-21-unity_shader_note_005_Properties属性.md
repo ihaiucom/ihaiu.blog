@@ -4,8 +4,8 @@ title: Unity Shader 学习笔记（005）Properties 属性
 date: 2018-12-21 9:50:00
 categories: Shader
 tags: Shader
-excerpt: Unity Shader 语言形式
-shareexcerpt: Unity Shader  语言形式
+excerpt: Unity Shader Properties 属性
+shareexcerpt: Unity Shader Properties 属性
 thread: 20181018160000
 author: 大海明月
 authorQQ: 593705098
