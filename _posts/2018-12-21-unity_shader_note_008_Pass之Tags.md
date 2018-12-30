@@ -46,7 +46,7 @@ sh_csharp: true
 
 <br>
 
-### 默认提供4种Tag 
+### 默认提供3种Tag 
 
 
 <p><img src="/assets/docpic/unity_shader_note_008_01.png" style="border: solid 1px #666;" /></p>
