@@ -29,13 +29,13 @@ sh_csharp: true
 
 	<h2 class="c16 c19" id="h.quh3d6w2lfof"><span class="c8"></span></h2>
   <h2 class="c16" id="h.quh3d6w2lfof-1"><span class="c12">相关文档</span></h2>
-  <p class="c23"><span class="c14"><a class="c9" href="https://www.google.com/url?q=https://blog.csdn.net/m0_37283423/article/details/72136536&amp;sa=D&amp;ust=1545712388227000">Amplify Shader Editor入门教程</a></span></p>
+  <p class="c23"><span class="c14"><a class="c9" href="https://blog.csdn.net/m0_37283423/article/details/72136536&amp;sa=D&amp;ust=1545712388227000">Amplify Shader Editor入门教程</a></span></p>
   <p class="c0"><span class="c3"></span></p>
-  <p class="c23"><span class="c14"><a class="c9" href="https://www.google.com/url?q=http://wiki.amplify.pt/index.php?title%3DUnity_Products:Amplify_Shader_Editor&amp;sa=D&amp;ust=1545712388227000">Unity Products:Amplify Shader Editor 官方文档</a></span></p>
+  <p class="c23"><span class="c14"><a class="c9" href="http://wiki.amplify.pt/index.php?title%3DUnity_Products:Amplify_Shader_Editor&amp;sa=D&amp;ust=1545712388227000">Unity Products:Amplify Shader Editor 官方文档</a></span></p>
   <p class="c0"><span class="c3"></span></p>
-  <p class="c23"><span class="c14"><a class="c9" href="https://www.google.com/url?q=https://docs.unity3d.com/Manual/SL-Reference.html&amp;sa=D&amp;ust=1545712388227000">Unity: Shader Reference</a></span></p>
+  <p class="c23"><span class="c14"><a class="c9" href="https://docs.unity3d.com/Manual/SL-Reference.html&amp;sa=D&amp;ust=1545712388227000">Unity: Shader Reference</a></span></p>
   <p class="c0"><span class="c3"></span></p>
-  <p class="c23"><span class="c14"><a class="c9" href="https://www.google.com/url?q=https://unity3d.com/cn/get-unity/download/archive&amp;sa=D&amp;ust=1545712388228000">Unity: 去下载想要版本的内置Shader</a></span></p>
+  <p class="c23"><span class="c14"><a class="c9" href="https://unity3d.com/cn/get-unity/download/archive&amp;sa=D&amp;ust=1545712388228000">Unity: 去下载想要版本的内置Shader</a></span></p>
   <h2 class="c16 c19" id="h.zc3j1qyajn2e"><span class="c12"></span></h2>
   <h2 class="c16 c19" id="h.az05ahpf5k5d"><span class="c12"></span></h2>
   <h1 class="c11" id="h.4fo9ybhqkssv"><span class="c2">1.主属性（Main Properties）</span></h1>
