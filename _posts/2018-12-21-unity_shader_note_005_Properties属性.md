@@ -49,7 +49,7 @@ Shader "Hello"
 {
     Properties
     {
-        // 浮点数
+        // 整数
         _MyInitA("MyInitA", Int) = 1
         // 浮点数
         _MyFloatA("MyFloatA", Float) = 0
