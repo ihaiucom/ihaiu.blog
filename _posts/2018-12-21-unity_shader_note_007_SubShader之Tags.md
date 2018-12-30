@@ -94,7 +94,7 @@ sh_csharp: true
 
 
 
-#### 默认值
+<h4 class="nav1">默认值</h4>
 
 
 
@@ -138,8 +138,7 @@ sh_csharp: true
 </pre>
 
 
-#### 可选值
-
+<h4 class="nav1">可选值</h4>
 
 
 
@@ -178,8 +177,7 @@ sh_csharp: true
 </pre>
 
 
-#### 可选值
-
+<h4 class="nav1">可选值</h4>
 
 
 
@@ -216,7 +214,7 @@ sh_csharp: true
 <br>
 <h2 class="nav2"> IgnoreProjector (忽略投影) </h2>
 
-<p> 如果IgnoreProjector给定了tag并且其值为“True”，那么使用此着色器的对象将不会受到<a href="https://docs.unity3d.com/Manual/class-Projector.html" target="_blank"> Projector</a>的影响。这对半透明对象非常有用，因为投影仪没有好办法影响它们。</p>
+<p> 如果IgnoreProjector给定了tag并且其值为“True”，那么使用此着色器的对象将不会受到<a href="https://docs.unity3d.com/Manual/class-Projector.html" target="_blank"> Projector </a>的影响。这对半透明对象非常有用，因为投影仪没有好办法影响它们。 </p>
 
 
 <pre class="brush: csharp; ">
