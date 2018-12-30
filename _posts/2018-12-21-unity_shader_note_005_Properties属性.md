@@ -306,12 +306,21 @@ Shader "Hello"
 
 
 
+
+
 ### [Normal]
+
 <p><img src="/assets/docpic/unity_shader_note_005_03.png" style="border: solid 1px #666;" /></p>
 
 
 
 ### [Toggle]
-<p><img src="/assets/docpic/unity_shader_note_005_03.png" style="border: solid 1px #666;" /></p>
 
+<p><img src="/assets/docpic/unity_shader_note_005_04.png" style="border: solid 1px #666;" /></p>
+
+
+### [Enum]
+
+<p><img src="/assets/docpic/unity_shader_note_005_05.png" style="border: solid 1px #666;" /></p>
+<p><img src="/assets/docpic/unity_shader_note_005_06.png" style="border: solid 1px #666;" /></p>
 
