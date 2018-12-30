@@ -26,7 +26,7 @@ sh_csharp: true
 <p> <a href="http://gad.qq.com/article/detail/38320" target="_blank"> Unity Shader学习笔记（3）Unity Shader模板、结构、形式 </a> </p>
 <p> <a href="https://docs.unity3d.com/Manual/SL-Shader.html" target="_blank"> Unity用户手册（2018.3）/ 图像图形参考 / 着色器参考ShaderLab语法 </a> </p>
 <p> <a href="https://docs.unity3d.com/Manual/ShaderTut1.html" target="_blank"> Unity用户手册（2018.3）/ 图像图形教程 / 着色器：ShaderLab和固定功能着色器 </a> </p>
-<p> <a href="https://docs.unity3d.com/Manual/ShaderTut2.html" target="_blank"> 着色器：顶点和片段程序 </a> </p>
+<p> <a href="https://docs.unity3d.com/Manual/ShaderTut2.html" target="_blank"> Unity用户手册（2018.3）/ 图像图形教程 / 着色器：顶点和片段程序 </a> </p>
 
 
 <br>
