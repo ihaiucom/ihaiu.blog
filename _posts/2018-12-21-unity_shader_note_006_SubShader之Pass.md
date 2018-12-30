@@ -124,5 +124,6 @@ Shader "GrabPassInvert"
 
 </pre>
 
+<p><img src="/assets/docpic/unity_shader_note_006_01.gif" style="border: solid 1px #666;" /></p>
 
 
