@@ -296,3 +296,22 @@ Shader "Hello"
 
 </pre>
 
+
+
+### [NoScaleOffset]
+
+<p><img src="/assets/docpic/unity_shader_note_005_01.png" style="border: solid 1px #666;" /></p>
+加了[NoScaleOffset]之后
+<p><img src="/assets/docpic/unity_shader_note_005_02.png" style="border: solid 1px #666;" /></p>
+
+
+
+### [Normal]
+<p><img src="/assets/docpic/unity_shader_note_005_03.png" style="border: solid 1px #666;" /></p>
+
+
+
+### [Toggle]
+<p><img src="/assets/docpic/unity_shader_note_005_03.png" style="border: solid 1px #666;" /></p>
+
+
