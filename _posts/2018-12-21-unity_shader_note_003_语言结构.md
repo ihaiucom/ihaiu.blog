@@ -58,7 +58,7 @@ Shader "ShaderName" ｛
 
 </pre>
 
-
+<pre>
 
 Shader
 |__Properties : 属性
@@ -75,3 +75,5 @@ Shader
 		|__[RenderSetup]: 同SubShader，还可以使用固定管线的着色器命令。
 		|__嵌套Shader代码
 |__Fallback : SubShader不能运行时执行
+
+</pre>
