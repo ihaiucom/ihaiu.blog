@@ -441,8 +441,9 @@ Shader "Unlit/BaseTexture"
             "RenderType" = "AlphaTest"
         } 
 
-        // 透明抠图必须加这个
+        // 透明抠图必须加这个 或者换成 Blend SrcAlpha OneMinusSrcAlpha
         AlphaToMask On
+        
         // 双面显示
         Cull Off
 
