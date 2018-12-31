@@ -37,16 +37,7 @@ sh_csharp: true
 <h2 class="nav1"> 固定着色器命令 </h2>
 
 
-<h4 >官方文档给出以下8个</h4>
 
-* Cull (设置剔除模式)
-* ZTest (深度测试)
-* ZWrite (设置深度缓冲区写入模式开关)
-* Offset (设置Z缓冲深度偏移)
-* Blend (混合模式)
-* BlendOp (混合操作)
-* AlphaToMask On：打开alpha-to-coverage。
-* ColorMask (设置颜色通道写入掩码)
 
 
 
@@ -241,3 +232,251 @@ Shader "Unlit/Material"
 </pre>
 
 
+
+
+
+<h2 class="nav1"> 固定着色器命令 纹理 </h2>
+
+
+* 使用片段程序时，SetTexture命令无效; 就像在那种情况下像素操作在着色器中完整描述。建议最近使用可编程着色器而不是SetTexture命令。
+
+* SetTexture命令必须放在Pass的末尾。
+
+* 您可以在一个传递中包含多个SetTexture命令 - 所有纹理都按顺序应用，就像绘画程序中的图层一样。
+
+
+
+<h2 class="nav2"> combine </h2>
+
+
+
+| 命令                      | 介绍   | 
+| ----------------------------- | -----  |
+| combine src1 * src2                       | 结果将比任一输入更暗。   |
+| combine src1 + src2                       | 结果将比任一输入更亮。   |
+| combine src1 - src2                       |    |
+| combine src1 lerp（src2）src3              | lerp(src3, src1, src2.a)    |
+| combine src1 * src2 + src3                | src1.a * src2.a +  src3  |
+
+
+
+<h2 class="nav2"> src的取值 </h2>
+
+
+
+| 值                      | 介绍   | 
+| ----------------------------- | -----  |
+| Previous                     | 前一个SetTexture的结果   |
+| Primary                       | 照明计算的颜色或绑定时的顶点颜色   |
+| Texture                       | SetTexture中TextureName指定的纹理的颜色   |
+| Constant             | ConstantColor指定的颜色    |
+
+
+<h2 class="nav2"> 修饰符 </h2>
+
+* Double 或 Quad: 上面指定的公式可以选择性地后跟关键字 Double 或 Quad ，以使得到的颜色2x或4x变亮。
+
+* One - XXX:  除参数外，所有src属性都lerp可以选择以(One - XXX)以使结果颜色无效。
+
+* constantColor :  常量是在指定的颜色。
+
+<pre>
+            SetTexture [_MainTex] {
+                combine texture Double
+            }
+</pre>
+
+
+<pre>
+            SetTexture [_MainTex] {
+                combine one -texture
+            }
+</pre>
+
+
+<pre>
+            SetTexture [_MainTex] {
+                
+                // 指定常量颜色
+                constantColor (0, 0, 1, 1)
+
+                // 混合
+                combine constant lerp(texture) previous
+            }
+</pre>
+
+
+<pre>
+            SetTexture [_MainTex] {
+                
+                // 指定常量颜色, 使用属性里的变量
+                constantColor [_ColorShape]
+
+                // 混合
+                combine constant lerp(texture) previous
+            }
+</pre>
+                
+
+
+<h4>放置一张存纹理没有光照</h4>
+
+<pre class="brush: csharp; ">
+Shader "Unlit/BaseTexture"
+{
+    Properties
+    {
+        _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader
+    {      
+        Pass
+        {
+            SetTexture [_MainTex]
+            {
+                combine texture
+            }
+        }
+    }
+}
+
+</pre>
+
+<p><img src="/assets/docpic/unity_shader_note_010_06.png" style="border: solid 1px #666;" /></p><br>
+
+
+
+<h4>Alpha混合两个纹理</h4>
+
+<pre class="brush: csharp; ">
+Shader "Unlit/2 Alpha Blended Textures"
+{
+    Properties {
+        _MainTex ("Base (RGB)", 2D) = "white" {}
+        _BlendTex ("Alpha Blended (RGBA) ", 2D) = "white" {}
+    }
+    SubShader {
+        Pass {
+            // 绘制基础纹理
+            SetTexture [_MainTex] {
+                combine texture
+            }
+            // 混合：
+            // lerp(previous, texture, texture.a)
+            // lerp(_MainTex.rgb, _BlendTex.rgb, _BlendTex.a)
+            // _BlendTex.a = 0 显示 _MainTex
+            // _BlendTex.a = 1 显示 _BlendTex
+            SetTexture [_BlendTex] {
+                combine texture lerp (texture) previous
+            }
+        }
+    }
+}
+
+</pre>
+<p><img src="/assets/docpic/unity_shader_note_010_07.png" style="border: solid 1px #666;" /></p><br>
+
+
+<h4>Alpha混合两个颜色</h4>
+
+<pre class="brush: csharp; ">
+Shader "Unlit/Self-Illumination"
+{
+    Properties 
+    {
+        // 设置基础颜色
+        _Color ("Color", Color) = (0,1,0,1)
+        // 设置形状颜色
+        _ColorShape ("Color Shape", Color) = (0,0,1,1)
+        // 形状图片
+        _MainTex ("Base (RGB) Self-Illumination (A)", 2D) = "white" {}
+    }
+    SubShader {
+        Pass {
+
+            // 设置基础颜色
+            Color [_Color]
+
+            SetTexture [_MainTex] {
+                // 设置形状颜色
+                // constantColor (0, 0, 1, 1);
+                constantColor [_ColorShape]
+
+                // 混合
+                combine constant lerp(texture) previous
+            }
+        }
+    }
+}
+
+
+</pre>
+<p><img src="/assets/docpic/unity_shader_note_010_08.png" style="border: solid 1px #666;" /></p><br>
+
+
+
+<h4>透明图片</h4>
+
+<pre class="brush: csharp; ">
+Shader "Unlit/BaseTexture"
+{
+    Properties
+    {
+     // 漫反射颜色：这是对象的基色。
+        _Color ("Main Color", Color) = (1,1,1,0)
+        // 镜面反射颜色：物体镜面反射高光的颜色。
+        _SpecColor ("Spec Color", Color) = (1,1,1,1)
+        // 光泽度数：高光的锐度，介于0和1之间。在0处，你会得到一个巨大的亮点，看起来很像漫反射光，1点你会得到一个微小的斑点。
+        _Shininess ("Shininess", Range (0.01, 1)) = 0.7
+        // 自发光颜色：物体未被任何光线击中时的颜色。
+        _Emission ("Emmisive Color", Color) = (0,0,0,0)
+
+        _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader
+    { 
+        Tags
+        {
+            "Queue" = "TransparentCutout"
+            "RenderType" = "AlphaTest"
+        } 
+
+        // 透明抠图必须加这个
+        AlphaToMask On
+        // 双面显示
+        Cull Off
+
+        Pass
+        {
+
+            Material {
+                // 漫反射颜色：这是对象的基色。
+                Diffuse [_Color]
+                // 环境颜色：这是对象在照明窗口中设置的环境光照射时所具有的颜色。
+                Ambient [_Color]
+                // 镜面反射颜色：物体镜面反射高光的颜色。
+                Specular [_SpecColor]
+                // 光泽度数：高光的锐度，介于0和1之间。在0处，你会得到一个巨大的亮点，看起来很像漫反射光，1点你会得到一个微小的斑点。
+                Shininess [_Shininess]
+                // 自发光颜色：物体未被任何光线击中时的颜色。
+                Emission [_Emission]
+            }
+
+            // 光照开关
+            Lighting On
+            // 高光开关
+            SeparateSpecular On
+
+            SetTexture [_MainTex]
+            {
+                combine Texture * Primary
+            }
+        }
+
+  
+    }
+}
+
+
+</pre>
+<p><img src="/assets/docpic/unity_shader_note_010_09.png" style="border: solid 1px #666;" /></p><br>
