@@ -28,6 +28,7 @@ sh_csharp: true
 <p> <a href="https://docs.unity3d.com/Manual/SL-Pass.html" target="_blank"> ShaderLab: Pass</a> </p>
 <p> <a href="https://docs.unity3d.com/Manual/SL-CullAndDepth.html" target="_blank"> ShaderLab：剔除和深度测试</a> </p>
 <p> <a href="https://docs.unity3d.com/Manual/SL-Blend.html" target="_blank"> ShaderLab：混合</a> </p>
+<p> <a href="https://docs.unity3d.com/Manual/SL-Blend.html" target="_blank"> ShaderLab：混合</a> </p>
 <p> <a href="https://docs.unity3d.com/Manual/SL-Other.html" target="_blank"> ShaderLab: other commands</a> </p>
 <p> <a href="https://docs.unity3d.com/Manual/Glossary.html#depthbuffer" target="_blank"> 词汇表</a> </p>
 
@@ -40,8 +41,16 @@ sh_csharp: true
 <p><img src="/assets/docpic/unity_shader_note_009_01.png" style="border: solid 1px #666;" /></p>
 
 
+<h4 >官方文档给出以下8个， 其他的还有固定着色器命令</h4>
 
-
+* Cull (设置剔除模式)
+* ZTest (深度测试)
+* ZWrite (设置深度缓冲区写入模式开关)
+* Offset (设置Z缓冲深度偏移)
+* Blend (混合模式)
+* BlendOp (混合操作)
+* AlphaToMask On：打开alpha-to-coverage。
+* ColorMask (设置颜色通道写入掩码)
 
 
 <br>
@@ -275,7 +284,7 @@ AlphaToMask On：打开alpha-to-coverage。使用MSAA时，alpha-to-coverage会�
 </pre>
 
 
-<h4 >只混合颜色RPG</h4>
+<h4 >混合颜色RPGA</h4>
 <pre class="brush: csharp; ">
     SubShader {
         Blend One One , SrcAlpha OneMinusSrcAlpha
@@ -284,7 +293,7 @@ AlphaToMask On：打开alpha-to-coverage。使用MSAA时，alpha-to-coverage会�
 </pre>
 
 
-<h4 >混合颜色RPGA</h4>
+<h4 >只混合颜色RPG</h4>
 <pre class="brush: csharp; ">
     SubShader {
         Blend One One
