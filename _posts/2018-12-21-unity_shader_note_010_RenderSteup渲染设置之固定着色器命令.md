@@ -72,7 +72,7 @@ Shader "Solid Red" {
         Pass { Color (1,0,0,0) }
     }
 }
-
+</pre>
 
 传材质球的变量：
 <pre class="brush: csharp; ">
