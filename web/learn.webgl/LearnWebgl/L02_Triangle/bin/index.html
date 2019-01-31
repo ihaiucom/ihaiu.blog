@@ -1,0 +1,34 @@
+<html>
+<head>
+    <title>learn_01_viewport</title>
+    
+    
+    <script type="text/javascript" src="js/Main.js"></script><!--自行添加js引入-->
+
+    <noscript id="shader-vs">
+        // 顶点shader
+        attribute vec3 position;
+        void main(void)
+        {
+            gl_Position = vec4(position, 1.0);
+        }
+    </noscript>
+
+    <noscript id="shader-fs">
+        // 片段sahder
+        void main(void)
+        {
+            gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+        }
+    
+    </noscript>
+
+
+</head>
+
+
+
+<body onload="main()">
+    <canvas id="gameCanvas" style="border: 1px solid red;" width="600" height="450"></canvas>
+</body>
+</html>
