@@ -13,15 +13,21 @@ var positionIndex = 0;
 function main() {
     setTimeout(function () {
         draw();
-    }, 1000);
+    }, 100);
 }
 function draw() {
     console.log("draw");
+    //========================================
+    // 初始化上下文
+    //----------------------------------------
     var canvas = document.getElementById("gameCanvas");
     // 初始化上下文
     gl = canvas.getContext("webgl");
     // 初始化视窗大小
     gl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+    //========================================
+    // 创建shader、设置shader代码、编译shader
+    //----------------------------------------
     // 创建 顶点shader对象
     vertexShaderObject = gl.createShader(gl.VERTEX_SHADER);
     // 创建 面片shader对象
@@ -41,6 +47,9 @@ function draw() {
         alert("error: fragmentShaderObject");
         return;
     }
+    //========================================
+    // 创建渲染程序、附加shader到程序、绑定shader中的属性变量、链接程序、使用程序
+    //----------------------------------------
     // 创建渲染程序
     programObject = gl.createProgram();
     // 设置渲染程序shader
@@ -57,6 +66,9 @@ function draw() {
     }
     // 使用渲染程序
     gl.useProgram(programObject);
+    //========================================
+    // 创建顶点缓冲、给缓冲赋值
+    //----------------------------------------
     // 顶点数据
     var jsArrayData = [
         //x         y               z           r       g       b
@@ -82,10 +94,16 @@ function draw() {
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer);
     // 给顶点缓冲赋值数据
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(jsArrayData), gl.STATIC_DRAW);
+    //========================================
+    // 绘制背景
+    //----------------------------------------
     // 设置绘制背景颜色
     gl.clearColor(0.9, 0.9, 0.9, 1.0);
     // 绘制背景颜色
     gl.clear(gl.COLOR_BUFFER_BIT);
+    //========================================
+    // 设置当前要使用的缓冲、给shader变量赋值、绘制
+    //----------------------------------------
     // 指定绘制所使用的顶点数据 从 该缓冲区中获取
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleBuffer);
     // 设置顶点shader属性

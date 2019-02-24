@@ -1,0 +1,272 @@
+<html>
+<head>
+    <title>lessom-13:webgl-point Sprite</title>
+    <meta http-equiv="content-type" content="text/html; charset=gb2312">
+    
+    <script type ="text/javascript" src="glMatrix-0.9.6.min.js"></script>
+    <script id="shader-vs" type="x-shader/x-fragment">
+        
+            uniform     float   _time;
+            uniform     vec3    _centerPosition;
+            attribute   float   _lifetime;
+            attribute   vec3    _startPosition;
+            attribute   vec3    _endPosition;
+            varying     float   _outLifetime;
+            void main()
+            {
+              if ( _time <= _lifetime )
+              {
+                gl_Position.xyz    = _startPosition + (_time * _endPosition);
+                gl_Position.xyz    += _centerPosition;
+                gl_Position.w      = 1.0;
+              }
+              else
+                 gl_Position = vec4( -1000, -1000, 0, 0 );
+              _outLifetime = 1.0 - ( _time / _lifetime );
+              _outLifetime = clamp ( _outLifetime, 0.0, 1.0 );
+              gl_PointSize = ( _outLifetime * _outLifetime ) * 40.0;
+            }
+    </script>
+
+    <script id="shader-fs" type="x-shader/x-fragment">
+        precision mediump float;
+            uniform    vec4        _color;
+            uniform    sampler2D   _texture;
+            varying    float       _outLifetime;
+            void main()
+            {
+              vec4 texColor;
+              texColor         =   texture2D( _texture, gl_PointCoord );
+              gl_FragColor     =   vec4( _color ) * texColor;
+              gl_FragColor.a   *=  _outLifetime;
+            }
+    </script>
+
+    <script>
+
+        var     webgl = null;
+        var     vertexShaderObject  =   null;
+        var     fragmentShaderObject=   null;
+        var     programObject       =   null;
+        var     triangleBuffer      =   null;
+        var     textureHandle       =   null;
+        var     _color;
+        var     _texture;
+        var     _time;
+        var     _centerPosition;
+        
+        var     _attrLifetime;
+        var     _attrStartPosition;
+        var     _attrEndPosition;
+
+
+        var projectMat = mat4.create();
+
+
+        function getShaderSource(scriptID) {
+            var shaderScript = document.getElementById(scriptID);
+            if (shaderScript == null) return "";
+
+            var sourceCode = "";
+            var child = shaderScript.firstChild;
+            while (child) {
+                if (child.nodeType == child.TEXT_NODE) sourceCode += child.textContent;
+                child = child.nextSibling;
+            }
+
+            return sourceCode;
+        }
+
+        /**
+        *   初始化,完成资源的加载.
+        */
+        function init() {
+
+            var canvas = document.getElementById('myCanvas');
+            webgl = canvas.getContext("webgl");
+
+            webgl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+            //mat4.ortho(0, canvas.clientWidth, canvas.clientHeight, 0, -1.0, 1.0, projectMat);
+
+
+            vertexShaderObject = webgl.createShader(webgl.VERTEX_SHADER);
+            fragmentShaderObject = webgl.createShader(webgl.FRAGMENT_SHADER);
+
+            webgl.shaderSource(vertexShaderObject, getShaderSource("shader-vs"));
+            webgl.shaderSource(fragmentShaderObject, getShaderSource("shader-fs"));
+
+            webgl.compileShader(vertexShaderObject);
+            webgl.compileShader(fragmentShaderObject);
+
+            if (!webgl.getShaderParameter(vertexShaderObject, webgl.COMPILE_STATUS)) {
+                var err = webgl.getShaderInfoLog(vertexShaderObject);
+                alert(err);
+                return;
+            }
+            if (!webgl.getShaderParameter(fragmentShaderObject, webgl.COMPILE_STATUS)) {
+                var err = webgl.getShaderInfoLog(fragmentShaderObject);
+                alert(err);
+                return;
+            }
+
+            programObject = webgl.createProgram();
+
+            webgl.attachShader(programObject, vertexShaderObject);
+            webgl.attachShader(programObject, fragmentShaderObject);
+
+            webgl.linkProgram(programObject);
+            if (!webgl.getProgramParameter(programObject, webgl.LINK_STATUS)) {
+                alert("error:programObject");
+                return;
+            }
+
+            webgl.useProgram(programObject);
+
+            textureHandle = initTexture("smoke1.png");
+
+            _color              =   webgl.getUniformLocation(programObject, "_color");
+            _texture            =   webgl.getUniformLocation(programObject, "_texture");
+            _time               =   webgl.getUniformLocation(programObject, "_time");
+            _centerPosition     =   webgl.getUniformLocation(programObject, "_centerPosition");
+            
+            
+            _attrLifetime       =   webgl.getAttribLocation(programObject, "_lifetime");
+            _attrStartPosition  =   webgl.getAttribLocation(programObject, "_startPosition");
+            _attrEndPosition    =   webgl.getAttribLocation(programObject, "_endPosition");
+            
+
+
+            webgl.activeTexture(webgl.TEXTURE0);
+            webgl.bindTexture(webgl.TEXTURE_2D, textureHandle);
+            webgl.uniform1i(_texture, 0);
+
+
+            var size = 1000;
+            var dataPoint = new Float32Array(size * 7);
+            
+            for ( var i = 0; i < 1000; i++ )
+            {
+                // Lifetime of particle
+                dataPoint[i * 7 + 0] = Math.random();
+
+                // End position of particle
+                dataPoint[i * 7 + 1] = Math.random();
+                dataPoint[i * 7 + 2] = Math.random();
+                dataPoint[i * 7 + 3] = Math.random();
+
+                // Start position of particle
+                dataPoint[i * 7 + 4] = Math.random()* 0.125;
+                dataPoint[i * 7 + 5] = Math.random()* 0.125;
+                dataPoint[i * 7 + 6] = Math.random()* 0.125;
+
+            }
+
+            triangleBuffer = webgl.createBuffer();
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, triangleBuffer);
+            webgl.bufferData(webgl.ARRAY_BUFFER, dataPoint, webgl.STATIC_DRAW);
+            webgl.enable(webgl.BLEND);
+            webgl.blendFunc(webgl.SRC_ALPHA, webgl.GL_ONE);
+
+            
+        }
+
+        function handleLoadedTexture(texture) {
+            webgl.bindTexture(webgl.TEXTURE_2D, texture);
+            webgl.texImage2D(webgl.TEXTURE_2D, 0, webgl.RGBA, webgl.RGBA, webgl.UNSIGNED_BYTE, texture.image);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MAG_FILTER, webgl.LINEAR);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, webgl.LINEAR);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_S, webgl.REPEAT);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_T, webgl.REPEAT);
+
+            webgl.bindTexture(webgl.TEXTURE_2D, null);
+        }
+        function initTexture(imageFile) {
+            var texture;
+            //! 创建一个纹理 webgl
+            texture = webgl.createTexture();
+            //! 创建一个图片
+            texture.image = new Image();
+            //! 指定图片的路径
+            texture.image.src = imageFile;
+            texture.image.onload = function() {
+                handleLoadedTexture(texture)
+            }
+            return texture;
+
+        }
+
+
+        function webGLStart() {
+            //! 初始化
+            init();
+            //! 进入游戏循环
+            tick();
+        }
+
+        var times = 0;
+        function renderScene() {
+
+
+            
+            //! 设置重绘背景的颜色
+            webgl.clearColor(0.0, 0.0, 0.0, 1.0);
+            //! 执行绘制，即将背景清空成制定的颜色(clearColor)
+            webgl.clear(webgl.COLOR_BUFFER_BIT | webgl.DEPTH_BUFFER_BIT);
+            webgl.enable(webgl.DEPTH_TEST);
+
+            //! 指定绘制所使用的顶点数据 从 该缓冲区中获取
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, triangleBuffer);
+
+            webgl.enable(webgl.BLEND);
+            webgl.blendFunc(webgl.SRC_ALPHA, webgl.ONE_MINUS_SRC_ALPHA);
+
+            webgl.activeTexture(webgl.TEXTURE0);
+            webgl.bindTexture(webgl.TEXTURE_2D, textureHandle);
+            webgl.uniform1i(_texture, 0);
+
+            webgl.uniform1f(_time, times);
+            times += 0.016;
+            if (times >= 1.0) 
+            {
+                webgl.uniform3f(_centerPosition, Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+
+                webgl.uniform4f(_color, Math.random(), Math.random(), Math.random(), 0.9);
+                times = 0;          
+            }
+            
+            
+            webgl.enableVertexAttribArray(_attrLifetime);
+            webgl.enableVertexAttribArray(_attrStartPosition);
+            webgl.enableVertexAttribArray(_attrEndPosition);
+
+            webgl.vertexAttribPointer(_attrLifetime,        1, webgl.FLOAT, false, 28, 0);
+            webgl.vertexAttribPointer(_attrEndPosition,     3, webgl.FLOAT, false, 28, 4);
+            webgl.vertexAttribPointer(_attrStartPosition,   3, webgl.FLOAT, false, 28, 16);
+
+            webgl.drawArrays(webgl.POINTS, 0, 1000);
+        }
+
+
+        function tick() {
+            requestAnimFrame(tick);
+            renderScene();
+
+        }
+        window.requestAnimFrame = (function () {
+            return window.requestAnimationFrame ||
+                   window.webkitRequestAnimationFrame ||
+                   window.mozRequestAnimationFrame ||
+                   window.oRequestAnimationFrame ||
+                   window.msRequestAnimationFrame ||
+                   function (callback, element) {
+                       window.setTimeout(callback, 1000 / 60);
+                   };
+        })();
+
+    </script>
+</head>
+<body onload='webGLStart()'>
+    <canvas id="myCanvas" style="border: 1px solid red;" width='1024' height='768'></canvas>
+</body>
+</html>
