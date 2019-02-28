@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7D1F628D-B215-493B-A794-40237D9EB051}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>WebGL</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="lesson01\lesson01-0.html" />
+    <None Include="lesson02\lesson02-0.html" />
+    <None Include="lesson03\lesson03-VertexBuffer.html" />
+    <None Include="lesson04\lesson04-VertexBuffer2.html" />
+    <None Include="lesson05\lesson05-IndexBuffer.html" />
+    <None Include="lesson06\lesson06-shader.html" />
+    <None Include="lesson07\lesson07-shader2.html" />
+    <None Include="lesson08\glMatrix-0.9.6.min.js" />
+    <None Include="lesson08\lesson08-ortho.html" />
+    <None Include="lesson09\lesson09-ortho.html" />
+    <None Include="lesson09\webgl-utils.js" />
+    <None Include="lesson10\lesson10-primative.html" />
+    <None Include="lesson11\lesson11-texture.html" />
+    <None Include="lesson12\lesson12-texture2.html" />
+    <None Include="lesson13\lesson13-multiTexture.html" />
+    <None Include="lesson14\lesson14-multiTexture.html" />
+    <None Include="lesson15\lesson15-perpective.html" />
+    <None Include="lesson20\lesson20-纹理滤波.html" />
+    <None Include="lesson22\lesson22-key-control.html" />
+    <None Include="lesson23\lesson23-mat-复合变换.html" />
+    <None Include="lesson24-混合透明\lesson24-blend.html" />
+    <None Include="lesson25\lesson25-fbo-copy-tex.html" />
+    <None Include="lesson26\lesson26-fbo.html" />
+    <None Include="lesson27\lesson27-mouse.html" />
+    <None Include="lesson29\lesson29-fps-camera.html" />
+    <None Include="lesson31\lesson31-3rd-camera.html" />
+    <None Include="lesson34\lesson34-dir-lighting.html" />
+    <None Include="lesson35\lesson35-point-lighting.html" />
+    <None Include="lesson36\lesson36-model.html" />
+    <None Include="lesson37\lesson37-binary-file.html" />
+    <None Include="lesson38\lesson38-binary-model.html" />
+    <None Include="lesson40-高光\lesson40-高光.html" />
+    <None Include="lesson41-VAO\lesson41-VAO.html" />
+    <None Include="lesson45-布告板技术(1)\lesson45-billbord.html" />
+    <None Include="lesson46-布告板技术(2)\lesson46-billbord.html" />
+    <None Include="lesson49-场景的管理-节点\lesson49-node.html" />
+    <None Include="lesson50-boundbox\lesson50-boundbox.html" />
+    <None Include="lesson51-裁减\lesson51-裁减.html" />
+    <None Include="lesson52-skybox\lesson52-skybox.html" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

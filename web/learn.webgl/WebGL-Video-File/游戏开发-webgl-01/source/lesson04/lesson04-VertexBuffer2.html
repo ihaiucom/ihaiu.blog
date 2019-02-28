@@ -1,0 +1,149 @@
+<html>
+<head>
+    <title>webgl-lesson2</title>
+    <meta http-equiv="content-type" content="text/html; charset=gb2312">
+
+    <script id="shader-vs">
+        attribute vec3 v3Position;
+        void main(void)
+        {
+            gl_Position = vec4(v3Position, 1.0);
+        }
+    </script>
+
+    <script id="shader-fs">
+        void main(void)
+        {
+            gl_FragColor = vec4(0.0, 1.0, 1.0, 1.0);
+        }
+    </script>
+
+    <script>
+        function getShaderSource(scriptID) {
+            var shaderScript = document.getElementById(scriptID);
+            if (shaderScript == null) return "";
+
+            var sourceCode = "";
+            var child = shaderScript.firstChild;
+            while (child) {
+                if (child.nodeType == child.TEXT_NODE) sourceCode += child.textContent;
+                child = child.nextSibling;
+            }
+
+            return sourceCode;
+        }
+
+        var webgl = null;
+        var vertexShaderObject = null;
+        var fragmentShaderObject = null;
+        var programObject = null;
+        var triangleBuffer = null;
+        var triangleBuffer1 = null;
+        var v3PositionIndex = 0;
+
+        function Init() {
+            var canvas = document.getElementById('myCanvas');
+            webgl = canvas.getContext("webgl");
+
+            webgl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+            vertexShaderObject      =   webgl.createShader(webgl.VERTEX_SHADER);
+            fragmentShaderObject    =   webgl.createShader(webgl.FRAGMENT_SHADER);
+
+            webgl.shaderSource(vertexShaderObject,      getShaderSource("shader-vs"));
+            webgl.shaderSource(fragmentShaderObject,    getShaderSource("shader-fs"));
+
+            webgl.compileShader(vertexShaderObject);
+            webgl.compileShader(fragmentShaderObject);
+
+            if (!webgl.getShaderParameter(vertexShaderObject, webgl.COMPILE_STATUS)) 
+            { 
+                alert("error:vertexShaderObject");
+                return; 
+            }
+            if (!webgl.getShaderParameter(fragmentShaderObject, webgl.COMPILE_STATUS))
+            { 
+                alert("error:fragmentShaderObject");
+                return;
+            }
+
+            programObject = webgl.createProgram();
+
+            webgl.attachShader(programObject, vertexShaderObject);
+            webgl.attachShader(programObject, fragmentShaderObject);
+
+            webgl.bindAttribLocation(programObject, v3PositionIndex, "v3Position");
+
+            webgl.linkProgram(programObject);
+            if (!webgl.getProgramParameter(programObject, webgl.LINK_STATUS)) 
+            { 
+                alert("error:programObject"); 
+                return; 
+            }
+
+            //1 顶点缓冲区
+            //2 索引缓冲区
+            //3 纹理
+            //4 帧缓冲
+            //5 深度缓冲区
+            //6 颜色缓冲区
+            //7 模板缓冲区
+
+            //1 模型矩阵
+            //2 观察矩阵
+            //3 投影矩阵
+            //4 视口
+            webgl.useProgram(programObject);
+
+            var jsArrayData = 
+                [
+                    //x     y       z       nx      ny      nz
+                    -0.5,   +0.5,   0.0,    0.0,    0.0,    0.0,
+                    +0.5,   +0.5,   0.0,    0.0,    0.0,    0.0,
+                    +0.5,   -0.5,   0.0,    0.0,    0.0,    0.0,
+
+                    -0.5,   +0.5,   0.0,    0.0,    0.0,    0.0,
+                    +0.5,   -0.5,   0.0,    0.0,    0.0,    0.0,
+                    -0.5,   -0.5,   0.0,    0.0,    0.0,    0.0,
+                ];//右顶点
+
+            var jsArrayData1 = 
+                [
+                    1.0, 1.0, 0.0,      //  上顶点
+                    -1.0, -1.0, 0.0,    //  左顶点
+                    0.0, -1.0, 0.0
+                ];//右顶点
+
+            triangleBuffer = webgl.createBuffer();
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, triangleBuffer);
+            webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(jsArrayData), webgl.STATIC_DRAW);
+
+            triangleBuffer1 = webgl.createBuffer();
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, triangleBuffer1);
+            webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(jsArrayData1), webgl.STATIC_DRAW);
+
+            //webgl.bufferData(webgl.ARRAY_BUFFER, 4 * 9, webgl.STATIC_DRAW);
+            //webgl.bufferSubData(webgl.ARRAY_BUFFER, 0, new Float32Array(jsArrayData));
+
+
+            //! 设置重绘背景的颜色
+            webgl.clearColor(0.0, 0.0, 0.0, 1.0);
+            //! 执行绘制，即将背景清空成制定的颜色(clearColor)
+            webgl.clear(webgl.COLOR_BUFFER_BIT);
+
+            //! 指定绘制所使用的顶点数据 从 该缓冲区中获取
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, triangleBuffer);
+
+            webgl.enableVertexAttribArray(v3PositionIndex);
+
+            webgl.vertexAttribPointer(v3PositionIndex, 3, webgl.FLOAT, false, 4 * 6, 0);
+
+            webgl.drawArrays(webgl.TRIANGLES, 0, 6);
+
+        }
+    </script>
+</head>
+<body onload='Init()'>
+    <canvas id="myCanvas" style="border: 1px solid red;" width='600' height='600'></canvas>
+</body>
+</html>

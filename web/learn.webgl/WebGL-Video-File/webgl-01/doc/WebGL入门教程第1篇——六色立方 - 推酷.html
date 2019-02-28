@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)http://www.tuicool.com/articles/I7fU7n -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="authenticity_token" name="csrf-param">
+<meta content="QJbLC/aIcfY7bkvdBpDm4gbZ4gNjl7Y6K+EIvzzNDG8=" name="csrf-token">
+    <title>
+            WebGL入门教程第1篇——六色立方 - 推酷
+   </title>
+    <meta name="description" content="WebGL入门教程第1篇——六色立方">
+  <link rel="shortcut icon" href="http://static0.tuicool.com/favicon.ico" type="image/x-icon">
+  <link href="./WebGL入门教程第1篇——六色立方 - 推酷_files/application-bc9f103ffac633f3e0506001890d1135.css" media="screen" rel="stylesheet" type="text/css">
+  <link href="http://static0.tuicool.com/assets/font-awesome.min.css" rel="stylesheet">
+  <script async="" type="text/javascript" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/ca-pub-7054762349007490.js"></script><script src="./WebGL入门教程第1篇——六色立方 - 推酷_files/application-9d8e2864bc094ddf228d2147120a4b1f.js" type="text/javascript"></script>
+
+  <!--[if IE 7]>
+  <link rel="stylesheet" href="http://assets.tuicool.com/assets/font-awesome-ie7.min.css">
+  <![endif]--> 
+    <script type="text/javascript" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/tip.js"></script>
+  
+  <script type="text/javascript" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/m.js"></script>
+<script src="./WebGL入门教程第1篇——六色立方 - 推酷_files/ds.js"></script>
+<script type="text/javascript" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/spin.min.js"></script><style type="text/css"></style>
+<link rel="stylesheet" href="http://static0.tuicool.com/assets/github.css">
+
+<script src="./WebGL入门教程第1篇——六色立方 - 推酷_files/share.js"></script><script src="./WebGL入门教程第1篇——六色立方 - 推酷_files/share.js"></script><link rel="stylesheet" href="http://bdimg.share.baidu.com/static/api/css/share_style1_24.css"></head>
+<body><div id="BAIDU_DUP_fp_wrapper" style="position: absolute; left: -1px; bottom: -1px; z-index: 0; width: 0px; height: 0px; overflow: hidden; visibility: hidden; display: none;"><iframe id="BAIDU_DUP_fp_iframe" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/o(1).html" style="width: 0px; height: 0px; visibility: hidden; display: none;"></iframe></div><div id="BAIDU_DUP_fp_wrapper" style="position: absolute; left: -1px; bottom: -1px; z-index: 0; width: 0px; height: 0px; overflow: hidden; visibility: hidden; display: none;"><iframe id="BAIDU_DUP_fp_iframe" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/o.html" style="width: 0px; height: 0px; visibility: hidden; display: none;"></iframe></div>
+  
+  <div id="header" class="navbar-fixed-top">
+    <div class="container">
+      <div class="navbar">
+        <div class="navbar-inner">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+            <span class="icon-bar"></span> 
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span> 
+          </a>
+          <a href="http://www.tuicool.com/" class="brand">推酷</a>        
+        <nav class="nav-collapse collapse">
+            <ul class="nav navbar primary-nav">                            
+              <li class="active">
+                <a href="http://www.tuicool.com/ah">
+                  文章
+                </a>
+              </li>              
+              <li class="">
+                <a href="http://www.tuicool.com/sites/hot">
+                  站点
+                </a>
+              </li>
+              <li class="">
+                <a href="http://www.tuicool.com/topics">
+                  主题
+                </a>
+              </li>
+              <li class="">
+                <a href="http://course.tuicool.com/">
+                  公开课
+                </a>
+              </li>
+              <li class="">
+                <a href="http://huodong.tuicool.com/">
+                  活动
+                </a>
+              </li>
+              <li class="">
+                <a href="http://www.tuicool.com/mobile">
+                  客户端
+                    <sup style="font-size:0.8em;color: #16A085;">荐</sup>
+                </a>
+              </li>
+              <li class="dropdown">
+                <a href="http://www.tuicool.com/articles/I7fU7n#" class="dropdown-toggle" data-toggle="dropdown">周刊 <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://www.tuicool.com/mags">编程狂人</a></li>
+                  <li><a href="http://www.tuicool.com/mags/design">设计匠艺</a></li> 
+                  <li><a href="http://www.tuicool.com/mags/startup">创业周刊</a></li> 
+                  <li><a href="http://www.tuicool.com/mags/tech">科技周刊</a></li>      
+                  <li><a href="http://www.tuicool.com/mags/guru">Guru Weekly</a></li> 
+                  <li><a href="http://www.tuicool.com/articles/weekly">一周拾遗</a></li>                  
+                </ul>
+              </li>
+              
+               <li class="dropdown">
+                <a href="http://www.tuicool.com/articles/I7fU7n#" class="dropdown-toggle" data-toggle="dropdown">更多 <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="http://www.tuicool.com/bbs">讨论区</a></li>  
+                  <li><a href="http://www.tuicool.com/about">关于我们</a></li>                 
+                </ul>
+              </li>
+              
+              </ul>
+            <form class="navbar-search pull-left" action="http://www.tuicool.com/search">
+              <input type="text" class="search-query span2" name="kw" placeholder="搜索">
+            </form>
+            <ul class="nav pull-right">
+                <li><a href="http://www.tuicool.com/login">登录</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+  </div>   
+</div>
+  <div id="flash_container" class="noPrint">    
+  </div>
+  
+  <div class="container-fluid">  
+      
+<div class="row-fluid article_row_fluid">
+    <div class="span8 contant article_detail_bg">
+        <h1>WebGL入门教程第1篇——六色立方</h1>
+        <div class="article_meta">
+            <div style="margin-bottom: 5px;">
+            <span class="timestamp">时间&nbsp;2014-04-15 20:39:50
+            </span>
+            <span class="from">
+                <i class="icon-globe"></i>
+                    <a class="cut cut28 from" href="http://www.tuicool.com/sites/vQZRB3" target="_blank">CSDN博客
+                    </a>
+            </span>
+            </div>
+            <div class="source">
+                <i style="float:left;">原文</i>&nbsp; 
+                <a class="cut cut70" href="http://blog.csdn.net/hentailing/article/details/23671901?utm_source=tuicool&utm_medium=referral" style="display:inline-block;">http://blog.csdn.net/hentailing/article/details/23671901</a>
+            </div>
+            <div>
+                <span>主题</span>
+                <a href="http://www.tuicool.com/topics/11080024" target="_blank">
+                    <span class="new-label">WebGL</span>
+                </a>
+            </div>
+        </div>
+        <div class="article_body" id="nei">
+            <div>
+  <p>
+    <span>WebGL，一项允许开发人员在浏览器里操纵GPU来显示图形的技术。让我们一起走进WebGL的世界。</span>
+  </p>
+  <h2>
+    <span>读者对象</span>
+  </h2>
+  <p>
+    <span>本系列适合具有基础JavaScript知识的开发人员。</span>
+  </p>
+  <h2>
+    <span>准备工作</span>
+  </h2>
+  <p>
+    <span>
+      我们应该在本地搭建好web服务器，或者安装了具有预览功能的IDE。如果你安装了Visual Studio，      <a target="_blank" href="http://www.teajs.net/" rel="nofollow,noindex">Nivk</a>
+      童鞋为我们开发了WebGL代码提示功能，你可以通过以下步骤使Visual Studio支持WebGL代码提示：打开Visual Studio——点击工具——点击选项——展开文本编辑器——展开JavaScript——展开IntelliSense——点击引用——切换引用组为Implicit(Web)——将http://www.nivkgames.com/WebGL-vs-doc.js引用添加到当前组。需要注意的是现在这个引用还有点瑕疵，Nivk童鞋将很快修复它。    </span>
+  </p>
+  <p>
+    <span>此外我们还应该安装了支持WebGL的浏览器，本系列将全部以Chrome为例。</span>
+  </p>
+  <p>
+    <span>
+      本文的完整示例可以在      <a target="_blank" href="http://yunpan.cn/QNmmcJnfvRw9T" rel="nofollow,noindex">这里</a>
+      下载（访问密码f6b0）。    </span>
+  </p>
+  <h2>
+    <span>本文目标</span>
+  </h2>
+  <p>
+    <span>我们将一边学习WebGL基础知识一边利用所学知识绘制一个六面有着不同颜色的立方体。最后我们将得到一个类似下图的立方体：</span>
+  </p>
+  <p>
+    <img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/aiAnaiI.png" alt="" style="display: block;">
+    <br>
+  </p>
+  <h2>
+    <span>理想实验</span>
+  </h2>
+  <p>
+    <span>我们应该如何绘制立方体呢？我们可以在三维空间定义六个顶点，定义顶点间的连接顺序，然后命令GPU按我们给定的点和顺序把图形画出来，并在不同的面涂上不同的颜色。</span>
+  </p>
+  <p>
+    <span>那我们应该如何定义顶点呢？使用坐标系来定义点已经是常识了。接下来我们来看看如何建立标准的笛卡尔三维坐标系。</span>
+  </p>
+  <h2>
+    <span>WebGL坐标系统</span>
+  </h2>
+  <p>
+    <img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/BzqMbq.png" alt="" style="display: block;">
+    <br>
+  </p>
+  <p>
+    <span>习惯上，我们建立右手坐标系，坐标原点位于画布中央，X轴单位长度为原点到画布右边缘的长度，Y轴单位长度类似。我们会发现X轴的单位长度和Y轴的不一致，这个问题将有之后介绍的投影矩阵来解决。先假设坐标各轴的单位长度相同，我们来定义一下立方体的六个顶点。</span>
+  </p>
+  <h2>
+    <span>顶点坐标</span>
+  </h2>
+  <p>
+    <img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/Q3eUJ3N.png" alt="" style="display: block;">
+    <br>
+  </p>
+  <p>
+    <span>如果立方体中心位于坐标原点并假设边长为2，我们可以得到V0=(1.0,1.0,1.0)，V1=(-1.0,1.0,1.0)，V2=(-1.0,-1.0,1.0)，V3=(1.0,-1.0,1.0)，V4=(1.0,1.0,-1.0)，V5=(-1.0,1.0,-1.0)，V6=(-1.0,-1.0,-1.0)，V7=(1.0,-1.0,-1.0)。</span>
+  </p>
+  <h2>
+    <span>如何绘制面</span>
+  </h2>
+  <p>
+    <span>因为WebGL只能绘制三角形（还有点和线），所以为了绘制面V0-V1-V2-V3，我们可以通过绘制三角形V0-V1-V2和三角形V0-V2-V3来拼成面V0-V1-V2-V3。其他面类似。</span>
+  </p>
+  <h2>
+    <span>缠绕顺序</span>
+  </h2>
+  <p>
+    <span>对于三角形V0-V1-V2，我们通过连接V0和V1然后连接V1和V2最后连接V2和V0这种逆时针的缠绕顺序来绘制，也可以通过连接V0和V2然后连接V2和V1最后连接V1和V0这种顺时针的缠绕顺序来绘制。习惯上，我们采用逆时针的缠绕顺序。</span>
+  </p>
+  <p>
+    <span>如果一个三角形正面各顶点的缠绕顺序为逆时针，那么如果我们站在这个三角形的背面就会感觉各顶点的缠绕顺序为顺时针。</span>
+  </p>
+  <p>
+    <span>WebGL通过三角形的缠绕顺序来判断正反面。如果我们采用逆时针的缠绕顺序，那么一个面各顶点的缠绕顺序为逆时针为正面，反之为背面。背面是看不到的面，我们可以通过激活WebGL的面剔除功能来剔除背面三角形。</span>
+  </p>
+  <h2>
+    <span>绘制顺序</span>
+  </h2>
+  <p>
+    <span>下面我们来看看这个立方体的各个顶点的绘制顺序，需要注意的是绘制的所有三角形都是逆时针的缠绕顺序。</span>
+  </p>
+  <p>
+    <span>（从现在开始，三角形V0-V1-V2表示是通过连接V0和V1然后连接V1和V2最后连接V2和V0这种逆时针的缠绕顺序绘制的。）</span>
+  </p>
+  <p>
+    <span>面V0-V1-V2-V3可通过三角形V0-V1-V2和三角形V0-V2-V3拼成。</span>
+  </p>
+  <p>
+    <span>面V4-V5-V6-V7可通过三角形V4-V6-V5和三角形V4-V7-V6拼成。（这里要注意一下，面V4-V5-V6-V7的正面是朝向Z轴负方向的，这时候逆时针到底是怎么绕的不易判断。但是这个面的背面是朝向Z轴正方向，也就是说我们站在立方体前望向Z轴负方向，刚好看到的是这个面的背面，所以我们按顺时针的顺序来缠绕，就保证这个面的正面的缠绕顺序为逆时针）</span>
+  </p>
+  <p>
+    <span>面V4-V5-V1-V0可通过三角形V4-V5-V1和三角形V4-V1-V0拼成。</span>
+  </p>
+  <p>
+    <span>
+      面V7-V6-V2-V3可通过三角形V7-V2-V6和三角形V7-V3-V2拼成。      <br>
+    </span>
+  </p>
+  <p>
+    <span>
+      面V4-V0-V3-V7可通过三角形V4-V0-V3和三角形V4-V3-V7拼成。      <br>
+    </span>
+  </p>
+  <p>
+    <span>面V5-V1-V2-V6可通过三角形V5-V2-V1和三角形V5-V6-V2拼成。</span>
+    <br>
+  </p>
+  <h2>
+    <span>GPU处理方式</span>
+  </h2>
+  <p>
+    <span>CPU 由专为顺序串行处理而优化的几个核心组成。基于CPU遍历一个数组，一般我们处理完第一个元素才能处理第二个。而GPU 由数以千计的更小、更高效的核心组成，可以高效地处理并行任务。基于GPU遍历一个数组，我们可以同时处理所有元素。我们将所有顶点信息存入一个数组，然后传递给GPU处理。</span>
+    <br>
+  </p>
+  <p>
+    <span>WebGL渲染管线</span>
+  </p>
+  <p>
+    <span>那GPU接收到数组后是怎么处理的呢？</span>
+  </p>
+  <p>
+    <span>来看个简化的模型：</span>
+  </p>
+  <p>
+    <img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/uyUNJr.png" alt="">
+    <br>
+  </p>
+  <p>
+    <span>顶点数组：包含我们要提交给GPU的顶点信息。</span>
+  </p>
+  <p>
+    <span>顶点着色器：处理顶点的程序。GPU将并行地在每个顶点上运行顶点着色器。顶点着色器的作用之一是得到顶点的位置信息。</span>
+  </p>
+  <p>
+    <span>图元装配：经过顶点着色器我们得到了顶点的位置，图元装配阶段将顶点连接成三角形（或连接成线段，或描述为点），然后考察新图形是否位于画布可见的区域内。可见区域内的图形进入下个步骤，其他的删除。</span>
+  </p>
+  <p>
+    <span>光栅化：经过图元装配我们得到了三角形的外形，光栅化阶段将用像素来填充三角形。经过光栅化，我们得到了由像素描述的三角形，而非由顶点描述的三角形。</span>
+  </p>
+  <p>
+    <span>片段着色器：处理像素的程序。GPU将并行地在光栅化得到的每个像素上运行片段着色器。片段着色器的作用之一是指定每个像素的颜色。</span>
+  </p>
+  <p>
+    <span>深度测试：测试像素的前后关系。被其他像素遮挡的像素是无法被看到的，将在测试里被丢弃。</span>
+  </p>
+  <p>
+    <span>帧缓冲区：到达帧缓冲区的像素将被显示到屏幕上。</span>
+  </p>
+  <p>
+    <span>其中图元装配，光栅化，深度测试都是自动完成的，我们真正要关心的是顶点着色器和片段着色器。</span>
+  </p>
+  <h2>
+    <span>顶点着色器</span>
+  </h2>
+  <p>
+    <span>我们先来看一段完整的顶点着色器代码：</span>
+  </p>
+  <pre class="prettyprint cs">attribute vec3 aVertexPosition;
+attribute vec3 aVertexColor;
+uniform mat4 uModelViewMatrix;
+uniform mat4 uProjectionMatrix;
+varying vec4 vColor;
+
+<span class="keyword">void</span> main()
+{
+  gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, <span class="number">1.0</span>);
+  vColor = vec4(aVertexColor, <span class="number">1.0</span>);
+}</pre>
+  <span>首先我们会明显发现的是这不是JavaScript代码。这是专门用于编写OpenGL着色器的GLSL语言。不同于JavaScript，GLSL是一门强类型和编译型的语言。</span>
+  <p>
+    <span>从第一行开始考察，attribute是存储限定符，vec3是数据类型，aVertexPosition是变量名。接下来四行也是一样的道理。</span>
+  </p>
+  <p>
+    <span>那么attribute，uniform，varying是什么意思呢？</span>
+  </p>
+  <p>
+    <span>
+      attribute表示当顶点着色器在每个顶点运行时它修饰的变量每次都不一样。      <br>
+    </span>
+  </p>
+  <p>
+    <span>
+      uniform表示当顶点着色器在每个顶点运行时它修饰的变量每次都一样。      <br>
+    </span>
+  </p>
+  <p>
+    <span>
+      varying表示当顶点着色器在每个顶点运行时它修饰的变量的值最终都需要传递给片段着色器。因为三个顶点可以定义一个三角形，而很多像素才能装配一个三角形，所以varying修饰的变量的值将经过插值后分配给片段着色器。      <br>
+    </span>
+  </p>
+  <p>
+    <span>那vec3，mat4代表什么呢？</span>
+  </p>
+  <p>
+    <span>vec3表示所修饰的变量的数据类型为三维向量。</span>
+  </p>
+  <p>
+    <span>mat4表示所修饰的变量的数据类型为4*4矩阵。</span>
+  </p>
+  <p>
+    <span>那么这些变量将用来做什么呢？</span>
+  </p>
+  <p>
+    <span>
+      aVertexPosition将用来存放各个顶点的位置坐标。因为顶点坐标只需要三个分量XYZ，所以我们把aVertexPosition定义为vec3类型。因为在顶点着色器运行的时候顶点的位置一般都不一样，所以我们把它定义为attribute类型。      <br>
+    </span>
+  </p>
+  <p>
+    <span>
+      aVertexColor将用来存放各个顶点的颜色信息。因为颜色信息只需要三个分量RGB（假设物体完全不透明），所以和aVertexPosition的情况基本一样。      <br>
+    </span>
+  </p>
+  <p>
+    <span>
+      uModelViewMatrix将用来存放模型视图矩阵，uProjectionMatrix将用来存放投影矩阵。因为对图形进行3D变换需要用到4*4矩阵，所以我们把它们的类型定义为mat4。因为我们一般是对整个3D物体进行变换的，所以对于每个顶点这些矩阵为不变量，所以我们把它们定义为uniform变量。      <br>
+    </span>
+  </p>
+  <p>
+    <span>vColor将用于存放颜色信息。颜色信息从顶点数组途经顶点着色器和插值运算最终传递到片段着色器中。我们要给立方体的每个面定义不同的颜色，这些颜色信息需要传递给片段着色器，要给片段着色器传递这种会变化的值，只能使用varying变量。</span>
+  </p>
+  <p>
+    <span>接下来我们会看到main函数，使用过C或之类语言的童鞋会很熟悉这是程序的入口。void表示这个函数没有返回值。</span>
+  </p>
+  <p>
+    <span>下一个映入眼帘的是gl_Position。我们并没有定义过这个变量，它是顶点着色器内置的变量，用于向GPU传递顶点的位置坐标。我们通过vec4(aVertexPosition, 1.0)来得到一个四维向量，1.0表示它的第四维为1.0。为什么需要一个四维向量呢？因为4*4矩阵只能和四维向量点乘。uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0)对原始的顶点坐标进行矩阵变换，然后存入gl_Position。为什么要进行矩阵变换呢？因为我们用三维坐标来定义图形，使用矩阵变换将方便我们对图形进行平移旋转缩放等操作，并最终能把三维的坐标投影到二维的屏幕上去。</span>
+  </p>
+  <p>
+    <span>接下来的是vColor = vec4(aVertexColor, 1.0)，我们通过vec4(aVertexColor, 1.0)来得到一个四维向量，第四维表示透明度，1.0为完全不透明，0.0为完全透明。我们把vec4(aVertexColor, 1.0)的值赋给vColor，值经过插值最终将传递给片段着色器。</span>
+  </p>
+  <h2>
+    <span>片段着色器</span>
+  </h2>
+  <pre class="prettyprint cs">precision highp <span class="keyword">float</span>;
+varying vec4 vColor;
+
+<span class="keyword">void</span> main()
+{
+  gl_FragColor = vColor;
+}</pre>
+  <span>第一行表示片段着色器要采用高精度的浮点值。我们可以把highp换成mediump（中等精度）或lowp（低精度）来改变浮点值的精度。选择什么精度取决于你的需求，精度越高计算越慢越占内存越耗电。</span>
+  <p>
+    <span>第二行和顶点着色器的第五行一致，vColor的值来自于顶点着色器，但是经过了插值（自动完成）。</span>
+  </p>
+  <p>
+    <span>
+      gl_FragColor是片段着色器内置的变量，用于向GPU传递每个像素的颜色值。这里我们简单的把vColor的值赋给gl_FragColor。      <br>
+    </span>
+  </p>
+  <p>
+    <span>需要注意的是在片段着色器里是不能定义attribute变量的。</span>
+  </p>
+  <h2>
+    <span>编译链接</span>
+  </h2>
+  <p>
+    <span>GPU不能直接理解GLSL语言，我们需要编译着色器源代码并链接到着色器程序才能供GPU使用。方便的是我们可以在浏览器里调用JavaScript API完成编译链接工作。</span>
+  </p>
+  <h2>
+    <span>身体力行</span>
+  </h2>
+  <p>
+    <span>现在到了实战的时候了。我们边读代码边讲解细节问题。</span>
+  </p>
+  <p>
+    <span>先看看我们的HTML结构：</span>
+  </p>
+  <pre class="prettyprint xml"><span class="doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;<span class="title">html</span>&gt;</span>
+<span class="tag">&lt;<span class="title">head</span>&gt;</span>
+<span class="indent">  </span><span class="tag">&lt;<span class="title">meta</span> <span class="attribute">charset</span>=<span class="value">"utf-8"</span> /&gt;</span>
+<span class="indent">  </span><span class="tag">&lt;<span class="title">title</span>&gt;</span>六色立方<span class="tag">&lt;/<span class="title">title</span>&gt;</span>
+<span class="indent">  </span><span class="comment">&lt;!--&lt;script src="promise-0.1.1.js"&gt;&lt;/script&gt;--&gt;</span>
+<span class="indent">  </span><span class="tag">&lt;<span class="title">script</span> <span class="attribute">src</span>=<span class="value">"gl-matrix.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+<span class="indent">  </span><span class="tag">&lt;<span class="title">script</span>&gt;</span><span class="javascript">
+<span class="indent">  </span><span class="indent">  </span>window.onload = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+<span class="indent">  </span><span class="indent">  </span><span class="indent">  </span>
+<span class="indent">  </span><span class="indent">  </span>};
+<span class="indent">  </span></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">head</span>&gt;</span>
+<span class="tag">&lt;<span class="title">body</span>&gt;</span>
+<span class="indent">  </span><span class="tag">&lt;<span class="title">canvas</span> <span class="attribute">id</span>=<span class="value">"webgl"</span> <span class="attribute">width</span>=<span class="value">"960"</span> <span class="attribute">height</span>=<span class="value">"540"</span>&gt;</span><span class="tag">&lt;/<span class="title">canvas</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">body</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">html</span>&gt;</span></pre>
+  <span>因为JavaScript并不能直接支持矩阵和向量的运算，所以我们引用了gl-matrix库，来帮助我们简化这类运算。gl-matrix的github地址为https://github.com/toji/gl-matrix。</span>
+  <p>
+    <span>
+      如果你使用Chrome浏览器，注释掉      <a target="_blank" href="http://s3.amazonaws.com/es6-promises/promise-0.1.1.js" rel="nofollow,noindex">promise-0.1.1.js</a>
+      ，这个文件只是为了让其他浏览器完整支持Promise API。（现在是学习Promise API的大好时机，Chrome完整支持，Firefox接近完整支持，微软很早之前就为WinJS引入Promise，相信IE也即将支持。一个不错的Promise API教程在      <a target="_blank" href="http://www.html5rocks.com/zh/tutorials/es6/promises/" rel="nofollow,noindex">这里</a>
+      ）    </span>
+  </p>
+  <h2>
+    <span>获取3D绘图上下文</span>
+  </h2>
+  <pre class="prettyprint cs"><span class="keyword">var</span> gl = webgl.getContext(<span class="string">"webgl"</span>);</pre>
+  <p>
+    <span>这个和获取2D绘图上下文的方法差不多，只是参数从2d变成了webgl。</span>
+  </p>
+  <h2>
+    <span>初始化着色器</span>
+  </h2>
+  <p>
+    <span>着色器源代码只是字符串而已，我们定义一个JS变量vertexSource用来存储顶点着色器的源代码，定义一个JS变量fragmentSource用来存储片段着色器的源代码。最简单的方法是我们直接把着色器源代码的字符串赋值给这俩变量。这种方法很好，除了不易读。这里我们采用另外一种方法，通过AJAX加载着色器源代码的文本文件，然后提取出字符串。</span>
+  </p>
+  <pre class="prettyprint javascript"><span class="function"><span class="keyword">function</span> <span class="title">get</span><span class="params">(url)</span> {</span>
+<span class="indent">  </span><span class="keyword">return</span> <span class="keyword">new</span> Promise(<span class="function"><span class="keyword">function</span> <span class="params">(resolve)</span> {</span>
+<span class="indent">  </span><span class="indent">  </span><span class="keyword">var</span> xhr = <span class="keyword">new</span> XMLHttpRequest();
+<span class="indent">  </span><span class="indent">  </span>xhr.onload = <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+<span class="indent">  </span><span class="indent">  </span><span class="indent">  </span>resolve(<span class="keyword">this</span>.responseText);
+<span class="indent">  </span><span class="indent">  </span>};
+<span class="indent">  </span><span class="indent">  </span>xhr.open(<span class="string">"get"</span>, url);
+<span class="indent">  </span><span class="indent">  </span>xhr.send();
+<span class="indent">  </span>});
+}
+Promise.all([get(<span class="string">"source.vert"</span>), get(<span class="string">"source.frag"</span>)]).then(<span class="function"><span class="keyword">function</span> <span class="params">(sources)</span> {</span>
+<span class="indent">  </span><span class="keyword">var</span> vertexSource = sources[<span class="number">0</span>];
+<span class="indent">  </span><span class="keyword">var</span> fragmentSource = sources[<span class="number">1</span>];
+});</pre>
+  <span>source.vert和source.frag是我们的两个文本文件，如果你使用Visual Studio，启动调试时会发现这俩文件加载失败了，我们需要让web服务器允许加载vert和frag这两种格式，所以可以把Web.config改成这样：</span>
+  <pre class="prettyprint xml"><span class="pi">&lt;?xml version="1.0"?&gt;</span>
+<span class="tag">&lt;<span class="title">configuration</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">system.web</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">compilation</span> <span class="attribute">debug</span>=<span class="value">"true"</span> <span class="attribute">targetFramework</span>=<span class="value">"4.5.1"</span>/&gt;</span>
+    <span class="tag">&lt;<span class="title">httpRuntime</span> <span class="attribute">targetFramework</span>=<span class="value">"4.5.1"</span>/&gt;</span>
+  <span class="tag">&lt;/<span class="title">system.web</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">system.webServer</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">staticContent</span>&gt;</span>
+      <span class="tag">&lt;<span class="title">mimeMap</span> <span class="attribute">fileExtension</span>=<span class="value">".vert"</span> <span class="attribute">mimeType</span>=<span class="value">"text/plain"</span> /&gt;</span>
+      <span class="tag">&lt;<span class="title">mimeMap</span> <span class="attribute">fileExtension</span>=<span class="value">".frag"</span> <span class="attribute">mimeType</span>=<span class="value">"text/plain"</span> /&gt;</span>
+    <span class="tag">&lt;/<span class="title">staticContent</span> &gt;</span>
+  <span class="tag">&lt;/<span class="title">system.webServer</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">configuration</span>&gt;</span></pre>
+  <p>
+    <span>得到源代码的字符串后，现在我们要来编译它了，对于顶点着色器：</span>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> vertexShader = gl.createShader(gl.VERTEX_SHADER);
+gl.shaderSource(vertexShader, vertexSource);
+gl.compileShader(vertexShader);</pre>
+  <span>我们通过创建了一个顶点着色器对象，然后指定它的源代码，最后进行了编译。</span>
+  <p>
+    <span>片段着色器也是一样的流程：</span>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+gl.shaderSource(fragmentShader, fragmentSource);
+gl.compileShader(fragmentShader);</pre>
+  <span>接下来我们要把它们链接到着色器程序：</span>
+  <br>
+  <pre class="prettyprint cs"><span class="keyword">var</span> program = gl.createProgram();
+gl.attachShader(program, vertexShader);
+gl.attachShader(program, fragmentShader);
+gl.linkProgram(program);
+gl.useProgram(program);</pre>
+  <p>
+    <span>我们创建了着色器程序，然后将顶点着色器和片段着色器包含进程序，接着链接，最后通知WebGL我们要使用的着色器程序就是它了。</span>
+  </p>
+  <h2>
+    <span>为顶点着色器传入矩阵</span>
+  </h2>
+  <p>
+    <span>我们的屏幕是二维的，却要它能展示出图形的立体感。就像绘画里的透视法，投影矩阵就是我们的透视法，帮助完成三维到二维的变换。我们真正要关心的是怎么搭建和搭建怎样的一个3D场景，而不用去在意要怎么把场景变换到平面里。gl-matrix为我们完成了所有脏活。</span>
+  </p>
+  <p>
+    <span>我们知道观察事物的角度不同得出的结论也往往不同。要描述某个3D场景，我们还需要指定观察者的角度位置。</span>
+  </p>
+  <pre class="prettyprint sql">var modelViewMatrix = mat4.<span class="operator"><span class="keyword">create</span>();</span>
+mat4.lookAt(modelViewMatrix, [4, 4, 8], [0, 0, 0], [0, 1, 0]);</pre>
+  <span>我们创建了一个4*4单位矩阵，它将作为我们的模型视图矩阵，用于描述物体的变换和观察者的观察方式。因为我们不打算对立方体进行变换操作，所以这里我们只需调用lookAt函数来指定我们的观察者站在(4,4,8)坐标位置，眼睛望向(0,0,0)坐标位置，头顶朝向(0,1,0)坐标位置。需要指出的是这里JS上下文中的mat4是gl-matrix引入的全局变量，不同于着色器源代码里的mat4。</span>
+  <p>
+    <span>还记得我们在顶点着色器里定义的uModelViewMatrix么？我们已经得到了模型变换矩阵modelViewMatrix，现在需要把它传递给顶点着色器的uModelViewMatrix。WebGL API并没有提供直接给着色器里的变量赋值的方法，所以我们需要先获得变量在内存里的地址，再在相应的内存里写入值。</span>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> uModelViewMatrix = gl.getUniformLocation(program, <span class="string">"uModelViewMatrix"</span>);
+gl.uniformMatrix4fv(uModelViewMatrix, <span class="keyword">false</span>, modelViewMatrix);</pre>
+  <p>
+    <span>我们先调用了getUniformLocation获取uniform变量uModelViewMatrix的地址，然后赋值给JS变量uModelViewMatrix。uniformMatrix4fv用于将模型视图矩阵modelViewMatrix写入相应的内存。false参数表示不需要转置（行变列，列变行）这个矩阵，WebGL要求这个参数必须设置为false。</span>
+  </p>
+  <p>
+    <span>接下来我们来设置投影矩阵。</span>
+  </p>
+  <pre class="prettyprint sql">var projectionMatrix = mat4.<span class="operator"><span class="keyword">create</span>();</span>
+mat4.perspective(projectionMatrix, Math.PI / 6, webgl.width / webgl.height, 0.1, 100);</pre>
+  <p>
+    <span>我们创建了一个4*4单位矩阵，它将作为我们的投影矩阵。Math.PI / 6表示视角为30°，webgl.width / webgl.height表示视口的宽高比，0.1表示视锥近截面到观察点的距离，100表示视锥远截面到观察点的距离。在近截面和远截面所截的视锥外的图形在图元装配阶段将被舍弃。</span>
+  </p>
+  <p>
+    <img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/q6nmQ3.png" alt="" style="display: block;">
+  </p>
+  <p>
+    <span>图中两红线的夹角为视角，蓝点为观察点，橙色截面为近截面，紫色截面为远截面。</span>
+  </p>
+  <p>
+    <span>设置完投影矩阵，我们需要把它传递给顶点着色器的uniform变量uProjectionMatrix。</span>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> uProjectionMatrix = gl.getUniformLocation(program, <span class="string">"uProjectionMatrix"</span>);
+gl.uniformMatrix4fv(uProjectionMatrix, <span class="keyword">false</span>, projectionMatrix);</pre>
+  <p>
+    <span>这部分和之前传递模型视图矩阵的做法是相同的。</span>
+  </p>
+  <h2>
+    <span>初始化缓冲区</span>
+  </h2>
+  <p>
+    <span>现在开始传递立方体的顶点坐标和颜色值了，还记得顶点着色器里的两个attribute变量aVertexPosition和aVertexColor么？aVertexPosition用来接收顶点坐标，aVertexColor用来接收顶点颜色。</span>
+  </p>
+  <p>
+    <span>我们将通过绘制两个三角形来合成一个立方体的面，六个面我们需要绘制十二个三角形。</span>
+  </p>
+  <p>
+    <span>先定义一个数组vertices，用来存放所有的顶点信息。</span>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> vertices = [
+<span class="indent">  </span><span class="comment">//前</span>
+<span class="indent">  </span><span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.8</span>, <span class="number">0.0</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.8</span>, <span class="number">0.0</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.8</span>, <span class="number">0.0</span>,
+<span class="indent">  </span><span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>, <span class="number">0.8</span>, <span class="number">0.0</span>,
+<span class="indent">  </span><span class="comment">//后</span>
+<span class="indent">  </span><span class="number">1.0</span>, <span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">0.6</span>, <span class="number">0.9</span>, <span class="number">0.0</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, <span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">0.6</span>, <span class="number">0.9</span>, <span class="number">0.0</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, -<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">0.6</span>, <span class="number">0.9</span>, <span class="number">0.0</span>,
+<span class="indent">  </span><span class="number">1.0</span>, -<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">0.6</span>, <span class="number">0.9</span>, <span class="number">0.0</span>,
+<span class="indent">  </span><span class="comment">//上</span>
+<span class="indent">  </span><span class="number">1.0</span>, <span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, <span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>,
+<span class="indent">  </span><span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.0</span>,
+<span class="indent">  </span><span class="comment">//下</span>
+<span class="indent">  </span><span class="number">1.0</span>, -<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, -<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>,
+<span class="indent">  </span><span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.5</span>, <span class="number">0.0</span>,
+<span class="indent">  </span><span class="comment">//右</span>
+<span class="indent">  </span><span class="number">1.0</span>, <span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">0.9</span>, <span class="number">0.0</span>, <span class="number">0.2</span>,
+<span class="indent">  </span><span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.9</span>, <span class="number">0.0</span>, <span class="number">0.2</span>,
+<span class="indent">  </span><span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.9</span>, <span class="number">0.0</span>, <span class="number">0.2</span>,
+<span class="indent">  </span><span class="number">1.0</span>, -<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">0.9</span>, <span class="number">0.0</span>, <span class="number">0.2</span>,
+<span class="indent">  </span><span class="comment">//左</span>
+<span class="indent">  </span>-<span class="number">1.0</span>, <span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">0.6</span>, <span class="number">0.0</span>, <span class="number">0.6</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.6</span>, <span class="number">0.0</span>, <span class="number">0.6</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">1.0</span>, <span class="number">0.6</span>, <span class="number">0.0</span>, <span class="number">0.6</span>,
+<span class="indent">  </span>-<span class="number">1.0</span>, -<span class="number">1.0</span>, -<span class="number">1.0</span>, <span class="number">0.6</span>, <span class="number">0.0</span>, <span class="number">0.6</span>
+];</pre>
+  <span>每行表示一个顶点，前三个元素表示该顶点的坐标XYZ，后三个元素表示该顶点的颜色RGB。我们会发现WebGL中很多数值都是介于0.0~1.0（或-1.0~1.0），统一的取值范围便于运算优化。对于立方体的一个面，四个顶点都是相同的颜色，但是四个顶点的位置坐标却各不相同。对于立方体的一个顶点，与它接壤的三个面里这个顶点的位置坐标都相同，但是因为三个面的颜色都不同导致这个顶点的颜色值在三个面里都不相同。所以虽然理想中只需要6个顶点6种颜色，但是实际上我们不得不为每个面定义四个不同的顶点。</span>
+  <p>
+    <img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/m2IBf2.png" alt="" style="display: block;">
+    <br>
+  </p>
+  <p>
+    <span>图中括号里表示的是三个颜色分量。与其把一个顶点当做一个三态叠加的顶点，不如就把它当做是三个重叠的不同顶点。</span>
+  </p>
+  <p>
+    <span>vertices只是一个数组，WebGL并不能直接操作JS数组，我们需要把它转换成类型化数组然后载入缓冲区。</span>
+    <br>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> vertexBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+gl.bufferData(gl.ARRAY_BUFFER, <span class="keyword">new</span> Float32Array(vertices), gl.STATIC_DRAW);</pre>
+  <span>我们创建了一个缓冲区，然后绑定为gl.ARRAY_BUFFER，之后的缓冲区操作都将基于当前绑定的缓冲区。这和2D绘图上下文中的fillStyle是相似的，给fillStyle绑定某种颜色后，之后的填充操作都将使用这种颜色，直到fillStyle再次被改变为止。</span>
+  <p>
+    <span>
+      bufferData方法用于向当前缓冲区传递数据，这里我们把vertices包装成Float32Array三十二位浮点类型化数组然后传入。gl.STATIC_DRAW表示我们的数据只加载一次，然后在之后绘图中多次使用。      <br>
+    </span>
+  </p>
+  <p>
+    <span>在我们把顶点信息载入缓冲区后，WebGL已可以直接操作它。是时候把顶点信息传入顶点着色器了。</span>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> aVertexPosition = gl.getAttribLocation(program, <span class="string">"aVertexPosition"</span>);
+gl.vertexAttribPointer(aVertexPosition, <span class="number">3</span>, gl.FLOAT, <span class="keyword">false</span>, <span class="number">24</span>, <span class="number">0</span>);
+gl.enableVertexAttribArray(aVertexPosition);</pre>
+  <p>
+    <span>我们通过getAttribLocation获取了aVertexPosition的地址，这一步和我们获取uModelViewMatrix的地址的方法是相似的。aVertexPosition需要接收顶点的位置信息，但是我们的顶点数组包含了位置和颜色两种信息，所以需要调用vertexAttribPointer把位置信息提取出来。实参3表示顶点数组中我们是用3个浮点值表示一个顶点，gl.FLOAT表示我们的数据为浮点类型的值，false表示我们的数据已经是介于-1.0~1.0的gl.FLOAT类型，不需要规范化。24表示的是从同一种类型的元素到下一个同类型元素的跨度，顶点数组的第一行第一个元素是位置坐标，第二行第一个元素也是位置坐标，它们间跨了6个元素，因为我们的顶点数组是用Float32Array类型存储的，所以一个元素占了4字节，6个元素需要跨24字节。0表示每个跨度里我们的位置坐标类型的第一个元素的偏移量，因为我们先排位置信息再排颜色信息，所以它的偏移量为0。</span>
+  </p>
+  <p>
+    <span>
+      enableVertexAttribArray告诉WebGL我们要使用顶点数组。默认情况下是使用常量顶点数据，但是因为我们的每个顶点都有各自不同的位置信息，所以不能使用常量顶点数据。      <br>
+    </span>
+  </p>
+  <p>
+    <span>传入顶点位置信息后我们再传入顶点颜色信息：</span>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> aVertexColor = gl.getAttribLocation(program, <span class="string">"aVertexColor"</span>);
+gl.vertexAttribPointer(aVertexColor, <span class="number">3</span>, gl.FLOAT, <span class="keyword">false</span>, <span class="number">24</span>, <span class="number">12</span>);
+gl.enableVertexAttribArray(aVertexColor);</pre>
+  <span>这和之前传入顶点位置信息的操作是很相似的。我们的颜色信息是用0.0~1.0范围的值表示的，如果我们用0~255范围的值来表示颜色信息的话，那么就需要vertexAttribPointer的gl.FLOAT实参改为gl.UNSIGNED_BYTE，false实参修改为true，WebGL内部将自动为我们把颜色信息的值映射到0.0~1.0的范围。因为在一个跨度中前三个是位置信息，所以偏移量设置为3*4字节=12字节。</span>
+  <p>
+    <span>顶点信息传递完后，现在该传递绘制顺序的信息了。</span>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> indices = [
+<span class="indent">  </span><span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">3</span>,
+<span class="indent">  </span><span class="number">4</span>, <span class="number">6</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">7</span>, <span class="number">6</span>,
+<span class="indent">  </span><span class="number">8</span>, <span class="number">9</span>, <span class="number">10</span>, <span class="number">8</span>, <span class="number">10</span>, <span class="number">11</span>,
+<span class="indent">  </span><span class="number">12</span>, <span class="number">14</span>, <span class="number">13</span>, <span class="number">12</span>, <span class="number">15</span>, <span class="number">14</span>,
+<span class="indent">  </span><span class="number">16</span>, <span class="number">17</span>, <span class="number">18</span>, <span class="number">16</span>, <span class="number">18</span>, <span class="number">19</span>,
+<span class="indent">  </span><span class="number">20</span>, <span class="number">22</span>, <span class="number">21</span>, <span class="number">20</span>, <span class="number">23</span>, <span class="number">22</span>
+];</pre>
+  <span>我们定义了一个数组indices，元素的值i表示顶点数组vertices所表示的第i个顶点（从零开始计数）。数组indices的每三个元素表示一个三角形的绘制顺序。所以0，1，2表示绘制三角形V0-V1-V2的顺序，0，2，3表示绘制三角形V0-V2-V3的顺序。数组indices的每行表示使用两个三角形合成的一个面。</span>
+  <p>
+    <span>指定绘制顺序的数组我们称之为索引数组。</span>
+  </p>
+  <p>
+    <span>接着，我们把索引数组载入缓冲区：</span>
+  </p>
+  <pre class="prettyprint cs"><span class="keyword">var</span> indexBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, <span class="keyword">new</span> Uint8Array(indices), gl.STATIC_DRAW);</pre>
+  <p>
+    <span>这和把顶点信息载入缓冲区的步骤是相似的。顶点数组我们绑定为gl.ARRAY_BUFFER，而索引数组则需要绑定为gl.ELEMENT_ARRAY_BUFFER。因为我们的索引数组的元素都是很小的正整数，所以这里把数组indices包装成8位无符号类型化数组。</span>
+  </p>
+  <h2>
+    <span>绘制</span>
+  </h2>
+  <p>
+    <span>到现在，我们所需各自信息都齐全了，只差把它绘制出来。</span>
+  </p>
+  <pre class="prettyprint perl">gl.enable(gl.DEPTH_TEST);
+gl.enable(gl.CULL_FACE);
+gl.clearColor(<span class="number">0</span>.<span class="number">0</span>, <span class="number">0</span>.<span class="number">0</span>, <span class="number">0</span>.<span class="number">0</span>, <span class="number">1.0</span>);
+gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+gl.drawElements(gl.TRIANGLES, indices.<span class="keyword">length</span>, gl.UNSIGNED_BYTE, <span class="number">0</span>);</pre>
+  <span>我们启用了深度测试和面剔除功能。然后我们把清除颜色设置为黑色，接着我们清除了前一次绘图遗留的颜色缓存和深度缓存。虽然这里我们只绘制一帧，不清除也一样，但是每次绘图前清除缓存是个好习惯。</span>
+  <p>
+    <span>最后我们调用drawElements来绘制图形。drawElements基于WebGL当前绑定的索引数组来绘制图形。第一个参数表示要用什么图元渲染，这里指定为三角形；第二个参数表示要使用多少个索引数组元素来渲染图形，这里我们指定为indices.length表示我们需要所有的索引数组元素来渲染；第三个参数表示索引数组元素的类型，因为我们把数组indices包装成Uint8Array，所以元素的类型指定为gl.UNSIGNED_BYTE，如果我们是用Uint16Array来包装，则这个参数指定为gl.UNSIGNED_SHORT；最后一个参数我们要从索引数组的第几个元素开始渲染，所有元素都需要用来渲染，所以这个参数指定为0。</span>
+  </p>
+  <h2>
+    <span>结束语</span>
+  </h2>
+  <p>
+    <span>经过这些步骤，终于我们得到了一个六色立方体。你可以把示例加载到浏览器中查看，然后试试修改观察者的位置角度或顶点数组的位置颜色，最后刷新浏览器看看图形发生了什么变化。</span>
+  </p>
+  <p>
+    <span>WebGL更多细节本文并没有详细展开，比如光照纹理等，将在WebGL系列的后续文章继续介绍。</span>
+  </p>
+  <p>
+    <span>欢迎留言交流。</span>
+  </p>
+</div>
+
+        </div>
+        <div class="article_social">
+         <div class="article_like">
+    <div class="circle circle-like" id="my_zan" data_id="I7fU7n">
+    </div>
+</div>
+        <div id="share_weixin_image">
+            <img width="100px" height="100px" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/qrcode.php">
+        </div>
+<div class="article_share_fav">
+    <div class="share" id="ckepop">
+        <span>分享</span>
+        <button class="share_weibo" id="share_weibo_id" title="分享到新浪微博"></button>
+        <button class="share_qq" id="share_qq_id" title="分享到QQ空间"></button>
+        <button class="share_weixin" id="share_weixin_id"></button>
+    </div>
+    <div class="fav_correct">
+        <button id="my_fav" data_id="I7fU7n">
+            <i class="icon icon-star-empty"></i> <span id="fav_tip">收藏</span>
+        </button>
+        <button id="article-correct" data_id="I7fU7n">
+            <i class="icon icon-warning-sign"></i>
+            <span>纠错</span>
+        </button>
+    </div>
+</div>
+<script type="text/javascript">
+$("#share_weibo_id").click( function() {
+   window.open("http://share.baidu.com/s?type=text&searchPic=0&sign=on&to=tsina&url=http://www.tuicool.com/articles/I7fU7n&title=WebGL%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B%E7%AC%AC1%E7%AF%87%E2%80%94%E2%80%94%E5%85%AD%E8%89%B2%E7%AB%8B%E6%96%B9++%28%E5%88%86%E4%BA%AB%E8%87%AA+%40%E6%8E%A8%E9%85%B7%E7%BD%91%29&key=3113829255");
+});
+$("#share_qq_id").click( function() {
+   window.open("http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=http://www.tuicool.com/articles/I7fU7n&title=WebGL%E5%85%A5%E9%97%A8%E6%95%99%E7%A8%8B%E7%AC%AC1%E7%AF%87%E2%80%94%E2%80%94%E5%85%AD%E8%89%B2%E7%AB%8B%E6%96%B9&desc=&summary=&site=");
+});
+$("#share_weixin_id").click( function() {
+  $("#share_weixin_image").toggle();
+});
+</script>
+
+
+            <div class="bottom_ad huodong-detail-ad-banner clearfix">
+            <script type="text/javascript">
+    var cpro_id = "u1665123";
+</script>
+<script src="./WebGL入门教程第1篇——六色立方 - 推酷_files/c.js" type="text/javascript"></script><div id="BAIDU_DUP_wrapper_u1665123_0"><iframe id="cproIframe_u1665123_1" width="580" height="90" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/acom.html" align="center,center" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" allowtransparency="true"></iframe></div><script charset="utf-8" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/acom"></script>
+
+            </div>
+        </div>
+        <div id="site_articles" style="clear:both;">
+              <div class="article-part-title">
+                <span>推荐文章</span>
+              </div>
+          <ul class="side_article_list">
+                <li class="side_article_list_item">
+                    1.<a href="http://www.tuicool.com/articles/v6N7Rf" target="_blank" title="Unity官方实例教程 Space Shooter（四）">
+                    Unity官方实例教程 Space Shooter（四）
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    2.<a href="http://www.tuicool.com/articles/2EFfaqU" target="_blank" title="Ogre2.1 灯光与阴影">
+                    Ogre2.1 灯光与阴影
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    3.<a href="http://www.tuicool.com/articles/uYbABr" target="_blank" title="赛式方法论（上）：为什么你的游戏做不完、做得烂？">
+                    赛式方法论（上）：为什么你的游戏做不完、做得烂？
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    4.<a href="http://www.tuicool.com/articles/7jENvqI" target="_blank" title="技术分享：游戏中的2D可见性">
+                    技术分享：游戏中的2D可见性
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    5.<a href="http://www.tuicool.com/articles/FnymEn7" target="_blank" title="OpenGL ES 3.0之Fragment buffer objects（FBO）详解（二）">
+                    OpenGL ES 3.0之Fragment buffer objects（FBO）详解（二）
+                    </a>
+                </li>
+                <li class="side_article_list_item">
+                    6.<a href="http://www.tuicool.com/articles/BrMz2qq" target="_blank" title="JS开发HTML5游戏《神奇的六边形》（三）">
+                    JS开发HTML5游戏《神奇的六边形》（三）
+                    </a>
+                </li>
+          </ul>
+        </div>
+        <div id="kan_articles"> <div class="article-part-title"> <span>相关推刊</span></div><ul class="kan-list">          <li class="kan-item">            <a href="http://www.tuicool.com/kans/1005699241" target="_blank" class="kan-item-head">              <small>刊主：liaowanyong</small>              <img class="kan-cover" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/YzEnmq.png!kan">            </a>            <span class="kan-detail">              <a href="http://www.tuicool.com/kans/1005699241" target="_blank">《默认推刊》</a>              <i class="kan-num">5</i>            </span>          </li>        </ul><i class="clearfix"></i></div>
+        <div id="article_weibo" style="display:none;">
+            <div class="article-part-title">
+                <span>相关微博</span>
+                <sub>
+                    <a href="http://www.tuicool.com/articles/weibo_list/I7fU7n" target="_blank">(<i id="weibo_num"></i>)</a> 
+               </sub>
+            </div>
+            <div class="related-weibo-list"></div>
+        </div>
+        <div class="comments">
+    <div class="comments-area">
+    <div class="comments-header">
+        <h5>我来评几句</h5>
+        <div class="alert comment-alert alert-error" style="display:none;">
+            错误
+        </div>
+            <textarea cols="60" rows="5" id="comment-body" placeholder="请输入评论内容..." style="resize: none;"></textarea>
+            <span class="btn btn-medium btn-submit" id="comment-submit">登录后评论</span>
+        <p style="margin-top: 5px;margin-left:10px;">
+            已发表评论数(<span class="comment_cnt">0</span>)
+        </p>
+    </div>
+    <div class="comments-list">
+        <div class="empty-cmts alert alert-success" style="display:none;">
+            没有更多评论了^^
+        </div>
+    </div>
+    <div class="more-comments" style="display:none;">
+        <a href="">更多评论</a>
+    </div>
+    <div class="load-fail" style="display:none;">
+        评论加载失败，<a href="javascript:reload_comments('I7fU7n',1,0,-1);">重新加载</a>
+    </div>
+    </div>
+</div>
+
+    </div>
+        <div class="span4 article_right_side">
+            <div class="right_top">
+    <div class="article_related_site article_detail_bg">
+    <h4 class="article-part-title">相关站点</h4>
+    <div class="article_related_site_body clearfix">
+        <div class="logo">
+            <img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/vQZRB3.png">
+        </div>
+        <div class="name">
+            <div>
+                <a href="http://www.tuicool.com/sites/vQZRB3" target="_blank"> CSDN博客</a>
+            </div>
+            <div>
+                    <input type="button" class="btn btn-success right_site_follow" value="+ 订阅" id="my_follow" data_id="vQZRB3">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="right-ad">
+      <a href="https://www.jpush.cn/?f=tc" target="_blank"><img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/jpush300.jpg"></a>
+
+</div>
+<div class="right-ad" style="margin-top: 8px">
+      <script type="text/javascript">BAIDU_CLB_fillSlot("1161131");</script><div id="BAIDU_DUP_wrapper_1161131_0"><iframe id="baidu_clb_slot_iframe_1161131_0" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/WebGL入门教程第1篇——六色立方 - 推酷.html" onload="BAIDU_DUP_CLB_renderFrame(&#39;1161131_0&#39;)" width="300" height="150" vspace="0" hspace="0" allowtransparency="true" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" style="border:0; vertical-align:bottom; margin:0; display:block;"></iframe></div><script charset="utf-8" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/ecom"></script><script charset="utf-8" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/fixed7o.js"></script>
+
+</div>
+<div class="right-ad" style="margin-top: 8px">
+      <a href="http://www.jiankongbao.com/new_docker?f=tuicool" target="_blank"><img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/jiankongbao300.png"></a>
+
+</div>
+<div class="right-ad" style="margin-top: 8px">
+      <a href="https://www.teambition.com/?utm_source=tuicool&utm_medium=banner01" target="_blank"><img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/teambition300.jpg"></a>
+
+</div>
+<div id="right_site_articles" class="article_detail_bg">
+    <div class="article-part-title">
+        <span>热门文章</span>
+    </div>
+    <ul class="side_article_list">
+        <li class="side_article_list_item">
+            1.<a href="http://www.tuicool.com/articles/uYbABr" target="_blank" title="赛式方法论（上）：为什么你的游戏做不完、做得烂？"> 赛式方法论（上）：为什么你的游戏做不完、做得烂？ </a>
+        </li>
+        <li class="side_article_list_item">
+            2.<a href="http://www.tuicool.com/articles/7jENvqI" target="_blank" title="技术分享：游戏中的2D可见性"> 技术分享：游戏中的2D可见性 </a>
+        </li>
+        <li class="side_article_list_item">
+            3.<a href="http://www.tuicool.com/articles/BrMz2qq" target="_blank" title="JS开发HTML5游戏《神奇的六边形》（三）"> JS开发HTML5游戏《神奇的六边形》（三） </a>
+        </li>
+        <li class="side_article_list_item">
+            4.<a href="http://www.tuicool.com/articles/yiM3euZ" target="_blank" title="OSC 第 98 期高手问答 —— Unity 游戏开发"> OSC 第 98 期高手问答 —— Unity 游戏开发 </a>
+        </li>
+        <li class="side_article_list_item">
+            5.<a href="http://www.tuicool.com/articles/zMRFJjM" target="_blank" title="Android中Canvas绘图基础详解（附源码下载）"> Android中Canvas绘图基础详解（附源码下载） </a>
+        </li>
+        <li class="side_article_list_item">
+            6.<a href="http://www.tuicool.com/articles/u6RRjeU" target="_blank" title="2015/11/9用Python写游戏，pygame入门(8)：按钮和游戏结束"> 2015/11/9用Python写游戏，pygame入门(8)：按钮和游戏结束 </a>
+        </li>
+    </ul>
+</div>
+</div>
+
+<div class="operate_zone" style="position: fixed; top: 50px;">
+    <div class="container-body share-body">
+        <div class="article-part-title">
+            <span>分享本文</span>
+        </div>
+        <div class="share_zone">
+    <div class="bdsharebuttonbox bdshare-button-style1-24" data-bd-bind="1447473150099"> 
+         <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_more" data-cmd="more"></a>
+     </div>
+    <script>
+        window._bd_share_config = {
+            "common" : {
+                "bdSnsKey" : {
+                    "tsina" : "3113829255",
+                    "tqq" : "801536792"
+                },
+                "bdText" : "WebGL入门教程第1篇——六色立方 (分享自 @推酷网)",
+                "bdMini" : "2",
+                "bdMiniList" : false,
+                "bdPic" : "http://aimg1.tuicool.com/IbAzYb.png",
+                "bdStyle" : "1",
+                "bdSize" : "24"
+            },
+            "share" : {}
+        };
+        with (document)
+        0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];
+    </script>
+</div>
+    </div>
+        <div class="frd_pos">
+        <script async="" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/adsbygoogle.js"></script>
+<ins class="adsbygoogle" style="display: inline-block; width: 300px; height: 250px;" data-ad-client="ca-pub-7054762349007490" data-ad-slot="5705695566" data-adsbygoogle-status="done"><ins id="aswift_0_expand" style="display:inline-table;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><ins id="aswift_0_anchor" style="display:block;border:none;height:250px;margin:0;padding:0;position:relative;visibility:visible;width:300px;background-color:transparent"><iframe width="300" height="250" frameborder="0" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" scrolling="no" allowfullscreen="true" onload="var i=this.id,s=window.google_iframe_oncopy,H=s&amp;&amp;s.handlers,h=H&amp;&amp;H[i],w=this.contentWindow,d;try{d=w.document}catch(e){}if(h&amp;&amp;d&amp;&amp;(!d.body||!d.body.firstChild)){if(h.call){setTimeout(h,0)}else if(h.match){try{h=s.upd(h,i)}catch(e){}w.location.replace(h)}}" id="aswift_0" name="aswift_0" style="left:0;position:absolute;top:0;"></iframe></ins></ins></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+        </div>
+</div>
+         </div>
+</div>
+
+<div class="read-later-alert">
+</div>
+<div>
+   <a href="http://www.tuicool.com/articles/I7fU7n#add-article-to-kan" id="add-article-to-kan-btn" class="btn" data-toggle="modal" style="display:none;">添加到推刊</a>
+   <!-- add_article to kan -->
+<div id="add-article-to-kan" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <span class="add-title">收藏到推刊</span>
+    <a href="http://www.tuicool.com/articles/I7fU7n#new-kan" class="btn pull-right" data-toggle="modal">创建推刊</a>
+    <i class="clearfix"></i>
+  </div>
+  <div class="modal-body">
+    <ul id="add-kan-list">
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <input type="hidden" value="I7fU7n" class="article-id"> 
+    <button class="btn btn-primary pull-left add-to-btn">  收 藏  </button>
+    <button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+  </div>
+</div>
+<div class="add-article-to-kan-alert">
+  已收藏到推刊！
+</div>
+
+   <div id="new-kan" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-body">
+    <input type="text" name="name" id="new-kan-name" placeholder="推刊名(必填)" required="" data-validation-required-message="请填写推刊名">
+    <span class="new-ness-name">请填写推刊名</span>
+    <br>
+    <textarea name="desc" id="desc" rows="6" placeholder="推刊描述"></textarea>
+    <span class="new-ness-desc">描述不能大于100个字符!</span>
+    <br>
+    权限设置：<input type="radio" name="type" value="1" checked="checked"> 公开
+    <input type="radio" name="type" value="0"> 仅自己可见
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary pull-left create-kan-btn" disabled="">创建</button>
+    <button class="btn dismiss-new-kan" data-dismiss="modal" aria-hidden="true">取消</button>
+  </div>
+</div>
+
+
+</div>
+<div id="article-correct-modal" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            ×
+        </button>
+        <h3>文章纠错</h3>
+    </div>
+    <div class="modal-body">
+        <input type="hidden" value="I7fU7n" id="article-correct-source">
+        <div>
+            <label for="article-correct-email">
+                邮箱地址
+            </label>
+            <input type="email" id="article-correct-email" class="input-large">
+        </div>
+        <div>
+            <label for="article-correct-select">
+                错误类型
+            </label>
+            <select id="article-correct-select">
+                <option value="正文不准确">正文不准确</option>
+                <option value="排版有问题">排版有问题</option>
+                <option value="没有分页内容">没有分页内容</option>
+                <option value="视频无法显示">视频无法显示</option>
+                <option value="图片无法显示">图片无法显示</option>
+            </select>
+        </div>
+        <div>
+            <label for="article-correct-other">
+                补充信息
+            </label>
+            <textarea id="article-correct-other" class="span6"></textarea>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary pull-right huodong_correct_submit" id="article-correct-submit">
+            &nbsp;&nbsp;提交&nbsp;&nbsp;
+        </button>
+    </div>
+</div>
+    <div class="share_zone">
+    <div class="bdsharebuttonbox bdshare-button-style1-24" data-bd-bind="1447473150099"> 
+         <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+        <a href="http://www.tuicool.com/articles/I7fU7n#" class="bds_more" data-cmd="more"></a>
+     </div>
+    <script>
+        window._bd_share_config = {
+            "common" : {
+                "bdSnsKey" : {
+                    "tsina" : "3113829255",
+                    "tqq" : "801536792"
+                },
+                "bdText" : "WebGL入门教程第1篇——六色立方 (分享自 @推酷网)",
+                "bdMini" : "2",
+                "bdMiniList" : false,
+                "bdPic" : "http://aimg1.tuicool.com/IbAzYb.png",
+                "bdStyle" : "1",
+                "bdSize" : "24"
+            },
+            "share" : {}
+        };
+        with (document)
+        0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];
+    </script>
+</div>
+
+<style type="text/css">
+    .btn-large {
+        padding: 0;
+    }
+    .load-fail {
+        display: none;
+    }
+</style>
+<script src="./WebGL入门教程第1篇——六色立方 - 推酷_files/highlight.pack.js"></script>
+<script type="text/javascript">
+    $('table').each(function(i) {
+        var size = $(this).children().size();
+        if (size > 1) {
+            $(this).attr('class',"table table-bordered");
+        } else if (size == 1) {
+            var e11 = $(this).children(":first");
+            var e1 = e11[0];
+            var name = e1.nodeName.toLowerCase();
+            if ("tbody" == name) {
+                if (e11.children().size() > 1) {
+                     $(this).attr('class',"table table-bordered");
+                }
+            }
+        }
+    });
+            related_kan("I7fU7n");
+        window.page = 0;
+        window.last = 0;    
+        window.first = true;
+        resize_article_image('#nei', 550);
+                load_comments("I7fU7n",1,0,-1);
+                window.uid = -1;
+        open_add_article_to_kan("false");
+        async_do_zan_article(); 
+        $('pre').each(function(i, e) {
+            hljs.highlightBlock(e, "<span class='indent'>  </span>", false)
+        });
+       
+          
+       handle_follow_site("#my_follow","已订阅","+ 订阅");
+</script>
+
+
+  </div>
+
+    <div class="footer">
+    <div class="footer-inner">
+    <dl class="about-link site-link">
+        <dt>
+            网站相关
+        </dt>
+        <dd>
+            <a target="_blank" href="http://www.tuicool.com/about">关于我们</a>
+        </dd>
+        <dd>
+            <a target="_blank" href="http://www.tuicool.com/mobile">移动应用</a>
+        </dd>
+        <dd>
+            <a target="_blank" href="http://www.tuicool.com/bbs/go/issues">建议反馈</a>
+        </dd>
+    </dl>
+    <dl class="site-link follow-link">
+        <dt>
+            关注我们
+        </dt>
+        <dd>
+            <a target="_blank" href="http://e.weibo.com/tuicool2012"><img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/weibo-32.png">推酷网</a>
+        </dd>
+        <dd><img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/weixin-32.png">tuicool2012
+        </dd>
+        <dd><img src="./WebGL入门教程第1篇——六色立方 - 推酷_files/qun-54.png">QQ群:164644910
+        </dd>
+    </dl>
+    <dl class="site-link links">
+        <dt>
+            友情链接
+        </dt>
+        <dd>
+                <a href="http://www.woshipm.com/" title="人人都是产品经理" target="_blank">人人都是产品经理</a>
+                <a href="http://www.tmtforum.com/" title="TMTForum" target="_blank">TMTForum</a>
+                <a href="http://www.moobuu.com/" title="魔部网" target="_blank">魔部网</a>
+                <a href="http://www.pm265.com/" title="PM256" target="_blank">PM256</a>
+                <a href="http://www.pintu360.com/" title="品途网" target="_blank">品途网</a>
+                <a href="http://www.yidonghua.com/" title="移动信息化" target="_blank">移动信息化</a>
+                <a href="http://www.snsiu.com/" title="行晓网" target="_blank">行晓网</a>
+                <a href="http://code4app.com/" title="Code4App" target="_blank">Code4App</a>
+                <a href="http://www.taskcity.com/" title="智城外包网" target="_blank">智城外包网</a>
+                <a href="http://blog.lamper.cn/" title="LAMP人" target="_blank">LAMP人</a>
+                <a href="http://www.apkway.com/forum.php" title="安卓航班网" target="_blank">安卓航班网</a>
+                <a href="http://www.huxiu.com/" title="虎嗅" target="_blank">虎嗅</a>
+                <a href="http://www.ycpai.com/" title="缘创派" target="_blank">缘创派</a>
+                <a href="http://www.iterduo.com/" title="IT耳朵" target="_blank">IT耳朵</a>
+                <a href="http://www.iresearch.cn/" title="艾瑞网" target="_blank">艾瑞网</a>
+                <a href="http://mediaworks.caixin.com/" title="创媒工场" target="_blank">创媒工场</a>
+                <a href="http://www.leiphone.com/" title="雷锋网" target="_blank">雷锋网</a>
+                <a href="http://www.managershare.com/" title="经理人分享" target="_blank">经理人分享</a>
+                <a href="http://www.shichangbu.com/" title="市场部网" target="_blank">市场部网</a>
+                <a href="http://www.ikanchai.com/" title="砍柴网" target="_blank">砍柴网</a>
+                <a href="http://www.cocoachina.com/" title="CocoaChina" target="_blank">CocoaChina</a>
+                <a href="http://www.ibeifeng.com/" title="北风网" target="_blank">北风网</a>
+                <a href="http://www.jiankongbao.com/" title="云智慧" target="_blank">云智慧</a>
+                <a href="http://www.wyzc.com/" title="我赢职场" target="_blank">我赢职场</a>
+                <a href="http://www.thebigdata.cn/" title="大数据时代" target="_blank">大数据时代</a>
+                <a href="http://www.qidic.com/" title="奇笛网" target="_blank">奇笛网</a>
+                <a href="http://www.cngulu.com/" title="咕噜网" target="_blank">咕噜网</a>
+                <a href="http://www.linuxdiyf.com/" title="红联linux" target="_blank">红联linux</a>
+                <a href="http://win10.ithome.com/" title="Win10之家" target="_blank">Win10之家</a>
+                <a href="http://www.niaogebiji.com/" title="鸟哥笔记" target="_blank">鸟哥笔记</a>
+                <a href="http://www.play.cn/" title="爱游戏" target="_blank">爱游戏</a>
+                <a href="http://www.investide.cn/" title="投资潮" target="_blank">投资潮</a>
+                <a href="http://www.31huiyi.com/" title="31会议网" target="_blank">31会议网</a>
+                <a href="https://www.jpush.cn/" title="极光推送" target="_blank">极光推送</a>
+                <a href="https://www.teambition.com/" title="Teambition" target="_blank">Teambition</a>
+                <a href="http://cn.cocos2d-x.org/" title="Cocos引擎中文官网" target="_blank">Cocos引擎中文官网</a>
+                <a href="http://www.guigu.org/" title="硅谷网" target="_blank">硅谷网</a>
+            <a href="http://www.tuicool.com/links">更多链接&gt;&gt;</a>&nbsp;&nbsp;
+        </dd>
+    </dl>
+    <div class="clear"></div>
+    </div>
+</div>
+
+<div style="display:none;">
+   <script src="./WebGL入门教程第1篇——六色立方 - 推酷_files/stat.php" language="JavaScript"></script><script src="./WebGL入门教程第1篇——六色立方 - 推酷_files/core.php" charset="utf-8" type="text/javascript"></script><a href="http://www.cnzz.com/stat/website.php?web_id=5541078" target="_blank" title="站长统计"><img border="0" hspace="0" vspace="0" src="./WebGL入门教程第1篇——六色立方 - 推酷_files/pic.gif"></a>
+</div>
+
+
+
+
+<div class="return" title="返回顶部" style="display: block;"></div></body></html>

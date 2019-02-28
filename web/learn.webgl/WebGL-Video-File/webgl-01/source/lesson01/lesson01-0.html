@@ -1,0 +1,24 @@
+<html>
+<head>
+    <title>webgl-lesson1</title>
+    <meta http-equiv="content-type" content="text/html; charset=gb2312">
+
+    <script>
+
+        var webgl = null;
+
+        function Init() {
+            var canvas = document.getElementById('myCanvas');
+            webgl = canvas.getContext("webgl");
+
+            webgl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+            webgl.clearColor(106/255.0, 121.0/255, 162.0/255, 1.0);
+            webgl.clear(webgl.COLOR_BUFFER_BIT);
+        }
+    </script>
+</head>
+<body onload='Init()'>
+    <canvas id="myCanvas" style="border: 1px solid red;" width='600' height='450'></canvas>
+</body>
+</html>
