@@ -2,7 +2,7 @@
 layout: post
 title: OpenGL环境搭建 For Windows
 date: 2019-05-26 9:50:00
-categories: Shader
+categories: OpenGL
 tags: OpenGL
 excerpt: OpenGL环境搭建 For Windows
 shareexcerpt: OpenGL环境搭建 For Windows
@@ -64,7 +64,7 @@ sh_csharp: true
       <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&#38656;&#35201;&#21246;&#36873; &ldquo;&#20351;&#29992;C++ &#30340;&#26700;&#38754;&#24320;&#21457;&rdquo;</span></p>
     <p class="c0 c9">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.00px; height: 336.00px;">
-        <img alt="" src="images/OpenGLForWindows/image10.png" style="width: 602.00px; height: 336.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image10.png" style="width: 602.00px; height: 336.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0 c6 c9">
       <span class="c3"></span>
@@ -103,11 +103,11 @@ sh_csharp: true
     </p>
     <p class="c0 c16">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.00px; height: 573.33px;">
-        <img alt="" src="images/OpenGLForWindows/image5.png" style="width: 602.00px; height: 573.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image5.png" style="width: 602.00px; height: 573.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0 c16">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.00px; height: 290.67px;">
-        <img alt="" src="images/OpenGLForWindows/image11.png" style="width: 602.00px; height: 290.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image11.png" style="width: 602.00px; height: 290.67px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <ol class="c8 lst-kix_7k0zun5riml-0" start="4">
       <li class="c4 c2">
@@ -121,7 +121,7 @@ sh_csharp: true
     </ol>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.00px; height: 416.00px;">
-        <img alt="" src="images/OpenGLForWindows/image9.png" style="width: 602.00px; height: 416.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image9.png" style="width: 602.00px; height: 416.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <ol class="c8 lst-kix_jwq645ffcukm-0" start="2">
       <li class="c0 c2">
@@ -131,11 +131,11 @@ sh_csharp: true
       <span class="c3">&#23558;&#19979;&#36733;&#30340;glad&#21644; glfw&#25918;&#21040;&#39033;&#30446;&#30456;&#23545;&#20301;&#32622;&#65288;&#22909;&#25214;&#21040;&#30340;&#20301;&#32622;&#23601;&#34892;&#65289;</span></p>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 253.00px; height: 265.00px;">
-        <img alt="" src="images/OpenGLForWindows/image6.png" style="width: 253.00px; height: 265.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image6.png" style="width: 253.00px; height: 265.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.00px; height: 637.33px;">
-        <img alt="" src="images/OpenGLForWindows/image13.png" style="width: 602.00px; height: 637.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image13.png" style="width: 602.00px; height: 637.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0 c6">
       <span class="c3"></span>
@@ -144,11 +144,11 @@ sh_csharp: true
       <span class="c3">&#37197;&#32622; Include Dirctories</span></p>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.00px; height: 405.33px;">
-        <img alt="" src="images/OpenGLForWindows/image1.png" style="width: 602.00px; height: 405.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image1.png" style="width: 602.00px; height: 405.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 598.00px; height: 405.00px;">
-        <img alt="" src="images/OpenGLForWindows/image14.png" style="width: 598.00px; height: 405.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image14.png" style="width: 598.00px; height: 405.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0 c6">
       <span class="c3"></span>
@@ -157,11 +157,11 @@ sh_csharp: true
       <span class="c3">&#37197;&#32622;LibraryDirectories</span></p>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.00px; height: 405.33px;">
-        <img alt="" src="images/OpenGLForWindows/image8.png" style="width: 602.00px; height: 405.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image8.png" style="width: 602.00px; height: 405.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 598.00px; height: 405.00px;">
-        <img alt="" src="images/OpenGLForWindows/image12.png" style="width: 598.00px; height: 405.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image12.png" style="width: 598.00px; height: 405.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0 c6">
       <span class="c3"></span>
@@ -170,11 +170,11 @@ sh_csharp: true
       <span class="c3">&#37197;&#32622;Linker</span></p>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.00px; height: 405.33px;">
-        <img alt="" src="images/OpenGLForWindows/image2.png" style="width: 602.00px; height: 405.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image2.png" style="width: 602.00px; height: 405.33px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 598.00px; height: 405.00px;">
-        <img alt="" src="images/OpenGLForWindows/image7.png" style="width: 598.00px; height: 405.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image7.png" style="width: 598.00px; height: 405.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0 c6">
       <span class="c3"></span>
@@ -186,7 +186,7 @@ sh_csharp: true
     </p>
     <p class="c0">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 387.00px; height: 276.00px;">
-        <img alt="" src="images/OpenGLForWindows/image4.png" style="width: 387.00px; height: 276.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image4.png" style="width: 387.00px; height: 276.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </p>
     <p class="c0 c6">
       <span class="c3"></span>
@@ -215,6 +215,6 @@ sh_csharp: true
     </ol>
     <h1 class="c4 c9" id="h.5ovb082fhd9t">
       <span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 602.00px; height: 472.00px;">
-        <img alt="" src="images/OpenGLForWindows/image3.png" style="width: 602.00px; height: 472.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
+        <img alt="" src="./images/OpenGLForWindows/image3.png" style="width: 602.00px; height: 472.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);" title=""></span>
     </h1>
 </div>
