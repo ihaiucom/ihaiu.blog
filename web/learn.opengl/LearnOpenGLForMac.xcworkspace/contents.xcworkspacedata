@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:LearnOpenGLForMac/L02_IDE_glfw/L02_IDE_glfw.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:LearnOpenGLForMac/L01_IDE/L01_IDE.xcodeproj">
    </FileRef>
 </Workspace>

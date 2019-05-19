@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		58AFF22E2291516100240647 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AFF22D2291516100240647 /* AppDelegate.m */; };
-		58AFF2312291516100240647 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AFF2302291516100240647 /* ViewController.m */; };
 		58AFF2332291516300240647 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 58AFF2322291516300240647 /* Assets.xcassets */; };
-		58AFF2362291516300240647 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 58AFF2342291516300240647 /* Main.storyboard */; };
-		58AFF2392291516300240647 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AFF2382291516300240647 /* main.m */; };
 		58AFF2442291516300240647 /* L01_IDETests.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AFF2432291516300240647 /* L01_IDETests.m */; };
 		58AFF24F2291516300240647 /* L01_IDEUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 58AFF24E2291516300240647 /* L01_IDEUITests.m */; };
+		58AFF25F229153D000240647 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AFF25D229153D000240647 /* OpenGL.framework */; };
+		58AFF260229153D000240647 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AFF25E229153D000240647 /* GLUT.framework */; };
+		58AFF26A2291586400240647 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 58AFF2692291586400240647 /* main.cpp */; };
+		58AFF26D2291588B00240647 /* libgltools.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AFF26B2291588A00240647 /* libgltools.dylib */; };
+		58AFF26E2291588B00240647 /* libGLEW.2.1.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 58AFF26C2291588A00240647 /* libGLEW.2.1.0.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,14 +36,8 @@
 
 /* Begin PBXFileReference section */
 		58AFF2292291516100240647 /* L01_IDE.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = L01_IDE.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		58AFF22C2291516100240647 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		58AFF22D2291516100240647 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		58AFF22F2291516100240647 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		58AFF2302291516100240647 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		58AFF2322291516300240647 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		58AFF2352291516300240647 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		58AFF2372291516300240647 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		58AFF2382291516300240647 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		58AFF23A2291516300240647 /* L01_IDE.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = L01_IDE.entitlements; sourceTree = "<group>"; };
 		58AFF23F2291516300240647 /* L01_IDETests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = L01_IDETests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		58AFF2432291516300240647 /* L01_IDETests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = L01_IDETests.m; sourceTree = "<group>"; };
@@ -50,6 +45,11 @@
 		58AFF24A2291516300240647 /* L01_IDEUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = L01_IDEUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		58AFF24E2291516300240647 /* L01_IDEUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = L01_IDEUITests.m; sourceTree = "<group>"; };
 		58AFF2502291516300240647 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		58AFF25D229153D000240647 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		58AFF25E229153D000240647 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
+		58AFF2692291586400240647 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		58AFF26B2291588A00240647 /* libgltools.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libgltools.dylib; sourceTree = "<group>"; };
+		58AFF26C2291588A00240647 /* libGLEW.2.1.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libGLEW.2.1.0.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +57,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				58AFF26E2291588B00240647 /* libGLEW.2.1.0.dylib in Frameworks */,
+				58AFF25F229153D000240647 /* OpenGL.framework in Frameworks */,
+				58AFF260229153D000240647 /* GLUT.framework in Frameworks */,
+				58AFF26D2291588B00240647 /* libgltools.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +88,7 @@
 				58AFF2422291516300240647 /* L01_IDETests */,
 				58AFF24D2291516300240647 /* L01_IDEUITests */,
 				58AFF22A2291516100240647 /* Products */,
+				58AFF25C229153CF00240647 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -100,15 +105,10 @@
 		58AFF22B2291516100240647 /* L01_IDE */ = {
 			isa = PBXGroup;
 			children = (
-				58AFF22C2291516100240647 /* AppDelegate.h */,
-				58AFF22D2291516100240647 /* AppDelegate.m */,
-				58AFF22F2291516100240647 /* ViewController.h */,
-				58AFF2302291516100240647 /* ViewController.m */,
 				58AFF2322291516300240647 /* Assets.xcassets */,
-				58AFF2342291516300240647 /* Main.storyboard */,
 				58AFF2372291516300240647 /* Info.plist */,
-				58AFF2382291516300240647 /* main.m */,
 				58AFF23A2291516300240647 /* L01_IDE.entitlements */,
+				58AFF2692291586400240647 /* main.cpp */,
 			);
 			path = L01_IDE;
 			sourceTree = "<group>";
@@ -129,6 +129,17 @@
 				58AFF2502291516300240647 /* Info.plist */,
 			);
 			path = L01_IDEUITests;
+			sourceTree = "<group>";
+		};
+		58AFF25C229153CF00240647 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				58AFF26C2291588A00240647 /* libGLEW.2.1.0.dylib */,
+				58AFF26B2291588A00240647 /* libgltools.dylib */,
+				58AFF25E229153D000240647 /* GLUT.framework */,
+				58AFF25D229153D000240647 /* OpenGL.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,7 +246,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				58AFF2332291516300240647 /* Assets.xcassets in Resources */,
-				58AFF2362291516300240647 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,9 +270,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				58AFF2312291516100240647 /* ViewController.m in Sources */,
-				58AFF2392291516300240647 /* main.m in Sources */,
-				58AFF22E2291516100240647 /* AppDelegate.m in Sources */,
+				58AFF26A2291586400240647 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,17 +304,6 @@
 			targetProxy = 58AFF24B2291516300240647 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		58AFF2342291516300240647 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				58AFF2352291516300240647 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		58AFF2512291516300240647 /* Debug */ = {
@@ -427,10 +424,19 @@
 				CODE_SIGN_ENTITLEMENTS = L01_IDE/L01_IDE.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = (
+					"${gltools_header}",
+					"${glew_header}",
+				);
 				INFOPLIST_FILE = L01_IDE/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/glew/2.1.0/lib,
+					"$(PROJECT_DIR)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ihaiu.learnopengl.L01-IDE";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -444,10 +450,19 @@
 				CODE_SIGN_ENTITLEMENTS = L01_IDE/L01_IDE.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				HEADER_SEARCH_PATHS = (
+					"${gltools_header}",
+					"${glew_header}",
+				);
 				INFOPLIST_FILE = L01_IDE/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/glew/2.1.0/lib,
+					"$(PROJECT_DIR)",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.ihaiu.learnopengl.L01-IDE";
 				PRODUCT_NAME = "$(TARGET_NAME)";
