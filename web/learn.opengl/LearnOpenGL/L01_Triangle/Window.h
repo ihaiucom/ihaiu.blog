@@ -1,6 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <iostream>
+#include "Triangle.h"
 
 #pragma once
 class Window
@@ -10,8 +12,9 @@ public:
 	Window();
 	~Window();
 
+
 	// 初始化
-	bool init(int width, int height);
+	bool init(int width, int height, Triangle* triangle);
 
 	// 启动
 	void start();
@@ -24,6 +27,10 @@ public:
 protected:
 
 	GLFWwindow* window;
+	Triangle* triangle;
+
+	// 是否允许中
+	bool isRuning;
 
 	// 循环
 	void loop();
