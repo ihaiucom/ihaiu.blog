@@ -11,8 +11,10 @@ int main()
 	Triangle* triangle = new Triangle();
 
 	Window* window = new Window();
-	window->init(SRC_WIDTH, SRC_HEIGHT, triangle);
-	window->start();
+	if (window->init(SRC_WIDTH, SRC_HEIGHT, triangle))
+	{
+		window->start();
+	}
 
 	return 0;
 }
