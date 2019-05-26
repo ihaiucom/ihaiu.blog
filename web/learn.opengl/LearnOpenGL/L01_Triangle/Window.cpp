@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "Triangle.h"
 
 
 Window::Window()
@@ -11,8 +12,10 @@ Window::~Window()
 }
 
 // 初始化
-bool Window::init(int width, int height)
+bool Window::init(int width, int height, Triangle* triangle)
 {
+	this->triangle = triangle;
+
 	// 初始化GLFW
 	glfwInit();
 
@@ -66,13 +69,16 @@ bool Window::init(int width, int height)
 }
 
 
+
 // 启动
 void Window::start()
 {
+	triangle->init();
 
+	isRuning = true;
 	/// 渲染循环
 	// glfwWindowShouldClose 在我们每次循环的开始前检查一次GLFW是否被要求退出，如果是的话该函数返回true然后渲染循环便结束了，之后为我们就可以关闭应用程序了。
-	while (!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window) && isRuning)
 	{
 		// 输入
 		processInput(window);
@@ -86,6 +92,8 @@ void Window::start()
 		// glfwPollEvents函数检查有没有触发什么事件（比如键盘输入、鼠标移动等）、更新窗口状态，并调用对应的回调函数（可以通过回调方法手动设置）。
 		glfwPollEvents();
 	}
+
+	triangle->release();
 }
 
 
@@ -93,6 +101,7 @@ void Window::start()
 void Window::exit()
 {
 	glfwTerminate();
+	isRuning = false;
 }
 
 
@@ -120,6 +129,6 @@ void Window::processInput(GLFWwindow* window)
 // 渲染
 void Window::render()
 {
-
+	triangle->render();
 }
 
