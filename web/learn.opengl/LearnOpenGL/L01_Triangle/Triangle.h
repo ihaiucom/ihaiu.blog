@@ -29,6 +29,8 @@ protected:
 
 	// 顶点数组对象VAO， 位置
 	unsigned int VAO;
+	// 顶点缓冲对象VBO， 位置
+	unsigned int VBO;
 
 	// 着色器程序
 	unsigned int shaderProgrm;

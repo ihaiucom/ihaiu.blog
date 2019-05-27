@@ -123,9 +123,11 @@
   <ItemGroup>
     <ClCompile Include="..\L00_IDE\glad.c" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Triangle.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Triangle.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
