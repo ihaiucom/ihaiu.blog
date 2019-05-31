@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:LearnOpenGLForMac/L05_Shader/L05_Shader.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:LearnOpenGLForMac/L04_Triangle/L04_Triangle.xcodeproj">
    </FileRef>
    <FileRef
