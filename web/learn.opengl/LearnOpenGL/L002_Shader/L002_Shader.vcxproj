@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{51DE351A-14CB-491A-A852-AA1D1403E85A}</ProjectGuid>
-    <RootNamespace>L01Triangle</RootNamespace>
+    <ProjectGuid>{C8FF354A-7061-45C2-9D04-9AE2D8A8689C}</ProjectGuid>
+    <RootNamespace>L002Shader</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,7 +70,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>E:\zengfeng\githubs\ihaiu.blog\web\learn.opengl\libs\glad\include;E:\zengfeng\githubs\ihaiu.blog\web\learn.opengl\libs\glfw-3.3.bin.WIN32\include;$(IncludePath)</IncludePath>
+    <IncludePath>E:\zengfeng\githubs\ihaiu.blog\web\learn.opengl\libs\glfw-3.3.bin.WIN32\include;E:\zengfeng\githubs\ihaiu.blog\web\learn.opengl\libs\glad\include;$(IncludePath)</IncludePath>
     <LibraryPath>E:\zengfeng\githubs\ihaiu.blog\web\learn.opengl\libs\glfw-3.3.bin.WIN32\lib-vc2017;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -121,14 +121,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\L00_IDE\glad.c" />
-    <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Triangle.cpp" />
-    <ClCompile Include="Window.cpp" />
+    <ClCompile Include="..\..\libs\glad\src\glad.c" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Triangle.h" />
-    <ClInclude Include="Window.h" />
+    <ClInclude Include="Shader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xsd Include="FirstShader.xsd">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Xsd>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
