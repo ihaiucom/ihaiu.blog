@@ -1,3 +1,2 @@
-﻿  main.cpp
-e:\zengfeng\githubs\ihaiu.blog\web\learn.opengl\learnopengl\l002_shader\main.cpp(150): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  L002_Shader.vcxproj -> E:\zengfeng\githubs\ihaiu.blog\web\learn.opengl\LearnOpenGL\Debug\L002_Shader.exe
+﻿  Shader.cpp
+e:\zengfeng\githubs\ihaiu.blog\web\learn.opengl\learnopengl\l002_shader\shader.cpp(44): error C3867: 'std::system_error::code': non-standard syntax; use '&' to create a pointer to member
