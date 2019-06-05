@@ -33,9 +33,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <Xsd Include="FirstShader.xsd">
-      <Filter>Resource Files\shader</Filter>
-    </Xsd>
-  </ItemGroup>
 </Project>

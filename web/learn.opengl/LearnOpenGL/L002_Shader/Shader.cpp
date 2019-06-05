@@ -41,7 +41,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	}
 	catch (std::ifstream::failure e)
 	{
-		std::cout << "读取Shader文件出错:" << e.code << std::endl;
+		std::cout << "读取Shader文件出错:" << std::endl;
 	}
 
 	const char* vsCode = vertexCode.c_str();
@@ -109,3 +109,29 @@ void Shader::checkLinkError()
 	}
 }
 
+void Shader::use()
+{
+	glUseProgram(id);
+}
+
+
+void Shader::setBool(const std::string &name, bool value)
+{
+	glUniform1i(glGetUniformLocation(id, name.c_str()), (int) value);
+}
+
+void Shader::setInt(const std::string &name, int value)
+{
+	glUniform1i(glGetUniformLocation(id, name.c_str()), value);
+}
+
+void Shader::setFloat(const std::string &name, float value)
+{
+	glUniform1f(glGetUniformLocation(id, name.c_str()), value);
+}
+
+
+void Shader::set4f(const std::string &name, float r, float g, float b, float a)
+{
+	glUniform4f(glGetUniformLocation(id, name.c_str()), r, g, b, a);
+}
