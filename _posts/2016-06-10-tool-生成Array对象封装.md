@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 生成Array对象封装
-date: 2016-06-10 00:00:00
+date: 2020-02-12 00:00:00
 categories: Tool
 tags: Tool
 excerpt: 生成Array对象封装
