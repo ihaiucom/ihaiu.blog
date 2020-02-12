@@ -113,8 +113,8 @@ function OnClickReplace()
     for(var i = 0; i < outArr.length; i ++)
     {
 		var field = outArr[i];
-        outStr += "get "+field+"() { return this.buff["+i+"]; } \n";
-        outStr += "set "+field+"(v) { this.buff["+i+"] = v;} \n";
+        outStr += "get "+field+"()		{	return this.buff["+i+"];	} \n";
+        outStr += "set "+field+"(v)		{	this.buff["+i+"] = v;		} \n\n";
     }
 
    
