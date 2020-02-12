@@ -112,8 +112,8 @@ function OnClickReplace()
     var outStr = "";
     for(var i = 0; i < outArr.length; i ++)
     {
-        outStr += "get() { return this.buff["+i+"]; } ";
-        outStr += "set(v) { this.buff["+i+"] = v;} ";
+        outStr += "get() { return this.buff["+i+"]; } \n";
+        outStr += "set(v) { this.buff["+i+"] = v;} \n";
     }
 
    
