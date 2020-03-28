@@ -21,26 +21,505 @@ sh_csharp: true
 
 
 
-**前言**
+## 前言
 
-*《孙子兵法》有云，知己知彼者，百战不殆。*如果我们想要写出比Unity Standard Shader更好的Shader，或者想要选择比Unity提供的标准渲染方案更好的渲染方案，那么摆在我们面前的第一个问题便是Unity Standard Shader到底做了什么？它使用了哪些技术？它又是如何应用这些技术的？
+*《孙子兵法》有云，知己知彼者，百战不殆。*
 
-**正文**
+如果我们想要写出比Unity Standard Shader更好的Shader，或者想要选择比Unity提供的标准渲染方案更好的渲染方案，那么摆在我们面前的第一个问题便是Unity Standard Shader到底做了什么？它使用了哪些技术？它又是如何应用这些技术的？
 
-我阅读的Unity Standard Shader的版本是2018.2.12f1。我的结论均以该版本为基础。并且只描述Unity在forward模式中使用到的算法和技术。为了看起来方便，我先描述我的结论，再给出我得出结论的过程。
+事实上这是一篇写给自己的总结，而不是写给新人看的教程。所以在这篇文章中并不会去介绍Unity所使用的算法原理,仅仅是讲解Unity Standard Shader使用了哪些技术，又是如何应用的。
 
-**结论**
+## 正文
 
-整个Unity Standard Shader在forward模式所使用的技术以及对技术的应用可以用下面一张图表示。![img](https://lh3.googleusercontent.com/lZC5EbGP9FUmXQngSwDn7ZXU4m3RZmEmjOGkszpAR14vdTE7yQtRdA99hVrEdKDnKNdVtY8D2zLIF7PvBncbqBpADkGnFJ2ACRQLgQzluDmhmy6sOJTa_ncNDMSNfn8Eqlf0bAmc)对于Unity Standard Shader使用的渲染技术按照路径积分的形式来划分成自发光，直接光照，间接光照，以及全局雾效。下面我会逐一介绍上图的东西。
+我阅读的Unity Standard Shader的版本是2018.2.12f1。我的结论均以该版本为基础。并且只描述Unity在forward模式中使用到的算法和技术。
 
-**1.自发光**
-Unity Standard Shader的自发光主要由EmissionMap和EmissionColor构造。![img](https://lh4.googleusercontent.com/3Hm480XLmAfD_k7vSVO1A_0ku1tnRRjSeVU-IjLZod9p0ZET1O8tPyctjZ179mYx6pOiN6wJiImlrc98Upwm_a9wsNlhBWVmEjA94IyIs8e6_KFxiNZjG07rJLDL36C0BKvKH4fi)其自发光大小为![img](https://lh5.googleusercontent.com/Cu3OdBbxI542PJ_Y5Vkru8BggzotO98GYA0F51U-iAt-Er2IMc6r4x1F51REB9rhhX5W1ZxQZZPWHe-i9AvwNF-jHTr6h2MXj-sS4O9QojTUcN0vdKaTkzDzak3C3HQY3zaNrMkz) ，其中EmissionMap和EmissionColor由外部输入。最后再线性叠加到最后颜色输出中。Unity Standard Shader的自发光实现是非常标准的，完全符合路径积分的描述。![img](https://lh3.googleusercontent.com/4lzRB_5QVsQ38dVcodMSK1DvjdJQFwvFJtmWT0dBjM4MtkVjvjEAfkEB26LXQY42mT-phXnvOYm9B6RdF882bJeKlBHNnowU2xGR5rXnDjF63YGZ2vvVcDSIGQP5FTEpjv_oUvcF)
+为了看起来方便，我先描述我的结论，再给出我得出结论的过程。
 
-**2.直接光照**
-主要从BRDF的角度去考察Unity Standard Shader的直接光照。BRDF 模型![img](https://lh6.googleusercontent.com/-T4SFCTXVKn09zrct0PyrFE99hoHZK04IRCcZsvuneP1VDgmXqYcMIoEg0XXu4M0YsHhJNhQ0Ovg_geRwe9Z5XOrhJ-94zS6WOqCWSOVQr8ye8Nt49Pqfkl8xJkg5XQvAnkX7xb2)根据Unity Standard Shader的代码可以判断出Unity直接光照部分实现的BRDF是![img](https://lh4.googleusercontent.com/aCJMFap7KmfBCI4Xu2CjYVC1OUF05sZyydAf3kx3VKMKkm4vW5AsZo5sNKulAlH7vGyUAarZPGG9o3E0Nb7c0wofqLcEl8231RygnsmotkanwS1kVHASWFihuqOJgK97DZrbquVA)而标准Disney BRDF是![img](https://lh4.googleusercontent.com/KE1-KX-6Xy_dR5I-WVmBcDNvezhIvOoFaVIZA2gxhXYSpEA_w2yiAdNPUALt7RfDE3z0CDGuZ9uo7ZkvtxWHXg0Gp8tmbcEytg97QRA5IqFMWxtbi4mhWimoTD-2rqfsG3kXVMP0)可以看出Unity BRDF的Diffuse项比Disney BRDF的Diffuse项多乘一个π，所以Unity的Diffuse部分会比Disney BRDF更亮一些。Unity在注释中解释了为什么要多乘这一个π，目的是为了和Legacy的Shader保持亮度一致。Unity的Torrance-Sparrow的模型部分比标准Torrance-Sparrow模型要多除一个π，所以Unity的高光分量会比标准的更暗。从这一点来看Unity的高光部分并没有完全遵守微面元模型的推导。至于其他的部分，Unity的实现与Disney BRDF完全一致。![img](https://lh4.googleusercontent.com/EnMiQI2g3_NxgagNQ3WWKmtUUj0Txg6vrSO93Z8oLEQgSID6Ebe0vSCO10NP1sy-RKfejfGx7Gvl3hWJInaHr4PULuEMKofRRMK8Iw6EelYZHq3V4vmd7KjR-bDrtyk-vmyTKXoJ)D项使用的标准各向同性GGX分布函数。![img](https://lh6.googleusercontent.com/OZTUVHb-SzO9L8tAU4PNyis9WkdpV1QxjGvIY9cY5bRt_lZEumce1p-c296TI-iy8a77-6KmE7urlxzuTFO0MGoITum0Uo6gn0C1VX3ZPiEdSgWwaqEvSf0R_gKicONEsXMduKJU)![img](https://lh6.googleusercontent.com/JqCqJ25P3mUMMkRe4-hxHYs8WNvdtPNscO1c0nFB7sVMGramX42oymdTtfg6Jeu_YcMxY9ba_KP8Ti2cPkRQ1zNUT1AchABqsLtWA4rsuWH8y1M1BQasU26VOywKEBbW9aTyMFLq)![img](https://lh5.googleusercontent.com/vH1JJd6KBUqaNziONlqsSHAUSHLcKLxDTOAJ7YNu-MjaHVSfiK7YY5ycCLY1xqCFNUABgaAdiAcpKaOaIfvFRmX9SrWKffj8PVNORCR-hyJAmIPxpiZp-BS8rIvpxJ9lku-qyh80)其中G使用的是Height-Correlated Masking and Shadowing形式，![img](https://lh6.googleusercontent.com/4BJcwW1q2g_jEvDO4Ct9_hyVC8yWasj5zWzu-lASbmwNoRzZTy72V0Juu6ojcWwc9tHXWx9nvQPbHjTsufPNHxYFxLSNkCBxOUZRcT4jOQiUjk14YrzBPJouKbEbZ-XYxyDS2H4E)然而事实上Unity在默认情况并没有使用这个，而是使用了一个近似值。根据Unity Standard Shader的代码，我们可以反推出Unity使用的这个近似值是![img](https://lh4.googleusercontent.com/0Kn4mIl2LKa72UgFYFi1Kcd-rtUtS7qAI8c5WzGLp6fp5qTMZIUHaTC_N_oMT5DRzmrx4wJXOZG-MWRS4aMaaeFoIfhjl0AsBrkSv78vbCbRAQdXn7oa0VvpWeWMFvdCt_Qe9Iij)对于菲涅尔函数，Unity使用的也是 Schlick 近似。![img](https://lh5.googleusercontent.com/z-2drmU3-bH774qYZ9sBRS0k8uorBMpfH3NPmiPIZDN2L6tKNPuymNPY98EmjnUBu32iOoRd32vmSdKiikaoBH_EjHDDTszdBRagyArDyaH-rI6c5WjvBwOyl1XwbTyt5IwAKE2M)最后总结一下，Unity的BRDF与Disney BRDF基本一致，仅仅有3处差异1.Unity BRDF的Diffuse项比Disney BRDF多乘一个π，Unity的Diffuse会更亮2.Unity BRDF的高光项比Disney BRDF多除以一个π，Unity的高光会更暗。3.Unity BRDF使用的![img](https://lh5.googleusercontent.com/69aSmSW5RkILCqztZ1YtwrgA3xd0xhkC_OIjnPalo24I3Bx-zhU2ACwSFpogoCJZgvXLuXwp7D-fRpFpaFQ1tAfcRxEpZ74ihIP5rsJ8MYS8HGsfw-SlQ43nVeEDAHOy2LziH26A)是近似值而非精确值。BRDF 输入上面分析了Unity使用的BRDF模型，现在分析一下Unity 的BRDF模型都有哪些输入，这些输入是如何构造的。Unity BRDF总共有4个输入参数：1.diffColor2.![img](https://lh3.googleusercontent.com/3Lua0sqgVIE9WZ7tqKDH-VHX0N0OB2Hpw4n-JjHxGyQZyLwE7I6o5I04ITFeJa9PerB3XiRch64jHOk8cVhWXrTmNW9k8N4IBIdM5C6V85IWdnzAvmQ9mukcgM4Pz-U8MQA9sKEh) 中的perceptualRoughness3.GGX中的α4.Fresnel中的 ![img](https://lh4.googleusercontent.com/qQWwLAibzVNu3YlNKtyTohQgMuKLMUFkEOZlJ8oWTpz_51OFllSY6X_ovITG83pPXBtzQoqt0RxR3b-9amSkJ5xa-1q5HvKxYzzwE_NFK85X34VXGXCI8toJBp59CzggKKHiZnJ_)
-Unity中diffColor的构造流程如上图。![img](https://lh4.googleusercontent.com/VNkG4EgNrLvZgPHPgYwIOK3qTjG1l4v-F7T76cWGeHhffVMQv985r3TRckvjH6EU1LGz5AbiK9HOk1NAycYYIoA6K3jsPsLcq7StMzews8zBGfosOR2zFdzkIb8nAn0KqWK8xEYH)其中Albedo由Albedo贴图输入。而reflectivity会根据不同的工作流进行确定。金属工作流中![img](https://lh3.googleusercontent.com/Ek2-UepqiddMPxo2KTdrVoAiXkFxdvajZd0BEGle-h6WqSFmG6AMF2qFfbtwCOMcLrd6cJzLlBRnfkExGm9ZpoU7KpCD05PdvLoe10qnvT4YwoYrfRbcdyUtczf0iYmn-E7t1Ain)其中metallic由Metallic贴图输入。而dielectricSpec的值由外部输入的unity_ColorSpaceDielectricSpec.a提供。unity_ColorSpaceDielectricSpec.a存储的是 ![img](https://lh6.googleusercontent.com/57F6DFFNTkwkxYgHKKZXQfCHYbiRwRSAxoKWgI8omy2ax51j9fAsaVTtuPwxM_l80_6sy45eJUpoTlfOIVYA-mnckDi9gaiAKRqGA48t7c43o44qfr0HfYdwgFMr3irXa0-0LGWC) 。高光工作流中 ![img](https://lh3.googleusercontent.com/Kg9we6LLZLjifnUOLgvoAxgkZINqowY8LtqBXE4NwFRUI9STuFfptGgOK--tYMkKKGjK8DMtOybfsjqp7_Z9cJeR1Uk2evsUv0hXzPeKxYmfJzHW8yATBZQxJX9gGvkcnrb17p2c) 其中specColor由高光贴图输入。![img](https://lh6.googleusercontent.com/9nwASvyUqq6VUDEI3bhIAf-FDcxqKoXY3KWLGbno4RK26UdEqk_61f5_PG6mtHzYSghMOklD5RUbzuDP0NROlIUK--4jyTR8YRD_2JAsMnsdBzAH11HBK_qQFqYXErWKNVE6dMop)perceptualRoughness由Smothness确定。 ![img](https://lh6.googleusercontent.com/_cCLSCl0sQ4J-h-z8N33tYCpawI169fDiuAIi6b2ogYdY_d1OuPZSctmUvbR65cpmxXUEiKvz9urYIk91t3uqoZtzbinHXAaVEDPAkWx7neASVGEkhZWQMXhUNF8Ol-BAoGmTZBE) 。Smothness由外部贴图输入。具体的几种输入方式如上图所示。![img](https://lh6.googleusercontent.com/A7f4R9xUF4SUySm1abxK115eQtB28i3-CWMQZr7FRRoFZnINw-vj6pWmOGV_6EH1VJGSpv9mZOD5l5qhdOVNAqgC0K6c3WBj5nD-tjsVTkBSV8GEZ6klnkLbkX2mO2hC13jnqxFC)α由perceptualRoughness确定。 ![img](https://lh3.googleusercontent.com/OHELibMnttsRuYxFDRnHVL2tqE1iRxf6CuXWxHtTYfJ9E6n-GbYDmodLY97qW4wtw3qcEQckQSDkXig9l21uwTYcz25yRiNsVqFvtPr_2n4FGyK4iTImEzK_4dlo_GKsTfF31nom) 。也非常的简单。![img](https://lh3.googleusercontent.com/urJr7rkA6DKYCmYVJsDniBnLTm6vrJtxriVdasMhrq8pVC3c7HtQvF2vi9J-b5s-SwTjGMhJKs7EjWhk2jn25XP8g2L4KeyhPPAk8GhS-dHdUEI_Y21950wwjeOiF4C2rHVkml9E)F0由specColor确定。 ![img](https://lh4.googleusercontent.com/LN21c-wkjY3QR-VzycDIWLZVPxSxBPKyE63ixN02kPmbH_tG2vBl2WNJsID5CthwPvJWOr0sue008EwwS134AKj_X5brbX3cWsJ_FcCjfdNjmW-hpydDHIGeqRL830NNeFlTqsOM) 。specColor会根据不同的工作流确定。高光工作流中直接由高光贴图输入。金属工作流会通过金属度去构造。![img](https://lh3.googleusercontent.com/_w8CN7vgkJoRGSLg-ymqQAVi2b2gxgmRQhAggYtkuNpJshvcqqJKAcQfit5ir4lPpZfdDeeOs1K_Kks0RDpVd-SpC3KJbHNZLSXV3F6dE_YZVCFs5jk8oND7oVnhxxcDHTUAuMz7)针对BRDF的输入我们做一个总结，其实Unity的所谓高光工作流或者金属工作流使用的都是相同的BRDF，只是不同的工作流对上述的4个参数的构造方式不同。 Unity Standard Shader 输入最后我们再完整总结一下Unity Standard Shader 都有哪些输入，这些输入参数都分别被用来做什么了。![img](https://lh4.googleusercontent.com/mbkNkIbyo404CS6bxvwyHmJGEf7GCQxTGgB1NbVHk7UMMbe5dhLigxUhIj_qbstT2CZ2eeJF9WYYuGSjVulvFomaLIqpFAzZF6ZmXfHTGNjnndNIakh3Gkvrhz5f-tptwIb2_tHY)从上面的分析我们可以看出，Unity BRDF的输入由以下几个参数去构造1.Metallic2.SpecColor3.Albedo4.Smothness这几个参数都是直接从外部贴图输入的，非常直接。另外，Unity Standard Shader 还有 高度图和遮挡贴图的输入。这个高度图主要是用来做视差映射，但是并没有做视差遮蔽。遮挡贴图用来表达着色点的被遮挡程度，在计算间接光照和AO的时候被应用。**3 间接光照****![img](https://lh6.googleusercontent.com/bqeo_QfGM9MOx1IwfsJqt_BEn00l51Xh2Cf_mDUjFoOTtnLmRu7pxwraKdJ0yulRIrAdWKjufp1b4j_uRIO0N55-tDN1D1SOFzXNN07r9DNTnsf9NCsOUy6nXI2biVbKd3vIhbC0)**间接光照Unity主要提供了6类间接光照1.实时阴影2.Light Map3.Directional Light Map4.Shadow Mask5.光照探针系列技术6.IBL 实时阴影Unity的阴影系统算是比较完备的。它的主要构成由下图所展示。![img](https://lh6.googleusercontent.com/NKNsCsRb63Id26C3xWMeDghuBBJ_6HEd6knQo62oyzkFw4jM3729kz8aPUga17lGUR9zA2ml0lcslulrn6AHvLQJYq4pWdm7PViKbUAzyQZnkmlJuH5RF8Yw9Q9PPMrFXNANU5z6)unity的实时阴影系统主要分为以下3个步骤：1.根据CSM算法生成 Shadow Map Atlas。在Shadow Map Atlas的生成中使用了Normal Offset Bias 和Linear Bias两种Bias方案。Unity实现的Normal Offset Bias与标准的Normal Offset Bias 稍微有一点差异。标准方案是接收阴影者在采样Shadow Map时向着表面法线方向偏移，而Unity的做法是在生成ShadowMap时，投射阴影者向着背离表面法线的方向偏移。2.在屏幕空间对Shadow Map Atlas进行PCF滤波，并将滤波结果生成一张贴图。Unity将这种做法称为Screen Space Shadow Map，Unity生成的这张贴图也被Unity称作Screen Space Shadow Map。Unity的PCF采样策略十分晦涩。我并没有看懂它是怎么样一个采样策略。如果有了解的，麻烦告知一下。Unity在进行PCf滤波的时候实现了receiver plane depth bias这个Bias方案，不过在默认情况下是关闭的。3.最后Unity会在屏幕空间采样Screen Space Shadow Map。采样到阴影值以后会与Shadow Mask中烘焙的遮挡进行线性插值，以完成GI与实时阴影的混合。线性插值因子的计算策略不详，如果有了解的麻烦告知一下。Unity 的阴影系统在Forward模式下的实现其实有点奇怪。事实上可以直接不在屏幕空间做PCF滤波，然后避免生成中间的Screen Space Shadow Map，不是很确定Unity多出一步屏幕空间变换的原因是什么。如果有了解的，麻烦告知一下。我猜测原因是这样的：Unity认为直接渲染中会出现OverDraw，比如整个屏幕像素共有n个像素，但是OverDraw了以后，会绘制m个像素。m>n。如果做5x5PCF，那么直接渲染就会访问Shadow Map Atlas 25m次，而在屏幕空间做5x5PCF，则只会访问Shadow Map Atlas 25n次，当OverDraw很严重的时候，在屏幕空间做PCF的纹理采样次数会远小于直接渲染的情况，会减少GPU纹理采样的耗时。 Shadow MaskUnity除了实时阴影以外，还实现了一种被Unity称之为Shadow Mask的技术。这种技术能实现的效果就是动态的在实时阴影和烘焙阴影之间做切换。运行时的原理也非常简单，可以通过如下的表达式所表示。![img](https://lh6.googleusercontent.com/BkKzhlwQ0S98t-ZvJ2j5VH_dIdVqSHKJBkguMWuHJGF7jZ4oNOKY3m8fuK-NiEnYhecLaJpKKQEL7qOxS36f3-zHGQ25LlLJEKvcfn8E6lHE03EdMd5Z8gHZx12hJx1l7fAhvTgA)简单来说就是最终的阴影是通过在实时阴影和烘焙遮挡之间做线性插值得到的。不过没有Unity的源码，看不出来插值系数Fade的计算原理是怎么样的。虽然说Shadow Mask技术在运行时的实现非常简单，但是还有一个非常关键的问题，就是Shadow Mask 这张遮挡贴图应该如何生成。这里我也不太清楚，如果有了解的，麻烦告知一下。Lightmap & directional lightmap其中Light Map提供了Static Light Map，Dynamic Light Map。静态Light Map就是传统的烘焙Irradiance，Dynamic Light Map提供实时GI。Unity也提供了Directional Light Map，它会把入射光烘焙成一束主入射光，这样就带有方向了。然后在计算时使用Half Lambert BRDF。最后会再除以一个再平衡系数。Shadow Mask这个技术没有看到源码，也没有看到过文档，不清楚是怎么烘焙的。如果有了解的，麻烦告知一下。光照探针Unity的光照探针系列技术算是Unity具有原创性的做的比较好的技术之一。Light Probe会采样空间中一点的Irradiance，然后保存到3阶球谐函数中。再在运行时从球谐函数中复原光照信号，并生成新的正确的Irradiance。Light Probe Proxy Volume主要给较大的物体使用，原理上与Light Probe相同，但是仍有一些技术差异，不过这一部分我并没有看懂，如果有了解的，麻烦告知一下。IBLUnity IBL实现的比较简单。它就是把当前着色点当作是Mirror Reflection，直接去做纹理采样。**2.4 雾效![img](https://lh4.googleusercontent.com/5Ny1AgItkIAb9kuwPsc_gKm-fSKk6JXaRtwCz5Vg-jNSNVyXNeQK8h_VJRkYQ_wG6LUk8qsy7x21hqBKgn7wEmtMW6EIzbTKPKG1-_c2kPjicOn1S_X_yV5UWME-8-UB9NTeXKZd)**Unity的雾效Unity主要实现了3种雾效，线性雾，指数雾，指数平方雾。3中方案的计算方法大同小异。都是物体颜色与雾的颜色做一个线性插值，只是插值因子的计算不同。其中线性雾的插值因子由 ![img](https://lh3.googleusercontent.com/zfKOFJBowftRvMUCQj8tMJG7ZHl-SmAUDYqwjb0O4RAV5D7A3Q467dgD9QBV1VTXAOBtQH2jto2d1xTtmSPfSb_xuBE3a5qmirgJT_FbxBrc-9mqYBn9uOeP_nWeTqrqoHvLACDc) 计算得到，指数雾由 ![img](https://lh3.googleusercontent.com/sZicZGnzty7KlgdbkRBjE4U5EfeqK8-zTVUam18zj7I-OviEzpHdwbztLZZPQ3bhU27dIVh4zankBmvUH9o8PoyoR5UdyV-ZPcScVYde9L2KkV5s9RqFyqtE18VLuFISSU4P-GCt) 计算得到，指数平方雾由 ![img](https://lh5.googleusercontent.com/nAU8g8SYvWxyCaZDHEtRMu22Qxbp21gX4lkmKk1J-iKUg4XRe3EElyBoy3q3x1ai4PvPRLXUSeBdWM2SSZLccEU94qA4la-UtJyKT-IX48Eu-aAviDIqThgFI6cnaLXY_kw94ie0) 计算得到。 **代码分析**上面分析了Unity Standard Shader都应用了哪些技术是如何应用的。下面来读一下代码，从代码层面来验证上面的判断。我主要阅读Unity Standard Shader版本的是2018.2.12f1，主要阅读的是Forward模式的代码。首先，我们看一下代码主体结构。Unity Standard Shader的入口在 Standard.shader 文件中。![img](https://lh4.googleusercontent.com/AGHR5g56ndHqROIJX-8PNCjOpToWEw5V-3HtEq22_X_PcR_u3lz98SwQwmtIRxq_1quxljkR42FBIie2JXHUQNHghO1Hj_RcxuJo_3R1BYNqlzDO3RTadbWCTEdRgx70w6FQLkyv)Unity Standard Shader可以看到顶点和片元函数的定义在UnityStandardCoreForward.cginc文件中。UnityStandardCoreForward.cginc文件的主要内容如下，可以看到顶点Shade和片元Shader的函数调用，并且调用的函数实现均在UnityStandardCore.cginc文件中。![img](https://lh6.googleusercontent.com/-gfuci7MFL0TRS4KNXR1r8Ui_XZ5yi8qu6yqcL45AFj-JDkjvf7hPKEr1pEGNzc7ZsYcEMd2ALkt7wFSfFVQ-4ADP-SnES7dS4qT4fzdoj_evvlEUCU3VJ70WPs1ceMlhflYL1UW)UnityStandardCoreForward.cginc打开UnityStandardCore.cginc文件，可以看到对应函数的实现![img](https://lh6.googleusercontent.com/PLme0LcNR7GIIPuOKbvfgnetQaSAkHD1HeDr0Vqsar8QY2KnzN4yLDUxkl0WbSoeCj5VsLwipMuHwOf9qQ8r2IS8Y5EEna49KyE9am9seQw4C3-_tle_fAJXXtAY137BoI8y_C1i)vertForwardBase![img](https://lh4.googleusercontent.com/7EptK2wCPFgC0CcjzwJi7cAABcN2rxt0VaFgROg1d_QgLCJ843_KGQAkxcW34pZCBmX1Z_dEcbzTO4WdF8KOhogL0ySL6GjBfufs3aHM3DXkWbag9uxYIzbKOg8CTvgPaxVV6IwG)fragForwardBase![img](https://lh3.googleusercontent.com/RphPhje-oiaElKphXp6HIlzmRcKCwM8G5WVfph4R7G5vKuYNspFUlsE2EoEG7u3ylfDNXSHzPjCuALiIMEzjdXdhl1kjkfqniKakbjXWILs0LbkBXYZTRFaPV82ZAxWGrWm6LN9S)fragForwardBaseInternal顶点和片元Shader的代码轮廓基本就是这样。后面我就不一行行的分析代码。而是按照前面的分析流程进行分析。**1.自发光**自发光的相关代码如下![img](https://lh6.googleusercontent.com/Bhtb-DjKigxN7ExRP4ywYsenPruCAecWid6LawbvMhpiftDbrZNDb1CczD20CaSeIuu2bbNtTwgZ0wJIx_QsN3AcsdhS9uZFo-XY3gShzbuOQ9cyv9f7XzRNIzGr1_BD8xz9psa3)自发光Emission的实现在UnityStandardInput.cginc文件中![img](https://lh6.googleusercontent.com/lABddLyx64OKxiGjMlcQbpNcCq0nbq7-j2GQW-qt9W61fWIvcwS76010belUz1DP5mbQAVkSr4OrUz5PGJFhTOn3CvNFWMA_nyM0FRyF2oCXXzvyEWKQSJ3DHz11jNuAaO5Q49qi)可以看出Unity对自发光的实现非常标准。自发光的大小 ![img](https://lh3.googleusercontent.com/JxKcd_DcdmvtWBVoB_ZeyLU8PGFaaxdkhwmsz5mxp0UGaZ_jYDLBumGopn4safYdyXyZ9oRqtemVZmXiOhAkS1uzP6WuBKq62iV8EwW9ULLfe0GsFLBewMtz_e7clnF1Oh7oc09-)自发光对片元的影响也是线性的，符合路径积分的描述。![img](https://lh5.googleusercontent.com/QNpV4QPFjXheyHtWBKoUZGpsoxFgKYNCWCs9oDVFT2X3IGbRh-r8DcHwRFmTUfQ-9JPBbrr8LGnrbrmWybraczv8Sr66zNcMer3G48yfv-QkgfC1XU89lqr7pzupyk5XTkzQRBWd)**2.直接光照**直接光照的宏UNITY_BRDF_PBS定义在UnityPBSLighting.cginc文件中。![img](https://lh3.googleusercontent.com/N8oiEYJYHSq2XzSAa923P5zl7GP91yFReUiSBLgs08fLgX8jPwH0bIaeSEkS2see74XccHXwVVOl0TOKo0pY3c8sQRHW0CKi6oICl-V-FLSKwe_GcRkVbW7Mt0XKbJqMODVMmL3e)UNITY_BRDF_PBS分为3档，我们直接看第三档BRDF1_Unity_PBS，也就是最高档。BRDF1_Unity_PBS的实现在UnityStandardBRDF.cginc文件中。该函数实现比较长。我们从返回值往前看。![img](https://lh4.googleusercontent.com/5dc8zIO8q_01Mou_GrXedcfJSVZ4oCBdUvbB2C8YQQ7dBWZ0yxV8vOG5GfAp2PlZSA-A-J4CZn32KK48n5Go7D9566e77HmC6h6v1hOlxRKodNi0gHwKd3rnWBih8w8MQ93O0EeG)**Diffuse 项**在Aras Pranckevičius的PPT《Physically Based Shading in Unity》中提到，Unity使用的BRDF是Brent Burley等人在《Physically Based Shading at Disney》文章中提出的BRDF，其BRDF模型为![img](https://lh4.googleusercontent.com/mVvX5KO0Wtr2j6zPmUBapH-Y9r9_ZWJomJFTS8uKZvvuGaA4Qq86XYS9luZAmLJPDY4pq7VqN_RuWGLlaL6wJ_9xpFto8skCYsHqydu-hz_B3GDxwh2MLE9cxtRGSH_IsLvxP3K3)我们对比一下Unity的实现和Disney BRDF模型。可以看出其中diffColor*gi.diffuse是间接光的diffuse项，surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv)是间接光的高光项。其中diffColor*light.color*diffuseTerm+specularTerm * light.color * FresnelTerm (specColor, lh)则是应用Disney BRDF的直接光照部分。所以在这个函数中我们重点关注这部分的计算。追溯代码可以发现，light.color是渲染方程中入射radiance的大小。然后我们观察一下diffuseTerm的计算。![img](https://lh6.googleusercontent.com/E4oNf4isVZ5bfaa85FOe4MhXgI6W73m1vcOzQ60B6HY6Tixg4eKUY2XvkyNL_DhI0WUh6QhH7tl4MQz5DiCvSV-tlBgCKVGg5qz4nxZZ0FIqc-pPHeZDZuUEjJDJHeJAwJECo3wX)![img](https://lh5.googleusercontent.com/qrLRUad8oz_bpCYg3Y8iNo3T8zDdYVTHrNeOdkikzBzdqtvoequDx7cTllN2YwShEmSmwTz9otqPEnltJc6bRS6FwM_iIhGG6dUfkExKnlEihlQvQflcN7UK4cFoQvoCgeR6cJxk)很明显，nl就是渲染方程中的cos项。然后我们在看看DisneyDiffuse的实现。![img](https://lh3.googleusercontent.com/PVGTqjljmWvZXYRPH_uwQmNirRqWk_GQ0-O2AfPswPGZu2-rqhm98KpA-cuu0GX2PWwiIIXRmNTLFmRfTncioUU1F5Dk-nLs3b-TCDsENF42U_97W7TjFDp-N1ZAw6AMWykLDsm-)代码计算非常直接，与Disney BRDF的表达式非常一致。可以看出DisneyDiffuse实际上就是在计算DisneyBRDF中的![img](https://lh3.googleusercontent.com/52jIA4yd_sYDcrQnbwX2emaWXfPmSsZZWLujl4vUBpZvoIJ65S6o93piW6xY5F9cYgLRTTXXPFugoTE79s3Jgro2BC2Qm_JaCVRAUMFW2ahJvwIyasmybCdJM2pnzRO9eM3GozDT)到这里可以看出Unity对diffuse的实现比标准DisneyBRDF少乘了1/Pi。**Torrance-Sparrow模型**接下来我们再对比下Torrance-Sparrow项的实现。![img](https://lh5.googleusercontent.com/VjCzM1_b6PdTqmmUaRK_kvSuvPkdcZCfv_IRlN859BqPEhZU4D3KaIKDC-SV6j6oicZBZKbaZd7og_Kg1Yq68JMYL1hnsiJIzNGVxu_66cs44bP4rKL3fdHrVuTv-xMT_l-uHhf-)![img](https://lh3.googleusercontent.com/J1STVjAKmasLfXk-eyeOL7Ac1z9nh2u7pcdzyrvXC_yr0R5Z4ydfnAlsVvhHfq1dwl3hgMr-lJfdIs1LvnRb6JENpoZlY3CUB_s-u-fLIYzWbVGCQtT0Y5jiEAFNFA1FX67v66_J)对比标准DisneyBRDF可以发现，Unity的实现是DFV/Pi，比起标准DisneyBRDF多除了Pi。这个除法被合并到了G函数中计算。Fresnel 项我们先看下最简单Fresnel项，标准 DisneyBRDF中的Fresnel 使用Schlick近似。![img](https://lh3.googleusercontent.com/P3iEKwe6iQq-P2XQGxxLT2T1ioVtMlp4km3YVfB6l6VRE0RViBEvF6JfBtgcq65EDzQ4fFqeXaBo80G7EmL6ngyR2wYt-blXLsOA9kluXDrmSGlsrc2i2JH5w90igP1swoH8GjR1)![img](https://lh3.googleusercontent.com/OwwEICXb51groN7YyqrOKQp6s_IJwZUM7d1xMuTXwLJaxhVAod1zjp0DNIJsFDs7UU3vSZnniJ2OrYcy5E8m8n6ZSHbPRoSOtu4oTGMlu8HN_Xkg1bJ_0Gyjh3xUYgMeKwhkyU6o)对比Unity的实现代码，发现Unity 实现的就是Schlick近似。法线分布函数接下来我们对比一下D项，Unity使用的分布函数是GGX。我们首先看一下标准的GGX函数，图片截取自Microfacet Models for Refraction through Rough Surfaces。这篇文章首次提出了GGX分布，并且，2作是个中国人。![img](https://lh6.googleusercontent.com/pTPjQEMKEj1-1Eo9NesBdlovYHC4eVfAw_GKSiFEq1bsWs4zt1TtkauKeu4omYIVFYFjlz6q7L9In74h9TxtFzNE-ki30mEu1lj1EgAT3awDEXtFo85GNdprj0YBUDalLIWIjDPA)接下来我们再看看Unity的实现。Unity的实现在函数为GGXTerm，定义在UnityStandardBRDF.cginc文件中。![img](https://lh6.googleusercontent.com/OuDocwjhocHVKoDMfI3fl3yYPKPisRd7AZ8WXXd8dcfx9A5g9Q8qtRkCkENYyWXoG6otrKdV_e7DNQOM063FPcbVvmYe-hjbjiFQphDotygzPpCbO6n0c97MRUQDSGDwgx2rxatU)Unity的实现具有一定的技巧性，并不是很直观。这么做主要是为了避免计算正切函数，减少计算量。在Unity的实现中 ![img](https://lh4.googleusercontent.com/KCqH7-YTSdp-UAeDFLO3Y4CvtMjE6QFLaWPXm9UIp0xMIMpErXb3bS-GM5eCyuIzu-55jX8RQJTHXK_5iqYmT3B3b85tqwXY4AlC6-ECUmApsdOo4WDP8gmkwVqt8Pe8ZjWloiCJ) ，我们做一点变换。![img](https://lh5.googleusercontent.com/Gu3LiXYS56LFalNAE7MIicpEmm0BzFA8lKr06AupeQUsJLVt1mjz_HFie8R0D8sIfRzk7KQmPBChl5DIXC3RiGKgTDgg80SAVXqWvR2PFQA5hXDuESLZgStirsXS4waEJ_YbsFuA)到这里已经可以看出Unity的实现基本就是标准GGX函数，只是在分母中多加了一个epsilon，防止除0异常。几何遮蔽函数在Unity中Standard Shader中，将几何遮蔽函数和![img](https://lh5.googleusercontent.com/sv0IOzVhNWwuwPXU-ha6LJFYudpuFRy9V9zhTNopUxwt74sU4bOvWUsnnygv2aqWaO8rp_-FxDLTmwmbvk2uuRHTs3HMnBAbZXLLsAAIlUdGc6TfhbWOKZRcHz3cW4Ln_n59EgGQ)合并成了一个可见性项V。![img](https://lh5.googleusercontent.com/S6CS8WR6pbI2fcrnEpz1wh92dmVZj4AMdBxGez8GHECZr2HnpB83vBE4dbHdRQkJXpMmigtc6cfDpVL2lpp4s9RbIs-xK6lrhRKbULQDGJJ4WMQZTXIFxClnPOMit-87DVbxK0Ur)而对于G项，Unity选择的是Height-Correlated Masking and Shadowing形式，![img](https://lh6.googleusercontent.com/D2VAVrPnwmj7sLgaZeJfuRBanxRn8ary-LqgPL3RwdZ_-j66W7RVkMBBZZkINpbekBO0rGYfIuwx29SCnTN595QE6HHRQpe6Eeyb6BetE5WizC1AzKBr6YWASgZAqdHKLHjcQLas)而对于标准GGx分布，有![img](https://lh4.googleusercontent.com/C0HozO-BRv7uWJwg8983f_1RcSfa0SdrewTvq5gGBqhJXmJ9lB7keLq5IXH6-d3tIoVy8QjOeZRlY4uZBv7lv8aqxq-FC0W8slr8sfdkM6Fy38GlU50RB2cNK2nTYUrf4K7rY1rF)Unity的实现代码在UnityStandardBRDF.cginc文件SmithJointGGXVisibilityTerm函数中。![img](https://lh4.googleusercontent.com/pXM3bwHOZyi59G_tMC6mkSqm4KjwfVVFb8MhXUXTElAfzD19NsRXIwGGfAXTIddnC3P1owDqZmrkrbDin9pUrETCb_sKtIN5HTI84Dmc_iz3vlJRXuvqDjVQpKbHAIhLwya6z4AF)可以看到，Unity的实现并不直观，看上去和前面描述的公式并不一样。这是因为Unity在实现中为了避免三角函数的计算，在运算中使用了三角恒等变换去变形，我们对这些变换做一些推导。因为这个函数返回的是可见性项，所以我们先推导一下可见性项G。其实就是将![img](https://lh6.googleusercontent.com/PiEJjZSrFNJO7iUWQaky5dq04NAkhVXRsxkk69PtSetj6Mqr7TlgSbDGMzKU9I-RDraleDiZoeMR2qvfJf6yjTvv68f24SMkUXt7ERGnI1lD3fwPUi0j9lkIt4BEHdjU03Xyz0_V)和G代入到V中。可得![img](https://lh5.googleusercontent.com/Owql7BpMnfoKxIQ99-3SX_l1UvLg7kqfqluVwHyX8qBv4_GqHeMBGhGO3t9jMG3KzuzLWK1YLzNoL0r2bsK73rsdevubTS7p8bVtIMRJsStwrH0atMS2dH-QwvIFl2u5IA1aCVuG)接下来我们推导一下Unity的实现代码![img](https://lh3.googleusercontent.com/ynLHA_XNIPAKIqwjV61uUIh3Svwda9NUJJ3ClqZ7AAw9vWO_WaZTP7i6-b4xtc7aSlIaFf5Uk56CgT5ZGTa2rQexkSmfwUS2MlZ7BWZrO8nEbeiJuEyLMVJNztMJrB0SBPBVZbjz)由于 ![img](https://lh5.googleusercontent.com/mi4BEaVaEbn4UJONc4vmQDOR2KRPxFxUkqWhzFyaiyPjkD1CPW-2zrhgk-MSAJhCpdNrCzHj2cJMuel59arc2dGzDQfeMCFILrwhqgIy-ysenM2f_agFPpN8CA1sq4CGjYSeZNHa) ，上式可以化简为 ![img](https://lh5.googleusercontent.com/jrCUxTJVou4X9qB4wBDWsBPezT_RADaGwQTUSCoEMqzoc-Bt_7FFCZQLxTtMrdsBY_Wn09AWW-r4UeuGT3rLF0xcrELqYvvNz0U128__ig2Bw1FkUEz41O5PvKh22YsdFSiuxFKI) 。同样的方法可以用来推导 ![img](https://lh5.googleusercontent.com/95eSFUkqtUBMY96Ed8PJEnuHtXu_G9H84bm4HQBpbFPIDMFc0tQGhBjAOfoW82_-1Y-LWSNhsc99j6D6iYSkcPVKfB6wKY_KkZxZDpAo6_pTVPV_XiHOC3T7TfMHLEQbxFFp178c)最后将上式的推导结果代入到SmithJointGGXVisibilityTerm函数的返回值中![img](https://lh4.googleusercontent.com/8rmNCulW1Hiq2GuutGSoop_sPf20C7KKpE9LJkGiN9-olOQjw3lB_cXBMuMnStlbkFRLlqfOxKPmB7RQCxPKkqT_quEwEOko31p3RcguLXJpKNOus78qhkm3glBN-LA1qDA9vmeb)化简可得![img](https://lh6.googleusercontent.com/8VaapIZFUMzLU-3BHSMSLQa2drCvWtPb9as2F-AJZm7FcMpnZEoAoIJZS17NIm3RApMtIq8jRGB-F0G4D-btcmaco-hiu3XtIyflmZkYfmYl9Ybu0IqrLRXDYTPO0Dq2Yu-RtpOo)可以看到Unity的实现与前述的推导完全一样。也就是说Unity实现的是标准的Height-Correlated Masking and Shadowing函数。不过Unity在运行时并没有使用这个标准形式。由于开方函数GPU消耗较高，所以Unity使用了一个近似。反推过去可以发现，Unity事实上使用的近似是![img](https://lh6.googleusercontent.com/Q8UCNtKYdtQBleQN_ckp1kIQWbGE_jUl_0aF8_9g77MmWNr644bQEZNAbjkQZ4CcUgByuaIWzQaZmeHYRN5Rxa41TG_Pbvb_fWyKBTTl4tLfSwQr5HcBdeEm-hO5_jpgMzW4JvhB)根据Unity在注释中的描述是，这个数值虽然在计算上不正确，但是与精确值足够接近。**BRDF输入**从上面的分析可以看出来Unity Standard BRDF有几个输入，diffColor，perceptualRoughness，roughness，F0,Normal,Normalm。![img](https://lh5.googleusercontent.com/Mcb6s9gmw-jPlGevg1PAg5RYeYG2R6lSXfS0mfG8Cc17DUXZgGj8yi40-96tFAE7SC6GnSdlvzcz_N8eWW0OHLlPI7daFQ8JTgvhq5y_PviI8XYK4rL8a3GroTEbC81qDnMidlQa)从上面的图中可以分析出，perceptualRoughness，roughness的构造是比较简单的，直接通过Smothness构造。而Smothness则可以直接从纹理中输入。金属工作流中，F0可以通过玻璃塑料的F0和Albedo插值获得。diffColor会根据metallic构造，金属度越低，diffColor越接近Albedo，金属度越高，diffColor越接近0.Normalm使用半角向量。而Normal则通过法线贴图获得。法线贴图读取法线贴图的代码在UnityStandardCore.cginc文件FragmentSetup函数中。![img](https://lh3.googleusercontent.com/FRi_7Obz5a1yLXg140ZDFI7nHj8qrndmhKww1WKc77OcTa-SBjKnnC6XGjQmPZVniPWd_7vmzAYeKVSICzetvLC_GbdAc4v2wVPE5BhtULV0EB6StO6ahj1iLEOIjGxLjtTMSHrR)读取法线贴图主要由PerPixelWorldNormal函数实现，该函数在UnityStandardCore.cginc文件中。![img](https://lh6.googleusercontent.com/oWYZFmwoQpzyPZXtF9RmQjrdswKELKLncZtAZETrM0iaO1S1YKFzfxWQzXtJcp-nPaM0SoPXsj4gNu1x7x_Jd5GYKcf6m73sxGC3F2qG2i49Nt3cei7jmKGDla2JP-CrBwmiuFZs)在PerPixelWorldNormal函数的实现非常常规，首先会去读取法线贴图，然后再将法线从切线空间转换到世界空间，最后再归一化。需要注意的是NormalInTangentSpace函数在读取法线时会根据_BumpScale对法线在tb方向进行缩放。![img](https://lh3.googleusercontent.com/UJmiTVE_cSB5D2PG62xyEBb-0VX_XGtcv3tXaGtQyIjBJq0km7tf4GVJJKGnSX-GrBQpZtpk8-1W7L427g6nAIlteXRemumhYRZv3PCvjiLgJi00CJcWALv9CUgpNB5Xqp90qOKX)![img](https://lh3.googleusercontent.com/d4FYYE9-L8GNmiybySavyI0EZIdxjpKCd6IKvephFU2rlJx4Y7DptdWywAfMTurSJpUWlzgt3I2TgiNEOonhIgOuIfKNgi98skmEb9CHlVWOu9VWvg4Lhzfy2glesm6f-YBDsTSj)![img](https://lh5.googleusercontent.com/ga_3cFfDFO8aMGdyFDAKYnCogQMfeTQoiTiYSGrYplPj5Y2203A8WTweEFQbj5lTM_Z2BYjJWaOV-4dSjvA9q_Rjzd90dgVbNRH6wa3V3Ec7mN30z1qklNk4jDdCjSTiRIP9iDso)视差映射视差映射的实现在UnityStandardInput.cginc文件中。根据视差贴图对UV进行偏移。并没有做视差遮蔽映射。**3.间接光照****3.1实时阴影**vertShadowCaster过程Unity CSM的代码可以在UnityStandardShadow.cginc文件中看到。![img](https://lh3.googleusercontent.com/nMo2W5-amzw-Y6D0YJ1AHH1parj0j7pEffY915EDvXs72OThGlez-APhDeM0wFwkhASUK9BDXvRFgpV4jjtOWqAHWdlEp9qiURoA9tjHTJtACp4xwlG-HPgm1ItroKGAbAfc0Vku)vertShadowCaster可以看到主要的坐标变换由TRANSFER_SHADOW_CASTER_NOPOS宏实现。TRANSFER_SHADOW_CASTER_NOPOS宏的实现在UnityCG.cginc文件中。我们看一下方向光的实现。![img](https://lh4.googleusercontent.com/KPOs17EPAxS6hQOKiIu2AYg1fpu50AYyFIAvbAMyj37S-0CHOnD4qP7QvX0WzNl_BFJhgsX3tyMwvyB53w4oPII8n0M9rvC8QWSo_SQBDH8z5bAmRIMrvR6nF6R99AU-c1SWt-zy)TRANSFER_SHADOW_CASTER_NOPOSUnityClipSpaceShadowCasterPos函数的实现也在UnityCG.cginc文件中。![img](https://lh5.googleusercontent.com/aLHak_FAvGMq8GJTVGIgBTBNXaCn4pyijR3a3YSA5obfem7Rq983yJjtgmi_Gm7JoxT_WLScA-Wj5qrELfRcmEiKjAFaFwlYDXooBqR7-3vVD6LGxuZXfS2tOrbPa5Np2ok_n4r7)UnityClipSpaceShadowCasterPos可以看出Unity使用的是标准的Normal Offset Bias方案。片元朝着背离表面法线的方向偏移，偏移量正比于表面法线于光线夹角的正弦值，比例系数由外部指定。UnityApplyLinearShadowBias函数的实现在UnityCG.cginc文件中。![img](https://lh4.googleusercontent.com/HwlK-HTl_OaPaf8qpRi5nLAZdKlN0ylV8kRnbI2e5LxCwlNLJl7uRSkXuIIpxe3pQDAyRAEfm71AGjIXvwPzfHkXNhRk1bbcIzLSIoZpAbstNjUhnj20qGIMz8OrX6t2O4-O7CSW)UnityApplyLinearShadowBiasUnity在投影空间实现了一个线性的Bias。CollectShadow过程Unity把它自己实现的这套阴影叫做Screen Space Shadow Map。而在屏幕空间进行的一系列操作Unity把它称为CollectShadows。在FrameDebug中可以看到。![img](https://lh4.googleusercontent.com/w7udT9Ajrw6fnluhma38sytNoJGmm8a2Qa7mxquyMuX_m2wKOiu3OXSh_NGvZpuCN5o3I2nkv4utayu3ys0UPG6NfgiPyvD3xVsaJ0NGsNYx7Wmi3IDkGlsPi0eL0VHHS602ulJ_) ![img](https://lh3.googleusercontent.com/v-g8li-5O_LUWpYDg1MehCqVaxwdeZEpWFvvay7t_FkMVaSjHy-bscBH9YprYrtSKLZncZm82gWpAHOUlyPo3TNMUFhmX-3yuSiKq9oc-bx9Z-hRo6IiRF3unjSjoNqZtUuGEca-) 可以看出CollectShadows过程主要执行的是Hidden/Internal-ScreenSpaceShadows Subshader #2 Pass #0。其实现如下![img](https://lh4.googleusercontent.com/9F99Ee9DQsNczqpJvoi_0fp061jQoqO4PPFaHDZqf0ORnNCbT6FILqsiVBTc8N8zAQUSwoz2mvL1MgcG25cQL5p2wxcxqD2EgM3MXCMfiraFnwVuUhs3xjilyKAD4I5i46-ee4dz)片元Shader的入口在frag_pcfSoft函数中。![img](https://lh3.googleusercontent.com/My-Z46kygnaSKLye-LaJ3-NbDdyXmE1eMbMN9U9jBtGsXhxscKA-JOHTmTKo6w36IF_e4sVJX6mBNBJBE-LF-YdTbvsxTSlgMS6YVBb8skqg1sCV1BAxaBP_xKDW-Z0pxgKxHyvr)浏览一遍可以看出这个函数主要在做两件事调用UnitySampleShadowmap_PCF5x5函数进行PCF滤波级联混合我们先看级联混合![img](https://lh5.googleusercontent.com/Xlr8KvcrDCM8TdGKj2_NoHcN7F3mwajtfrGLMoRFI-KOQsasR5_dSHSHSO9ZbB9COaf4pFzHT969UNMCnoWvUSj2etX3cgqMjPK93tr2dNn3BCgcbu_OiXerRke_1HdiHPL2-eC_)级联混合的策略也非常直接，就是先生成当前级联的阴影，再生成下一级联的阴影，然后再这两级级联中线性插值。然后我们再看一下UnitySampleShadowmap_PCF5x5的实现。![img](https://lh5.googleusercontent.com/-bV9E2NtaZZDbIh7TkYib81hCO0UXMIfb8SEGt25OdGd7HBSCkHe1hWwGhZOAkf0cAzCSF0Krg037aDjYp97jvotIzSV5gM0vyxOa_5L8v3xU7Wf9Ovdt0n0cQ3PJesT8YUt2Vzx)UnitySampleShadowmap_PCF5x5Tent函数的实现比较长，不方便截图，我就拷代码了。
+## 结论
 
-```c#
+整个Unity Standard Shader在forward模式所使用的技术以及对技术的应用可以用下面一张图表示。
+
+![img](https://pic3.zhimg.com/80/v2-7800fe5b201c575492b4f3a56017c422_720w.jpg)Unity Standard Shader 技术大纲
+
+对于Unity Standard Shader使用的渲染技术按照路径积分的形式来划分成自发光，直接光照，间接光照，以及全局雾效。下面我会逐一介绍上图的东西。
+
+### 1.自发光
+
+Unity Standard Shader的自发光主要由EmissionMap和EmissionColor构造。
+
+![img](https://pic3.zhimg.com/80/v2-df860596fc9d605dab0fb62fa5dceb8e_720w.jpg)自发光
+
+其自发光大小为![[公式]](https://www.zhihu.com/equation?tex=EmissionMap.rgb%C3%97EmissionColor.rgb+) ，其中EmissionMap和EmissionColor由外部输入。最后再**线性叠加**到最后颜色输出中。
+
+Unity Standard Shader的自发光实现是非常标准的，完全符合路径积分的描述。
+
+![[公式]](https://www.zhihu.com/equation?tex=L_o+%3DL+_e%2BL_%7Bdirect%7D++%2BL+_%7Bindirect%7D++%E2%80%8B%09+++)
+
+### 2.直接光照
+
+主要从BRDF的角度去考察Unity Standard Shader的直接光照。
+
+**BRDF 模型**
+
+![img](https://pic3.zhimg.com/80/v2-de8ec11ac04b34955ac503e3ad0a072a_720w.png)Unity Standard Shader BRDF
+
+根据Unity Standard Shader的代码可以判断出Unity直接光照部分实现的BRDF是
+
+![[公式]](https://www.zhihu.com/equation?tex=diffColor%C3%97%281%2B%28F_%7BD90%7D%E2%88%921%29%281%E2%88%92cos%CE%B8_l%29+%5E5+%29%281%2B%28F_%7BD90%7D%E2%88%921%29%281%E2%88%92cos%CE%B8_v+%29%5E5%29%2B+%CF%80%5Ctimes%7BDVF%7D++)
+
+而标准Disney BRDF是
+
+![[公式]](https://www.zhihu.com/equation?tex=%5Cfrac%7BdiffColor%7D%7B%5Cpi%7D%C3%97%281%2B%28F_%7BD90%7D%E2%88%921%29%281%E2%88%92cos%CE%B8_l%29+%5E5+%29%281%2B%28F_%7BD90%7D%E2%88%921%29%281%E2%88%92cos%CE%B8_v+%29%5E5%29%2B+DVF)
+
+可以看出Unity BRDF整体比Disney BRDF多乘一个π，所以Unity的BRDF会比Disney BRDF更亮一些。Unity在注释中解释了为什么要多乘这一个π，目的是为了和Legacy的Shader保持亮度一致。
+
+![img](https://pic2.zhimg.com/80/v2-8a85ee6aa998e84c7df64a2c83507e2d_720w.jpg)Unity Standard Shader BRDF中的参数
+
+至于其他的部分，Unity的实现与Disney BRDF完全一致。
+
+![[公式]](https://www.zhihu.com/equation?tex=F_%7BD90%7D%3D0.5%2B2%C3%97perceptualRoughness%C3%97cos%5E+2%CE%B8_l+%E2%80%8B)
+
+D项使用的标准各向同性GGX分布函数。
+
+![[公式]](https://www.zhihu.com/equation?tex=D%3D+%5Cfrac%7B%CE%B1%5E2%7D%7B%CF%80cos%5E4%CE%B8_+m%28%CE%B1%5E2%2Btan%5E+2%CE%B8_++m+%E2%80%8B%09++%29++++%E2%80%8B%09+++%7D+)
+
+![img](https://pic3.zhimg.com/80/v2-f97b9b212eba43fd96206e2a79ef33fe_720w.png)V项
+
+![[公式]](https://www.zhihu.com/equation?tex=+V%3D%5Cfrac%7B+G%7D%7B4cos+%CE%B8+_lcos+%CE%B8+_v%7D)其中G使用的是Height-Correlated Masking and Shadowing形式，
+
+![[公式]](https://www.zhihu.com/equation?tex=G%3D+%5Cfrac%7B1%7D%7B1%2B%CE%9B%28l%29%2B%CE%9B%28v%29%7D+%E2%80%8B%09++)
+
+![[公式]](https://www.zhihu.com/equation?tex=%CE%9B%28%CF%89_o%29%3D+%5Cfrac%7B%E2%88%921%2B+%5Csqrt%7B1%2B%CE%B1%5E2tan%5E+2%CE%B8_+o%7D%7D%7B2%7D++)
+
+然而事实上Unity在默认情况并没有使用这个，而是使用了一个近似值。根据Unity Standard Shader的代码，我们可以反推出Unity使用的这个近似值是
+
+![[公式]](https://www.zhihu.com/equation?tex=%CE%9B%28%CF%89_o%29%3D+%5Cfrac%7B1%E2%88%92cos%CE%B8_o%7D%7B2cos%CE%B8+_o%7D%CE%B1++)
+
+![img](https://pic3.zhimg.com/80/v2-c414b220bac112633b8b1ce7d9c83736_720w.png)Fresnell近似
+
+对于菲涅尔函数，Unity使用的也是 Schlick 近似。
+
+![[公式]](https://www.zhihu.com/equation?tex=F%3DF_0%2B%281%E2%88%92F_0%29%281%E2%88%92cos%CE%B8+_l%29%5E++5++)
+
+最后总结一下，Unity的BRDF与Disney BRDF基本一致，仅仅有2处差异
+
+1. Unity BRDF整体比Disney BRDF多乘一个π，在相同光照情况下会更亮
+2. Unity BRDF使用的![[公式]](https://www.zhihu.com/equation?tex=%CE%9B%28%CF%89_o%29++)是近似值而非精确值。
+
+**BRDF 参数构造**
+
+上面分析了Unity使用的BRDF模型，现在分析一下Unity 的BRDF模型都有哪些输入，这些输入是如何构造的。Unity BRDF总共有4个输入参数：
+
+![img](https://pic1.zhimg.com/80/v2-968ab9a98b80926a10a77800551e3240_720w.jpg)Unity BRDF 输入
+
+1. diffColor
+2. ![[公式]](https://www.zhihu.com/equation?tex=F_%7BD90%7D) 中的perceptualRoughness
+3. GGX中的α
+4. Fresnel中的 ![[公式]](https://www.zhihu.com/equation?tex=F_0)
+
+**金属工作流**
+
+![img](https://pic3.zhimg.com/80/v2-aa4644a2984e878234d3c5233195a65a_720w.jpg)Metallic工作流
+
+Metallic工作流中对UnityBRDF的4个输入参数的构造流程如上图所示。Metallic和*unity*_*ColorSpaceDielectricSpec.a被用来构造reflectivity，之后reflectivity和Albedo共同构造diffColor.而*Metallic，*Albedo,unity*_*ColorSpaceDielectricSpec被共同用来构造* ![[公式]](https://www.zhihu.com/equation?tex=F_0) 。smothness被用来构造perceptualRoughness和α。具体构造公式和流程如上图所示。
+
+![img](https://pic3.zhimg.com/80/v2-25e42751f5d81de9b63ae8d8d9cf66ce_720w.jpg)Specular工作流
+
+Specular工作流的参数构造流程如上图所示。Specular工作流的构造方法比Metallic工作流的构造方法由简单。其中Albedo贴图和Specular贴图会被用来共同构造diffColor。而Specular贴图会被当做![[公式]](https://www.zhihu.com/equation?tex=F_0)直接传Unity的BRDF中去。同样的，Smoth贴图被用来构造perceptualRoughness和α。具体构造公式和流程如上图所示。
+
+
+
+![img](https://pic4.zhimg.com/80/v2-6adaa90ba363fce934e7d21b1c3db927_720w.png)diffColor的构造
+
+Unity中diffColor的构造流程如上图。
+
+![[公式]](https://www.zhihu.com/equation?tex=diffColor%3Dalbedo%C3%97%281%E2%88%92reflectivity%29)
+
+其中Albedo由Albedo贴图输入。而reflectivity会根据不同的工作流进行确定。金属工作流中
+
+![[公式]](https://www.zhihu.com/equation?tex=+reflectivity%3D%281-metallic%29%C3%97dielectricSpec%2Bmetallic+%C3%97+1)
+
+其中metallic由Metallic贴图输入。而dielectricSpec的值由外部输入的unity_ColorSpaceDielectricSpec.a提供。unity_ColorSpaceDielectricSpec.a存储的是 ![[公式]](https://www.zhihu.com/equation?tex=unity_ColorSpaceDielectricSpec.a%3D1-dielectricSpec) 。
+
+高光工作流中 ![[公式]](https://www.zhihu.com/equation?tex=reflectivity%3Dmax%28specColor.r%2CspecColor.g%2CspecColor.b%29) 其中specColor由高光贴图输入。
+
+![img](https://pic3.zhimg.com/80/v2-564a654636dd7956c144561c4a8060f6_720w.jpg)perceptualRoughness的构造
+
+perceptualRoughness由Smothness确定。 ![[公式]](https://www.zhihu.com/equation?tex=perceptualRoughness%3D1%E2%88%92smothness) 。Smothness由外部贴图输入。具体的几种输入方式如上图所示。
+
+![img](https://pic3.zhimg.com/80/v2-9f8912d3a96576c03b3a4c8e951aeb3e_720w.jpg)α的构造
+
+α由perceptualRoughness确定。 ![[公式]](https://www.zhihu.com/equation?tex=%CE%B1%3DperceptualRoughness%5E2++) 。也非常的简单。
+
+![img](https://pic4.zhimg.com/80/v2-d27ac30c073645610e6669168270e057_720w.png)F0的构造
+
+F0由specColor确定。 ![[公式]](https://www.zhihu.com/equation?tex=F_0%09++%3DspecColor) 。specColor会根据不同的工作流确定。高光工作流中直接由高光贴图输入。金属工作流会通过金属度去构造。
+
+![[公式]](https://www.zhihu.com/equation?tex=specColor%3D%281%E2%88%92metallic%29%C3%97unity%5C_ColorSpaceDielectricSpec%2Bmetallic%C3%97albedo)
+
+针对BRDF的输入我们做一个总结，其实Unity的所谓高光工作流或者金属工作流使用的都是相同的BRDF，只是不同的工作流对上述的4个参数的构造方式不同。
+
+
+
+**Unity Standard Shader 输入**
+
+最后我们再完整总结一下Unity Standard Shader 都有哪些输入，这些输入参数都分别被用来做什么了。
+
+![img](https://pic2.zhimg.com/80/v2-5b49ecd3f4689cd740781a01c51bca19_720w.jpg)Unity Standard Shader 输入
+
+从上面的分析我们可以看出，Unity BRDF的输入由以下几个参数去构造
+
+1. Metallic
+2. SpecColor
+3. Albedo
+4. Smothness
+
+这几个参数都是直接从外部贴图输入的，非常直接。
+
+另外，Unity Standard Shader 还有 高度图和遮挡贴图的输入。这个高度图主要是用来做视差映射，但是并没有做视差遮蔽。遮挡贴图用来表达着色点的被遮挡程度，在计算间接光照和AO的时候被应用。
+
+## 3 间接光照
+
+![img](https://pic3.zhimg.com/80/v2-9c45131910220f03ddafaaef11376c1a_720w.jpg)间接光照
+
+Unity主要提供了6类间接光照
+
+1. 实时阴影
+2. Light Map
+3. Directional Light Map
+4. Shadow Mask
+5. 光照探针系列技术
+6. 环境光照
+
+## **3.1 实时阴影**
+
+Unity的阴影系统算是比较完备的。它的主要构成由下图所展示。
+
+![img](https://pic1.zhimg.com/80/v2-483faa4da142074ea1754dada7585164_720w.jpg)Unity 实时阴影系统
+
+unity的实时阴影系统主要分为以下3个步骤：
+
+1. 根据CSM算法生成 Shadow Map Atlas。在Shadow Map Atlas的生成中使用了Normal Offset Bias 和Linear Bias两种Bias方案。Unity实现的Normal Offset Bias与标准的Normal Offset Bias 稍微有一点差异。标准方案是接收阴影者在采样Shadow Map时向着表面法线方向偏移，而Unity的做法是在生成ShadowMap时，投射阴影者向着背离表面法线的方向偏移。
+2. 在屏幕空间对Shadow Map Atlas进行PCF滤波，并将滤波结果生成一张贴图。Unity将这种做法称为Screen Space Shadow Map，Unity生成的这张贴图也被Unity称作Screen Space Shadow Map。Unity的PCF采样策略十分晦涩。我并没有看懂它是怎么样一个采样策略。**如果有了解的，麻烦告知一下**。Unity在进行PCf滤波的时候实现了receiver plane depth bias这个Bias方案，不过在默认情况下是关闭的。
+3. 最后Unity会在屏幕空间采样Screen Space Shadow Map。采样到阴影值以后会与Shadow Mask中烘焙的遮挡进行线性插值，以完成GI与实时阴影的混合。线性插值因子的计算策略不详，**如果有了解的麻烦告知一下。**
+
+Unity 的阴影系统在Forward模式下的实现其实有点奇怪。事实上可以直接不在屏幕空间做PCF滤波，然后避免生成中间的Screen Space Shadow Map，不是很确定Unity多出一步屏幕空间变换的原因是什么。**如果有了解的，麻烦告知一下**。
+
+我猜测原因是这样的：Unity认为直接渲染中会出现OverDraw，比如整个屏幕像素共有n个像素，但是OverDraw了以后，会绘制m个像素。m>n。如果做5x5PCF，那么直接渲染就会访问Shadow Map Atlas 25m次，而在屏幕空间做5x5PCF，则只会访问Shadow Map Atlas 25n次，当OverDraw很严重的时候，在屏幕空间做PCF的纹理采样次数会远小于直接渲染的情况，会减少GPU纹理采样的耗时。
+
+## **3.2Lightmap & directional lightmap**
+
+其中Light Map提供了Static Light Map，Dynamic Light Map。静态Light Map就是传统的烘焙Irradiance，Dynamic Light Map提供实时GI。Unity也提供了Directional Light Map，它会把入射光烘焙成一束主入射光，这样就带有方向了。然后在计算时使用Half Lambert BRDF。最后会再除以一个再平衡系数。Shadow Mask这个技术没有看到源码，也没有看到过文档，不清楚是怎么烘焙的。**如果有了解的，麻烦告知一下**。
+
+## **3.3Shadow Mask**
+
+Unity除了实时阴影以外，还实现了一种被Unity称之为Shadow Mask的技术。这种技术能实现的效果就是动态的在实时阴影和烘焙阴影之间做切换。运行时的原理也非常简单，可以通过如下的表达式所表示。
+
+![[公式]](https://www.zhihu.com/equation?tex=%E2%80%8Bshadow%3Dlerp%28realtimeShadowAttenuation%2C+bakedShadowAttenuation%2C+fade%29)
+
+简单来说就是最终的阴影是通过在实时阴影和烘焙遮挡之间做线性插值得到的。不过没有Unity的源码，看不出来插值系数Fade的计算原理是怎么样的。
+
+虽然说Shadow Mask技术在运行时的实现非常简单，但是还有一个非常关键的问题，就是Shadow Mask 这张遮挡贴图应该如何生成。这里我也不太清楚，**如果有了解的，麻烦告知一下**。
+
+## **3.4光照探针**
+
+Unity的光照探针系列技术算是Unity具有原创性的做的比较好的技术之一。Light Probe会采样空间中一点的Irradiance，然后保存到3阶球谐函数中。再在运行时从球谐函数中复原光照信号，并生成新的正确的Irradiance。
+
+Light Probe Proxy Volume主要给较大的物体使用，原理上与Light Probe相同，但是仍有一些技术差异，**不过这一部分我并没有看懂，如果有了解的，麻烦告知一下**。
+
+## **3.5环境光照**
+
+![img](https://pic2.zhimg.com/80/v2-c855f38ac57bb6f33e02470e69bb1a39_720w.jpg)Unity的环境光照
+
+Unity实现了3种光源类型的环境光照。
+
+1. 恒定环境光源 Ambient
+2. 渐变环境光源Gradient
+3. 天空盒
+
+Ambient属于常量环境光源，即入射radiance大小为常数，不随着方向变化。而渐变环境光源Gradient入射radiance的大小会随着入射角的变化而变化。把天空盒当做环境光源也就是通常所说的IBL。
+
+![img](https://pic3.zhimg.com/80/v2-085f83a5e20265a3c9505cf16a5ec7ce_720w.jpg)环境光照计算
+
+**Diffuse部分**
+
+三种环境光源都会进行Diffuse部分的计算。当物体接受LightMap的时候，环境光照会被合并到LightMap中去，而当物体不接受LightMap的时候，会使用一种在RTR4中被称为Sphere Harmonic Irradiance的技术，也就是使用球谐函数来解析的表示Irradiance Environment Map，其技术来源于Ravi Ramamoorthi，等人的文章"An Efficient Representation for Irradiance Environment Maps"。
+
+另外Unity在进行Sphere Harmonic Irradiance的计算会根据是否使用了光照探针而有所不同。在没有使用光照探针时，会在顶点着色阶段进行Sphere Harmonic Irradiance计算，而在使用光照探针时，环境光照的Irradiance Map会被合并进光照探针中。
+
+**Specular部分**
+
+只有当使用天空盒作为环境光照的时候，才会进行Specular部分的光照计算。Unity使用的是基于经验的模糊算法。模糊的方法是通过Mipmap来进行降采样，而降采样的层级则通过着色表面的粗糙程度来确定
+
+## 4 雾效
+
+![img](https://pic2.zhimg.com/80/v2-a5389edeaf8346a31f64420025088555_720w.jpg)Unity的雾效
+
+Unity主要实现了3种雾效，线性雾，指数雾，指数平方雾。3中方案的计算方法大同小异。都是物体颜色与雾的颜色做一个线性插值，只是插值因子的计算不同。其中线性雾的插值因子由 ![[公式]](https://www.zhihu.com/equation?tex=%E2%80%8B+factor%3D%5Cfrac%7Bend+-z%7D%7Bend-start%7D++) 计算得到，指数雾由 ![[公式]](https://www.zhihu.com/equation?tex=factor%3D+e%5E%7B-density%2Az%7D) 计算得到，指数平方雾由 ![[公式]](https://www.zhihu.com/equation?tex=%E2%80%8B+factor%3De%5E%7B-%28density%2Az%29%5E2%7D) 计算得到。
+
+
+
+## 代码分析
+
+上面分析了Unity Standard Shader都应用了哪些技术是如何应用的。下面来读一下代码，从代码层面来验证上面的判断。我主要阅读Unity Standard Shader版本的是2018.2.12f1，主要阅读的是Forward模式的代码。
+
+首先，我们看一下代码主体结构。Unity Standard Shader的入口在 Standard.shader 文件中。
+
+![img](https://pic2.zhimg.com/80/v2-9544dcd0dd1c2367f4d374c156e4a28d_720w.jpg)Unity Standard Shader
+
+可以看到顶点和片元函数的定义在UnityStandardCoreForward.cginc文件中。UnityStandardCoreForward.cginc文件的主要内容如下，可以看到顶点Shade和片元Shader的函数调用，并且调用的函数实现均在UnityStandardCore.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-f33e56e1c850bdc5c27f20ef74631fa0_720w.jpg)UnityStandardCoreForward.cginc
+
+打开UnityStandardCore.cginc文件，可以看到对应函数的实现
+
+![img](https://pic4.zhimg.com/80/v2-28850c83c0256467dea26e567066b3ab_720w.jpg)vertForwardBase
+
+![img](https://pic4.zhimg.com/80/v2-bb229e5e63b6b2cc0713717a3cca59d3_720w.jpg)fragForwardBase
+
+![img](https://pic4.zhimg.com/80/v2-9c72e226860bb4d5225e6634d111b1d7_720w.jpg)fragForwardBaseInternal
+
+顶点和片元Shader的代码轮廓基本就是这样。后面我就不一行行的分析代码。而是按照前面的分析流程进行分析。
+
+## 1.自发光
+
+自发光的相关代码如下
+
+![img](https://pic2.zhimg.com/80/v2-57058e3c48d6ee0aca7f1e718f2c4091_720w.jpg)自发光
+
+Emission的实现在UnityStandardInput.cginc文件中
+
+![img](https://pic1.zhimg.com/80/v2-cc9b0130a66cc3a920d716cb87a97398_720w.jpg)Emission
+
+可以看出Unity对自发光的实现非常标准。自发光的大小 ![[公式]](https://www.zhihu.com/equation?tex=%E2%80%8B+Emission%3DEmissionMap.rgb+%C3%97+EmissionColor.rgb)
+
+自发光对片元的影响也是线性的，符合路径积分的描述。
+
+![[公式]](https://www.zhihu.com/equation?tex=+L_o%3DL_e%2BL_%7Bdirect%7D%2BL_%7Bindirect%7D)
+
+## 2.直接光照
+
+直接光照的宏UNITY_BRDF_PBS定义在UnityPBSLighting.cginc文件中。
+
+![img](https://pic2.zhimg.com/80/v2-628fe475170cf0a37fbc38c009eaca69_720w.jpg)
+
+UNITY_BRDF_PBS分为3档，我们直接看第三档BRDF1_Unity_PBS，也就是最高档。BRDF1_Unity_PBS的实现在UnityStandardBRDF.cginc文件中。该函数实现比较长。我们从返回值往前看。
+
+![img](https://pic2.zhimg.com/80/v2-bb30727e5d44a9c9b5e9ed337cb42f95_720w.jpg)
+
+### Diffuse 项
+
+在Aras Pranckevičius的PPT《Physically Based Shading in Unity》中提到，Unity使用的BRDF是Brent Burley等人在《Physically Based Shading at Disney》文章中提出的BRDF，其BRDF模型为
+
+![[公式]](https://www.zhihu.com/equation?tex=f%28l%2Cv%29%3D%5Cfrac%7BdiffColor%7D%7B%5Cpi%7D%C3%97%281%2B%28F_%7BD90%7D%E2%88%921%29%281%E2%88%92cos%CE%B8_l%29+%5E5+%29%281%2B%28F_%7BD90%7D%E2%88%921%29%281%E2%88%92cos%CE%B8_v+%29%5E5%29%2B+DVF)
+
+![[公式]](https://www.zhihu.com/equation?tex=F_%7BD90%7D%3D0.5%2B2%C3%97perceptualRoughness%C3%97cos%5E+2%CE%B8_l+%E2%80%8B)
+
+我们对比一下Unity的实现和Disney BRDF模型。可以看出其中diffColor*gi.diffuse是间接光的diffuse项，surfaceReduction * gi.specular * FresnelLerp (specColor, grazingTerm, nv)是间接光的高光项。其中diffColor*light.color*diffuseTerm+specularTerm * light.color * FresnelTerm (specColor, lh)则是应用Disney BRDF的直接光照部分。所以在这个函数中我们重点关注这部分的计算。
+
+追溯代码可以发现，light.color是渲染方程中入射radiance的大小。然后我们观察一下diffuseTerm的计算。
+
+![img](https://pic4.zhimg.com/80/v2-c579faf0fe23a08b6b471839265513df_720w.jpg)
+
+![img](https://pic1.zhimg.com/80/v2-68f7b4db9710bd8793b2b19f60ea4850_720w.jpg)
+
+很明显，nl就是渲染方程中的cos项。然后我们在看看DisneyDiffuse的实现。
+
+![img](https://pic1.zhimg.com/80/v2-a4e4bf702931a6148259b54feb42c220_720w.jpg)
+
+代码计算非常直接，与Disney BRDF的表达式非常一致。可以看出DisneyDiffuse实际上就是在计算DisneyBRDF中的
+
+![[公式]](https://www.zhihu.com/equation?tex=%281%2B%28F_%7BD90%7D%E2%88%921%29%281%E2%88%92cos%CE%B8_l%29+%5E5+%29%281%2B%28F_%7BD90%7D%E2%88%921%29%281%E2%88%92cos%CE%B8_v+%29%5E5%29)
+
+到这里可以看出Unity对diffuse的实现比标准DisneyBRDF少乘了1/Pi。
+
+### Torrance-Sparrow模型
+
+接下来我们再对比下Torrance-Sparrow项的实现。
+
+![img](https://pic2.zhimg.com/80/v2-7ed34f74137d70b7ff5fe82f1f15cc59_720w.jpg)
+
+![img](https://pic1.zhimg.com/80/v2-ad9df5b3e29e71cdfcd51e0f4269d5d4_720w.jpg)
+
+![img](https://pic3.zhimg.com/80/v2-c67c848ac0089b466448761d2edf9db2_720w.png)
+
+对比标准DisneyBRDF可以发现，Unity的实现是DFV*Pi，比起标准DisneyBRDF多乘以了Pi。
+
+**Fresnel** **项**
+
+我们先看下最简单Fresnel项，标准 DisneyBRDF中的Fresnel 使用Schlick近似。
+
+![[公式]](https://www.zhihu.com/equation?tex=+F_%7B%E2%80%8B+Schlick%7D%3DF_0%2B%281%E2%88%92F_0%29%281%E2%88%92cos%CE%B8_l%29%5E5)
+
+![img](https://pic4.zhimg.com/80/v2-30c3f590c3594c77f840bf2c4c1bd9eb_720w.jpg)
+
+对比Unity的实现代码，发现Unity 实现的就是Schlick近似。
+
+**法线分布函数**
+
+接下来我们对比一下D项，Unity使用的分布函数是GGX。我们首先看一下标准的GGX函数，图片截取自Microfacet Models for Refraction through Rough Surfaces。这篇文章首次提出了GGX分布，并且，**2作是个中国人。**
+
+![img](https://pic4.zhimg.com/80/v2-ac228beb43035a9534fe3ed6d56dcd1b_720w.jpg)
+
+接下来我们再看看Unity的实现。Unity的实现在函数为GGXTerm，定义在UnityStandardBRDF.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-ce96c311327ba0cd9b451db62c0f05a8_720w.jpg)
+
+Unity的实现具有一定的技巧性，并不是很直观。这么做主要是为了避免计算正切函数，减少计算量。在Unity的实现中 ![[公式]](https://www.zhihu.com/equation?tex=d%3D%28cos%5Ctheta_m%5Calpha%5E2-cos%5Ctheta_m%29cos%5Ctheta_m%2B1) ，我们做一点变换。
+
+![[公式]](https://www.zhihu.com/equation?tex=d%3Dcos%5E2%5Ctheta_m%5Calpha%5E2-cos%5E2%5Ctheta_m%2B1)
+
+![[公式]](https://www.zhihu.com/equation?tex=d%3Dcos%5E2%5Ctheta_m%5Calpha%5E2%2Bsin%5E2%5Ctheta_m)
+
+![[公式]](https://www.zhihu.com/equation?tex=d%3Dcos%5E2%5Ctheta_m%28%5Calpha%5E2%2Btan%5E2%5Ctheta_m%29)
+
+到这里已经可以看出Unity的实现基本就是标准GGX函数，只是在分母中多加了一个epsilon，防止除0异常。
+
+**几何遮蔽函数**
+
+在Unity中Standard Shader中，将几何遮蔽函数和![[公式]](https://www.zhihu.com/equation?tex=4cos%5Ctheta_vcos%5Ctheta_l)合并成了一个可见性项V。
+
+![[公式]](https://www.zhihu.com/equation?tex=V%3D%5Cfrac%7BG%7D%7B4cos%5Ctheta_vcos%5Ctheta_l%7D)
+
+而对于G项，Unity选择的是Height-Correlated Masking and Shadowing形式，
+
+![img](https://pic2.zhimg.com/80/v2-cc0ffc839defbf4f229f08d294472ac5_720w.jpg)
+
+而对于标准GGx分布，有
+
+![[公式]](https://www.zhihu.com/equation?tex=%5CLambda%28%5Comega_o%29%3D%5Cfrac%7B-1%2B%5Csqrt%7B1%2B%5Calpha%5E2tan%5E2%5Ctheta_o%7D%7D%7B2%7D)
+
+Unity的实现代码在UnityStandardBRDF.cginc文件SmithJointGGXVisibilityTerm函数中。
+
+![img](https://pic3.zhimg.com/80/v2-d75b17ddee213a9003074e02d78567f6_720w.jpg)
+
+可以看到，Unity的实现并不直观，看上去和前面描述的公式并不一样。这是因为Unity在实现中为了避免三角函数的计算，在运算中使用了三角恒等变换去变形，我们对这些变换做一些推导。
+
+因为这个函数返回的是可见性项，所以我们先推导一下可见性项G。其实就是将![[公式]](https://www.zhihu.com/equation?tex=%5CLambda%28%5Comega_o%29)和G代入到V中。可得
+
+![[公式]](https://www.zhihu.com/equation?tex=V%3D%5Cfrac%7B1%7D%7B2cos%5Ctheta_vcos%5Ctheta_l%28%5Csqrt%7B1%2B%5Calpha%5E2tan%5E2%5Ctheta_v%7D%2B%5Csqrt%7B1%2B%5Calpha%5E2tan%5E2%5Ctheta_l%7D%29%7D)
+
+接下来我们推导一下Unity的实现代码
+
+![[公式]](https://www.zhihu.com/equation?tex=%5CLambda%28v%29%3Dcos%5Ctheta_l%5Csqrt%7B%28-%5Calpha%5E2cos%5Ctheta_v%2Bcos%5Ctheta_v%29cos%5Ctheta_v%2B%5Calpha%5E2%7D)
+
+![[公式]](https://www.zhihu.com/equation?tex=%5CLambda%28v%29%3Dcos%5Ctheta_l%5Csqrt%7B-%5Calpha%5E2cos%5E2%5Ctheta_v%2Bcos%5E2%5Ctheta_v%2B%5Calpha%5E2%7D)
+
+![[公式]](https://www.zhihu.com/equation?tex=%5CLambda%28v%29%3Dcos%5Ctheta_l%5Csqrt%7B%5Calpha%5E2sin%5E2%5Ctheta_v%2Bcos%5E2%5Ctheta_v%7D)
+
+![[公式]](https://www.zhihu.com/equation?tex=%5CLambda%28v%29%3Dcos%5Ctheta_l%7Ccos%5Ctheta_v%7C%5Csqrt%7B%5Calpha%5E2tan%5E2%5Ctheta_v%2B1%7D)
+
+由于 ![[公式]](https://www.zhihu.com/equation?tex=%5Ctheta_v%3C%5Cfrac%7B%5Cpi%7D%7B2%7D) ，上式可以化简为 ![[公式]](https://www.zhihu.com/equation?tex=%5CLambda%28v%29%3Dcos%5Ctheta_lcos%5Ctheta_v%5Csqrt%7B%5Calpha%5E2tan%5E2%5Ctheta_v%2B1%7D) 。同样的方法可以用来推导 ![[公式]](https://www.zhihu.com/equation?tex=%5CLambda%28l%29%3Dcos%5Ctheta_v%7Ccos%5Ctheta_l%7C%5Csqrt%7B%5Calpha%5E2tan%5E2%5Ctheta_l%2B1%7D)
+
+最后将上式的推导结果代入到SmithJointGGXVisibilityTerm函数的返回值中
+
+![[公式]](https://www.zhihu.com/equation?tex=V%3D%5Cfrac%7B1%7D%7B2%28%5CLambda%28v%29%2B%5CLambda%28v%29%29%7D)
+
+化简可得
+
+![[公式]](https://www.zhihu.com/equation?tex=V%3D%5Cfrac%7B1%7D%7B2cos%5Ctheta_vcos%5Ctheta_l%28%5Csqrt%7B1%2B%5Calpha%5E2tan%5E2%5Ctheta_v%7D%2B%5Csqrt%7B1%2B%5Calpha%5E2tan%5E2%5Ctheta_l%7D%29%7D)
+
+可以看到Unity的实现与前述的推导完全一样。也就是说Unity实现的是标准的Height-Correlated Masking and Shadowing函数。
+
+不过Unity在运行时并没有使用这个标准形式。由于开方函数GPU消耗较高，所以Unity使用了一个近似。反推过去可以发现，Unity事实上使用的近似是
+
+![[公式]](https://www.zhihu.com/equation?tex=%5CLambda%28%5Comega_o%29%3D%5Cfrac%7B1-cos%5Ctheta_o%7D%7B2cos%5Ctheta_o%7D%5Calpha)
+
+根据Unity在注释中的描述是，这个数值虽然在计算上不正确，但是与精确值足够接近。
+
+### BRDF输入
+
+从上面的分析可以看出来Unity Standard BRDF有几个输入，diffColor，perceptualRoughness，roughness，F0,Normal,Normalm。
+
+![img](https://pic1.zhimg.com/80/v2-c3140a3d852b6a5ba853c661b6595bbc_720w.jpg)
+
+从上面的图中可以分析出，perceptualRoughness，roughness的构造是比较简单的，直接通过Smothness构造。而Smothness则可以直接从纹理中输入。金属工作流中，F0可以通过玻璃塑料的F0和Albedo插值获得。diffColor会根据metallic构造，金属度越低，diffColor越接近Albedo，金属度越高，diffColor越接近0.Normalm使用半角向量。而Normal则通过法线贴图获得。
+
+**法线贴图**
+
+读取法线贴图的代码在UnityStandardCore.cginc文件FragmentSetup函数中。
+
+![img](https://pic3.zhimg.com/80/v2-334c3c26a550f716927579b8f710f2e2_720w.jpg)
+
+读取法线贴图主要由PerPixelWorldNormal函数实现，该函数在UnityStandardCore.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-72c1e4a1e8c17646ac4e4f9378638424_720w.jpg)
+
+在PerPixelWorldNormal函数的实现非常常规，首先会去读取法线贴图，然后再将法线从切线空间转换到世界空间，最后再归一化。需要注意的是NormalInTangentSpace函数在读取法线时会根据_BumpScale对法线在tb方向进行缩放。
+
+![img](https://pic1.zhimg.com/80/v2-c0544f331264c76a7727d6e5a0f2a64c_720w.jpg)
+
+![img](https://pic1.zhimg.com/80/v2-6a31bccf9cf59d9bee99ff64bde95f78_720w.jpg)
+
+![img](https://pic1.zhimg.com/80/v2-43dadaae60f12b291280f13a0d9b64c0_720w.jpg)
+
+**视差映射**
+
+视差映射的实现在UnityStandardInput.cginc文件中。根据视差贴图对UV进行偏移。并没有做**视差遮蔽映射**。
+
+## 3.间接光照
+
+## **3.1实时阴影**
+
+**vertShadowCaster过程**
+
+Unity CSM的代码可以在UnityStandardShadow.cginc文件中看到。
+
+![img](https://pic3.zhimg.com/80/v2-1532e980d9a611c4ce9529f001a81df6_720w.jpg)vertShadowCaster
+
+可以看到主要的坐标变换由TRANSFER_SHADOW_CASTER_NOPOS宏实现。TRANSFER_SHADOW_CASTER_NOPOS宏的实现在UnityCG.cginc文件中。我们看一下方向光的实现。
+
+![img](https://pic3.zhimg.com/80/v2-363b00e39f2038f91a17fb3e8a7b927a_720w.jpg)TRANSFER_SHADOW_CASTER_NOPOS
+
+UnityClipSpaceShadowCasterPos函数的实现也在UnityCG.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-2f59618bb27c2c009b368839e35ca9b4_720w.jpg)UnityClipSpaceShadowCasterPos
+
+可以看出Unity使用的是标准的Normal Offset Bias方案。片元朝着背离表面法线的方向偏移，偏移量正比于表面法线于光线夹角的正弦值，比例系数由外部指定。
+
+UnityApplyLinearShadowBias函数的实现在UnityCG.cginc文件中。
+
+![img](https://pic4.zhimg.com/80/v2-cbe337d32684868e35c60ae1bc903b47_720w.jpg)UnityApplyLinearShadowBias
+
+Unity在投影空间实现了一个线性的Bias。
+
+**CollectShadow过程**
+
+Unity把它自己实现的这套阴影叫做Screen Space Shadow Map。而在屏幕空间进行的一系列操作Unity把它称为CollectShadows。在FrameDebug中可以看到。
+
+![img](https://pic3.zhimg.com/80/v2-8ca1d5327330cf6d01bd5642ebf81be6_720w.jpg)CollectShadows
+
+
+
+![img](https://pic3.zhimg.com/80/v2-50150747c7b6e79985e9db77464362ba_720w.jpg)
+
+
+可以看出CollectShadows过程主要执行的是Hidden/Internal-ScreenSpaceShadows Subshader #2 Pass #0。其实现如下
+
+![img](https://pic2.zhimg.com/80/v2-e064eaccab132e0f60c57029f95e7b75_720w.jpg)Hidden/Internal-ScreenSpaceShadows Subshader #2 Pass #0
+
+片元Shader的入口在frag_pcfSoft函数中。
+
+![img](https://pic3.zhimg.com/80/v2-24fd3f341659dc30f2c35b7a3afbd5ce_720w.jpg)frag_pcfSoft
+
+浏览一遍可以看出这个函数主要在做两件事
+
+1. 调用UnitySampleShadowmap_PCF5x5函数进行PCF滤波
+2. 级联混合
+
+我们先看级联混合
+
+![img](https://pic3.zhimg.com/80/v2-77e60d918dd72e801b0f301ce56c13e6_720w.jpg)级联混合
+
+级联混合的策略也非常直接，就是先生成当前级联的阴影，再生成下一级联的阴影，然后再这两级级联中线性插值。
+
+然后我们再看一下UnitySampleShadowmap_PCF5x5的实现。
+
+![img](https://pic1.zhimg.com/80/v2-30cacdc0125430071eb4de7e6b76e674_720w.png)UnitySampleShadowmap_PCF5x5
+
+UnitySampleShadowmap_PCF5x5Tent函数的实现比较长，不方便截图，我就拷代码了。
+
+```glsl
 half UnitySampleShadowmap_PCF5x5Tent(float4 coord, float3 receiverPlaneDepthBias)
 {
     half shadow = 1;
@@ -90,13 +569,203 @@ half UnitySampleShadowmap_PCF5x5Tent(float4 coord, float3 receiverPlaneDepthBias
 }
 ```
 
- 
+这一部分关于PCF的采样策略的代码我没有看懂，有了解的麻烦告知一下。
 
-这一部分关于PCF的采样策略的代码我没有看懂，有了解的麻烦告知一下。在文件Internal-ScreenSpaceShadows.shader中可以看到对级联坐标的计算。![img](https://lh3.googleusercontent.com/nvOSLOb_5pZsSiJUy-nlPvWWzM66mldBaDpbsFwvftCXoLYeAJxJLvouWfCiaz8VnAl_sVYPz102zZFAhlpVzBBV3ViehWuUldzbSlSDtR11TqhD7XIVtuoWI0ddMnlQduw83bmu)![img](https://lh3.googleusercontent.com/dnIjal2X3J_G98pHXQh3_QUpYxkQGUIx3oICNKfwRYn4spT-zV4YTcibBMA1vx4hHoex7XW38svRJ5z_jD1y7VrEWzz2mC4PWBBkLCCsacJtEO87H7A8qiIdkcvTWoBWCRuL1FxG)从中可以看出，Unity的CSM会根据物体的深度绘制在不同层级的ShadowMap中。![img](https://lh4.googleusercontent.com/M6_x3AHB7D5nPR6HtK_oOGKk58n88N1TNJjPtT74SW2nc_L0cHsEwqQ6jSGPqDXS597hEajpUgusFP78Lici9VrKiDCJlRxDwM-aktLxIMnX-poNmMlywYNss0GXfJyi3fgxT-3L)![img](https://lh4.googleusercontent.com/uuQomE7vjJyETt2e7xGzUmJYedNVKhHoXKXzBC33Y_xD9sG6B9hFW93-laUyjVQG1kbFO_jEX1uROJxOXna3JKvSBXkFXUcHEO0wPSWWSLpjy2UiSyFSm-6B7d6B548YN8a1uCjf) 但是在Unity的FrameDebug中可以看到，会出现同一个物体被绘制在多个层级问题。这是因为光锥有交叉。如下图所示。光锥为了包含视锥，会出现交叉。 ![img](https://lh6.googleusercontent.com/rMx42ZZUxuTIexTrpx1MinwYQisj-c0y9xBAzu0LURCKgviHwbVdbNmw64y_Me2QDqJkp_T0tRL3uOGUC47-dVMW3EjKBVZzAd7jRAWSJU-CZ8ILWaUBdgm1gd1cmjOOP68fyHO5) Screen Space Shadow Map采样最后我们再来看一下我们按照代码顺序来看，首先看光源衰减。UNITY_LIGHT_ATTENUATION宏主要做两件事，计算阴影和计算光照衰减。Unity按照光源类型去处理阴影和衰减。在这里我们只关注最简单的方向光。可以看到方向光的没有计算衰减只计算了阴影。方向光的光源衰减函数在AutoLight.cginc文件中。代码如下 ![img](https://lh3.googleusercontent.com/W08zdd4vdCOFxd4VwrVRbWPmAiWkrqjVXDaNuXzy8YnlC6AYYNypy-MC_Bkk8Qe_hHQMrz5qO4BqLK56g13SwWOzP0aFd5Q_P_s-vYfZ802dWzrKUt9POpRwUKP8Rh-NiWHU2YBM) ![img](https://lh6.googleusercontent.com/RKOg9UtIDCmowhvo6klq0ukXW6cOi95fb8keJiSDo7nziE9SLKOvwZDXWzR2dia7NRMDFwoxGANggL2qpoJMGiiHBxovLrYFJ-jMJEtUWimqbYUNX_Jdc-Vb7-jS19-8o-oij-QQ)Screen Space Shadow Map 纹理采样过程最后我们再看一下Screen Space Shadow Map 纹理采样过程。![img](https://lh6.googleusercontent.com/ycUKyUxR2osl95xc6gqGu0evaJYbluiRG0fFeGVY1KhRuuWsKgrw-DDJEVvWOMGQQ-wDjtHKCjPvVbdAGRwbeDVxuuf-MhOmZyUHBD7yXcSyfSc-uiNFfdM7CCzLF6orVsBJuzUq)UNITY_LIGHT_ATTENUATION宏的实现在AutoLight.cginc文件中。我们只看方向光模式。![img](https://lh4.googleusercontent.com/GqNB-99FsmLdhEt1Iq2drWmqj74ozL2kH5TuEJf95mFXGvOnTZENx53GdRR4cJxxFYXgTUAU5Zkt7RwCQlLRt9J7yBuddNcYq3-x6pNExm_Lfc2EMiuhyKkn9VzI3lfUCxbvGj-W)可以看出destName完全由UNITY_SHADOW_ATTENUATION宏计算得到。UNITY_SHADOW_ATTENUATION宏的定义也在AutoLight.cginc文件中。![img](https://lh4.googleusercontent.com/d0KSi1jGl22CsqZnSdCZwO9cQU9yjmVqVjoyEHabyDhuWe5IYLlBzQ3aYd3GER3W5H7crUwmx6Qndx0oi7bW0RmYEQ9re6sn4PhzpPXto_HXdT6s9Czlr8-5uBTyIidBMlcGdNdo)可以看出UNITY_SHADOW_ATTENUATION宏由SHADOW_ATTENUATION宏实现。SHADOW_ATTENUATION宏的实现也在AutoLight.cginc文件中。![img](https://lh3.googleusercontent.com/cYzTr9p_9BsvLIG0lkwNuGlocUBuDHUHmwf5sRPz-nKDkNJcOOqZ-o0Vjc8rHCn6nVRjFvgDOh-ap_Sn9Pk0NRMVtTUnRuSbRKBxHLb5Rf-zY-bTEaDYABh0wHMB8x83K824Lnok)SHADOW_ATTENUATION可以看出SHADOW_ATTENUATION的实现主要unitySampleShadow函数实现。unitySampleShadow函数的实现也在AutoLight.cginc文件中。![img](https://lh6.googleusercontent.com/79FOgaff8Q_1-3KhYZJ2QrPxZC4mjSBjTG3uUkkSYKaveWkHhF9Bigk46LrWnz-lZPA1ogCaJiXKGy_YP3796nuoIDJoDEJ6dUEi6mjW6g1WNed0urCOTjd38iFc_8lV0FEmrWkR)可以看出unitySampleShadow函数的实现非常简单。就是直接对Screen Space Shadow Map 纹理进行采样。其中UNITY_SAMPLE_SCREEN_SHADOW是一个阴影贴图采样的宏，用来统一平台差异的。然后我们在返回去看看shadowCoord是如何计算的。反观上面的这些函数，这些函数并没有对shadowCoord做任何处理，完全是从顶点Shader传进来的。我们再转回去看看顶点Shader是如何计算shadowCoord。![img](https://lh3.googleusercontent.com/Ugw997tLQjk5cQav39_xeFg5Hvacu2FMdZG0Zb1BGRaXTcUEIZHEVVbb_BGN9f1eCwQ1HsCpKo2torKjzG1FlRRWuEV0j1LnNHUTj0unmNhn_z9GnzEaUAUQcmKXvmH1HX9uHaP3)在顶点Shader中shadowCoord的计算由UNITY_TRANSFER_LIGHTING宏完成。UNITY_TRANSFER_LIGHTING宏的实现也在AutoLight.cginc文件中。![img](https://lh5.googleusercontent.com/d5KGK_3R4yNfC-HXnQuDlSKE9RzEfrdeV738c3pDg1m2v_lnZdZWJtm3bClL8lYJASPv0qGd_MivBpf9JMMybuXghqNJNfh-JmLYtGbBfdlIL3rmqHSrZkeHxjbDUQuW9L8Ab_ED)Shader中shadowCoord的计算主要由UNITY_TRANSFER_SHADOW宏完成。UNITY_TRANSFER_SHADOW宏的实现也在AutoLight.cginc文件中。![img](https://lh5.googleusercontent.com/NLI1GVgrAGfSboGnmMCE_z0JUo9JxsKUibyAu9hSoPA_wzjCB9pi2V_FGxwPJYtaIJQxn7-pmAnd9AIYd3v33zMqB7RST2HmohQMqrmQA2NdJAUH86dI2qD6NnYKjvLIZ6SWQCx4)可以看到UNITY_TRANSFER_SHADOW宏由TRANSFER_SHADOW宏实现。![img](https://lh4.googleusercontent.com/BH_v2d844KKeL_38jHHdDgID6mkppd6z8cocXkzD2pWg-h9STDyzxou7SloD-ZUUojrOvOdklqfXwODGJAGRwOImLMrESnTMen8PgWjOlLXcG2f6iNi6jeOkDa5CDc1wWcA1YIrb)可以看到shadowCoord的计算主要由ComputeScreenPos函数完成，其中pos是着色点在Clip空间的坐标，也就是乘完MVP矩阵之后的坐标。ComputeScreenPos函数的实现在UnityCG.cginc文件中。![img](https://lh5.googleusercontent.com/noc5YDtQUESnxZUF5neRXbUF_qTw99X5gLryMKyjmFMfmbhtpBARFpD0MNqmDWDe4wp3f1_zgBVkLocg8ytnDSNlh04Z3mbf8-Vcd9QB2WeBu_DpxMeIqE9xGXPlKKJSjR5Ox89k)可以看到ComputeScreenPos函数主要由ComputeNonStereoScreenPos实现。ComputeNonStereoScreenPos的实现在UnityCG.cginc文件中。![img](https://lh4.googleusercontent.com/svDJOnMjMuBP-zWPoqmo-uh9gGzc49ZuqRskcXulKcyE9_XfmC2sG9Q87XDcBPdUUjB4sNVEPNMa8fxVO3Ywy_bAKZAfTMXnCliNQpP7JCK9LBKPgg2xyC7K_AaKBLtvgiaSGNCR)这个函数需要解释一下，Pos是Clip Space的坐标，XY分量的坐标范围是[-w，w],这个函数实际上是作一个坐标变换，将XY分量变换到[0,w]区间。ZW分量保持不变。也就是说当这个值被传到片元着色器中后，XY分量就在[0,1]，就是屏幕空间坐标。也就是说实际上是按照当前着色点的屏幕空间坐标去采样Screen Space Shadow Map的。Screen Space Shadow Map 采样值的应用最后我们再看一下Unity Standard Shader是如何应用Screen Space Shadow Map 采样出来的Shadow值的。![img](https://lh4.googleusercontent.com/C2pABri-ucByKpZ-cDrEsi_8CIgNwJLUGqnKe7icZQjVcJuyGJUS0tBGTTlK_iM_1TPDyb2IDvBLHetiRW6HH7dUn08Rm4uLIdRF1rjYHlLc0t6p6NrXLfZsB6LWKIWbSQjivHed)可以看到Screen Space Shadow Map 采样出来的Shadow值会在FragmentGI函数中被应用。![img](https://lh4.googleusercontent.com/P_RIiH51Lyr1VNOdcVh3iL7bB1KX1jWu5BtlDL9ZxMcLHSUDyLKF1Ejw82_e-jNKRxSJMGGx0xRteKlIXIj4TOk2FpJL0dOylA1SYZGaR7vBAgzsGKUVc78F8YS_wr186rCngjjj)**3.2 GI相关**FragmentGI会直接调用另一个同名函数。![img](https://lh5.googleusercontent.com/Ur6xMmEsOdhXiuN5zkpZd2pVHVV7upgAFlll0eXO-ScOwf9gbr6BUegb1tw9HO3vuZL5TlsvJM8Y5CDqNUqL17X5LxCg0t5L5Y6SQAoM8jZYIwD3dvAr16mStoLoy70nUQMfEiVd)可以看到FragmentGI的实现基本就是先初始化UnityGIInput数据结构，然后再调用UnityGlobalIllumination函数。![img](https://lh5.googleusercontent.com/m_xBMNOP7WoXOYZBDyrwz740hGSxdxodYtJBlrrszXH7MpBP5FW6isjJho1hqNjLmysmvGbg2oPggSBFavVLtBO9fpOPE9M0mbWSKhqiFE_73UIVprtouTaQ7G3QCv1fBD4rt0Tr)可以看到UnityGlobalIllumination函数会调用UnityGI_Base和UnityGI_IndirectSpecular两个函数。在Shadow Mask模式下，UnityGI_Base中与atten相关的实现如下。![img](https://lh6.googleusercontent.com/YqqOJBjPgAwh7gV0Sqd_DtIarD4h_VL6nD6BO_66ZxZyJP4LHZ6uaH54FEFhnP3-dARgpJzI52vUkMgEKTCE7-z_yNcXEqqencpsIsLWDouTxk7_BooZGh5JwEtmjCuCeb0QQzJc)可以看到UnityGI_Base会先做实时Shadow与GI的混合，然后再用来阻挡光源。我们再看一下Shadow与GI的混合。![img](https://lh5.googleusercontent.com/Y_YccN5-sMz8CBsH2jVhcBAU5uwPXSv-J3bF0xMYT_zg8OeTjA8MT5GYcfx2-6WuGIK7_VJiFSpw2cVxuVf9eyxZ9lxacPrAO9aQJUDrV_JUBSge53ckFhEI3HxnwlEqd6vBWlBf)可以看出GI与阴影的混合实际上就是在烘焙的遮挡和实时阴影之间做线性插值。插值因子的计算策略不明。如果有了解的，麻烦告知一下。 间接光照FragmentGI的实现在UnityStandardCore.cginc文件中。![img](https://lh6.googleusercontent.com/4WCkMcKYiiagSETa0SEvZMiDXALuxQrZounSO8VtMc2CvyCtIiKXxXOZdi8YGrp7iJdHmp3oXO3-ClLK9blyH9vcDpBG4DVATBtwAl6rLhlbT8DdfGmReKsttpiWdAGiRUzna7AY)FragmentGI的实现非常直接，就是在做3件事，初始化UnityGIInput数据结构，初始化Unity_GlossyEnvironmentData数据结构，和调用UnityGlobalIllumination函数执行间接光照的计算。我们继续看UnityGlobalIllumination函数的实现。UnityGlobalIllumination函数的实现在UnityGlobalIllumination.cginc文件中。![img](https://lh6.googleusercontent.com/g9oXSUEycc9lgI06xG2vdPO-KaYokA3XPBHQqwaoWuLA92C3GMxaANLJIqME-tcoM9-nuv6b8bD251MWH_fwN6lrxc_ho3BdNyOUId9FJf5Oosg1ymS6FcI945UejoKUfaq2bPy3) UnityGlobalIllumination函数的实现也非常直接。函数分成两个部分，UnityGI_Base和UnityGI_IndirectSpecular。我们先看UnityGI_Base。UnityGI_Base的实现在UnityGlobalIllumination.cginc文件中。由于UnityGI_Base的实现比较长，所以我将其中的宏折叠了起来。![img](https://lh4.googleusercontent.com/nPy8zHlC43THh57OLX3jtOwOR3j3ufdtV-T_o3wMYy_M2HEJQQLNYXI2YrWQqSWG4J29a5zjXkWExPdPmYZVH4xUjuXLl-vBsVrXadQfP-YsmhaW7rc9wpbokUGynmTJ-N6Ujrs2)可以看到UnityGI_Base首先初始化UnityGI数据结构。之后处理光源衰减，最后再计算间接光照。间接光照有3个来源，光照探针，LightMap和实时GI。从光照探针中重构出着色点Irradiance的算法被全部包含在ShadeSHPerPixel函数中。该算法出自Sloan大神的文章Stupid Spherical Harmonics (SH) Tricks。![img](https://lh4.googleusercontent.com/2BMXEhzEEwyQCRzDzJ7R4gG-c2BhYeKR6Jv0wei7nQ4WyY-BoahZb3LUN4Nwg3It6QObj-h_wfRuDTF5WJwyV6d7fQISc8ND2UtiQR-3E0BZDg90ToTN0HlGDAzIh6fyfZSv6njS)接下来我们再看看LightMap的计算部分。![img](https://lh3.googleusercontent.com/eGUwymsYnfPqO9nRaUax4SZcTTUXWd6kf8nTh-fDwOE6RdxMYs2qAGlyB4Pr2DOWYiKtZKCvN1i5u1fZpiMngQdBgduHSV39glN0CnKVyPWl2on8V1uCk7_j-MxWpXbmhvhT5Hel)LightMap部分的代码非常直接，可以看到主要在处理3个东西,Lightmap，Directional Lightmap和Shadow Mask![img](https://lh6.googleusercontent.com/PC82O8z-5kK81JYhzVNORFyG5P7e1fIn32t-omKjfxwVTOpb_9MDSbI8Bra_P8mK1aNsZ3_heXViRN3KSE_9i2Sb3H7X0qRwxRWpSBXcEP-eD8CK6xh-t4SLIbCZXSpb3ZtPC6C4)实时GI部分的计算也非常直接。同样也处理了带和不带方向两种情况。另外从代码的实现来看，在Unity中实时GI与lightmap及光照探针是可以同时使用的。有向Lightmap![img](https://lh3.googleusercontent.com/PNt9nsZTz2tF4XF6OanwKms6MbV-tMQKw6ieDLXdv-O-HGJU69DsLSxir31NZ2COT7sfGEler4Q4wBo4AgkprbFBn3st6Bb7UdSK1F6gWf6ZwIRGNg4mZGTwjCj4aY0lt2RFgGId)在Directional Lightmap模式中，Unity会把光照信息烘焙成一个domain light 的光照，相当于变成了一个单入射光源的照明情况，然后BRDF选择半兰伯特，最后除以一个平衡系数。**Indirect Specular**现在我们再来看看UnityGI_IndirectSpecular函数的实现。
+在文件Internal-ScreenSpaceShadows.shader中可以看到对级联坐标的计算。
+
+![img](https://pic4.zhimg.com/80/v2-92504e207b3859e727aa5a2807d1cdff_720w.jpg)
+
+![img](https://pic3.zhimg.com/80/v2-ad1d0fdc0655ccfd0922636684a0e372_720w.jpg)
+
+从中可以看出，Unity的CSM会根据物体的深度绘制在不同层级的ShadowMap中。
+
+![img](https://pic4.zhimg.com/80/v2-40b1cb080d9db6104c85c11c8a8ce517_720w.jpg)
+
+![img](https://pic3.zhimg.com/80/v2-3b2087b4d010ccd34832a93d09249d1e_720w.jpg)
 
 
 
-```c#
+但是在Unity的FrameDebug中可以看到，会出现同一个物体被绘制在多个层级问题。这是因为光锥有交叉。如下图所示。光锥为了包含视锥，会出现交叉。
+
+
+
+![img](https://pic2.zhimg.com/80/v2-7beeb30f1f67956c897e196d78763b49_720w.jpg)
+
+
+
+**Screen Space Shadow Map采样**
+
+最后我们再来看一下
+
+我们按照代码顺序来看，首先看光源衰减。UNITY_LIGHT_ATTENUATION宏主要做两件事，计算阴影和计算光照衰减。Unity按照光源类型去处理阴影和衰减。在这里我们只关注最简单的方向光。可以看到方向光的没有计算衰减只计算了阴影。方向光的光源衰减函数在AutoLight.cginc文件中。代码如下
+
+
+
+![img](https://pic1.zhimg.com/80/v2-daf06745de47f961d97391d551f7d3e8_720w.jpg)
+
+
+
+
+
+![img](https://pic2.zhimg.com/80/v2-1e7c247d2f85ec9cc89af440893da939_720w.jpg)
+
+**Screen Space Shadow Map 纹理采样过程**
+
+最后我们再看一下Screen Space Shadow Map 纹理采样过程。
+
+![img](https://pic2.zhimg.com/80/v2-adf3b3b9e845bdac5451457fc06dbd99_720w.jpg)fragForwardBaseInternal
+
+UNITY_LIGHT_ATTENUATION宏的实现在AutoLight.cginc文件中。我们只看方向光模式。
+
+![img](https://pic2.zhimg.com/80/v2-e8defa1fb064ff5a5f3ad4b0bb38ed11_720w.png)UNITY_LIGHT_ATTENUATION
+
+可以看出destName完全由UNITY_SHADOW_ATTENUATION宏计算得到。UNITY_SHADOW_ATTENUATION宏的定义也在AutoLight.cginc文件中。
+
+![img](https://pic4.zhimg.com/80/v2-5ba3746b74c53d17322017a63b4e16bb_720w.png)UNITY_SHADOW_ATTENUATION
+
+可以看出UNITY_SHADOW_ATTENUATION宏由SHADOW_ATTENUATION宏实现。SHADOW_ATTENUATION宏的实现也在AutoLight.cginc文件中。
+
+![img](https://pic4.zhimg.com/80/v2-f6c81a8cb3ab4c325b02cd1dfd567e4b_720w.jpg)SHADOW_ATTENUATION
+
+可以看出SHADOW_ATTENUATION的实现主要unitySampleShadow函数实现。unitySampleShadow函数的实现也在AutoLight.cginc文件中。
+
+![img](https://pic2.zhimg.com/80/v2-bc4c311feac6bef678124b3fea961dc5_720w.jpg)unitySampleShadow
+
+可以看出unitySampleShadow函数的实现非常简单。就是直接对Screen Space Shadow Map 纹理进行采样。其中UNITY_SAMPLE_SCREEN_SHADOW是一个阴影贴图采样的宏，用来统一平台差异的。
+
+然后我们在返回去看看shadowCoord是如何计算的。反观上面的这些函数，这些函数并没有对shadowCoord做任何处理，完全是从顶点Shader传进来的。我们再转回去看看顶点Shader是如何计算shadowCoord。
+
+![img](https://pic1.zhimg.com/80/v2-1f7d3be65741294d20130db41c70ee50_720w.jpg)vertForwardBase
+
+在顶点Shader中shadowCoord的计算由UNITY_TRANSFER_LIGHTING宏完成。UNITY_TRANSFER_LIGHTING宏的实现也在AutoLight.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-c84a9d36dcb34f184157b3894f67be00_720w.png)UNITY_TRANSFER_LIGHTING
+
+Shader中shadowCoord的计算主要由UNITY_TRANSFER_SHADOW宏完成。UNITY_TRANSFER_SHADOW宏的实现也在AutoLight.cginc文件中。
+
+![img](https://pic4.zhimg.com/80/v2-e7e085e7f1e8b4238ca1733773171117_720w.png)UNITY_TRANSFER_SHADOW
+
+可以看到UNITY_TRANSFER_SHADOW宏由TRANSFER_SHADOW宏实现。
+
+![img](https://pic1.zhimg.com/80/v2-4177ba5006d6958b5fa1d15ce5cde63c_720w.jpg)TRANSFER_SHADOW
+
+可以看到shadowCoord的计算主要由ComputeScreenPos函数完成，其中pos是着色点在Clip空间的坐标，也就是乘完MVP矩阵之后的坐标。ComputeScreenPos函数的实现在UnityCG.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-cb9324f260f2a0e217523debcf322bb0_720w.jpg)ComputeScreenPos
+
+可以看到ComputeScreenPos函数主要由ComputeNonStereoScreenPos实现。ComputeNonStereoScreenPos的实现在UnityCG.cginc文件中。
+
+![img](https://pic3.zhimg.com/80/v2-99aa1a84919ca966698b6955dad11142_720w.jpg)ComputeNonStereoScreenPos
+
+这个函数需要解释一下，Pos是Clip Space的坐标，XY分量的坐标范围是[-w，w],这个函数实际上是作一个坐标变换，将XY分量变换到[0,w]区间。ZW分量保持不变。也就是说当这个值被传到片元着色器中后，XY分量就在[0,1]，就是屏幕空间坐标。**也就是说实际上是按照当前着色点的屏幕空间坐标去采样Screen Space Shadow Map的**。
+
+**Screen Space Shadow Map 采样值的应用**
+
+最后我们再看一下Unity Standard Shader是如何应用Screen Space Shadow Map 采样出来的Shadow值的。
+
+![img](https://pic1.zhimg.com/80/v2-afe081a537b5993cb2501e9c017b3e58_720w.jpg)fragForwardBaseInternal
+
+可以看到Screen Space Shadow Map 采样出来的Shadow值会在FragmentGI函数中被应用。
+
+![img](https://pic2.zhimg.com/80/v2-325e9be19b760b2cbcf60344d1d3f389_720w.png)FragmentGI
+
+## 3.2 GI相关
+
+FragmentGI会直接调用另一个同名函数。
+
+![img](https://pic2.zhimg.com/80/v2-73bdd3fcd40fef7b12e2e1588ecdd635_720w.jpg)FragmentGI
+
+可以看到FragmentGI的实现基本就是先初始化UnityGIInput数据结构，然后再调用UnityGlobalIllumination函数。
+
+![img](https://pic2.zhimg.com/80/v2-fe5c924cad126e327c8ca8a6e16b1a0d_720w.png)UnityGlobalIllumination
+
+可以看到UnityGlobalIllumination函数会调用UnityGI_Base和UnityGI_IndirectSpecular两个函数。在Shadow Mask模式下，UnityGI_Base中与atten相关的实现如下。
+
+![img](https://pic3.zhimg.com/80/v2-469876dcb1cd6712ed64b16fdfa5356e_720w.jpg)UnityGI_Base
+
+可以看到UnityGI_Base会先做实时Shadow与GI的混合，然后再用来阻挡光源。我们再看一下Shadow与GI的混合。
+
+![img](https://pic2.zhimg.com/80/v2-9cc765fe58fe22b0a0f5a97bf659da95_720w.png)阴影混合
+
+![img](https://pic1.zhimg.com/80/v2-0180001a3e8db17daca3d1bf2eaa94d4_720w.png)UnityMixRealtimeAndBakedShadows
+
+可以看出GI与阴影的混合实际上就是在烘焙的遮挡和实时阴影之间做线性插值。插值因子的计算策略不明。**如果有了解的，麻烦告知一下。**
+
+
+
+间接光照FragmentGI的实现在UnityStandardCore.cginc文件中。
+
+![img](https://pic2.zhimg.com/80/v2-c743a826228a4d7297d709ad4633f7ad_720w.jpg)FragmentGI
+
+![img](https://pic3.zhimg.com/80/v2-80eab1340e2c80e35e9ccc4459498822_720w.jpg)FragmentGI
+
+FragmentGI的实现非常直接，就是在做3件事，初始化UnityGIInput数据结构，初始化Unity_GlossyEnvironmentData数据结构，和调用UnityGlobalIllumination函数执行间接光照的计算。我们继续看UnityGlobalIllumination函数的实现。
+
+UnityGlobalIllumination函数的实现在UnityGlobalIllumination.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-1e0404e593fcfedce481bd6b10cca290_720w.jpg)
+
+
+
+UnityGlobalIllumination函数的实现也非常直接。函数分成两个部分，UnityGI_Base和UnityGI_IndirectSpecular。我们先看UnityGI_Base。
+
+UnityGI_Base的实现在UnityGlobalIllumination.cginc文件中。由于UnityGI_Base的实现比较长，所以我将其中的宏折叠了起来。
+
+![img](https://pic3.zhimg.com/80/v2-722f01e23d1d59fc4c6f1a8a9c788a86_720w.jpg)UnityGI_Base
+
+可以看到UnityGI_Base首先初始化UnityGI数据结构。之后处理光源衰减，最后再计算间接光照。间接光照有3个来源，光照探针，LightMap和实时GI。
+
+从光照探针中重构出着色点Irradiance的算法被全部包含在ShadeSHPerPixel函数中。光照探针中使用的Spherical Harmonics Irradiance算法来自于Ravi Ramamoorthi，等人的文章"An Efficient Representation for Irradiance Environment Maps"。
+
+![img](https://pic1.zhimg.com/80/v2-33f63239dca1aff37a5d761e57a4020c_720w.jpg)ShadeSHPerPixel
+
+ShadeSHPerPixel函数的实现在UnityStandardUtils.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-1c26e1d062bce9d923652dda026ee690_720w.jpg)ShadeSHPerPixel
+
+根据"An Efficient Representation for Irradiance Environment Maps"文章推导，Irradiance Map可以用球谐函数近似表示为
+
+![[公式]](https://www.zhihu.com/equation?tex=E%28%5Ctheta%2C%5Cphi%29%3D%5Csum_%7Bl%2Cm%7D%5E%7B%7D%7B%5Chat%7BA_l%7DL_%7Blm%7DY_%7Blm%7D%28%5Ctheta%2C%5Cphi%29%7D)
+
+其中![[公式]](https://www.zhihu.com/equation?tex=Y_%7Blm%7D%28%5Ctheta%2C%5Cphi%29)是球谐基函数， ![[公式]](https://www.zhihu.com/equation?tex=%5Chat%7BA_l%7DL_%7Blm%7D) 是对应的球谐系数。而 ![[公式]](https://www.zhihu.com/equation?tex=L_%7Blm%7D) 是使用球谐基函数来表示将Environment Map的得到球谐系数。 ![[公式]](https://www.zhihu.com/equation?tex=%5Chat%7BA_l%7D) 是 将![[公式]](https://www.zhihu.com/equation?tex=cos%5Ctheta) 投影到球谐基函数上而得到的系数。
+
+给定一个法线，便可以根据上述公式求得该着色表面的Irradiance。在Unity的实现中，Unity只使用了3阶球谐基函数来编码Irradiance Map。根据Sloan大神的文章“Stupid Spherical Harmonics (SH) Tricks”，对于3阶球谐函数的求和，直接采用线性相乘求和的方法要比矩阵阵法速度更快。而Unity也是采用了这样一种方案。
+
+直接将3阶球谐函数代入上述方程并展开化解可得
+
+![[公式]](https://www.zhihu.com/equation?tex=E%28x%2Cy%2Cz%29%3Dc_0%2Bc_1x%2Bc_2y%2Bc_3z%2Bc_4xy%2Bc_5yz%2Bc_6zx%2Bc_7z%5E2%2Bc_8%28x%5E2-y%5E2%29)
+
+具体的实现被分成了两个函数，SHEvalLinearL0L1和SHEvalLinearL2。SHEvalLinearL0L1计算常数项和线性项，SHEvalLinearL2计算二次项。最后3阶球谐函数值就是常数项+线性项+二次项。
+
+![img](https://pic1.zhimg.com/80/v2-6a6c1d55e58405f18c6a261c69987c24_720w.jpg)常数项+线性项
+
+![img](https://pic1.zhimg.com/80/v2-45f87a0dc4f181ab9d89905a364db418_720w.jpg)二次项
+
+
+
+接下来我们再看看LightMap的计算部分。
+
+![img](https://pic3.zhimg.com/80/v2-73b810c64356fc03cbc40882e65f94e2_720w.jpg)
+
+LightMap部分的代码非常直接，可以看到主要在处理3个东西,Lightmap，Directional Lightmap和Shadow Mask
+
+![img](https://pic1.zhimg.com/80/v2-91a6ebe5545832e59ce85d098662f0e8_720w.jpg)DynamicGI
+
+实时GI部分的计算也非常直接。同样也处理了带和不带方向两种情况。
+
+另外从代码的实现来看，在Unity中实时GI与lightmap及光照探针是可以同时使用的。
+
+**有向Lightmap**
+
+![img](https://pic3.zhimg.com/80/v2-8129fdd0b41f9434ff025512a753a8fe_720w.jpg)
+
+在Directional Lightmap模式中，Unity会把光照信息烘焙成一个domain light 的光照，相当于变成了一个单入射光源的照明情况，然后BRDF选择半兰伯特，最后除以一个平衡系数。
+
+## Indirect Specular
+
+现在我们再来看看UnityGI_IndirectSpecular函数的实现。
+
+```text
 inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_GlossyEnvironmentData glossIn)
 {
     half3 specular;
@@ -137,13 +806,9 @@ inline half3 UnityGI_IndirectSpecular(UnityGIInput data, half occlusion, Unity_G
 }
 ```
 
-
-
 可以看到Indirect Specular主要有env0和env1插值得到。而env0和env1均由Unity_GlossyEnvironment函数计算得到。Unity_GlossyEnvironment函数的实现在UnityImageBasedLighting.cginc文件中。其实现如下：
 
-
-
-```c#
+```text
 half3 Unity_GlossyEnvironment (UNITY_ARGS_TEXCUBE(tex), half4 hdr, Unity_GlossyEnvironmentData glossIn)
 {
     half perceptualRoughness = glossIn.roughness /* perceptualRoughness */ ;
@@ -172,8 +837,53 @@ half3 Unity_GlossyEnvironment (UNITY_ARGS_TEXCUBE(tex), half4 hdr, Unity_GlossyE
 }
 ```
 
- 
+可以看到Unity的Unity_GlossyEnvironment函数实际上计算的天空盒环境光照的Specular部分，而且是使用的基于经验的模糊方法。先通过粗糙度perceptualRoughness构建Mipmap层级，然后再进行采样得到。
 
- 
+## 4.雾效
 
-Unity的IBL实现的比较简单，只做了一次纹理采样。也就是说Unity在高光部分假设着色点的表面是Mirror Reflection。**4.雾效**最后我们来看一下雾效的实现。先看顶点Shader中与雾效相关的代码![img](https://lh6.googleusercontent.com/SOYkpbWoj6q2ySg7dAcbO6kkai08GeA7Vb3ZczRGb1S7_8taQg53w2XFvTc3azIJf9vT9Xkd5a8VWnq8qvqDKZ-iZsxz45VCEudRAIe-5AORj_O3Sx3sFU65VhNtnX_6nCemlVmQ)UNITY_TRANSFER_FOG_COMBINED_WITH_EYE_VEC宏的实现在UnityCG.cginc文件中。![img](https://lh4.googleusercontent.com/5wuui10d7zvJIoHFFqxSVqO0ow3hfVlB8O7nbRDIZOaHSZj1FLonIs_0tMZTgkIYym-W3t8q2Ax1jz0Le1p-k7arTMtGzGI_MNwfLZWBl_JDBIb7OwUFF-CKZw4czmo35Pg3A3TM)这个宏的实现非常简单，就是将当前着色点的深度值保存在eyeVec.w中。再来看看片元Shader中雾效相关的实现。![img](https://lh6.googleusercontent.com/RwQVRA8azD8-upb1sj2ech1WbPrPiOqIVqBRf6tdi5UJDzET-9wM1cOxfqk5b7JlnzylCi5xbiw3kklbkEQdZ_sAcNTtXMLFTdh0OWmukE1y2YxbsubbikkK_3bTb-ampxSFtlnl)UNITY_EXTRACT_FOG_FROM_EYE_VEC宏的实现在UnityCG.cginc文件中。![img](https://lh4.googleusercontent.com/jmgXQpph98zFxLmdNsdZeliYJg76J3jzwwOTlHLdobJtEImL0CrSUe4rp3ukmn4tvNHmyYIVIdY9XzBu-TyONRcqMy6RRJ1mEeM2tghUlI6wVptBpnkKyV5PiATfMCRFwa_uw6jZ)这个宏非常直接，声明一个_unity_fogCoord变量，用于保存eyeVec.w中的深度值。Unity的雾效主要由UNITY_APPLY_FOG宏实现。UNITY_APPLY_FOG宏的实现在UnityCG.cginc文件中。![img](https://lh6.googleusercontent.com/iLsrkwo22kIZsLLg8yPnsS2L8GaziG-dcH_Qwh_YStW6qfWlgGBaXz-MUbeDz7bJGfx9i2-8gHPOLJ-lyJqfDfQfFI5Dh_SWxmwMOnDXWZ9ZVEjUGUf0uK-dac3HpEKXH7Mo406a)可以看出UNITY_APPLY_FOG主要由UNITY_APPLY_FOG_COLOR宏实现。UNITY_APPLY_FOG_COLOR宏的实现在UnityCG.cginc文件中。![img](https://lh4.googleusercontent.com/ipT9pL3iM0YXubpSwLjdwTujYO_2L1v9BvWZ_7fhlpbXa2Fw60yFrsWnTawIBMEaLeav89Z2BgtU31rVXJL1qH1kBltc046uhNxffBczPJGbYyKLbCdtM2sY9hG0Mwj_YRd4gQmV)在这里我们主要关注SM 3.0的实现模式。UNITY_APPLY_FOG_COLOR宏由UNITY_CALC_FOG_FACTOR和UNITY_FOG_LERP_COLOR两个宏实现。UNITY_FOG_LERP_COLOR的实现在UnityCG.cginc文件中。![img](https://lh6.googleusercontent.com/uEzzOBpWqq9uC_V1rmjCl3h1uP0MSe-0leC0Ji1b_4vS_DZYmbrb3js75zQTt27tzE28_m3ftCjfsEuZhqme-AKWDYtRancOWJSUcKmdriXb40vNA-xJ4ocvHcugCf5Pn8bd3RKm)可以看出UNITY_FOG_LERP_COLOR的实现非常直接，就是根据雾因子在雾的颜色和物体的颜色间做个线性插值。UNITY_CALC_FOG_FACTOR宏的实现在UnityCG.cginc文件中。![img](https://lh3.googleusercontent.com/J9fMyvuaFMNZ4XzlGJjy6WIysfGng3W0zfHva3TK9iuOjPUQ23daJJkXRoX_Yo0SqpHE3WBZf_8NMFV1XcqI7NmexlhFVCVPycLL3SxxnsHqHCQ9Yz4xCMi6hxwhbt2XEjfpZ9U8)UNITY_CALC_FOG_FACTOR_RAW宏的实现在UnityCG.cginc文件中。![img](https://lh4.googleusercontent.com/QioEUJiC-LuRG42NpTopWfs1TKRF5rlVMf6WWKgfDZ13J5dp86-2EBol7SxV-kqR-yQzsFK-NrcG2RB1mRtZgNhMzTl_7fzDeOsr_KNoNQv3uob2YVdROf3etOZsdRyl0bL5z_a4)
+最后我们来看一下雾效的实现。先看顶点Shader中与雾效相关的代码
+
+![img](https://pic3.zhimg.com/80/v2-5319cb29498a13baf8fb5150a1358b3e_720w.png)顶点Shader中雾效相关的代码
+
+UNITY_TRANSFER_FOG_COMBINED_WITH_EYE_VEC宏的实现在UnityCG.cginc文件中。
+
+![img](https://pic2.zhimg.com/80/v2-1b02555f4826be3708cc8511b29691bd_720w.jpg)UNITY_TRANSFER_FOG_COMBINED_WITH_EYE_VEC宏的实现
+
+这个宏的实现非常简单，就是将当前着色点的深度值保存在eyeVec.w中。
+
+再来看看片元Shader中雾效相关的实现。
+
+![img](https://pic2.zhimg.com/80/v2-1406ff586105c5b3368ace34d40312a1_720w.jpg)Unity 雾效实现
+
+UNITY_EXTRACT_FOG_FROM_EYE_VEC宏的实现在UnityCG.cginc文件中。
+
+![img](https://pic4.zhimg.com/80/v2-50d6312fdac5d8d624dffdfa29f8dcf3_720w.jpg)UNITY_EXTRACT_FOG_FROM_EYE_VEC的实现
+
+这个宏非常直接，声明一个_unity_fogCoord变量，用于保存eyeVec.w中的深度值。
+
+Unity的雾效主要由UNITY_APPLY_FOG宏实现。UNITY_APPLY_FOG宏的实现在UnityCG.cginc文件中。
+
+![img](https://pic2.zhimg.com/80/v2-c4fb211e990d52fb1a0838d96f847e81_720w.jpg)
+
+可以看出UNITY_APPLY_FOG主要由UNITY_APPLY_FOG_COLOR宏实现。UNITY_APPLY_FOG_COLOR宏的实现在UnityCG.cginc文件中。
+
+![img](https://pic3.zhimg.com/80/v2-314e83bbd2c28315c5532c945115bd8e_720w.jpg)
+
+在这里我们主要关注SM 3.0的实现模式。UNITY_APPLY_FOG_COLOR宏由UNITY_CALC_FOG_FACTOR和UNITY_FOG_LERP_COLOR两个宏实现。
+
+UNITY_FOG_LERP_COLOR的实现在UnityCG.cginc文件中。
+
+![img](https://pic4.zhimg.com/80/v2-d2f0b0446b9696bd7cd27a45459c3be7_720w.jpg)
+
+可以看出UNITY_FOG_LERP_COLOR的实现非常直接，就是根据雾因子在雾的颜色和物体的颜色间做个线性插值。
+
+UNITY_CALC_FOG_FACTOR宏的实现在UnityCG.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-8701227da0fc719c76127d90e91d51d0_720w.jpg)
+
+UNITY_CALC_FOG_FACTOR_RAW宏的实现在UnityCG.cginc文件中。
+
+![img](https://pic1.zhimg.com/80/v2-317c59faf575ee722db6b06e16426a44_720w.jpg)
+
+
+
