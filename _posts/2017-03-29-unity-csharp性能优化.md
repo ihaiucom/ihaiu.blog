@@ -2,8 +2,8 @@
 layout: post
 title: [转]性能优化-C#-tips
 date: 2017-03-29 00:00:00
-categories: Tool
-tags: Tool
+categories: unity
+tags: unity
 excerpt: 性能优化-C#-tips
 thread: 20160610
 author: 大海明月
