@@ -1200,6 +1200,57 @@ thread: 20170310
         </ul>
 </div>
 
+<br>
+<br>
+<br>
+
+<h2>shader</h2>
+<div class="" >
+        <ul>
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://zhuanlan.zhihu.com/game-programming" draggable="false">
+              <span class="title">浅墨的游戏编程</span>
+            </a>
+            </li>
+
+            
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://zhuanlan.zhihu.com/p/59386732" draggable="false">
+              <span class="title">分享收集的Web 3D学习资源</span>
+            </a>
+            </li>
+
+            
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://zhuanlan.zhihu.com/p/59386732" draggable="false">
+              <span class="title">分享收集的Web 3D学习资源</span>
+            </a>
+            </li>
+         
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="https://zhuanlan.zhihu.com/c_1089189122089947136" draggable="false">
+              <span class="title">Wonder是Web 3D的解决方案，包含编辑器和引擎等</span>
+            </a>
+            </li>
+
+         
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.zwqxin.com/" draggable="false">
+              <span class="title">ZwqXin- 一起学习OPENGL吧</span>
+            </a>
+            </li>
+
+         
+           <li  data-fid="1" data-index="1" draggable="true">
+            <a target="_blank" contextmenu="thumb-menu" href="http://www.zwqxin.com/" draggable="false">
+              <span class="title">ZwqXin- 一起学习OPENGL吧</span>
+            </a>
+            </li>
+
+            
+        </ul>
+</div>
+
 
 <h2>数学</h2>
 <div class="" >
