@@ -160,7 +160,9 @@ sh_csharp: true
 * 利用噪音图制作一个纸张燃烧的效果 https://zhuanlan.zhihu.com/p/115635335
 * 一个简单的探照灯shader https://zhuanlan.zhihu.com/p/31618992
 * 使用顶点投射的方法制作实时阴影 https://zhuanlan.zhihu.com/p/31504088
-* 
+* [利用GPGPU计算大规模群落仿真行为](https://www.cnblogs.com/murongxiaopifu/p/7308366.html)  https://www.cnblogs.com/murongxiaopifu/p/7308366.html
+
+​	https://github.com/chenjd/Unity-Boids-Behavior-on-GPGPU
 
 
 
