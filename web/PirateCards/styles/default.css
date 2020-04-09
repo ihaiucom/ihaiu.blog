@@ -1,0 +1,24 @@
+html {
+    background: white;
+    width: 100vh;
+    height: 100vh;
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    width: 100vh;
+    height: 100vh;
+    overflow: hidden;
+}
+
+canvas {
+    background: #2F3C50;
+}
+
+
+@font-face {
+    font-style: normal;
+    font-family: "Dosis-SemiBold";
+    src: url("../fonts/Dosis-SemiBold.ttf") format("truetype");
+}
