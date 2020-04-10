@@ -5,7 +5,8 @@ export default class LoginModel extends MModel
 {
     get isIndulge():boolean
     {
-        return this.timeLong >= Global.indulgeTime;
+        return false;
+        // return this.timeLong >= Global.indulgeTime;
     }
 
     /** 时长，用于防沉迷 */

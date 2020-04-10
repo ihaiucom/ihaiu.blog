@@ -1,9 +1,5 @@
 import RoleData from "./RoleData";
 import Game from "../../Game";
-// import AntFrame from "../../AntFrame/AntFrame";
-// import GamerStatus = proto.GamerStatus;
-// import IGamerMain = proto.IGamerMain;
-// import IGamerMini = proto.IGamerMini;
 
 /** 玩家等级快照数据 */
 export class UserLevelSnapshotData
@@ -58,16 +54,6 @@ export default class UserData extends RoleData
     isShowLevelUp: boolean = false;
     
 
-
-    get maxExp(): number
-    {
-        let playerLevel = Game.config.playerLevel;
-        if(playerLevel.maxLevel > Game.user.level)
-        {
-            return playerLevel.getConfig(Game.user.level + 1).playerNeedExp;
-        }
-        return 0;
-    }
     
     public setGamerMain(data: any)
     // public setGamerMain(data: IGamerMain)
@@ -85,35 +71,4 @@ export default class UserData extends RoleData
         this.levelSnapshotData.level = this.level;
     }
 
-    public getHeadIconByHeroId(heroId: number|string)
-    {
-        let portraitCfg = Game.config.avatar.getConfig(heroId);
-        if(!portraitCfg) portraitCfg = Game.config.avatar.getConfig(1001);
-        if(portraitCfg)
-        {
-            return portraitCfg.iconUrl;
-        }
-        return "";
-    }
-
-    IsNewGetAvatar()
-    {
-        let heroidlist = Game.moduleModel.hero.IDList;
-        for (let i = 0, len = heroidlist.length; i < len; i++) 
-        {
-            let id = heroidlist[i]
-            if (this.IsNewAvatar(id)) 
-            {
-                return true
-            }
-        }
-
-        return false;
-    }
-
-    IsNewAvatar(heroid:number)
-    {
-        let hero = Game.moduleModel.hero.GetData(heroid);
-        return !hero.isSaw;
-    }
 }

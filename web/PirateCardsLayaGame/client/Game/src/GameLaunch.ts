@@ -106,7 +106,7 @@ export default class GameLaunch
 		// 初始化数据模型
 		Game.moduleModel.install();
 		// 加载服务器列表
-		await this.installServerList();
+		// await this.installServerList();
 		
 		// 资源预加载
 		// await Game.preload.start();

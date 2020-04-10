@@ -26,12 +26,10 @@ import ConstConfig from './Config/ConstConfig';
 import TookManager from "./SystemTook/TookManager";
 import ProtoSenderList from "./protosenders/ProtoSenderList";
 import ProtoHandlerList from "./protohandlers/ProtoHandlerList";
-import Prop from "./GameFrame/Props/Prop";
 import GameNetStat from "./GameNetStat";
 
 export default class Game
 {
-    _imports = [Prop];
     
     //=====================
     // 游戏设置

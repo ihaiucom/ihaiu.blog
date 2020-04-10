@@ -41,27 +41,12 @@ loadLib("libs/game/engine-adapter-laya.js");
 loadLib("libs/game/LayaExtend.js");
 loadLib("libs/game/FguiExtend.js");
 
-// 扩展 -- zip
-loadLib("libs/zip/jszip.js");
-loadLib("libs/zip/zip.js");
 
-
-// 扩展 -- WEB
-loadLib("libs/onlyweb/FileSaver.js");
-
-
-// PB配置
-loadLib("libs/pbconfig/pbconfig.js");
-loadLib("libs/pbconfig/pbconfig-extends.js");
 
 
 // Excel PB配置
 loadLib("libs/pbconfig/excelconfig.js");
 
-// gpuskinning
-loadLib("libs/game/gpuskinning.js");
-// text
-loadLib("libs/game/MeshText.js");
 
 
 //-----libs-end-------

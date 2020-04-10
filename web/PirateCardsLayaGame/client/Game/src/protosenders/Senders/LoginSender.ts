@@ -1,7 +1,6 @@
 
 import Game from '../../Game';
 import AntFrame from '../../AntFrame/AntFrame';
-import IntMath from '../../GameWar/CoreLib/IntMath/IntMath';
 export default class LoginSender
 {
     async reLogin()
@@ -118,28 +117,13 @@ export default class LoginSender
         
         // 请求角色初始数据
         await Game.net.AsyncGamerLoginGetDataC2S();
-        //请求关卡列表数据
-        await Game.net.AsyncCheckPointListC2S();
-        //获取大秘境信息
-        await Game.net.AsyncGetGamerSecretLandC2S();
-        // 角色数据必须在背包数据之前获取
-        
-        await Game.sender.guide.GetGuideData();
-        await Game.sender.hero.GetHeroList();
-        await Game.net.AsyncGamerGetBackpackC2S();
-        await Game.net.AsyncHeroGroupListC2S();
-        await Game.sender.pvp.getDanInfo();
-        
-
-        Game.sender.draug.DraugList();
-        Game.sender.quest.QuestList();
-        Game.sender.home.SysList();
+      
 
         // 登录了并且获取了用户数据
         Game.user.isLoginAndGetUserData = true;
         Game.netStat.isLogined = true;
         fgui.GRoot.inst.closeModalWait();
-        Game.launch.enterGame();
+        // Game.launch.enterGame();
         // Game.sender.gm.gmCommand('addlevel 20');
         // Game.menu.open(402200);
     }

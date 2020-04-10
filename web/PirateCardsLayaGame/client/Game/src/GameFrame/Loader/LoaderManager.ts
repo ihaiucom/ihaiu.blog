@@ -2,7 +2,6 @@
 import { LoaderId } from "./LoaderId";
 import LoaderCtl from "./LoaderCtl";
 import LoaderEnterModelPanel from "./LoaderEnterModelPanel";
-import LoaderEnterWarPanel from "./LoaderEnterWarPanel";
 import LoaderEnterLoginPanel from "./LoaderEnterLoginPanel";
 
 
@@ -60,12 +59,6 @@ export default class LoaderManager
         this.dict.add(ctl.loaderId, ctl);
 
         
-        // EnterWar 进入战斗用
-        let warPanel = new LoaderEnterWarPanel();
-        ctl = new LoaderCtl();
-        ctl.loaderId = LoaderId.EnterWar;
-        ctl.loaderPanel = warPanel;
-        this.dict.add(ctl.loaderId, ctl);
 
         // Module   进入模块用
         let modelPanel = new LoaderEnterModelPanel();

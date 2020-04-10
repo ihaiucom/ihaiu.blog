@@ -23,6 +23,7 @@ class GameMain
 		// 启动游戏
 		LayaExtendLogic();
 		FguiExtend();
+		Engine.init();
 		
 		Game.init();
 		

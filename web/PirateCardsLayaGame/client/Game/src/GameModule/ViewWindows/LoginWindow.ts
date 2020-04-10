@@ -31,29 +31,6 @@ export default class LoginWindow extends MWindow
 
         // 添加依赖资源
         this.addAssetForFguiComponent(LoginWindowUI);
-
-        // TODO Test
-        // this.addAssetForFguiPackagename(GuiPackageNames.CommonNumber);
-        // this.addAssetForFguiPackagename(GuiPackageNames.ModuleStudioMovieClip00Common);
-        // this.addAssetForFguiPackagename(GuiPackageNames.ModuleStudioMovieClip01Normal);
-        // this.addAssetForFguiPackagename(GuiPackageNames._ResImageUIV1);
-        // this.addAssetForFguiPackagename(GuiPackageNames.CommonBase);
-        
-        // this.addAssetForFguiPackagename(GuiPackageNames._ResFont);
-        // this.addAssetForFguiPackagename(GuiPackageNames.ModuleStudio);
-        // this.addAssetForFguiPackagename(GuiPackageNames._ResImageUIV1);
-        // this.addAssetForFguiPackagename(GuiPackageNames._ResImagePic);
-        // this.addAssetForFguiPackagename(GuiPackageNames.CommonGame);
-        // this.addAssetForFguiPackagename(GuiPackageNames.SystemModuleGuide);
-        // this.addAssetForFguiPackagename(GuiPackageNames._ResImagePic);
-    // this.addAssetForFguiPackagename(GuiPackageNames.CommonGame);
-        this.addAssetForFguiPackagename(GuiPackageNames.SystemModuleGuide);
-        if(VersionConfig.IsDebugVer)
-        {
-            this.addAssetForFguiPackagename(GuiPackageNames.GameTestView);
-            this.addAssetForFguiPackagename(GuiPackageNames.CommonBase);
-            this.addAssetForFguiPackagename(GuiPackageNames.CommonGame);
-        }
     }
 
 

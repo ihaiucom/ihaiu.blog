@@ -11,7 +11,6 @@ import SystemAlertMessage from "../../Extends/GameLaunch/SystemAlertMessage";
 import SystemConfirmMessage from "../../Extends/GameLaunch/SystemConfirmMessage";
 import SystemToastMessage from "../../Extends/GameLaunch/SystemToastMessage";
 import GMButton from "../../Extends/GameLaunch/GMButton";
-import EnterWarLoader from "../../Extends/GameLaunch/EnterWarLoader";
 import EnterWarItem from "../../Extends/GameLaunch/EnterWarItem";
 import BGModel from "../../Extends/GameLaunch/BGModel";
 import GlobalModalWaiting from "../../Extends/GameLaunch/GlobalModalWaiting";
@@ -30,7 +29,6 @@ export default class GameLaunchBinder
 		bind(SystemConfirmMessage.URL, SystemConfirmMessage);
 		bind(SystemToastMessage.URL, SystemToastMessage);
 		bind(GMButton.URL, GMButton);
-		bind(EnterWarLoader.URL, EnterWarLoader);
 		bind(EnterWarItem.URL, EnterWarItem);
 		bind(BGModel.URL, BGModel);
 		bind(GlobalModalWaiting.URL, GlobalModalWaiting);

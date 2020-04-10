@@ -1,6 +1,4 @@
 import Game from '../../Game';
-import HeadPortraitConfig from '../../Config/ConfigExtends/HeadPortraitConfig';
-import AvatarConfig from '../../Config/ConfigExtends/AvatarConfig';
 
 export default class RoleData
 {
@@ -76,46 +74,6 @@ export default class RoleData
         {
             this[key] = data[key];
         }
-    }
-    // 获取头像Url		
-    get headIconUrl(): string
-    {
-        let portraitCfg: AvatarConfig = Game.config.avatar.getConfig(this.avatar);
-        if(!portraitCfg) portraitCfg = Game.config.avatar.getConfig(1001);
-        if (portraitCfg)
-        {
-            return portraitCfg.iconUrl;
-        }
-        return "";
-    }
-
-    
-    // 获取升级需要经验值
-    get upgradeFans(): number
-    {
-        let config = Game.config.playerLevel.getConfig(Game.user.level);
-        if (config)
-        {
-            return config.playerNeedExp;
-        }
-        return 0;
-    }
-
-    // 获取等级的最大经验值
-    public getMaxExpByLevel(lv: number)
-    {
-        let config = Game.config.playerLevel.getConfig(lv);
-        if (config)
-        {
-            return config.playerNeedExp;
-        }
-        return 0;
-    }
-
-    /** 是否是最大等级 */
-    public getIsMaxLevel(level: number)
-    {
-        return level >= Game.config.playerLevel.maxLevel;
     }
 
     

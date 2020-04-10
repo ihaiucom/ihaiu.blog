@@ -1,6 +1,5 @@
 import Game from "../../Game";
 import { LoaderId } from "./LoaderId";
-import LoaderEnterWarPanel from "./LoaderEnterWarPanel";
 import LoaderEnterModelPanel from "./LoaderEnterModelPanel";
 
 
@@ -88,30 +87,6 @@ export default class LoaderSettingHandler
 		// 	Laya.timer.loop(5000, this, this.Reconnection);
 		// }
 	}
-	
-	private lastPercent:number = 0;
-	// 超过5秒，加载未变化， 提示断线重连
-	Reconnection()
-	{
-		let panel = <any>Game.loader.current.loaderPanel;
-
-		if (panel.loader) 
-		{
-			
-			let recon  = <fgui.Controller>panel.loader.m_Reconnection;
-			let change = (this.lastPercent == this.showPercent);
-			recon.selectedIndex = Number(change);
-
-			if (!change) 
-			{
-				panel instanceof LoaderEnterWarPanel   && Game.moduleModel.match.launchWar();
-
-				panel instanceof LoaderEnterModelPanel && console.log("open model");
-			}
-		}
-	
-		this.lastPercent = this.showPercent;
-	}
 
 	// 加载配置	
 	onLoadedConfig(index: number, count: number, rate: number)
@@ -132,45 +107,6 @@ export default class LoaderSettingHandler
 	{
 		this.setTip(Game.launchText.LoadedUI);
 		this.loading(60 + Math.ceil((index / count * 40) ));
-	}
-	
-	// 加载战斗配置
-	onLoadedWarConfig(index: number)
-	{
-		if(index <= 1)
-		{
-			this.setBegin();
-		}
-		var count = 4;
-		this.setTip(Game.launchText.LoadedWarConfig);
-		this.loading( Math.ceil((index / count * 10) ));
-	}
-    
-	// 加载战斗
-	onLoadedWar(rate)
-	{
-		this.setTip(Game.launchText.LoadedWar);
-		this.loading( 10 + Math.ceil((rate * 80) ));
-	}
-
-	onLoadedWar2(index: number, count: number)
-	{
-		// if(index <= 1)
-		// {
-		// 	this.setBegin();
-		// }
-		this.setTip(Game.launchText.LoadedWar +"("+ index + "/" + count + ")");
-		this.loading( 90 + Math.ceil((index / count * 10) ));
-	}
-
-	onLoadedWar3(index: number, count: number)
-	{
-		// if(index <= 1)
-		// {
-		// 	this.setBegin();
-		// }
-		this.setTip(Game.launchText.LoadedWar +"("+ index + "/" + count + ")");
-		this.loading( 10 + Math.ceil((index / count * 90) ));
 	}
 	
 	// 完成	

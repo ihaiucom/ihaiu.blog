@@ -9,13 +9,8 @@ import Game from "../../../Game";
 import TEXT from "../../../Config/Keys/TEXT";
 import AntFrame from "../../../AntFrame/AntFrame";
 import { AntPlatformWX } from "../../../AntFrame/Platform/AntWX";
-import WarResId from "../../../GameWar/View/WarResId";
-import { BehaviourEffectFont } from "../../../GameWar/View/Behaviours/BehaviourEffectFont";
-import { WarSetting } from "../../../GameWar/Logic/WarSetting";
-import { WarView } from "../../../GameWar/View/WarView";
 import GameConfig from "../../../GameConfig";
 import { MenuId } from "../../../GameModule/MenuId";
-import War3DWindowUI from "../GameWar3DUI/War3DWindowUI";
 import MenuLayer from "../../../GameFrame/Menu/MenuLayer";
 
 export default class LoginPanel extends LoginPanelStruct
@@ -41,95 +36,6 @@ export default class LoginPanel extends LoginPanelStruct
         // this.showDebugButton();
    }
 
-   showDebugButton()
-   {
-        this.createDebugButton("LayaText", this.onClickDebugLayaText, 0, 0);
-        this.createDebugButton("MeshText", this.onClickDebugMeshText, 1, 0);
-        this.createDebugButton("SpriteText", this.onClickDebugSpriteText, 2, 0);
-        this.createDebugButton("FguiText", this.onClickDebugFguiText, 3, 0);
-       
-        this.createDebugButton("Record", ()=>{
-            WarSetting.enableRecord = !WarSetting.enableRecord;
-        }, -1, 1);
-
-        this.createDebugButton("Sound", ()=>{
-            WarSetting.enableSound = !WarSetting.enableSound;
-        }, 0, 1);
-
-        this.createDebugButton("飘字", ()=>{
-            WarSetting.enableText = !WarSetting.enableText;
-        }, 1, 1);
-        
-        this.createDebugButton("AI", ()=>{
-            WarSetting.openAI = !WarSetting.openAI;
-        }, 2, 1);
-        
-        this.createDebugButton("美术特效", ()=>{
-            WarSetting.enableEffectArts = !WarSetting.enableEffectArts;
-        }, 3, 1);
-
-        this.createDebugButton("多摄像机", ()=>{
-            WarSetting.enableMultipleCamera = !WarSetting.enableMultipleCamera;
-            if(WarView.scene)
-            {
-                WarView.scene.enableMultipleCamera = WarSetting.enableMultipleCamera;
-            }
-        }, 4, 1);
-
-        this.createDebugButton("地图", ()=>{
-            if(WarView.scene && WarView.scene.mapNode)
-            {
-                if(WarView.scene.mapNode.parent)
-                {
-                    WarView.scene.mapNode.removeSelf();
-                }
-                else
-                {
-                    WarView.scene.sceneRoot.addChild(WarView.scene.mapNode);
-                }
-            }
-        }, 5, 1);
-
-        this.createDebugButton("技能大招", ()=>{
-            var menuCtrl = Game.menu.getMenuCtl(MenuId.WarWindowUI)
-            if(menuCtrl)
-            {
-                (<War3DWindowUI>menuCtrl.moduleWindow.panel).m_skillView.m_btnSkillFou.visible = !(<War3DWindowUI>menuCtrl.moduleWindow.panel).m_skillView.m_btnSkillFou.visible;
-            }
-        }, 0, 2);
-        
-        this.createDebugButton("战斗界面", ()=>{
-            var menuCtrl = Game.menu.getMenuCtl(MenuId.WarWindowUI)
-            if(menuCtrl)
-            {
-                (<War3DWindowUI>menuCtrl.moduleWindow.panel).visible = !(<War3DWindowUI>menuCtrl.moduleWindow.panel).visible;
-            }
-        }, 1, 2);
-
-        this.createDebugButton("角色", ()=>{
-            WarSetting.enableUnitView = !WarSetting.enableUnitView;
-        }, 2, 2);
-
-        this.createDebugButton("描边", ()=>{
-            WarSetting.isOutLine = !WarSetting.isOutLine;
-        }, 3, 2);
-        // this.createDebugButton("分辨率 x1", ()=>{
-        //     Laya.stage.width = GameConfig.width;
-        //     Laya.stage.height = GameConfig.height;
-        // }, 0, 2);
-
-        
-        // this.createDebugButton("分辨率 x0.75", ()=>{
-        //     Laya.stage.width = GameConfig.width * 0.75;
-        //     Laya.stage.height = GameConfig.height * 0.75;
-        // }, 1, 2);
-
-        // this.createDebugButton("分辨率 x0.5", ()=>{
-        //     Laya.stage.width = GameConfig.width * 0.5;
-        //     Laya.stage.height = GameConfig.height * 0.5;
-        // }, 2, 2);
-   }
-
    createDebugButton(text: string, fun:Function, x: number, y: number)
    {
         var button = fgui.UIPackage.createObjectFromURL(this.m_btn_login.resourceURL);
@@ -143,25 +49,6 @@ export default class LoginPanel extends LoginPanelStruct
    }
 
 
-   onClickDebugLayaText()
-   {
-        BehaviourEffectFont.useTextType = 0;
-   }
-
-   onClickDebugMeshText()
-   {
-        BehaviourEffectFont.useTextType = 1;
-
-   }
-   
-   onClickDebugSpriteText()
-   {
-        BehaviourEffectFont.useTextType = 2;
-   }
-   onClickDebugFguiText()
-   {
-        BehaviourEffectFont.useTextType = 3;
-   }
    
     // 账号
     get account(): string

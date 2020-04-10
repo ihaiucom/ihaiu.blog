@@ -6,7 +6,6 @@
 import LoginWindowUIStruct from "../../Generates/ModuleLogin/LoginWindowUIStruct";
 import Game from "../../../Game";
 import AntFrame from "../../../AntFrame/AntFrame";
-import WarResId from "../../../GameWar/View/WarResId";
 import GamerLoginS2C = proto.GamerLoginS2C;
 import { AntPlatformWX } from "../../../AntFrame/Platform/AntWX";
 
@@ -27,9 +26,7 @@ export default class LoginWindowUI extends LoginWindowUIStruct
         this.m_panelCheckID.m_btnMake.onClick(this, this.onMakeCheckID);
 
         this.m_loginPanel.m_btn_login.onClick(this, this.onClickLogin);
-        this.m_loginPanel.m_btn_offLine.onClick(this, this.onClickOffline);
         this.m_loginPanel.m_btn_randomLogin.onClick(this, this.onClickRandomLogin);
-        this.m_loginPanel.m_btn_testWar.onClick(this, this.onClickTestButton);
         this.m_cdkPanel.m_btn_cdk.onClick(this, this.onClickCdk);
         
 
@@ -56,9 +53,7 @@ export default class LoginWindowUI extends LoginWindowUIStruct
         this.m_panelCheckID.m_btnMake.onClick(this, this.onMakeCheckID);
 
         this.m_loginPanel.m_btn_login.offClick(this, this.onClickLogin);
-        this.m_loginPanel.m_btn_offLine.offClick(this, this.onClickOffline);
         this.m_loginPanel.m_btn_randomLogin.offClick(this, this.onClickRandomLogin);
-        this.m_loginPanel.m_btn_testWar.offClick(this, this.onClickTestButton);
         this.m_cdkPanel.m_btn_cdk.offClick(this, this.onClickCdk);
 
         Game.net.gamerLoginS2C.off(this.GamerLoginS2C, this);
@@ -159,20 +154,6 @@ export default class LoginWindowUI extends LoginWindowUIStruct
         this.m_loginPanel.account = AntFrame.RandName(2, 7);
         Game.sender.login.login(this.m_loginPanel.account, "123", true);
     }
-
-    /** 点击按钮--离线登录 */
-    private onClickOffline()
-    {
-        Laya.SoundManager.playSound(WarResId.GetSoundPath(WarResId.GetSoundBehit(1, 1)));
-        // Game.launch.enterGame();
-    }
-
-    /** 点击按钮--测试战斗 */
-    private onClickTestButton()
-    {
-        Game.launch.enterTestWar();
-    }
-
     /** 点击按钮--取消登录 */
     private onClickCancel()
     {
