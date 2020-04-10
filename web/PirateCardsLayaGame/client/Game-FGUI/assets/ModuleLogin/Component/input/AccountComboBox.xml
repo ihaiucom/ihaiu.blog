@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="500,50" opaque="false" designImageLayer="1">
+  <controller name="c1" pages="0,,1,hide" selected="0"/>
+  <displayList>
+    <image id="n15_tnlh" name="n15" src="tnlh3b" fileName="_images_pic/出售文本框.png" xy="1,0" size="500,50">
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+  </displayList>
+</component>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1334,750">
+  <controller name="Show" pages="0,Mine,1,Bulletin,2,Wx,3,Server,4,Cdk,5,CheckID" selected="0"/>
+  <displayList>
+    <component id="n0_5sas" name="screenBG" src="f84s1" fileName="ScreenBG.xml" pkg="47qsdr42" xy="667,375" pivot="0.5,0.5" anchor="true" size="1334,750">
+      <relation target="" sidePair="width-width,height-height"/>
+    </component>
+    <image id="n30_tnlh" name="n30" src="tnlh3i" fileName="_images_pic/bg_rectangle_gray.png" xy="-163,0" size="1660,750">
+      <gearDisplay controller="Show" pages="0,2,4,5"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <component id="n13_nz0c" name="loginPanel" src="nz0c1g" fileName="Component/LoginPanel.xml" xy="329,197" controller="type,0">
+      <gearDisplay controller="Show" pages="0,1"/>
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </component>
+    <component id="n25_neo6" name="wxPanel" src="neo62p" fileName="Component/WxPanel.xml" xy="428,172">
+      <gearDisplay controller="Show" pages="2"/>
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </component>
+    <component id="n27_ipa8" name="cdkPanel" src="ipa82w" fileName="Component/CdkPanel.xml" xy="329,197">
+      <gearDisplay controller="Show" pages="4"/>
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </component>
+    <component id="n28_tnlh" name="panelCheckID" src="qdfe1c" fileName="Component/CheckIDPanel.xml" xy="319,183" controller="Type,1">
+      <gearDisplay controller="Show" pages="5"/>
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </component>
+    <text id="n6_jbhb" name="txt_resVer" xy="8,717" size="366,33" hideByEditor="true" visible="false" fontSize="22" color="#333333" vAlign="middle" autoSize="none" text="ResVersion:11293239.12312.123">
+      <relation target="" sidePair="top-bottom"/>
+    </text>
+    <text id="n7_jbhb" name="txt_gamever" xy="995,717" size="322,33" hideByEditor="true" visible="false" fontSize="22" color="#333333" align="right" vAlign="middle" autoSize="none" text="GameVersion:1.0.18">
+      <relation target="" sidePair="bottom-bottom,right-right"/>
+    </text>
+    <component id="n24_rlfx" name="btnBulletin" src="nz0c1x" fileName="Component~NCode/buttons/btn_bule.xml" xy="20,23" size="146,75" hideByEditor="true" visible="false">
+      <gearDisplay controller="Show" pages="0,1"/>
+      <relation target="" sidePair="left-left,top-top"/>
+    </component>
+    <component id="n22_rlfx" name="panelBulletin" src="rlfx2m" fileName="Component/BulletinPanel.xml" xy="0,0">
+      <gearDisplay controller="Show" pages="1"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </component>
+    <component id="n26_lm61" name="panelServer" src="lm612r" fileName="Component/ServerPanel.xml" xy="0,0">
+      <gearDisplay controller="Show" pages="3"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </component>
+    <text id="n31_tq6y" name="n31" xy="666,711" pivot="0.5,0.5" anchor="true" size="1187,78" fontSize="22" color="#d0c0a7" autoSize="none" text="          抵制不良游戏 拒绝盗版游戏 注意自我保护 谨防受骗上当 适度游戏益脑 沉迷游戏伤身 合理安排时间 享受健康生活">
+      <relation target="" sidePair="width-width,bottom-bottom"/>
+    </text>
+  </displayList>
+</component>

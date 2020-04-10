@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="478,405">
+  <displayList>
+    <image id="n29_eg9p" name="n29" src="eg9p2k" fileName="_images_ui/n2.png" xy="-28,29" size="537,383" alpha="0.77"/>
+    <component id="n6_eikn" name="btn_login" src="nz0c2i" fileName="Component~NCode/buttons/btn_yellow.xml" xy="6,230" size="465,75">
+      <Button title="进入游戏"/>
+    </component>
+    <text id="n36_8e88" name="n36" xy="209,120" size="60,30" fontSize="26" color="#ffffff" text="欢迎"/>
+  </displayList>
+</component>

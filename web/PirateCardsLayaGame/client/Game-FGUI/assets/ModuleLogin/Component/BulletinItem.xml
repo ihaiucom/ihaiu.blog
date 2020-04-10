@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="600,169">
+  <displayList>
+    <image id="n15_je28" name="n15" src="je283p" fileName="_images_pic/弹窗标题 .png" xy="0,0" size="198,37" alpha="0.4"/>
+    <richtext id="n16_je28" name="labtitle" xy="12,33" pivot="0,1" anchor="true" size="149,28" fontSize="24" color="#d0c0a7" ubb="true" autoSize="none" text="限量测试开启"/>
+    <richtext id="n19_je28" name="labItem" xy="12,168" pivot="0,1" anchor="true" size="555,125" fontSize="24" color="#d0c0a7" ubb="true" autoSize="none" autoClearText="true" text="&lt;p>把编辑器钱钱钱钱钱钱&lt;/p>&#xA;&lt;p>[color=&quot;#ff0000&quot;]把编辑器钱钱钱钱钱钱[/color]&lt;/p>"/>
+  </displayList>
+</component>

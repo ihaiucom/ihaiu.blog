@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1083,670" extention="Button" designImage="ui://qjz790ecje2837" designImageOffsetX="-183" designImageOffsetY="-45" designImageAlpha="97">
+  <displayList>
+    <image id="n12_jl97" name="n12" src="je283m" fileName="_images_pic/弹窗右侧详细说明底板.png" xy="50,54" size="1018,591">
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <image id="n15_jl97" name="n15" src="je283p" fileName="_images_pic/弹窗标题 .png" xy="61,53" size="957,70"/>
+    <image id="n16_jl97" name="n16" src="je283q" fileName="_images_pic/弹窗标头.png" xy="35,34"/>
+    <loader id="n7_pwnt" name="icon" xy="52,26" pivot="0,1" size="325,102" url="ui://4698ugpkje283r" autoSize="true"/>
+    <component id="n8_pwnt" name="btn_Close" src="tnlh36" fileName="Component~NCode/CloseButton.xml" xy="956,67"/>
+    <image id="n17_a3k3" name="n17" src="tnlh3b" fileName="_images_pic/出售文本框.png" xy="269,139" size="736,454"/>
+  </displayList>
+  <Button/>
+</component>

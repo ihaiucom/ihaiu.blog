@@ -18,7 +18,7 @@ export default class EnterWarLoaderStruct extends fgui.GComponent
 	
 	public static URL:string = "ui://47qsdr42kpvww2b";
 	
-	public static DependPackages:string[] = ["GameLaunch","CommonGame"];
+	public static DependPackages:string[] = ["GameLaunch"];
 
 	
 	public static createInstance():EnterWarLoader {

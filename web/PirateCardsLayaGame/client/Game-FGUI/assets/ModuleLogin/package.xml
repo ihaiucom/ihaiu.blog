@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="4698ugpk" jpegQuality="80" compressPNG="true">
+  <resources>
+    <component id="nz0c0" name="LoginWindowUI.xml" path="/" exported="true"/>
+    <component id="nz0c1g" name="LoginPanel.xml" path="/Component/"/>
+    <component id="nz0c1h" name="AccountInput.xml" path="/Component/input/" exported="true"/>
+    <component id="nz0c1i" name="AccountComboBox.xml" path="/Component/input/"/>
+    <component id="nz0c1n" name="passwordInput.xml" path="/Component/input/" exported="true"/>
+    <component id="nz0c1z" name="RegisterPanel.xml" path="/Component/"/>
+    <component id="nz0c24" name="GuestPanel.xml" path="/Component/"/>
+    <component id="rlfx2m" name="BulletinPanel.xml" path="/Component/" exported="true"/>
+    <component id="neo62p" name="WxPanel.xml" path="/Component/"/>
+    <component id="neo62q" name="AccountShow.xml" path="/Component/input/" exported="true"/>
+    <component id="lm612r" name="ServerPanel.xml" path="/Component/" exported="true"/>
+    <component id="lm612v" name="ServerItem.xml" path="/Component/" exported="true"/>
+    <component id="ipa82w" name="CdkPanel.xml" path="/Component/"/>
+    <component id="ipa82x" name="CdkInput.xml" path="/Component/input/" exported="true"/>
+    <component id="8e882z" name="CancelPanel.xml" path="/Component/"/>
+    <component id="qdfe1c" name="CheckIDPanel.xml" path="/Component/" exported="true"/>
+    <image id="tnlh32" name="提示.png" path="/_images_pic/" exported="true"/>
+    <image id="tnlh33" name="防沉迷.png" path="/_images_pic/" exported="true"/>
+    <image id="tnlh34" name="实名.png" path="/_images_pic/" exported="true"/>
+    <image id="tnlh35" name="弹窗底板.png" path="/_images_pic/" exported="true" atlas="alone_npot"/>
+    <component id="tnlh36" name="CloseButton.xml" path="/Component~NCode/"/>
+    <image id="tnlh37" name="关闭.png" path="/_images_pic/" exported="true"/>
+    <image id="tnlh38" name="横线箭头.png" path="/_images_pic/" exported="true"/>
+    <component id="tnlh39" name="CommonButton1.xml" path="/Component~NCode/"/>
+    <image id="tnlh3a" name="按钮1.png" path="/_images_pic/" exported="true"/>
+    <image id="tnlh3b" name="出售文本框.png" path="/_images_pic/" exported="true" scale="9grid" scale9grid="4,12,2,23"/>
+    <image id="tnlh3c" name="欢乐互娱.png" path="/_images_pic/" exported="true"/>
+    <image id="tnlh3d" name="logo.png" path="/_images_pic/" exported="true" atlas="alone_npot"/>
+    <image id="tnlh3e" name="弹窗底板2.png" path="/_images_pic/" exported="true" atlas="alone_npot"/>
+    <component id="tnlh3h" name="PlaneBg.xml" path="/Component~NCode/"/>
+    <image id="tnlh3i" name="bg_rectangle_gray.png" path="/_images_pic/" exported="true"/>
+    <image id="tnlh3j" name="按钮上方横条.png" path="/_images_pic/" exported="true" scale="9grid" scale9grid="100,0,429,2" atlas="alone_npot"/>
+    <component id="je283k" name="CommonDialogBg.xml" path="/Component/" exported="true"/>
+    <image id="je283m" name="弹窗右侧详细说明底板.png" path="/_images_pic/" exported="true" scale="9grid" scale9grid="100,137,100,274" atlas="alone_npot"/>
+    <image id="je283n" name="竖页签横向拉伸.png" path="/_images_pic/" exported="true" scale="9grid" scale9grid="4,187,8,120" atlas="alone_npot"/>
+    <image id="je283o" name="tips底板渐变.png" path="/_images_pic/" exported="true" scale="9grid" scale9grid="2,20,2,50"/>
+    <image id="je283p" name="弹窗标题 .png" path="/_images_pic/" exported="true"/>
+    <image id="je283q" name="弹窗标头.png" path="/_images_pic/" exported="true"/>
+    <image id="je283r" name="游戏公告.png" path="/_images_pic/" exported="true"/>
+    <image id="je283s" name="选择服务器字.png" path="/_images_pic/" exported="true"/>
+    <image id="je283t" name="弹窗选中状态.png" path="/_images_pic/" exported="true"/>
+    <image id="je283u" name="竖页签横向拉伸2.png" path="/_images_pic/" exported="true"/>
+    <component id="je283v" name="SelectButton.xml" path="/Component~NCode/"/>
+    <component id="je283x" name="BulletinItem.xml" path="/Component/" exported="true"/>
+    <image id="je283y" name="红.png" path="/_images_pic/" exported="true"/>
+    <image id="je283z" name="黄.png" path="/_images_pic/" exported="true"/>
+    <image id="je2840" name="灰.png" path="/_images_pic/" exported="true"/>
+    <image id="je2841" name="绿.png" path="/_images_pic/" exported="true"/>
+    <image id="je2842" name="新.png" path="/_images_pic/" exported="true"/>
+    <image id="je2843" name="选择服务器.png" path="/_images_pic/" exported="true"/>
+    <image id="je2845" name="服务器点点底板.png" path="/_images_pic/" exported="true" scale="9grid" scale9grid="2,2,2,41"/>
+  </resources>
+  <publish name="ModuleLogin" genCode="true" npot="true"/>
+</packageDescription>

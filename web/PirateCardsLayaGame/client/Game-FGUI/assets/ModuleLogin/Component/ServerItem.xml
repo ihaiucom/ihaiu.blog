@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="326,67" extention="Button" designImage="ui://qjz790ecje2838" designImageOffsetX="-484" designImageOffsetY="-201" designImageAlpha="0">
+  <controller name="button" exported="true" pages="0,up,1,down,2,over,3,selectedOver" selected="0"/>
+  <controller name="State" exported="true" pages="0,火爆,1,拥挤,2,流畅,3,维护" selected="0"/>
+  <controller name="Type" pages="0,Old,1,New" selected="0"/>
+  <controller name="View" exported="true" pages="0,Server,1,Title" selected="0"/>
+  <displayList>
+    <image id="n3_je28" name="n3" src="je2843" fileName="_images_pic/选择服务器.png" xy="0,0" size="326,67">
+      <gearDisplay controller="View" pages="0"/>
+    </image>
+    <loader id="n4_je28" name="n4" xy="16,20" size="26,26" url="ui://4698ugpkje283y">
+      <gearIcon controller="State" pages="0,1,2" values="ui://4698ugpkje283y|ui://4698ugpkje283z|ui://4698ugpkje2841" default="ui://4698ugpkje2840"/>
+    </loader>
+    <text id="n2_lm61" name="labServer" xy="163,33" pivot="0.5,0.5" anchor="true" size="115,26" group="n7_je28" fontSize="22" color="#d0c0a7" align="center" vAlign="middle" singleLine="true" text="我的服务器">
+      <relation target="" sidePair="width-width,height-height"/>
+    </text>
+    <text id="n6_je28" name="labLevel" xy="286,33" pivot="0.5,0.5" anchor="true" size="49,26" group="n7_je28" fontSize="22" color="#7f1508" align="center" vAlign="middle" singleLine="true" text="10级">
+      <relation target="" sidePair="width-width,height-height"/>
+    </text>
+    <image id="n5_je28" name="n5" src="je2842" fileName="_images_pic/新.png" xy="270,-7" group="n7_je28">
+      <gearDisplay controller="Type" pages="1"/>
+    </image>
+    <group id="n7_je28" name="n7" xy="102,-7" size="233,53" advanced="true">
+      <gearDisplay controller="View" pages="0"/>
+    </group>
+    <text id="n8_je28" name="n5" xy="81,33" pivot="0.5,0.5" anchor="true" size="49,26" group="n9_je28" fontSize="22" color="#d0c0a7" align="center" vAlign="middle" singleLine="true" text="火爆">
+      <gearText controller="State" pages="0,1,2,3" values="火爆|拥挤|流畅|维护"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </text>
+    <group id="n9_je28" name="n9" xy="55,20" size="51,26" advanced="true">
+      <gearDisplay controller="View" pages="1"/>
+    </group>
+  </displayList>
+  <Button mode="Radio"/>
+</component>

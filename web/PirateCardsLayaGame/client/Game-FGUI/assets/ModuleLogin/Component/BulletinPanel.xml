@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1334,750" designImage="ui://qjz790ecje2837">
+  <controller name="Type" pages="0,Test,1,Update" selected="0"/>
+  <displayList>
+    <component id="n11_je28" name="bg" src="je283k" fileName="Component/CommonDialogBg.xml" xy="171,53"/>
+    <component id="n13_je28" name="n13" src="je283v" fileName="Component~NCode/SelectButton.xml" xy="219,194" size="213,99" controller="button,1">
+      <Button checked="true" title="玩家测试说明" controller="Type" page="0"/>
+    </component>
+    <component id="n14_je28" name="n14" src="je283v" fileName="Component~NCode/SelectButton.xml" xy="219,293" size="213,99" controller="button,0">
+      <Button title="更新内容说明" controller="Type" page="1"/>
+    </component>
+    <list id="n20_je28" name="listTest" xy="441,194" size="600,373" defaultItem="ui://4698ugpkje283x">
+      <gearDisplay controller="Type" pages="0"/>
+      <item/>
+      <item/>
+    </list>
+    <list id="n21_je28" name="listUpdate" xy="439,194" size="600,373" defaultItem="ui://4698ugpkje283x">
+      <gearDisplay controller="Type" pages="1"/>
+      <item/>
+      <item/>
+    </list>
+  </displayList>
+</component>

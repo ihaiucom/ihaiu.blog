@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="675,355" designImage="ui://qjz790ectnlh2g" designImageOffsetX="-475" designImageOffsetY="-179">
+  <controller name="type" exported="true" pages="0,normal,1,check" selected="1"/>
+  <displayList>
+    <component id="n33_tnlh" name="n33" src="tnlh3h" fileName="Component~NCode/PlaneBg.xml" xy="0,0"/>
+    <component id="n10_eikn" name="accountInput" src="nz0c1h" fileName="Component/input/AccountInput.xml" xy="88,152" size="498,50">
+      <gearXY controller="type" pages="0,1" values="88,124|88,152"/>
+    </component>
+    <component id="n32_rlfx" name="passwordInput" src="nz0c1n" fileName="Component/input/passwordInput.xml" xy="88,181" size="498,50">
+      <gearDisplay controller="type" pages="0"/>
+    </component>
+    <component id="n6_eikn" name="btn_login" src="tnlh39" fileName="Component~NCode/buttons/CommonButton1.xml" xy="245,265" size="184,53" controller="IsGray,0">
+      <Button title="登录"/>
+    </component>
+    <component id="n9_eikn" name="btn_offLine" src="nz0c1x" fileName="Component~NCode/buttons/btn_bule.xml" xy="1,322" size="206,75" hideByEditor="true" visible="false">
+      <gearDisplay controller="type" pages="0"/>
+      <Button title="离线进入"/>
+    </component>
+    <component id="n30_eg9p" name="btn_randomLogin" src="nz0c2j" fileName="Component~NCode/buttons/btn_purple.xml" xy="450,265" visible="false">
+      <Button title="随机账号"/>
+    </component>
+    <component id="n31_7efd" name="btn_testWar" src="nz0c1x" fileName="Component~NCode/buttons/btn_bule.xml" xy="0,265" size="225,75" visible="false">
+      <Button title="测试战斗"/>
+    </component>
+  </displayList>
+</component>

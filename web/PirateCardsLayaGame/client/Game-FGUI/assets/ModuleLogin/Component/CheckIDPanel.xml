@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="696,384" designImage="ui://qjz790ectzxbo" designImageOffsetX="-345" designImageOffsetY="-205" designImageAlpha="0">
+  <controller name="Type" exported="true" pages="0,,1,,2,,3," selected="1"/>
+  <displayList>
+    <image id="n8_tnlh" name="n8" src="tnlh35" fileName="_images_pic/弹窗底板.png" xy="0,0"/>
+    <component id="n1_ltul" name="btnClose" src="tnlh36" fileName="Component~NCode/CloseButton.xml" xy="628,16"/>
+    <loader id="n9_tnlh" name="n9" xy="347,41" pivot="0.5,0.5" anchor="true" size="197,48" url="ui://4698ugpktnlh34" autoSize="true">
+      <gearIcon controller="Type" pages="0,2,3" values="ui://4698ugpktnlh33|ui://4698ugpktnlh33|ui://4698ugpktnlh33" default="ui://4698ugpktnlh34"/>
+    </loader>
+    <text id="n12_tnlh" name="n12" xy="44,105" size="607,159" fontSize="25" color="#d0c0a7" autoSize="none" text="根据文化部《网络游戏管理暂行办法》的相关要求，网络游戏用户需要使用有效身份证进行实名认证。">
+      <gearText controller="Type" pages="0,1,2,3" values="您今日的游戏时间已经很长了，根据健康系统规则，由于您未进行实名认证，最多只能进行1小时的游戏体验，且无法进行充值！|根据文化部《网络游戏管理暂行办法》的相关要求，网络游戏用户需要使用有效身份证进行实名认证。|根据您的账户信息，您已被识别为未成年人，即日起您每天的游戏时长被限制为1-2小时。感谢您对街机三国一直以来的喜爱和支持，您的健康和快乐是我们最大的愿望。街机三国永远欢迎您！|按照政府部门的要求，您的账号属于未成年人，最多只能进行1小时的游戏体验，且账号无法充值，敬请谅解。"/>
+    </text>
+    <image id="n10_tnlh" name="n10" src="tnlh38" fileName="_images_pic/横线箭头.png" xy="21,284" size="654,4"/>
+    <component id="n11_tnlh" name="btnMake" src="tnlh39" fileName="Component~NCode/CommonButton1.xml" xy="256,300" controller="IsGray,0">
+      <gearText controller="Type" pages="0,2,3" values="确认|确认|确认" default="提交验证"/>
+      <Button title="提交验证"/>
+    </component>
+    <image id="n17_tnlh" name="n17" src="tnlh3b" fileName="_images_pic/出售文本框.png" xy="233,192" size="335,35" group="n21_tnlh"/>
+    <image id="n18_tnlh" name="n18" src="tnlh3b" fileName="_images_pic/出售文本框.png" xy="233,237" size="335,35" group="n21_tnlh"/>
+    <text id="n15_tnlh" name="n15" xy="127,197" size="71,26" group="n21_tnlh" fontSize="22" color="#f4b756" text="姓  名"/>
+    <text id="n16_tnlh" name="n16" xy="127,242" size="71,26" group="n21_tnlh" fontSize="22" color="#f4b756" text="身份证"/>
+    <text id="n19_tnlh" name="labName" xy="238,197" size="319,26" group="n21_tnlh" input="true" prompt="请填写真实的姓名" maxLength="20" fontSize="22" color="#d0c0a7" autoSize="none" text=""/>
+    <text id="n20_tnlh" name="labID" xy="238,242" size="319,26" group="n21_tnlh" input="true" prompt="请填写真实的身份证号码" maxLength="30" keyboardType="4" fontSize="22" color="#d0c0a7" autoSize="none" text=""/>
+    <group id="n21_tnlh" name="n22" xy="127,192" size="441,80" advanced="true">
+      <gearDisplay controller="Type" pages="1"/>
+    </group>
+  </displayList>
+</component>

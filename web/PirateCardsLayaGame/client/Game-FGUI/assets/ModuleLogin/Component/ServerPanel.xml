@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1334,750" designImage="ui://qjz790ecje2838" designImageAlpha="54">
+  <controller name="Server" pages="0,ServerOne,1,ServerList" selected="1"/>
+  <displayList>
+    <component id="n15_lm61" name="btnChange" src="lm612v" fileName="Component/ServerItem.xml" xy="505,471" group="n17_lm61" controller="button,0,State,0,View,0"/>
+    <component id="n16_lm61" name="btnStart" src="tnlh39" fileName="Component~NCode/CommonButton1.xml" xy="575,565" group="n17_lm61" controller="IsGray,0">
+      <Button title="开始游戏"/>
+    </component>
+    <image id="n25_tnlh" name="n25" src="tnlh3d" fileName="_images_pic/logo.png" xy="407,78" group="n17_lm61"/>
+    <group id="n17_lm61" name="n17" xy="407,78" size="519,540" advanced="true">
+      <gearDisplay controller="Server" pages="0"/>
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </group>
+    <component id="n28_je28" name="bg" src="je283k" fileName="Component/CommonDialogBg.xml" xy="171,53" group="n19_lm61">
+      <Button icon="ui://4698ugpkje283s"/>
+    </component>
+    <image id="n29_je28" name="n29" src="je2845" fileName="_images_pic/服务器点点底板.png" xy="453,588" size="709,45" group="n19_lm61"/>
+    <list id="n12_lm61" name="listMenu" xy="218,197" size="223,432" group="n19_lm61" overflow="scroll" lineGap="5" defaultItem="ui://4698ugpkje283v">
+      <item title="1-10区" controllers="button,1"/>
+    </list>
+    <list id="n26_je28" name="listServer" xy="453,197" size="709,391" group="n19_lm61" layout="flow_hz" overflow="scroll" lineGap="10" colGap="30" lineItemCount="2" defaultItem="ui://4698ugpklm612v">
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+      <item/>
+    </list>
+    <list id="n30_je28" name="n30" xy="453,588" size="709,67" group="n19_lm61" layout="row" overflow="scroll" colGap="-147" defaultItem="ui://4698ugpklm612v">
+      <item controllers="button,0,State,0,View,1"/>
+      <item controllers="button,0,State,1,View,1"/>
+      <item controllers="button,0,State,2,View,1"/>
+      <item controllers="button,0,State,3,View,1"/>
+    </list>
+    <group id="n19_lm61" name="n19" xy="171,53" size="1083,670" advanced="true">
+      <gearDisplay controller="Server" pages="1"/>
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </group>
+  </displayList>
+</component>

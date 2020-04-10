@@ -3,8 +3,6 @@
 // http://blog.ihaiu.com
 /////////////////////////////////////
 
-import CommonPlayerIcon from "../../Extends/CommonGame/CommonPlayerIcon";
-import ComCommonSkill from "../../Extends/CommonGame/ComCommonSkill";
 import EnterWarItem from "../../Extends/GameLaunch/EnterWarItem";
 
 export default class EnterWarItemStruct extends fgui.GComponent
@@ -13,13 +11,13 @@ export default class EnterWarItemStruct extends fgui.GComponent
 	public m_labName : fgui.GTextField;
 	public m_labLevel : fgui.GTextField;
 	public m_labProgess : fgui.GTextField;
-	public m_playerIcon : CommonPlayerIcon;
-	public m_btnTalent : ComCommonSkill;
+	public m_playerIcon : fgui.GObject;
+	public m_btnTalent : fgui.GObject;
 
 	
 	public static URL:string = "ui://47qsdr42kpvww2f";
 	
-	public static DependPackages:string[] = ["GameLaunch","CommonGame"];
+	public static DependPackages:string[] = ["GameLaunch"];
 
 	
 	public static createInstance():EnterWarItem {
@@ -43,8 +41,8 @@ export default class EnterWarItemStruct extends fgui.GComponent
 		this.m_labName = <fgui.GTextField><any>(this.getChild("labName"));
 		this.m_labLevel = <fgui.GTextField><any>(this.getChild("labLevel"));
 		this.m_labProgess = <fgui.GTextField><any>(this.getChild("labProgess"));
-		this.m_playerIcon = <CommonPlayerIcon><any>(this.getChild("playerIcon"));
-		this.m_btnTalent = <ComCommonSkill><any>(this.getChild("btnTalent"));
+		this.m_playerIcon = <fgui.GObject><any>(this.getChild("playerIcon"));
+		this.m_btnTalent = <fgui.GObject><any>(this.getChild("btnTalent"));
 		
 		
 	}

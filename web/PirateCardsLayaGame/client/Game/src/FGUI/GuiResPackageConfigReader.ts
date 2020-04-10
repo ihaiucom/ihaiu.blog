@@ -489,15 +489,6 @@ export default class GuiResPackageConfigReader
 
 		config = new GuiResPackageConfig();
             config.resDir = "fgui";
-            config.packageName = "ModuleSecretSection";
-            config.resBin = "ModuleSecretSection.bin";
-            this.addconfig(config)
-
-
-
-
-		config = new GuiResPackageConfig();
-            config.resDir = "fgui";
             config.packageName = "ModuleSetting";
             config.resBin = "ModuleSetting.bin";
             this.addconfig(config)
@@ -589,16 +580,6 @@ export default class GuiResPackageConfigReader
             config.resDir = "fgui";
             config.packageName = "SystemModuleMenu";
             config.resBin = "SystemModuleMenu.bin";
-            this.addconfig(config)
-
-
-
-
-		config = new GuiResPackageConfig();
-            config.resDir = "fgui";
-            config.packageName = "SystemModuleNewbeGuide";
-            config.resBin = "SystemModuleNewbeGuide.bin";
-            config.resAtlas.push("SystemModuleNewbeGuide_atlas0.png");
             this.addconfig(config)
 
 

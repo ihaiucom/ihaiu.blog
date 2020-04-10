@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="675,355">
+  <displayList>
+    <component id="n34_tnlh" name="n34" src="tnlh3h" fileName="Component~NCode/PlaneBg.xml" xy="0,0"/>
+    <component id="n10_eikn" name="cdkInput" src="ipa82x" fileName="Component/input/CdkInput.xml" xy="87,152"/>
+    <component id="n6_eikn" name="btn_cdk" src="tnlh39" fileName="Component~NCode/buttons/CommonButton1.xml" xy="245,265" size="184,54" controller="IsGray,0">
+      <Button title="验证"/>
+    </component>
+  </displayList>
+</component>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="478,405">
+  <displayList>
+    <image id="n29_eg9p" name="n29" src="eg9p2k" fileName="_images_ui/n2.png" xy="-28,29" size="537,383" alpha="0.77"/>
+    <component id="n6_eikn" name="btn_cancel" src="nz0c2i" fileName="Component~NCode/buttons/btn_yellow.xml" xy="7,230" size="465,75">
+      <Button title="取消"/>
+    </component>
+    <component id="n35_neo6" name="accountShow" src="neo62q" fileName="Component/input/AccountShow.xml" xy="1,101"/>
+  </displayList>
+</component>

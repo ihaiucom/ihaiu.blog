@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="500,50">
+  <displayList>
+    <component id="n23_m23g" name="accountComboBox" src="nz0c1i" fileName="Component/input/AccountComboBox.xml" xy="0,0"/>
+    <text id="n20_eikn" name="txt_cdk" xy="0,0" size="500,50" input="true" prompt="验证码" maxLength="50" restrict="a-zA-Z0-9\u0021-\u007e" fontSize="22" color="#d0c0a7" align="center" vAlign="middle" autoSize="none" strokeColor="#000000" singleLine="true" text=""/>
+  </displayList>
+</component>
