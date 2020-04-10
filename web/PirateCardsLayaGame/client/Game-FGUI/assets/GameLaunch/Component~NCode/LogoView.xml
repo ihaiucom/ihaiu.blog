@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component size="1334,750">
+<component size="970,671">
   <displayList>
-    <image id="n14_tnlh" name="n14" src="tnlhw31" fileName="_images_new/白色拉伸.png" xy="-78,-70" size="1491,890">
-      <relation target="" sidePair="width-width,height-height"/>
+    <image id="n19_sqzy" name="n19" src="sqzyz6g" fileName="Component~NCode/icon200.png" xy="485,335" pivot="0.5,0.5" anchor="true">
+      <relation target="" sidePair="center-center,middle-middle"/>
     </image>
-    <image id="n15_tnlh" name="n15" src="tnlhw32" fileName="_images_new/欢乐互娱logo.png" xy="335,281">
+    <image id="n22_sqzy" name="n22" src="sqzyz6i" fileName="Component~NCode/圆环.png" xy="484,335" pivot="0.5,0.5" anchor="true" size="304,297" alpha="0.36">
       <relation target="" sidePair="center-center,middle-middle"/>
     </image>
   </displayList>
+  <transition name="t0" autoPlay="true" autoPlayRepeat="-1">
+    <item time="0" type="Alpha" target="n19_sqzy" tween="true" startValue="0.75" endValue="1" duration="9"/>
+    <item time="0" type="Alpha" target="n22_sqzy" tween="true" startValue="0.36" endValue="0" duration="24"/>
+    <item time="0" type="Scale" target="n19_sqzy" tween="true" startValue="1.2,1.2" endValue="1,1" duration="9"/>
+    <item time="0" type="Scale" target="n22_sqzy" tween="true" startValue="0.67,0.67" endValue="1.3,1.3" duration="24"/>
+  </transition>
 </component>

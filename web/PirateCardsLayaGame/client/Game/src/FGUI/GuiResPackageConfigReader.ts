@@ -151,15 +151,8 @@ export default class GuiResPackageConfigReader
             config.packageName = "GameLaunch";
             config.resBin = "GameLaunch.bin";
             config.resAtlas.push("GameLaunch_atlas0.png");
-            config.resAtlas.push("GameLaunch_atlas_9wtpw2k.png");
             config.resAtlas.push("GameLaunch_atlas_qyvzw2s.png");
-            config.resAtlas.push("GameLaunch_atlas_tilsw3o.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw30.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw32.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw34.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw35.png");
             config.resAtlas.push("GameLaunch_atlas_tnlhw3c.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw3m.png");
             this.addconfig(config)
 
 
