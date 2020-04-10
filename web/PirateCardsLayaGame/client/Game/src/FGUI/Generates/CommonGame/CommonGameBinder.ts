@@ -1,0 +1,144 @@
+/////////////////////////////////////
+// ihaiu.ExportFairyGUICode生成
+// http://blog.ihaiu.com
+/////////////////////////////////////
+
+
+import WindowHead from "../../Extends/CommonGame/WindowHead";
+import HeroHeadIcon from "../../Extends/CommonGame/HeroHeadIcon";
+import HeroStar from "../../Extends/CommonGame/HeroStar";
+import HeadIcon from "../../Extends/CommonGame/HeadIcon";
+import ChangeNamePanel from "../../Extends/CommonGame/ChangeNamePanel";
+import WindowRed from "../../Extends/CommonGame/WindowRed";
+import DialogHeadBig from "../../Extends/CommonGame/DialogHeadBig";
+import DialogHeadMiddle from "../../Extends/CommonGame/DialogHeadMiddle";
+import DialogHeadSmall from "../../Extends/CommonGame/DialogHeadSmall";
+import BagItem from "../../Extends/CommonGame/BagItem";
+import ItemTipsMask from "../../Extends/CommonGame/ItemTipsMask";
+import ItemTips from "../../Extends/CommonGame/ItemTips";
+import ItemIconNum from "../../Extends/CommonGame/ItemIconNum";
+import EquipStar from "../../Extends/CommonGame/EquipStar";
+import HitDialog from "../../Extends/CommonGame/HitDialog";
+import InputTextField from "../../Extends/CommonGame/InputTextField";
+import HitDialog2 from "../../Extends/CommonGame/HitDialog2";
+import WindowHeadItem from "../../Extends/CommonGame/WindowHeadItem";
+import PanelBackground from "../../Extends/CommonGame/PanelBackground";
+import ItemCommon from "../../Extends/CommonGame/ItemCommon";
+import ComCommonStar from "../../Extends/CommonGame/ComCommonStar";
+import ItemEquip from "../../Extends/CommonGame/ItemEquip";
+import ItemStar from "../../Extends/CommonGame/ItemStar";
+import ItemEquipTipsDialog from "../../Extends/CommonGame/ItemEquipTipsDialog";
+import ItemEquipTips from "../../Extends/CommonGame/ItemEquipTips";
+import HeroBodyIcon from "../../Extends/CommonGame/HeroBodyIcon";
+import HeroBodyStar from "../../Extends/CommonGame/HeroBodyStar";
+import BaseRewardItem from "../../Extends/CommonGame/BaseRewardItem";
+import HorizontalStar from "../../Extends/CommonGame/HorizontalStar";
+import CommonRewardItem from "../../Extends/CommonGame/CommonRewardItem";
+import FatigueItem from "../../Extends/CommonGame/FatigueItem";
+import SectionSweepViewPanel from "../../Extends/CommonGame/SectionSweepViewPanel";
+import CommonRewardItem2 from "../../Extends/CommonGame/CommonRewardItem2";
+import SectionSweepViewPanelItem from "../../Extends/CommonGame/SectionSweepViewPanelItem";
+import SectionBuyTimesPanel from "../../Extends/CommonGame/SectionBuyTimesPanel";
+import SectionBuyTimesView from "../../Extends/CommonGame/SectionBuyTimesView";
+import SectionAwardButton from "../../Extends/CommonGame/SectionAwardButton";
+import ChapterStarTips from "../../Extends/CommonGame/ChapterStarTips";
+import ItemCommon2 from "../../Extends/CommonGame/ItemCommon2";
+import ItemCommon3 from "../../Extends/CommonGame/ItemCommon3";
+import DuelTempStar from "../../Extends/CommonGame/DuelTempStar";
+import CommonSkillButton from "../../Extends/CommonGame/CommonSkillButton";
+import DuelDanLevel from "../../Extends/CommonGame/DuelDanLevel";
+import DuelTempBackground from "../../Extends/CommonGame/DuelTempBackground";
+import PlayerHeadIcon from "../../Extends/CommonGame/PlayerHeadIcon";
+import DueltempDuelPoint from "../../Extends/CommonGame/DueltempDuelPoint";
+import DueltempTextItem from "../../Extends/CommonGame/DueltempTextItem";
+import RankTabTitle from "../../Extends/CommonGame/RankTabTitle";
+import DueltempResultPanel from "../../Extends/CommonGame/DueltempResultPanel";
+import WindowHead3 from "../../Extends/CommonGame/WindowHead3";
+import AffixCommon from "../../Extends/CommonGame/AffixCommon";
+import CommonDialogBg from "../../Extends/CommonGame/CommonDialogBg";
+import ComCommonSkill from "../../Extends/CommonGame/ComCommonSkill";
+import TeamHeroStar from "../../Extends/CommonGame/TeamHeroStar";
+import CommonPlayerIcon from "../../Extends/CommonGame/CommonPlayerIcon";
+import AffixTips from "../../Extends/CommonGame/AffixTips";
+import AffixCommonSmall from "../../Extends/CommonGame/AffixCommonSmall";
+import WindowHead2 from "../../Extends/CommonGame/WindowHead2";
+import WindowHeadItem2 from "../../Extends/CommonGame/WindowHeadItem2";
+import CommomBg from "../../Extends/CommonGame/CommomBg";
+import CommonItemBg from "../../Extends/CommonGame/CommonItemBg";
+import HeroSmallItemButton from "../../Extends/CommonGame/HeroSmallItemButton";
+import HeroStarPos from "../../Extends/CommonGame/HeroStarPos";
+import CommonRewardItem3 from "../../Extends/CommonGame/CommonRewardItem3";
+import BaseRewardItem2 from "../../Extends/CommonGame/BaseRewardItem2";
+
+export default class CommonGameBinder
+{
+	public static bindAll():void 
+	{
+		let bind = fgui.UIObjectFactory.setPackageItemExtension;
+		bind(WindowHead.URL, WindowHead);
+		bind(HeroHeadIcon.URL, HeroHeadIcon);
+		bind(HeroStar.URL, HeroStar);
+		bind(HeadIcon.URL, HeadIcon);
+		bind(ChangeNamePanel.URL, ChangeNamePanel);
+		bind(WindowRed.URL, WindowRed);
+		bind(DialogHeadBig.URL, DialogHeadBig);
+		bind(DialogHeadMiddle.URL, DialogHeadMiddle);
+		bind(DialogHeadSmall.URL, DialogHeadSmall);
+		bind(BagItem.URL, BagItem);
+		bind(ItemTipsMask.URL, ItemTipsMask);
+		bind(ItemTips.URL, ItemTips);
+		bind(ItemIconNum.URL, ItemIconNum);
+		bind(EquipStar.URL, EquipStar);
+		bind(HitDialog.URL, HitDialog);
+		bind(InputTextField.URL, InputTextField);
+		bind(HitDialog2.URL, HitDialog2);
+		bind(WindowHeadItem.URL, WindowHeadItem);
+		bind(PanelBackground.URL, PanelBackground);
+		bind(ItemCommon.URL, ItemCommon);
+		bind(ComCommonStar.URL, ComCommonStar);
+		bind(ItemEquip.URL, ItemEquip);
+		bind(ItemStar.URL, ItemStar);
+		bind(ItemEquipTipsDialog.URL, ItemEquipTipsDialog);
+		bind(ItemEquipTips.URL, ItemEquipTips);
+		bind(HeroBodyIcon.URL, HeroBodyIcon);
+		bind(HeroBodyStar.URL, HeroBodyStar);
+		bind(BaseRewardItem.URL, BaseRewardItem);
+		bind(HorizontalStar.URL, HorizontalStar);
+		bind(CommonRewardItem.URL, CommonRewardItem);
+		bind(FatigueItem.URL, FatigueItem);
+		bind(SectionSweepViewPanel.URL, SectionSweepViewPanel);
+		bind(CommonRewardItem2.URL, CommonRewardItem2);
+		bind(SectionSweepViewPanelItem.URL, SectionSweepViewPanelItem);
+		bind(SectionBuyTimesPanel.URL, SectionBuyTimesPanel);
+		bind(SectionBuyTimesView.URL, SectionBuyTimesView);
+		bind(SectionAwardButton.URL, SectionAwardButton);
+		bind(ChapterStarTips.URL, ChapterStarTips);
+		bind(ItemCommon2.URL, ItemCommon2);
+		bind(ItemCommon3.URL, ItemCommon3);
+		bind(DuelTempStar.URL, DuelTempStar);
+		bind(CommonSkillButton.URL, CommonSkillButton);
+		bind(DuelDanLevel.URL, DuelDanLevel);
+		bind(DuelTempBackground.URL, DuelTempBackground);
+		bind(PlayerHeadIcon.URL, PlayerHeadIcon);
+		bind(DueltempDuelPoint.URL, DueltempDuelPoint);
+		bind(DueltempTextItem.URL, DueltempTextItem);
+		bind(RankTabTitle.URL, RankTabTitle);
+		bind(DueltempResultPanel.URL, DueltempResultPanel);
+		bind(WindowHead3.URL, WindowHead3);
+		bind(AffixCommon.URL, AffixCommon);
+		bind(CommonDialogBg.URL, CommonDialogBg);
+		bind(ComCommonSkill.URL, ComCommonSkill);
+		bind(TeamHeroStar.URL, TeamHeroStar);
+		bind(CommonPlayerIcon.URL, CommonPlayerIcon);
+		bind(AffixTips.URL, AffixTips);
+		bind(AffixCommonSmall.URL, AffixCommonSmall);
+		bind(WindowHead2.URL, WindowHead2);
+		bind(WindowHeadItem2.URL, WindowHeadItem2);
+		bind(CommomBg.URL, CommomBg);
+		bind(CommonItemBg.URL, CommonItemBg);
+		bind(HeroSmallItemButton.URL, HeroSmallItemButton);
+		bind(HeroStarPos.URL, HeroStarPos);
+		bind(CommonRewardItem3.URL, CommonRewardItem3);
+		bind(BaseRewardItem2.URL, BaseRewardItem2);
+	}
+}

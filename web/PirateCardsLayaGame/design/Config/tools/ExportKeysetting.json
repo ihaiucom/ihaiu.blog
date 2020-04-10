@@ -1,0 +1,39 @@
+{
+  "list": 
+  [
+  	{
+  		"xlsx": "../Common/Msg.xlsx",
+  		"idField": "id",
+  		"keyField": "key",
+  		"txtModuleField": "module",
+  		"txtNameField": "name",
+  		"tplPath": "./ExportKey/Template/TS/KeyTemplate.txt",
+  		"codePath": "../../../client/client/Game/src/Config/keys/MsgKey.ts",
+  		"codeClassname": "MsgKey",
+  		"generateEmptyKey": true,
+  		"generateFullPing": true,
+  		"generateCode": false,
+  		"generateCodeNote": true,
+  		"replaceCode": false,
+  		"replaceCodeRoot": "../../../client/client/Game/src/",
+
+  	},
+    {
+      "xlsx": "../Common/BattleFormula.xlsx",
+      "idField": "id",
+      "keyField": "ParaName",
+      "txtModuleField": "",
+      "txtNameField": "ParaName",
+      "tplPath": "./ExportKey/Template/TS/KeyTemplate.txt",
+      "codePath": "../../../client/client/Game/src/Config/keys/BattleFormulaKey.ts",
+      "codeClassname": "BattleFormulaKey",
+      "generateEmptyKey": true,
+      "generateFullPing": true,
+      "generateCode": false,
+      "generateCodeNote": true,
+      "replaceCode": false,
+      "replaceCodeRoot": "../../../client/client/Game/src/",
+
+    },
+  ]
+}

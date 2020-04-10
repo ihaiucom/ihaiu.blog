@@ -1,0 +1,42 @@
+{
+  "enableoverwrites": [
+	{
+		"src":"../ExcelJson/clientConfig.json", 
+		"dst":"../../../client/Game/bin/res/config/pb/excelconfig.json"
+  	},
+	{
+		"src":"../Script/ExcelConfigTS/excelconfig.js", 
+		"dst":"../../../client/Game/bin/libs/pbconfig/excelconfig.js"
+	},
+	{
+		"src":"../Script/ExcelConfigTS/excelconfig.d.ts", 
+		"dst":"../../../client/Game/libs/excelconfig.d.ts"
+	},
+	{
+		"src":"../Script/ExcelConfigTS/excelconfig-sources.d.ts", 
+		"dst":"../../../client/Game/libs/excelconfig-sources.d.ts"
+	},
+	{
+		"src":"../Script/ExcelConfigTS/ExcelConfigLange.ts", 
+		"dst":"../../../client/Game/src/Config/ExcelConfigLange.ts"
+	},
+	{
+		"src":"../Script/ExcelConfigTS/ExcelConfigManager.ts", 
+		"dst":"../../../client/Game/src/Config/ExcelConfigManager.ts"
+	}
+  ],
+  "disableoverwrites": [
+	{
+		"src":"../Script/ExcelConfigTS/ExcelConfigReader.ts", 
+		"dst":"../../../client/Game/src/Config/ExcelConfigReader.ts"
+	},
+	{
+		"src":"../Script/ExcelConfigTS/ConfigExtends", 
+		"dst":"../../../client/Game/src/Config/ConfigExtends"
+	},
+	{
+		"src":"../Script/ExcelConfigTS/ReaderExtends", 
+		"dst":"../../../client/Game/src/Config/ReaderExtends"
+	}
+  ]
+}

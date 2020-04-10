@@ -1,0 +1,23 @@
+{
+  "enableoverwrites": [
+	{
+		"src":"../Script/ExcelConfigTS/excelconfig.js", 
+		"dst":"../../test/bin/libs/pbconfig/excelconfig.js"
+	},
+  	{
+  		"src":"../ExcelJson/excelconfig.bin", 
+  		"dst":"../../test/bin/res/config/pb/excelconfig.bin"
+	},
+	{
+		"src":"../ExcelJson/clientConfig.json", 
+		"dst":"../../test/bin/res/config/pb/excelconfig.json"
+  	},
+	{
+		"src":"../Script/ExcelConfigTS/excelconfig.js", 
+		"dst":"../../test/bin/libs/pbconfig/excelconfig.js"
+	},
+  ],
+  "disableoverwrites": [
+
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "enableoverwrites": [
+	{
+		"src":"../Script/ExcelConfigTS/excelconfig.js", 
+		"dst":"//192.168.100.205/GameJJSGWeb/fengchengyang/client/client/Game/bin/libs/pbconfig/excelconfig.js"
+	}
+  ],
+  "disableoverwrites": [
+
+  ]
+}
