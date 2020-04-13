@@ -5,7 +5,7 @@
       <relation target="" sidePair="width-width,height-height"/>
       <Label icon="ui://moe42ygrsqzy0"/>
     </component>
-    <component id="n5_sqzy" name="pausePanel" src="sqzy9a" fileName="PanelPause.xml" xy="0,0" visible="false">
+    <component id="n5_sqzy" name="pausePanel" src="sqzy9a" fileName="PanelPause.xml" xy="0,0" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
   </displayList>
