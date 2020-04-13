@@ -148,11 +148,30 @@ export default class GuiResPackageConfigReader
 
 		config = new GuiResPackageConfig();
             config.resDir = "fgui";
+            config.packageName = "GameHome";
+            config.resBin = "GameHome.bin";
+            config.sounds.push("GameHome_sqzy7p.mp3");
+            this.addconfig(config)
+
+
+
+
+		config = new GuiResPackageConfig();
+            config.resDir = "fgui";
             config.packageName = "GameLaunch";
             config.resBin = "GameLaunch.bin";
             config.resAtlas.push("GameLaunch_atlas0.png");
             config.resAtlas.push("GameLaunch_atlas_qyvzw2s.png");
             config.resAtlas.push("GameLaunch_atlas_tnlhw3c.png");
+            this.addconfig(config)
+
+
+
+
+		config = new GuiResPackageConfig();
+            config.resDir = "fgui";
+            config.packageName = "GameMain";
+            config.resBin = "GameMain.bin";
             this.addconfig(config)
 
 
@@ -522,12 +541,6 @@ export default class GuiResPackageConfigReader
             config.resDir = "fgui";
             config.packageName = "Sound";
             config.resBin = "Sound.bin";
-            config.sounds.push("Sound_i7ne2w.mp3");
-            config.sounds.push("Sound_tys94p.mp3");
-            config.sounds.push("Sound_tys94s.wav");
-            config.sounds.push("Sound_tys94t.wav");
-            config.sounds.push("Sound_tys94v.wav");
-            config.sounds.push("Sound_tys94w.wav");
             this.addconfig(config)
 
 

@@ -292,7 +292,7 @@
     <component id="sqzy87" name="BigSoundBtn.xml" path="/Btn/"/>
     <component id="sqzy88" name="MainMenuBtnBar.xml" path="/"/>
     <component id="sqzy89" name="PanelChooseHero.xml" path="/"/>
-    <component id="sqzy8a" name="WindowHome.xml" path="/"/>
+    <component id="sqzy8a" name="WindowHomeUI.xml" path="/"/>
     <component id="sqzy8b" name="MenuTopPanel.xml" path="/"/>
     <component id="sqzy8c" name="SamallHomeBtn.xml" path="/Btn/"/>
     <component id="sqzy8d" name="BigPrevBtn.xml" path="/Btn/"/>
@@ -329,8 +329,8 @@
     <component id="sqzy99" name="ShopInfoHorsehoe.xml" path="/ShopCard/"/>
     <component id="sqzy9a" name="PanelPause.xml" path="/"/>
     <component id="sqzy9b" name="BigHomeBtn.xml" path="/Btn/"/>
-    <component id="sqzy9c" name="WindowGame.xml" path="/"/>
+    <component id="sqzy9c" name="WindowGameUI.xml" path="/"/>
     <component id="sqzy9d" name="PanelResult.xml" path="/"/>
   </resources>
-  <publish name="GameHome"/>
+  <publish name="GameHome" genCode="true"/>
 </packageDescription>

@@ -20,8 +20,8 @@
             var reg = Laya.ClassUtils.regClass;
         }
     }
-    GameConfig.width = 1334;
-    GameConfig.height = 750;
+    GameConfig.width = 750;
+    GameConfig.height = 1334;
     GameConfig.screenMode = "none";
     GameConfig.alignV = Laya.Stage.ALIGN_TOP;
     GameConfig.alignH = Laya.Stage.ALIGN_CENTER;

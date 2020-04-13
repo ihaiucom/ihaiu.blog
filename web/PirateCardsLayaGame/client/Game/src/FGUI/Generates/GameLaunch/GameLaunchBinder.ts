@@ -15,6 +15,7 @@ import BGModel from "../../Extends/GameLaunch/BGModel";
 import GlobalModalWaiting from "../../Extends/GameLaunch/GlobalModalWaiting";
 import WindowModalWaiting from "../../Extends/GameLaunch/WindowModalWaiting";
 import EnterLoginLoader from "../../Extends/GameLaunch/EnterLoginLoader";
+import LogoView from "../../Extends/GameLaunch/LogoView";
 
 export default class GameLaunchBinder
 {
@@ -32,5 +33,6 @@ export default class GameLaunchBinder
 		bind(GlobalModalWaiting.URL, GlobalModalWaiting);
 		bind(WindowModalWaiting.URL, WindowModalWaiting);
 		bind(EnterLoginLoader.URL, EnterLoginLoader);
+		bind(LogoView.URL, LogoView);
 	}
 }
