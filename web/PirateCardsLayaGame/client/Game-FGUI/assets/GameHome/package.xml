@@ -330,6 +330,7 @@
     <component id="sqzy9a" name="PanelPause.xml" path="/"/>
     <component id="sqzy9b" name="BigHomeBtn.xml" path="/Btn/"/>
     <component id="sqzy9c" name="WindowGame.xml" path="/"/>
+    <component id="sqzy9d" name="PanelResult.xml" path="/"/>
   </resources>
   <publish name="GameHome"/>
 </packageDescription>

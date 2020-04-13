@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="750,1334" restrictSize="0,0,1000,0">
-  <controller name="Tab" pages="0,mainMenu,1,chooseHero,2,shop,3,chooseGameFormat" selected="0"/>
+  <controller name="Tab" pages="0,mainMenu,1,chooseHero,2,shop,3,chooseGameFormat,4,result" selected="4"/>
   <displayList>
     <component id="n0_sqzy" name="bg" src="f84s1" fileName="ScreenBG.xml" pkg="47qsdr42" xy="14,0" size="750,1334">
       <relation target="" sidePair="width-width,height-height"/>
@@ -20,6 +20,10 @@
     </component>
     <component id="n4_sqzy" name="chooseGameFormat" src="sqzy8z" fileName="PanelChooseGameFormat.xml" xy="0,0">
       <gearDisplay controller="Tab" pages="3"/>
+    </component>
+    <component id="n6_sqzy" name="result" src="sqzy9d" fileName="PanelResult.xml" xy="0,0">
+      <gearDisplay controller="Tab" pages="4"/>
+      <relation target="" sidePair="width-width,height-height"/>
     </component>
   </displayList>
 </component>
