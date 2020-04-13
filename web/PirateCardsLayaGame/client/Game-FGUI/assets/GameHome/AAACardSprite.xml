@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="98,117">
+  <controller name="sprite" exported="true" pages="2,Trap,3,Warrior,4,Health,5,Gold,6,Armor,7,Cannon,0,Barrel,8,Chest,9,Bomb,10,Poison,11,Horseshoe,1,Lightning,12,Multiplier,13,Skull" selected="0">
+    <remark page="0" value="陷阱"/>
+    <remark page="1" value="勇士"/>
+    <remark page="2" value="血瓶"/>
+    <remark page="3" value="金币"/>
+    <remark page="4" value="盔甲"/>
+    <remark page="5" value="加农炮 炮管"/>
+    <remark page="6" value="桶"/>
+    <remark page="7" value="宝箱"/>
+    <remark page="8" value="炸弹"/>
+    <remark page="9" value="毒药"/>
+    <remark page="10" value="马蹄铁"/>
+    <remark page="11" value="闪电"/>
+    <remark page="12" value="倍数"/>
+    <remark page="13" value="骷髅"/>
+  </controller>
+  <displayList>
+    <image id="n0_sqzy" name="Barrel" src="sqzy1f" fileName="sprite/game1/Barrel0000.png" xy="54,609" pivot="0.5,0.5" anchor="true"/>
+    <image id="n1_sqzy" name="Lightning" src="sqzy4k" fileName="sprite/game1/lightning0000.png" xy="59,1545" pivot="0.5,0.5" anchor="true"/>
+    <image id="n2_sqzy" name="Trap" src="sqzy16" fileName="sprite/game2/trap0000.png" xy="54,-134" pivot="0.5,0.5" anchor="true">
+      <gearDisplay controller="sprite" pages="2"/>
+    </image>
+    <image id="n4_sqzy" name="n4" src="sqzy17" fileName="sprite/game2/trap0001.png" xy="150,-196"/>
+    <image id="n3_sqzy" name="n3" src="sqzy18" fileName="sprite/game2/trap0002.png" xy="338,-152"/>
+    <image id="n5_sqzy" name="n5" src="sqzy19" fileName="sprite/game2/trap0003.png" xy="544,-150"/>
+    <image id="n6_sqzy" name="n6" src="sqzy3m" fileName="sprite/game1/health_10000.png" xy="-7,4"/>
+    <image id="n7_sqzy" name="n7" src="sqzy3n" fileName="sprite/game1/health_20000.png" xy="169,0"/>
+    <image id="n8_sqzy" name="n8" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="20,174"/>
+    <image id="n9_sqzy" name="n9" src="sqzy3d" fileName="sprite/game1/coinBag0000.png" xy="180,166"/>
+    <image id="n10_sqzy" name="n10" src="sqzy2p" fileName="sprite/game1/cannon0000.png" xy="1,425"/>
+    <component id="n11_sqzy" name="n11" src="sqzy9g" fileName="Fx/FxBarrel.xml" xy="240,600"/>
+    <movieclip id="n12_sqzy" name="n12" src="sqzy9j" fileName="Fx/MVLightning.jta" xy="195,1446"/>
+    <movieclip id="n13_sqzy" name="n13" src="sqzy9m" fileName="Fx/MVCoin.jta" xy="352,171"/>
+    <image id="n14_sqzy" name="n14" src="sqzy2z" fileName="sprite/game1/chest0000.png" xy="-13,949"/>
+    <image id="n15_sqzy" name="n15" src="sqzy30" fileName="sprite/game1/chest0001.png" xy="186,927"/>
+    <image id="n16_sqzy" name="n16" src="sqzy23" fileName="sprite/game1/bomb0000.png" xy="21,1134"/>
+    <movieclip id="n17_sqzy" name="n17" src="sqzy9q" fileName="Fx/MVBombFlame.jta" xy="97,1127"/>
+    <image id="n18_sqzy" name="n18" src="sqzy6m" fileName="sprite/game1/poison0000.png" xy="5,1248"/>
+    <movieclip id="n19_sqzy" name="n19" src="sqzy9q" fileName="Fx/MVBombFlame.jta" xy="-4,400"/>
+    <image id="n20_sqzy" name="n20" src="sqzy4b" fileName="sprite/game1/horseshoeBig0000.png" xy="11,1367"/>
+    <image id="n21_sqzy" name="n21" src="sqzy4c" fileName="sprite/game1/horseshoeSmall0000.png" xy="162,1390"/>
+    <image id="n22_sqzy" name="n22" src="sqzy65" fileName="sprite/game1/multiplier20000.png" xy="5,1663"/>
+    <image id="n23_sqzy" name="n23" src="sqzy66" fileName="sprite/game1/multiplier30000.png" xy="212,1652"/>
+    <image id="n24_sqzy" name="n24" src="sqzy11" fileName="sprite/game2/hero0000.png" xy="-7,1807"/>
+    <image id="n25_sqzy" name="n25" src="sqzy12" fileName="sprite/game2/heroBomb0000.png" xy="218,1810"/>
+    <image id="n26_sqzy" name="n26" src="sqzy13" fileName="sprite/game2/heroGun0000.png" xy="459,1821"/>
+    <image id="n27_sqzy" name="n27" src="sqzy14" fileName="sprite/game2/heroKey0000.png" xy="647,1805"/>
+    <image id="n28_sqzy" name="n28" src="sqzy6" fileName="sprite/game2/boss_10000.png" xy="-53,2001"/>
+    <image id="n29_sqzy" name="n29" src="sqzy7" fileName="sprite/game2/boss_20000.png" xy="187,1996"/>
+    <image id="n30_sqzy" name="n30" src="sqzy8" fileName="sprite/game2/boss_30000.png" xy="417,1991"/>
+    <image id="n31_sqzy" name="n31" src="sqzy9" fileName="sprite/game2/enemy_10000.png" xy="4,2219"/>
+    <image id="n32_sqzy" name="n32" src="sqzya" fileName="sprite/game2/enemy_20000.png" xy="152,2220"/>
+    <image id="n33_sqzy" name="n33" src="sqzyb" fileName="sprite/game2/enemy_30000.png" xy="320,2215"/>
+    <image id="n34_sqzy" name="n34" src="sqzyc" fileName="sprite/game2/enemy_40000.png" xy="468,2199"/>
+    <image id="n35_sqzy" name="n35" src="sqzyd" fileName="sprite/game2/enemy_50000.png" xy="18,2384"/>
+    <image id="n36_sqzy" name="n36" src="sqzye" fileName="sprite/game2/enemy_60000.png" xy="171,2375"/>
+    <image id="n37_sqzy" name="n37" src="sqzyf" fileName="sprite/game2/enemy_70000.png" xy="352,2381"/>
+    <image id="n38_sqzy" name="n38" src="sqzyg" fileName="sprite/game2/enemy_80000.png" xy="496,2388"/>
+    <movieclip id="n40_sqzy" name="n40" src="sqzy9r" fileName="Fx/MVEnemy_9_vane0000.jta" xy="648,2473"/>
+    <image id="n39_sqzy" name="n39" src="sqzyh" fileName="sprite/game2/enemy_90000.png" xy="686,2389"/>
+  </displayList>
+</component>

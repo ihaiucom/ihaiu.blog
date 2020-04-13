@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="1,1">
+  <displayList>
+    <image id="n30_sqzy" name="n30" src="sqzy1q" fileName="sprite/game1/barrelBoardRight10000.png" xy="19,-3" pivot="0.5,0.5" anchor="true"/>
+    <image id="n31_sqzy" name="n31" src="sqzy1t" fileName="sprite/game1/barrelBoardStraight20000.png" xy="-5,-3" pivot="0.5,0.5" anchor="true"/>
+    <image id="n32_sqzy" name="n32" src="sqzy1i" fileName="sprite/game1/barrelBoard20000.png" xy="-23,-23" pivot="0.5,0.5" anchor="true"/>
+    <image id="n33_sqzy" name="n33" src="sqzy1h" fileName="sprite/game1/barrelBoard100000.png" xy="-33,-21" pivot="0.5,0.5" anchor="true" rotation="8.3"/>
+    <image id="n34_sqzy" name="n34" src="sqzy1v" fileName="sprite/game1/barrelCircleLight0000.png" xy="0,-29" pivot="0.5,0.5" anchor="true"/>
+    <image id="n35_sqzy" name="n35" src="sqzy1u" fileName="sprite/game1/barrelCircleDark0000.png" xy="0,30" pivot="0.5,0.5" anchor="true"/>
+    <image id="n36_sqzy" name="n36" src="sqzy1s" fileName="sprite/game1/barrelBoardStraight10000.png" xy="-10,15" pivot="0.5,0.5" anchor="true"/>
+    <image id="n37_sqzy" name="n37" src="sqzy1m" fileName="sprite/game1/barrelBoard60000.png" xy="24,-17" pivot="0.5,0.5" anchor="true" rotation="-8.8"/>
+    <image id="n38_sqzy" name="n38" src="sqzy1r" fileName="sprite/game1/barrelBoardRight20000.png" xy="19,5" pivot="0.5,0.5" anchor="true"/>
+    <image id="n39_sqzy" name="n39" src="sqzy1k" fileName="sprite/game1/barrelBoard40000.png" xy="4,39" pivot="0.5,0.5" anchor="true"/>
+    <image id="n40_sqzy" name="n40" src="sqzy1p" fileName="sprite/game1/barrelBoard90000.png" xy="-30,40" pivot="0.5,0.5" anchor="true"/>
+    <image id="n41_sqzy" name="n41" src="sqzy1o" fileName="sprite/game1/barrelBoard80000.png" xy="-35,5" pivot="0.5,0.5" anchor="true"/>
+    <image id="n42_sqzy" name="n42" src="sqzy1n" fileName="sprite/game1/barrelBoard70000.png" xy="-23,30" pivot="0.5,0.5" anchor="true" rotation="-10.9"/>
+    <image id="n43_sqzy" name="n43" src="sqzy1l" fileName="sprite/game1/barrelBoard50000.png" xy="-23,-3" pivot="0.5,0.5" anchor="true"/>
+    <image id="n44_sqzy" name="n44" src="sqzy1x" fileName="sprite/game1/barrelIronDot0000.png" xy="0,-9" pivot="0.5,0.5" anchor="true"/>
+    <image id="n45_sqzy" name="n45" src="sqzy1x" fileName="sprite/game1/barrelIronDot0000.png" xy="0,28" pivot="0.5,0.5" anchor="true"/>
+  </displayList>
+</component>

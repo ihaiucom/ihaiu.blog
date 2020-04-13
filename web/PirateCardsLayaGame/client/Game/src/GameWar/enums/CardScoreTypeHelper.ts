@@ -1,4 +1,5 @@
 import { CardScoreType } from "./CardScoreType";
+import ArrayUtils from "../ArrayUtils";
 
 export default class CardScoreTypeHelper
 {
@@ -26,13 +27,22 @@ export default class CardScoreTypeHelper
         cardScoreType == CardScoreType.Skull;
     }
 
-    static getRandomItem(list)
-    {
-
-    }
 
     static getRandomFromChest()
     {
-        
+        return ArrayUtils.getRandomItem(this.itemsFromChest)
+    }
+
+    
+    static getRandomPowerUpFromBarrel()
+    {
+        return ArrayUtils.getRandomItem(this.itemsFromBarrel)
+    }
+
+    
+    static getRandomPowerUp()
+    {
+        return ArrayUtils.getRandomItem(this.powerUps)
     }
 }
+

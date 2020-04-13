@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="209,229">
+  <controller name="CardBackgroundType" exported="true" pages="0,Default,1,Warrior,2,Hero,3,PowerUp" selected="3">
+    <remark page="0" value="默认"/>
+    <remark page="1" value="敌人"/>
+    <remark page="2" value="英雄"/>
+    <remark page="3" value="能量升级"/>
+  </controller>
+  <displayList>
+    <loader id="n1_sqzy" name="bg" xy="104,114" pivot="0.5,0.5" anchor="true" size="209,229" url="ui://moe42ygrsqzy2t">
+      <gearIcon controller="CardBackgroundType" pages="2,3" values="ui://moe42ygrsqzy2s|ui://moe42ygrsqzy2t" default="ui://moe42ygrsqzy2r"/>
+    </loader>
+    <component id="n2_sqzy" name="n2" src="sqzy9u" fileName="Card/CardLifeHero.xml" xy="11,13"/>
+  </displayList>
+</component>

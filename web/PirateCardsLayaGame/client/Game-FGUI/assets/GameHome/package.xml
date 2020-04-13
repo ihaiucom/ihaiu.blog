@@ -102,7 +102,7 @@
     <image id="sqzy2s" name="cardBackrounds0002.png" path="/sprite/game1/"/>
     <image id="sqzy2t" name="cardBackrounds0003.png" path="/sprite/game1/"/>
     <image id="sqzy2u" name="cardLifeCircle0000.png" path="/sprite/game1/"/>
-    <image id="sqzy2v" name="cardLifeCircle0001.png" path="/sprite/game1/"/>
+    <image id="sqzy2v" name="cardLifeCircle0001.png" path="/sprite/game1/" scale="" scale9grid="27,16,54,32"/>
     <image id="sqzy2w" name="cardPowerUpCircle0000.png" path="/sprite/game1/"/>
     <image id="sqzy2x" name="cardPowerUpCircle0001.png" path="/sprite/game1/"/>
     <image id="sqzy2y" name="check0000.png" path="/sprite/game1/"/>
@@ -213,7 +213,7 @@
     <image id="sqzy5v" name="medal0000.png" path="/sprite/game1/"/>
     <image id="sqzy5w" name="medal0001.png" path="/sprite/game1/"/>
     <image id="sqzy5x" name="menuPanel0000.png" path="/sprite/game1/"/>
-    <image id="sqzy5y" name="menuStar0000.png" path="/sprite/game1/"/>
+    <image id="sqzy5y" name="menuStar0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy5z" name="mouse_click0000.png" path="/sprite/game1/"/>
     <image id="sqzy60" name="mouse_click0001.png" path="/sprite/game1/"/>
     <image id="sqzy61" name="mouse_click0002.png" path="/sprite/game1/"/>
@@ -332,6 +332,34 @@
     <component id="sqzy9c" name="WindowWarUI.xml" path="/" exported="true"/>
     <component id="sqzy9d" name="PanelResult.xml" path="/"/>
     <component id="sqzy9e" name="MenuTopPanelWar.xml" path="/"/>
+    <movieclip id="sqzy9f" name="MVArm.jta" path="/Fx/"/>
+    <component id="sqzy9g" name="FxBarrel.xml" path="/Fx/"/>
+    <component id="sqzy9h" name="AAACardSprite.xml" path="/"/>
+    <movieclip id="sqzy9i" name="MVHeartSmall.jta" path="/Fx/"/>
+    <movieclip id="sqzy9j" name="MVLightning.jta" path="/Fx/"/>
+    <movieclip id="sqzy9k" name="MVLockBombLamp.jta" path="/Fx/"/>
+    <movieclip id="sqzy9l" name="MVBoom.jta" path="/Fx/"/>
+    <movieclip id="sqzy9m" name="MVCoin.jta" path="/Fx/"/>
+    <movieclip id="sqzy9n" name="MVMouseClick.jta" path="/Fx/"/>
+    <movieclip id="sqzy9o" name="MVSkull.jta" path="/Fx/"/>
+    <movieclip id="sqzy9p" name="MVSmoke.jta" path="/Fx/"/>
+    <movieclip id="sqzy9q" name="MVBombFlame.jta" path="/Fx/"/>
+    <movieclip id="sqzy9r" name="MVEnemy_9_vane0000.jta" path="/Fx/"/>
+    <component id="sqzy9s" name="CardView.xml" path="/Card/"/>
+    <component id="sqzy9t" name="CardFrontView.xml" path="/Card/"/>
+    <component id="sqzy9u" name="CardLifeHero.xml" path="/Card/"/>
+    <component id="sqzy9v" name="CardViewFrontHero.xml" path="/Card/"/>
+    <component id="sqzy9w" name="CardViewFrontWarriow.xml" path="/Card/"/>
+    <component id="sqzy9x" name="CardLifeWarriow.xml" path="/Card/"/>
+    <component id="sqzy9y" name="CardViewFrontPowerUp.xml" path="/Card/"/>
+    <component id="sqzy9z" name="CardLifePowerUp.xml" path="/Card/"/>
+    <component id="sqzya0" name="CardShield.xml" path="/Card/"/>
+    <component id="sqzya1" name="CardShopBar.xml" path="/Card/"/>
+    <component id="sqzya2" name="CardViewBack.xml" path="/Card/"/>
+    <component id="sqzya3" name="CardViewFrontWarriowEnemy.xml" path="/Card/"/>
+    <component id="sqzya4" name="SpriteEnemy.xml" path="/Card/"/>
+    <component id="sqzya5" name="SpriteBoss.xml" path="/Card/"/>
+    <component id="sqzya6" name="CardViewFrontWarriowBoss.xml" path="/Card/"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

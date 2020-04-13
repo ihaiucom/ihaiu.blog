@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="128,165" extention="Label">
+  <controller name="sprite" exported="true" pages="0,Enemy01,1,Enemy02,2,Enemy03,3,Enemy04,4,Enemy05,5,Enemy06,6,Enemy07,7,Enemy08,8,Enemy09" selected="8"/>
+  <displayList>
+    <loader id="n0_sqzy" name="icon" xy="0,0" pivot="0.5,1" size="128,165" url="ui://moe42ygrsqzyh" align="center" vAlign="bottom">
+      <gearIcon controller="sprite" pages="0,1,2,3,4,5,6,7,8" values="ui://moe42ygrsqzy9|ui://moe42ygrsqzya|ui://moe42ygrsqzyb|ui://moe42ygrsqzyc|ui://moe42ygrsqzyd|ui://moe42ygrsqzye|ui://moe42ygrsqzyf|ui://moe42ygrsqzyg|ui://moe42ygrsqzyh"/>
+    </loader>
+  </displayList>
+  <transition name="t0" autoPlay="true" autoPlayRepeat="-1">
+    <item time="0" type="Scale" target="n0_sqzy" tween="true" startValue="1,1" endValue="1,0.97" duration="24"/>
+    <item time="24" type="Scale" target="n0_sqzy" tween="true" startValue="1,0.97" endValue="1,1" duration="24"/>
+  </transition>
+</component>

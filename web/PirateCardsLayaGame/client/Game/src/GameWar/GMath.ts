@@ -314,12 +314,12 @@ export default class GMath
         Math.sqrt(Math.pow(i - t, n) + Math.pow(s - e, n))
     }
 
-    static clamp(t, e, i) {
-        return t < e ? e: i < t ? i: t
+    static clamp(v, min, max) {
+        return v < min ? min: max < v ? max: v
     }
 
-    static clampBottom(t, e) {
-        return t < e ? e: t
+    static clampBottom(val, min) {
+        return val < min ? min: val
     }
 
     static within(t, e, i) {

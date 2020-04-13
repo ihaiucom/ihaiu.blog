@@ -5,11 +5,13 @@
       <relation target="" sidePair="width-width,height-height"/>
       <Label icon="ui://moe42ygrsqzy0"/>
     </component>
+    <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="65,50" locked="true">
+      <relation target="" sidePair="center-center,top-top%"/>
+    </component>
+    <movieclip id="n10_sqzy" name="arm" src="sqzy9f" fileName="Fx/MVArm.jta" xy="1021,529" pivot="0.29,0.07" anchor="true" locked="true" visible="false" playing="false"/>
     <component id="n5_sqzy" name="pausePanel" src="sqzy9a" fileName="PanelPause.xml" xy="0,0" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
-    <component id="n6_sqzy" name="n6" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="65,50">
-      <relation target="" sidePair="center-center,top-top%"/>
-    </component>
+    <component id="n11_sqzy" name="n11" src="sqzy9g" fileName="Fx/FxBarrel.xml" xy="198,-154"/>
   </displayList>
 </component>
