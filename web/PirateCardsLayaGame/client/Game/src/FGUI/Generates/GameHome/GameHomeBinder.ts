@@ -12,6 +12,11 @@ import PanelChooseGameFormat from "../../Extends/GameHome/PanelChooseGameFormat"
 import PanelPause from "../../Extends/GameHome/PanelPause";
 import WindowWarUI from "../../Extends/GameHome/WindowWarUI";
 import PanelResult from "../../Extends/GameHome/PanelResult";
+import MenuTopPanelWar from "../../Extends/GameHome/MenuTopPanelWar";
+import FxBarrel from "../../Extends/GameHome/FxBarrel";
+import CardViewFrontHero from "../../Extends/GameHome/CardViewFrontHero";
+import CardViewFrontWarriowEnemy from "../../Extends/GameHome/CardViewFrontWarriowEnemy";
+import CardViewFrontWarriowBoss from "../../Extends/GameHome/CardViewFrontWarriowBoss";
 
 export default class GameHomeBinder
 {
@@ -26,5 +31,10 @@ export default class GameHomeBinder
 		bind(PanelPause.URL, PanelPause);
 		bind(WindowWarUI.URL, WindowWarUI);
 		bind(PanelResult.URL, PanelResult);
+		bind(MenuTopPanelWar.URL, MenuTopPanelWar);
+		bind(FxBarrel.URL, FxBarrel);
+		bind(CardViewFrontHero.URL, CardViewFrontHero);
+		bind(CardViewFrontWarriowEnemy.URL, CardViewFrontWarriowEnemy);
+		bind(CardViewFrontWarriowBoss.URL, CardViewFrontWarriowBoss);
 	}
 }

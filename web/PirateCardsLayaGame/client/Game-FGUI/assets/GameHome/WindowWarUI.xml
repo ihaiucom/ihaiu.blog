@@ -13,5 +13,8 @@
       <relation target="" sidePair="width-width,height-height"/>
     </component>
     <component id="n11_sqzy" name="n11" src="sqzy9g" fileName="Fx/FxBarrel.xml" xy="198,-154"/>
+    <component id="n12_sqzy" name="n12" src="sqzya6" fileName="Card/CardViewFrontWarriowBoss.xml" xy="218,375"/>
+    <component id="n13_sqzy" name="n13" src="sqzya3" fileName="Card/CardViewFrontWarriowEnemy.xml" xy="276,708"/>
+    <component id="n14_sqzy" name="n14" src="sqzy9v" fileName="Card/CardViewFrontHero.xml" xy="-46,378"/>
   </displayList>
 </component>
