@@ -38,7 +38,7 @@ export default class MenuConfig extends MenuConfigLang
     {
         switch(this.menuId)
         {
-            case MenuId.WarWindowUI:
+            case MenuId.War:
             case MenuId.BattleResultWindow:
                 return LoaderId.None;
         }

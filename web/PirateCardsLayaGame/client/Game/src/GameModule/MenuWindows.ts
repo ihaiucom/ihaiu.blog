@@ -2,6 +2,8 @@ import { MenuId } from "./MenuId";
 import ModuleConfig from "../GameFrame/Module/ModuleConfig";
 import MWindow from "../GameFrame/Module/MWindow";
 import LoginWindow from "./ViewWindows/LoginWindow";
+import HomeWindow from "./ViewWindows/HomeWindow";
+import WarWindow from "./ViewWindows/WarWindow";
 
 
 //======================
@@ -30,5 +32,7 @@ export default class MenuWindows {
     static install() {
 
         MenuWindows.add(MenuId.Login, LoginWindow);
+        MenuWindows.add(MenuId.Home, HomeWindow);
+        MenuWindows.add(MenuId.War, WarWindow);
     }
 }

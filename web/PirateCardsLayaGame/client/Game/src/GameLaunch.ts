@@ -124,13 +124,14 @@ export default class GameLaunch
 		  window['launcherInitBG'].removeSelf();
 		}
 		
+		Game.loader.closeAll();
 		if(callback)
 		{
 			callback();
 		}
 		else
 		{
-			// Game.menu.open(MenuId.Login);
+			Game.menu.open(MenuId.War);
 		}
 
 
@@ -252,7 +253,7 @@ export default class GameLaunch
 		// 绑定组件
 		GuiBinderList.fguiBinderAll();
 		// 设置按钮声音
-		fgui.UIConfig.buttonSound = SoundKey.getUrl(SoundKey.MM01_Button);
+		fgui.UIConfig.buttonSound = "ui://moe42ygrsqzy7p";
 		//设置字体
 		fgui.UIConfig.defaultFont = "_sans";
 		

@@ -247,7 +247,7 @@ export default class MenuManager
     {
         for (let i = this.stack.length - 1; i >= 0; i--)
         {
-            if (this.stack[i].menuId != MenuId.WarWindowUI)
+            if (this.stack[i].menuId != MenuId.War)
             {
                 this.stack[i].close();
             }

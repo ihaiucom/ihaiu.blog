@@ -12,7 +12,6 @@ export default class GuiPackageNames
 
 	public static GameHome : string = "GameHome";
 	public static GameLaunch : string = "GameLaunch";
-	public static GameMain : string = "GameMain";
 	public static ModuleLogin : string = "ModuleLogin";
 	public static Sound : string = "Sound";
 

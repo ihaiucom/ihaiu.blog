@@ -150,6 +150,8 @@ export default class GuiResPackageConfigReader
             config.resDir = "fgui";
             config.packageName = "GameHome";
             config.resBin = "GameHome.bin";
+            config.resAtlas.push("GameHome_atlas0.png");
+            config.resAtlas.push("GameHome_atlas0_1.png");
             config.sounds.push("GameHome_sqzy7p.mp3");
             this.addconfig(config)
 

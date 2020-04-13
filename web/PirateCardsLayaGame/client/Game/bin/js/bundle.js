@@ -77,6 +77,7 @@
     (function (MenuId) {
         MenuId[MenuId["Notice"] = 0] = "Notice";
         MenuId[MenuId["Home"] = 100] = "Home";
+        MenuId[MenuId["War"] = 601] = "War";
         MenuId[MenuId["Login"] = 101] = "Login";
         MenuId[MenuId["Plot"] = 102] = "Plot";
         MenuId[MenuId["Gashapon"] = 200] = "Gashapon";
@@ -94,29 +95,6 @@
         MenuId[MenuId["Mail"] = 501] = "Mail";
         MenuId[MenuId["Rank"] = 502] = "Rank";
         MenuId[MenuId["PlayerInfo"] = 503] = "PlayerInfo";
-        MenuId[MenuId["Welfare"] = 601] = "Welfare";
-        MenuId[MenuId["Power"] = 700] = "Power";
-        MenuId[MenuId["Money"] = 701] = "Money";
-        MenuId[MenuId["Gold"] = 702] = "Gold";
-        MenuId[MenuId["DraugCoin"] = 703] = "DraugCoin";
-        MenuId[MenuId["RollCoin"] = 704] = "RollCoin";
-        MenuId[MenuId["SecretLandRoll"] = 704] = "SecretLandRoll";
-        MenuId[MenuId["SubMenuButtonBegin"] = 100000] = "SubMenuButtonBegin";
-        MenuId[MenuId["SubMenuSectionDetail"] = 1000001] = "SubMenuSectionDetail";
-        MenuId[MenuId["DuelTemp"] = 401002] = "DuelTemp";
-        MenuId[MenuId["BattleMatch"] = 1000002] = "BattleMatch";
-        MenuId[MenuId["WarWindowUI"] = 1000003] = "WarWindowUI";
-        MenuId[MenuId["BattleResultWindow"] = 1000004] = "BattleResultWindow";
-        MenuId[MenuId["PlayerLevelUpWindow"] = 503001] = "PlayerLevelUpWindow";
-        MenuId[MenuId["NewSeasonWindow"] = 1000005] = "NewSeasonWindow";
-        MenuId[MenuId["SecretBook"] = 402100] = "SecretBook";
-        MenuId[MenuId["SecretBookListWindow"] = 402101] = "SecretBookListWindow";
-        MenuId[MenuId["SecretBookDetailWindow"] = 402102] = "SecretBookDetailWindow";
-        MenuId[MenuId["SecretLand"] = 402200] = "SecretLand";
-        MenuId[MenuId["SecretLandAffix"] = 402201] = "SecretLandAffix";
-        MenuId[MenuId["AffixTips"] = 402202] = "AffixTips";
-        MenuId[MenuId["SecretLandReady"] = 402203] = "SecretLandReady";
-        MenuId[MenuId["CommonSkill"] = 900] = "CommonSkill";
     })(MenuId || (MenuId = {}));
     window["MenuId"] = MenuId;
 
@@ -755,7 +733,6 @@
     }
     GuiPackageNames.GameHome = "GameHome";
     GuiPackageNames.GameLaunch = "GameLaunch";
-    GuiPackageNames.GameMain = "GameMain";
     GuiPackageNames.ModuleLogin = "ModuleLogin";
     GuiPackageNames.Sound = "Sound";
 
@@ -2644,6 +2621,93 @@
         }
     }
 
+    class WindowHomeUIStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "WindowHomeUI"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_Tab = this.getController("Tab");
+            this.m_bg = (this.getChild("bg"));
+            this.m_mainMenu = (this.getChild("mainMenu"));
+            this.m_chooseHero = (this.getChild("chooseHero"));
+            this.m_shop = (this.getChild("shop"));
+            this.m_chooseGameFormat = (this.getChild("chooseGameFormat"));
+            this.m_result = (this.getChild("result"));
+        }
+    }
+    WindowHomeUIStruct.URL = "ui://moe42ygrsqzy8a";
+    WindowHomeUIStruct.DependPackages = ["GameHome", "GameLaunch"];
+
+    class WindowHomeUI extends WindowHomeUIStruct {
+    }
+
+    class HomeWindow extends MWindow {
+        constructor() {
+            super();
+            this.addAssetForFguiComponent(WindowHomeUI);
+        }
+        generateAssetsForDynmic() {
+            super.generateAssetsForDynmic();
+        }
+        onMenuCreate() {
+            let windowUI = WindowHomeUI.createInstance();
+            this.conent = windowUI;
+            this.contentPane = windowUI;
+            super.onMenuCreate();
+        }
+        onShowComplete() {
+            super.onShowComplete();
+        }
+        onHideComplete() {
+            super.onHideComplete();
+        }
+    }
+
+    class WindowWarUIStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "WindowWarUI"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_pausePanel = (this.getChild("pausePanel"));
+        }
+    }
+    WindowWarUIStruct.URL = "ui://moe42ygrsqzy9c";
+    WindowWarUIStruct.DependPackages = ["GameHome", "GameLaunch"];
+
+    class WindowWarUI extends WindowWarUIStruct {
+    }
+
+    class WarWindow extends MWindow {
+        constructor() {
+            super();
+            this.addAssetForFguiComponent(WindowWarUI);
+        }
+        generateAssetsForDynmic() {
+            super.generateAssetsForDynmic();
+        }
+        onMenuCreate() {
+            let windowUI = WindowWarUI.createInstance();
+            this.conent = windowUI;
+            this.contentPane = windowUI;
+            super.onMenuCreate();
+        }
+        onShowComplete() {
+            super.onShowComplete();
+        }
+        onHideComplete() {
+            super.onHideComplete();
+        }
+    }
+
     class MenuWindows {
         static get dict() {
             if (!this._dict) {
@@ -2659,6 +2723,8 @@
         }
         static install() {
             MenuWindows.add(MenuId.Login, LoginWindow);
+            MenuWindows.add(MenuId.Home, HomeWindow);
+            MenuWindows.add(MenuId.War, WarWindow);
         }
     }
 
@@ -2674,7 +2740,7 @@
         }
         get menuLoaderId() {
             switch (this.menuId) {
-                case MenuId.WarWindowUI:
+                case MenuId.War:
                 case MenuId.BattleResultWindow:
                     return LoaderId.None;
             }
@@ -4423,11 +4489,24 @@
             this.addconfig(config);
             config = new GuiResPackageConfig();
             config.resDir = "fgui";
+            config.packageName = "GameHome";
+            config.resBin = "GameHome.bin";
+            config.resAtlas.push("GameHome_atlas0.png");
+            config.resAtlas.push("GameHome_atlas0_1.png");
+            config.sounds.push("GameHome_sqzy7p.mp3");
+            this.addconfig(config);
+            config = new GuiResPackageConfig();
+            config.resDir = "fgui";
             config.packageName = "GameLaunch";
             config.resBin = "GameLaunch.bin";
             config.resAtlas.push("GameLaunch_atlas0.png");
             config.resAtlas.push("GameLaunch_atlas_qyvzw2s.png");
             config.resAtlas.push("GameLaunch_atlas_tnlhw3c.png");
+            this.addconfig(config);
+            config = new GuiResPackageConfig();
+            config.resDir = "fgui";
+            config.packageName = "GameMain";
+            config.resBin = "GameMain.bin";
             this.addconfig(config);
             config = new GuiResPackageConfig();
             config.resDir = "fgui";
@@ -4653,12 +4732,6 @@
             config.resDir = "fgui";
             config.packageName = "Sound";
             config.resBin = "Sound.bin";
-            config.sounds.push("Sound_i7ne2w.mp3");
-            config.sounds.push("Sound_tys94p.mp3");
-            config.sounds.push("Sound_tys94s.wav");
-            config.sounds.push("Sound_tys94t.wav");
-            config.sounds.push("Sound_tys94v.wav");
-            config.sounds.push("Sound_tys94w.wav");
             this.addconfig(config);
             config = new GuiResPackageConfig();
             config.resDir = "fgui";
@@ -5495,7 +5568,7 @@
         }
         closeAll() {
             for (let i = this.stack.length - 1; i >= 0; i--) {
-                if (this.stack[i].menuId != MenuId.WarWindowUI) {
+                if (this.stack[i].menuId != MenuId.War) {
                     this.stack[i].close();
                 }
             }
@@ -9951,6 +10024,152 @@
         }
     }
 
+    class PanelMainMenuStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PanelMainMenu"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_menuLogo = (this.getChild("menuLogo"));
+            this.m_btnBar = (this.getChild("btnBar"));
+        }
+    }
+    PanelMainMenuStruct.URL = "ui://moe42ygrsqzy7q";
+    PanelMainMenuStruct.DependPackages = ["GameHome"];
+
+    class PanelMainMenu extends PanelMainMenuStruct {
+    }
+
+    class PanelChooseHeroStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PanelChooseHero"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_btnGroup = (this.getChild("btnGroup"));
+            this.m_heroGroup = (this.getChild("heroGroup"));
+            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
+            this.m_playBtn = (this.getChild("playBtn"));
+            this.m_plusBtn = (this.getChild("plusBtn"));
+            this.m_nextHeroBtn = (this.getChild("nextHeroBtn"));
+            this.m_prevHeroBtn = (this.getChild("prevHeroBtn"));
+            this.m_choiceHero = (this.getChild("choiceHero"));
+        }
+    }
+    PanelChooseHeroStruct.URL = "ui://moe42ygrsqzy89";
+    PanelChooseHeroStruct.DependPackages = ["GameHome"];
+
+    class PanelChooseHero extends PanelChooseHeroStruct {
+    }
+
+    class PanelShopStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PanelShop"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
+            this.m_playBtn = (this.getChild("playBtn"));
+        }
+    }
+    PanelShopStruct.URL = "ui://moe42ygrsqzy8y";
+    PanelShopStruct.DependPackages = ["GameHome"];
+
+    class PanelShop extends PanelShopStruct {
+    }
+
+    class PanelChooseGameFormatStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PanelChooseGameFormat"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_formatGroup = (this.getChild("formatGroup"));
+            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
+            this.m_format3x3 = (this.getChild("format3x3"));
+            this.m_format4x4 = (this.getChild("format4x4"));
+        }
+    }
+    PanelChooseGameFormatStruct.URL = "ui://moe42ygrsqzy8z";
+    PanelChooseGameFormatStruct.DependPackages = ["GameHome"];
+
+    class PanelChooseGameFormat extends PanelChooseGameFormatStruct {
+    }
+
+    class PanelPauseStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PanelPause"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_btnGroup = (this.getChild("btnGroup"));
+            this.m_bg = (this.getChild("bg"));
+            this.m_logo = (this.getChild("logo"));
+            this.m_homeBtn = (this.getChild("homeBtn"));
+            this.m_soundBtn = (this.getChild("soundBtn"));
+            this.m_resumeBtn = (this.getChild("resumeBtn"));
+        }
+    }
+    PanelPauseStruct.URL = "ui://moe42ygrsqzy9a";
+    PanelPauseStruct.DependPackages = ["GameHome", "GameLaunch"];
+
+    class PanelPause extends PanelPauseStruct {
+    }
+
+    class PanelResultStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PanelResult"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_btnGroup = (this.getChild("btnGroup"));
+            this.m_resultBg = (this.getChild("resultBg"));
+            this.m_coinCurrent = (this.getChild("coinCurrent"));
+            this.m_coinMax = (this.getChild("coinMax"));
+            this.m_resultGroup = (this.getChild("resultGroup"));
+            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
+            this.m_homeBtn = (this.getChild("homeBtn"));
+            this.m_playBtn = (this.getChild("playBtn"));
+        }
+    }
+    PanelResultStruct.URL = "ui://moe42ygrsqzy9d";
+    PanelResultStruct.DependPackages = ["GameHome"];
+
+    class PanelResult extends PanelResultStruct {
+    }
+
+    class GameHomeBinder {
+        static bindAll() {
+            let bind = fgui.UIObjectFactory.setPackageItemExtension;
+            bind(PanelMainMenu.URL, PanelMainMenu);
+            bind(PanelChooseHero.URL, PanelChooseHero);
+            bind(WindowHomeUI.URL, WindowHomeUI);
+            bind(PanelShop.URL, PanelShop);
+            bind(PanelChooseGameFormat.URL, PanelChooseGameFormat);
+            bind(PanelPause.URL, PanelPause);
+            bind(WindowWarUI.URL, WindowWarUI);
+            bind(PanelResult.URL, PanelResult);
+        }
+    }
+
     class ScreenBGStruct extends fgui.GLabel {
         constructor() {
             super();
@@ -10069,6 +10288,24 @@
     class WindowModalWaiting extends WindowModalWaitingStruct {
     }
 
+    class LogoViewStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameLaunch", "LogoView"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_t0 = this.getTransition("t0");
+        }
+    }
+    LogoViewStruct.URL = "ui://47qsdr42tnlhw2t";
+    LogoViewStruct.DependPackages = ["GameLaunch"];
+
+    class LogoView extends LogoViewStruct {
+    }
+
     class GameLaunchBinder {
         static bindAll() {
             let bind = fgui.UIObjectFactory.setPackageItemExtension;
@@ -10083,6 +10320,7 @@
             bind(GlobalModalWaiting.URL, GlobalModalWaiting);
             bind(WindowModalWaiting.URL, WindowModalWaiting);
             bind(EnterLoginLoader.URL, EnterLoginLoader);
+            bind(LogoView.URL, LogoView);
         }
     }
 
@@ -10568,6 +10806,7 @@
 
     class GuiBinderList {
         static fguiBinderAll() {
+            GameHomeBinder.bindAll();
             GameLaunchBinder.bindAll();
             ModuleLoginBinder.bindAll();
             SoundBinder.bindAll();
@@ -10666,8 +10905,12 @@
             if (window['launcherInitBG']) {
                 window['launcherInitBG'].removeSelf();
             }
+            Game.loader.closeAll();
             if (callback) {
                 callback();
+            }
+            else {
+                Game.menu.open(MenuId.War);
             }
         }
         loadVersion() {
@@ -10730,7 +10973,7 @@
             fgui.UIConfig.packageFileExtension = GuiSetting.packageFileExtension;
             fgui.UIObjectFactory.setLoaderExtension(FGLoader);
             GuiBinderList.fguiBinderAll();
-            fgui.UIConfig.buttonSound = SoundKey.getUrl(SoundKey.MM01_Button);
+            fgui.UIConfig.buttonSound = "ui://moe42ygrsqzy7p";
             fgui.UIConfig.defaultFont = "_sans";
             let packageConfig = await Game.asset.loadFguiByPackagenameAsync(GuiPackageNames.GameLaunch);
             GuiSetting.addPackage(packageConfig.packagePath);

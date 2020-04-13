@@ -11,6 +11,8 @@ export enum MenuId
     /*---------无按钮 1------ */
     /** 主界面 */
     Home = 100,
+    /** 战斗 */
+    War = 601,
 
     /** 登录 */
     Login = 101,
@@ -63,82 +65,13 @@ export enum MenuId
     /** 角色信息 */
     PlayerInfo = 503,
 
-    
-    /*---------方位左上 6------ */
-    /** 福利(明日可取) */
-    Welfare = 601,
 
-
-    /*---------方位右上 7------ */
-    /** 体力 */
-    Power = 700,
-    
-    /** 金币 */
-    Money = 701,
-
-    /** 元宝 */
-    Gold = 702,
-
-    /** 战魂币 */
-    DraugCoin = 703,
-
-    /** roll币 */
-    RollCoin = 704,
-
-    
-    /** roll币 */
-    SecretLandRoll = 704,
-    /*------------- 主菜单  ------------ */
-
-
-    
     
 
     
 
     
 
-
-   
-
-    /*------------- 子菜单组  ------------ */
-    SubMenuButtonBegin = 100000,
-
-    SubMenuSectionDetail = 1000001,
-
-    DuelTemp = 401002,
-
-    /** 多人匹配 */
-    BattleMatch = 1000002,
-    /** 战斗界面 */
-    WarWindowUI = 1000003,
-    /** 战斗结果 */
-    BattleResultWindow = 1000004,
-
-    /** 战队升级 */
-    PlayerLevelUpWindow = 503001,
-    /** 赛季更新 */
-    NewSeasonWindow = 1000005,
-
-    /***************** 战役  ****************** */
-    /**秘闻本主界面 */
-    SecretBook = 402100,
-    /** 秘闻本列表 */
-    SecretBookListWindow = 402101,
-    /** 秘闻本详情 */
-    SecretBookDetailWindow = 402102,
-    /** 大秘境主界面 */
-    SecretLand = 402200,
-    /** 大秘境词缀介绍 */
-    SecretLandAffix = 402201,
-    /** 大秘境词缀tips */
-    AffixTips = 402202,
-    /** 大秘境准备界面 */
-    SecretLandReady = 402203,
-    
-    
-    /** 通用技能 */
-    CommonSkill = 900,
 
 }
 

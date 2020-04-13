@@ -1,21 +1,21 @@
 import MWindow from "../../GameFrame/Module/MWindow";
-import WindowHomeUI from "../../FGUI/Extends/GameHome/WindowHomeUI";
+import WindowWarUI from "../../FGUI/Extends/GameHome/WindowWarUI";
 
 
 //======================
 // 登录窗口
 //----------------------
-export default class HomeWindow extends MWindow
+export default class WarWindow extends MWindow
 {
 
-    conent: WindowHomeUI;
+    conent: WindowWarUI;
 
     constructor()
     {
         super();
 
         // 添加依赖资源
-        this.addAssetForFguiComponent(WindowHomeUI);
+        this.addAssetForFguiComponent(WindowWarUI);
     }
 
 
@@ -51,7 +51,7 @@ export default class HomeWindow extends MWindow
     // 菜单创建
     protected onMenuCreate(): void
     {
-        let windowUI = WindowHomeUI.createInstance();
+        let windowUI = WindowWarUI.createInstance();
         this.conent = windowUI;
         this.contentPane = windowUI;
 

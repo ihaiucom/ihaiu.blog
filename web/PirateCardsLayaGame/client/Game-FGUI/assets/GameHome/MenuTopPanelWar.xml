@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="620,87">
+  <displayList>
+    <image id="n6_sqzy" name="n6" src="sqzy5x" fileName="sprite/game1/menuPanel0000.png" xy="0,0" locked="true"/>
+    <image id="n7_sqzy" name="n7" src="sqzy7o" fileName="sprite/game1/turnsToBoss0000.png" xy="43,14"/>
+    <image id="n8_sqzy" name="n8" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="341,23"/>
+    <text id="n9_sqzy" name="coinText" xy="381,29" size="96,26" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
+    <text id="n10_sqzy" name="countText" xy="103,29" size="50,26" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
+    <text id="n12_sqzy" name="levelTex" xy="246,29" size="70,26" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
+    <text id="n13_sqzy" name="coinText" xy="222,29" size="19,26" fontSize="22" color="#fe5656" autoSize="none" strokeColor="#000000" text="X"/>
+    <component id="n15_sqzy" name="puaseBtn" src="sqzy8k" fileName="Btn~NCode/SamallPauseBtn.xml" xy="532,-1"/>
+  </displayList>
+</component>
