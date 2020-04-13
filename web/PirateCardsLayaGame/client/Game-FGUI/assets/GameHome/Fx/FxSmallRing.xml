@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="202,201" pivot="0.5,0.5" anchor="true" initName="fxSmallRing">
+  <displayList>
+    <component id="n12_sqzy" name="shadow" src="sqzy93" fileName="Fx/FxShadow.xml" xy="51,151"/>
+    <image id="n10_sqzy" name="n10" src="sqzy7c" fileName="sprite/game1/smallRing0000.png" xy="101,100" pivot="0.5,0.5" anchor="true" scale="1.1,1.1" alpha="0.5"/>
+    <image id="n9_sqzy" name="n9" src="sqzy7c" fileName="sprite/game1/smallRing0000.png" xy="101,100" pivot="0.5,0.5" anchor="true" alpha="0.8"/>
+  </displayList>
+  <transition name="anim" autoPlay="true" autoPlayRepeat="-1">
+    <item time="0" type="Rotation" target="n10_sqzy" tween="true" startValue="16" endValue="-344" duration="72" ease="Linear"/>
+    <item time="0" type="Rotation" target="n9_sqzy" tween="true" startValue="0" endValue="360" duration="72" ease="Linear"/>
+  </transition>
+</component>

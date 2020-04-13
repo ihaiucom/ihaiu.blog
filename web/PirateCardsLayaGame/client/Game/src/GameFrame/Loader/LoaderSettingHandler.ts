@@ -57,7 +57,7 @@ export default class LoaderSettingHandler
 		this.stopTweenPrecent();
 		this._tweenHandler = setInterval(() =>
 		{
-			this.showPercent = Math.min(100, Math.ceil(Mathf.Lerp(this.showPercent, this.percent, 0.2)));
+			this.showPercent = Math.min(100, Math.ceil(Mathf.Lerp(this.showPercent, this.percent, 0.5)));
 			this.setPercent(this.showPercent);
 			if(this.showPercent >= 100)
 				this.stopTweenPrecent();

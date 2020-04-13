@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="264,285">
+  <controller name="ShopType" exported="true" pages="0,Heart,1,Horseshoe,2,Luck,3,Key" selected="0"/>
+  <displayList>
+    <image id="n7_sqzy" name="bg" src="sqzy72" fileName="sprite/game1/shopItemBackground0000.png" xy="0,0" locked="true"/>
+    <component id="n8_sqzy" name="infoBtn" src="sqzy8g" fileName="Btn/SamallInfoBtn.xml" xy="-38,216" locked="true">
+      <relation target="" sidePair="left-left,bottom-bottom"/>
+    </component>
+    <image id="n12_sqzy" name="coinIcon" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="66,46" group="n14_sqzy"/>
+    <text id="n13_sqzy" name="coinText" xy="112,49" size="100,26" group="n14_sqzy" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="1000"/>
+    <group id="n14_sqzy" name="coinGroup" xy="65,46" size="147,38" locked="true" advanced="true" collapsed="true">
+      <relation target="" sidePair="center-center,top-top"/>
+    </group>
+    <component id="n10_sqzy" name="fxSmallRing" src="sqzy8w" fileName="Fx/FxSmallRing.xml" xy="132,155" size="202,201" aspect="true"/>
+    <component id="n3_sqzy" name="shopIcon" src="sqzy8x" fileName="ShopCard/ShopIcon.xml" xy="132,160" pivot="0.5,0.5" anchor="true" size="92,71" aspect="true">
+      <gearIcon controller="ShopType" pages="0,1,2" values="ui://moe42ygrsqzy3o|ui://moe42ygrsqzy4b|ui://moe42ygrsqzy5t" default="ui://moe42ygrsqzy4i"/>
+      <Label icon="ui://moe42ygrsqzy3o"/>
+    </component>
+    <image id="n16_sqzy" name="hasFlag" src="sqzy2y" fileName="sprite/game1/check0000.png" xy="179,215"/>
+    <component id="n19_sqzy" name="plusBtn" src="sqzy8i" fileName="Btn/SamallPlusBtn.xml" xy="218,219"/>
+  </displayList>
+</component>

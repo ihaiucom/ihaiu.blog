@@ -19,7 +19,7 @@
     <component id="mrzrw2n" name="ModuleLoadingProgressBar.xml" path="/Component~NCode/"/>
     <component id="mrzrw2o" name="EnterLoginLoader.xml" path="/" exported="true"/>
     <image id="qyvzw2s" name="粉色tips.png" path="/_images_new/" atlas="alone_npot"/>
-    <component id="tnlhw2t" name="LogoView.xml" path="/Component~NCode/"/>
+    <component id="tnlhw2t" name="LogoView.xml" path="/Component/" exported="true"/>
     <image id="tnlhw3a" name="按钮1.png" path="/_images_new/"/>
     <image id="tnlhw3c" name="弹窗底板.png" path="/_images_new/" atlas="alone_npot"/>
     <image id="tnlhw3e" name="关闭.png" path="/_images_new/"/>
@@ -27,7 +27,7 @@
     <component id="tnlhw3i" name="CommonButton1.xml" path="/Component~NCode/"/>
     <image id="tnlhw3l" name="bg_rectangle_gray.png" path="/_images_new/"/>
     <image id="sqzyz6g" name="icon200.png" path="/_images_new/"/>
-    <image id="sqzy2" name="BackgroundPause.png" path="/_images_new/"/>
+    <image id="sqzy2" name="BackgroundPause.png" path="/_images_new/" exported="true"/>
     <image id="sqzyz6i" name="圆环.png" path="/_images_new/"/>
     <image id="sqzy4" name="Loading.png" path="/_images_new/"/>
   </resources>

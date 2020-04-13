@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="264,285">
+  <controller name="ShopType" exported="true" pages="0,Heart,1,Horseshoe,2,Luck,3,Key" selected="3"/>
+  <displayList>
+    <image id="n7_sqzy" name="bg" src="sqzy73" fileName="sprite/game1/shopItemBackground0001.png" xy="0,0" locked="true"/>
+    <component id="n8_sqzy" name="backBtn" src="sqzy8h" fileName="Btn/SamallPrevBtn.xml" xy="-38,216" locked="true">
+      <relation target="" sidePair="left-left,bottom-bottom"/>
+    </component>
+    <component id="n20_sqzy" name="heart" src="sqzy96" fileName="ShopCard/ShopInfoHeart.xml" xy="78,102" locked="true">
+      <gearDisplay controller="ShopType" pages="0"/>
+    </component>
+    <component id="n23_sqzy" name="luck" src="sqzy97" fileName="ShopCard/ShopInfoLuck.xml" xy="12,82" locked="true">
+      <gearDisplay controller="ShopType" pages="2"/>
+    </component>
+    <component id="n29_sqzy" name="key" src="sqzy98" fileName="ShopCard/ShopInfoKey.xml" xy="20,93" locked="true">
+      <gearDisplay controller="ShopType" pages="3"/>
+    </component>
+    <component id="n30_sqzy" name="horseshoe" src="sqzy99" fileName="ShopCard/ShopInfoHorsehoe.xml" xy="36,100" locked="true">
+      <gearDisplay controller="ShopType" pages="1"/>
+    </component>
+  </displayList>
+</component>

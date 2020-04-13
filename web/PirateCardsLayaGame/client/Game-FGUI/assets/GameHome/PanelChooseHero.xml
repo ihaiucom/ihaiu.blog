@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" restrictSize="0,0,937,0" adaptationTest="FitSize">
+  <displayList>
+    <component id="n0_sqzy" name="menuTopPanel" src="sqzy8b" fileName="MenuTopPanel.xml" xy="125,92">
+      <relation target="" sidePair="center-center,top-top%"/>
+    </component>
+    <component id="n1_sqzy" name="playBtn" src="sqzy7v" fileName="Btn/BigPlayBtn.xml" xy="316,920" group="n24_sqzy"/>
+    <component id="n20_sqzy" name="plusBtn" src="sqzy8j" fileName="Btn/BigPlusBtn.xml" xy="317,919" group="n24_sqzy"/>
+    <group id="n24_sqzy" name="btnGroup" xy="316,919" size="168,167" advanced="true" collapsed="true">
+      <relation target="" sidePair="center-center,bottom-bottom%"/>
+    </group>
+    <component id="n15_sqzy" name="nextHeroBtn" src="sqzy8e" fileName="Btn/BigNextBtn.xml" xy="621,499" group="n224_sqzy"/>
+    <component id="n16_sqzy" name="prevHeroBtn" src="sqzy8d" fileName="Btn/BigPrevBtn.xml" xy="34,499" group="n224_sqzy"/>
+    <component id="n223_sqzy" name="choiceHero" src="sqzy8l" fileName="HeroCard/ChoiceHero.xml" xy="225,378" group="n224_sqzy"/>
+    <group id="n224_sqzy" name="heroGroup" xy="34,378" size="699,367" advanced="true">
+      <relation target="" sidePair="center-center,middle-middle%"/>
+    </group>
+  </displayList>
+</component>

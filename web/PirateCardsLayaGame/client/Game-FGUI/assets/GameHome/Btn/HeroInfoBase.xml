@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="255,89">
+  <displayList>
+    <image id="n17_sqzy" name="n17" src="sqzy70" fileName="sprite/game1/shields0003.png" xy="0,3" scale="0.8,0.8"/>
+    <image id="n18_sqzy" name="n18" src="sqzy6x" fileName="sprite/game1/shields0000.png" xy="110,4" scale="0.8,0.8"/>
+    <text id="n19_sqzy" name="n19" xy="38,0" size="31,29" fontSize="25" color="#ffffff" strokeColor="#000000" text="↑"/>
+    <text id="n20_sqzy" name="n20" xy="182,22" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="="/>
+    <text id="n21_sqzy" name="n21" xy="77,19" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+"/>
+    <text id="n22_sqzy" name="n22" xy="219,18" size="36,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+1"/>
+    <text id="n23_sqzy" name="n23" xy="152,3" size="31,29" fontSize="25" color="#ffffff" strokeColor="#000000" text="↓"/>
+  </displayList>
+</component>

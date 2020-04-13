@@ -4,13 +4,13 @@
     <image id="n7_sqzy" name="_bg" src="sqzy4" fileName="_images_new/Loading.png" xy="350,15" pivot="0.5,0.5" anchor="true" size="330,30">
       <relation target="" sidePair="width-width,height-height"/>
     </image>
-    <image id="n9_sqzy" name="_bg2" src="sqzy4" fileName="_images_new/Loading.png" xy="350,15" pivot="0.5,0.5" anchor="true" size="325,25" alpha="0.55" color="#000000">
+    <image id="n9_sqzy" name="_bg2" src="tnlhw3l" fileName="_images_new/bg_rectangle_gray.png" xy="350,15" pivot="0.5,0.5" anchor="true" size="325,25" color="#000000">
       <relation target="" sidePair="width-width,height-height"/>
     </image>
     <image id="n6_tnlh" name="bar" src="sqzy4" fileName="_images_new/Loading.png" xy="350,15" pivot="0.5,0.5" anchor="true" fillMethod="hz">
       <relation target="" sidePair="width-width,height-height"/>
     </image>
-    <text id="n2_kpvw" name="title" xy="0,-2" size="700,34" fontSize="20" color="#333333" align="center" vAlign="middle" autoSize="none" text="0">
+    <text id="n2_kpvw" name="title" xy="0,0" size="700,34" fontSize="20" color="#333333" align="center" vAlign="middle" autoSize="none" text="0">
       <relation target="" sidePair="width-width,height-height"/>
     </text>
   </displayList>

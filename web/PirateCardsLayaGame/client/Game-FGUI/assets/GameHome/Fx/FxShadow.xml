@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="100,47">
+  <displayList>
+    <image id="n12_sqzy" name="shadow" src="sqzy6w" fileName="sprite/game1/shadow0000.png" xy="50,23" pivot="0.5,0.5" anchor="true" aspect="true">
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+  </displayList>
+  <transition name="anim" autoPlay="true" autoPlayRepeat="-1">
+    <item time="0" type="Scale" target="n12_sqzy" tween="true" startValue="1,1" endValue="0.9,0.9" duration="12"/>
+    <item time="12" type="Scale" target="n12_sqzy" tween="true" startValue="0.9,0.9" endValue="1,1" duration="12"/>
+  </transition>
+</component>

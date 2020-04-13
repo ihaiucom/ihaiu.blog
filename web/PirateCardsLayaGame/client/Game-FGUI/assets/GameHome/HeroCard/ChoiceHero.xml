@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="300,367">
+  <displayList>
+    <component id="n8_sqzy" name="info" src="sqzy8p" fileName="HeroCard/ChoiceHeroInfo.xml" xy="0,0" hideByEditor="true" visible="false" controller="hero,0"/>
+    <component id="n7_sqzy" name="card" src="sqzy8u" fileName="HeroCard/ChoiceHeroCard.xml" xy="0,0"/>
+  </displayList>
+</component>

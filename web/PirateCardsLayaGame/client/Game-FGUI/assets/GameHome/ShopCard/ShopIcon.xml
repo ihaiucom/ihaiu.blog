@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="58,45" extention="Label">
+  <displayList>
+    <loader id="n3_sqzy" name="icon" xy="29,22" pivot="0.5,0.5" anchor="true" size="58,45" url="ui://moe42ygrsqzy3o" align="center" vAlign="middle" fill="scaleMatchHeight">
+      <relation target="" sidePair="width-width,height-height"/>
+    </loader>
+  </displayList>
+  <transition name="anim" autoPlay="true" autoPlayRepeat="-1">
+    <item time="0" type="XY" target="n3_sqzy" tween="true" startValue="-,22" endValue="-,10" duration="12"/>
+    <item time="12" type="XY" target="n3_sqzy" tween="true" startValue="-,10" endValue="-,22" duration="12"/>
+  </transition>
+</component>

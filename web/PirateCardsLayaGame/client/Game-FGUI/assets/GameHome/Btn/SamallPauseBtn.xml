@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="88,88" pivot="0.5,0.5" extention="Button">
+  <controller name="button" pages="0,up,1,down,2,over,3,selectedOver" selected="3"/>
+  <displayList>
+    <image id="n0_sqzy" name="up" src="sqzy7a" fileName="sprite/game1/smallBtnBackground0000.png" xy="0,0">
+      <gearDisplay controller="button" pages="0"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <image id="n1_sqzy" name="down" src="sqzy7b" fileName="sprite/game1/smallBtnBackground0001.png" xy="0,0">
+      <gearDisplay controller="button" pages="1,2,3"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <loader id="n2_sqzy" name="icon" xy="0,0" size="88,88" url="ui://moe42ygrsqzy6h" align="center" vAlign="middle">
+      <gearIcon controller="button" pages="0,1,2,3" values="ui://moe42ygrsqzy6g|ui://moe42ygrsqzy6h|ui://moe42ygrsqzy6h|ui://moe42ygrsqzy6h"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </loader>
+  </displayList>
+  <Button downEffect="scale" downEffectValue="1.10"/>
+</component>

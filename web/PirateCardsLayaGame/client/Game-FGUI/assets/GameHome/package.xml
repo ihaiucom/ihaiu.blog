@@ -121,7 +121,7 @@
     <image id="sqzy3b" name="coin0008.png" path="/sprite/game1/"/>
     <image id="sqzy3c" name="coin0009.png" path="/sprite/game1/"/>
     <image id="sqzy3d" name="coinBag0000.png" path="/sprite/game1/"/>
-    <image id="sqzy3e" name="coinPanel0000.png" path="/sprite/game1/"/>
+    <image id="sqzy3e" name="coinPanel0000.png" path="/sprite/game1/" scale="9grid" scale9grid="64,23,128,46"/>
     <image id="sqzy3f" name="controlBtn0000.png" path="/sprite/game1/"/>
     <image id="sqzy3g" name="controlBtn0001.png" path="/sprite/game1/"/>
     <image id="sqzy3h" name="core0000.png" path="/sprite/game1/"/>
@@ -277,6 +277,59 @@
     <image id="sqzy7n" name="ThreeXThree0000.png" path="/sprite/game1/"/>
     <image id="sqzy7o" name="turnsToBoss0000.png" path="/sprite/game1/"/>
     <sound id="sqzy7p" name="click.mp3" path="/sound/" exported="true"/>
+    <component id="sqzy7q" name="PanelMainMenu.xml" path="/"/>
+    <component id="sqzy7r" name="MenuLogo.xml" path="/"/>
+    <component id="sqzy7v" name="BigPlayBtn.xml" path="/Btn/"/>
+    <component id="sqzy7w" name="SmallBtn.xml" path="/Btn/"/>
+    <component id="sqzy7x" name="BigBtn.xml" path="/Btn/"/>
+    <component id="sqzy7y" name="SamallGroupBtn.xml" path="/Btn/"/>
+    <component id="sqzy7z" name="SamallSoundBtn.xml" path="/Btn/"/>
+    <component id="sqzy81" name="SamallSoundOnBtn.xml" path="/Btn/"/>
+    <component id="sqzy82" name="SamallSoundOffBtn.xml" path="/Btn/"/>
+    <component id="sqzy84" name="BigGroupBtn.xml" path="/Btn/"/>
+    <component id="sqzy85" name="BigSoundOnBtn.xml" path="/Btn/"/>
+    <component id="sqzy86" name="BigSoundOffBtn.xml" path="/Btn/"/>
+    <component id="sqzy87" name="BigSoundBtn.xml" path="/Btn/"/>
+    <component id="sqzy88" name="MainMenuBtnBar.xml" path="/"/>
+    <component id="sqzy89" name="PanelChooseHero.xml" path="/"/>
+    <component id="sqzy8a" name="WindowHome.xml" path="/"/>
+    <component id="sqzy8b" name="MenuTopPanel.xml" path="/"/>
+    <component id="sqzy8c" name="SamallHomeBtn.xml" path="/Btn/"/>
+    <component id="sqzy8d" name="BigPrevBtn.xml" path="/Btn/"/>
+    <component id="sqzy8e" name="BigNextBtn.xml" path="/Btn/"/>
+    <component id="sqzy8f" name="BigResumeBtn.xml" path="/Btn/"/>
+    <component id="sqzy8g" name="SamallInfoBtn.xml" path="/Btn/"/>
+    <component id="sqzy8h" name="SamallPrevBtn.xml" path="/Btn/"/>
+    <component id="sqzy8i" name="SamallPlusBtn.xml" path="/Btn/"/>
+    <component id="sqzy8j" name="BigPlusBtn.xml" path="/Btn/"/>
+    <component id="sqzy8k" name="SamallPauseBtn.xml" path="/Btn/"/>
+    <component id="sqzy8l" name="ChoiceHero.xml" path="/HeroCard/"/>
+    <component id="sqzy8m" name="HeroSprite.xml" path="/HeroCard/"/>
+    <component id="sqzy8n" name="AA.xml" path="/"/>
+    <component id="sqzy8o" name="Lock.xml" path="/Btn/"/>
+    <component id="sqzy8p" name="ChoiceHeroInfo.xml" path="/HeroCard/"/>
+    <component id="sqzy8q" name="HeroInfoKey.xml" path="/HeroCard/"/>
+    <component id="sqzy8r" name="HeroInfoBase.xml" path="/Btn/"/>
+    <component id="sqzy8s" name="HeroInfoBomb.xml" path="/HeroCard/"/>
+    <component id="sqzy8t" name="HeroInfoGun.xml" path="/HeroCard/"/>
+    <component id="sqzy8u" name="ChoiceHeroCard.xml" path="/HeroCard/"/>
+    <component id="sqzy8v" name="ShopCard.xml" path="/ShopCard/"/>
+    <component id="sqzy8w" name="FxSmallRing.xml" path="/Fx/"/>
+    <component id="sqzy8x" name="ShopIcon.xml" path="/ShopCard/"/>
+    <component id="sqzy8y" name="PanelShop.xml" path="/"/>
+    <component id="sqzy8z" name="PanelChooseGameFormat.xml" path="/"/>
+    <component id="sqzy91" name="GameFormatCard.xml" path="/GameFormatCard/"/>
+    <component id="sqzy92" name="SamallPlayBtn.xml" path="/Btn/"/>
+    <component id="sqzy93" name="FxShadow.xml" path="/Fx/"/>
+    <component id="sqzy94" name="ShopCardFront.xml" path="/ShopCard/"/>
+    <component id="sqzy95" name="ShopCardBack.xml" path="/ShopCard/"/>
+    <component id="sqzy96" name="ShopInfoHeart.xml" path="/ShopCard/"/>
+    <component id="sqzy97" name="ShopInfoLuck.xml" path="/ShopCard/"/>
+    <component id="sqzy98" name="ShopInfoKey.xml" path="/ShopCard/"/>
+    <component id="sqzy99" name="ShopInfoHorsehoe.xml" path="/ShopCard/"/>
+    <component id="sqzy9a" name="PanelPause.xml" path="/"/>
+    <component id="sqzy9b" name="BigHomeBtn.xml" path="/Btn/"/>
+    <component id="sqzy9c" name="WindowGame.xml" path="/"/>
   </resources>
-  <publish name=""/>
+  <publish name="GameHome"/>
 </packageDescription>

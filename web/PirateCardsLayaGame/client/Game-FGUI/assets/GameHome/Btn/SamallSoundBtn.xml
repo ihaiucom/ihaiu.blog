@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="88,88" pivot="0.5,0.5">
+  <controller name="button" exported="true" pages="0,on,1,off" selected="1">
+    <remark page="0" value="on"/>
+    <remark page="1" value="off"/>
+  </controller>
+  <displayList>
+    <component id="n3_sqzy" name="off" src="sqzy82" fileName="Btn/SamallSoundOffBtn.xml" xy="0,0">
+      <gearDisplay controller="button" pages="0"/>
+    </component>
+    <component id="n4_sqzy" name="on" src="sqzy81" fileName="Btn/SamallSoundOnBtn.xml" xy="0,0">
+      <gearDisplay controller="button" pages="1"/>
+    </component>
+  </displayList>
+</component>

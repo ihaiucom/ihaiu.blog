@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" restrictSize="0,0,1148,0">
+  <displayList>
+    <component id="n0_sqzy" name="menuTopPanel" src="sqzy8b" fileName="MenuTopPanel.xml" xy="125,92">
+      <relation target="" sidePair="center-center,top-top%"/>
+    </component>
+    <component id="n1_sqzy" name="playBtn" src="sqzy7v" fileName="Btn/BigPlayBtn.xml" xy="291,964">
+      <relation target="" sidePair="center-center,middle-middle%"/>
+    </component>
+    <list id="n225_sqzy" name="n225" xy="0,268" size="750,629" layout="flow_hz" overflow="scroll" lineGap="50" colGap="100" defaultItem="ui://moe42ygrsqzy8v" align="center">
+      <relation target="" sidePair="center-center,middle-middle%"/>
+      <item controllers="ShopType,0"/>
+      <item controllers="ShopType,1"/>
+      <item controllers="ShopType,2"/>
+      <item controllers="ShopType,3"/>
+    </list>
+  </displayList>
+</component>

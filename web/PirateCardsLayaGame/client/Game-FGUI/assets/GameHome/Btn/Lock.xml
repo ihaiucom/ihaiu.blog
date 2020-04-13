@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="62,68">
+  <controller name="state" exported="true" pages="0,lock,1,unlock" selected="1"/>
+  <displayList>
+    <loader id="n3_sqzy" name="icon" xy="0,0" size="62,68" url="ui://moe42ygrsqzy4y">
+      <gearIcon controller="state" pages="1" values="ui://moe42ygrsqzy4y" default="ui://moe42ygrsqzy4x"/>
+    </loader>
+  </displayList>
+</component>

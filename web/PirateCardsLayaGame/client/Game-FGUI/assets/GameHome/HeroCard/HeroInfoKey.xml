@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="329,304">
+  <displayList>
+    <image id="n7_sqzy" name="n7" src="sqzy1f" fileName="sprite/game1/Barrel0000.png" xy="10,0" size="75,89" aspect="true"/>
+    <image id="n8_sqzy" name="n8" src="sqzy7d" fileName="sprite/game1/smile0000.png" xy="147,3"/>
+    <image id="n9_sqzy" name="n9" src="sqzy2z" fileName="sprite/game1/chest0000.png" xy="0,139" scale="0.5,0.5"/>
+    <image id="n10_sqzy" name="n10" src="sqzy30" fileName="sprite/game1/chest0001.png" xy="148,120" scale="0.5,0.5"/>
+    <image id="n11_sqzy" name="n11" src="sqzy4g" fileName="sprite/game1/key20000.png" xy="99,141" scale="0.5,0.5"/>
+    <text id="n12_sqzy" name="n12" xy="105,27" size="37,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="→"/>
+    <text id="n13_sqzy" name="n13" xy="136,150" size="21,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="="/>
+    <text id="n14_sqzy" name="n14" xy="70,153" size="21,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+"/>
+  </displayList>
+</component>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="855,1334" restrictSize="0,0,800,0">
+  <displayList>
+    <component id="n6_sqzy" name="menuLogo" src="sqzy7r" fileName="MenuLogo.xml" xy="-52,0">
+      <relation target="" sidePair="center-center,top-top%"/>
+    </component>
+    <component id="n9_sqzy" name="btnBar" src="sqzy88" fileName="MainMenuBtnBar.xml" xy="166,780">
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </component>
+  </displayList>
+</component>

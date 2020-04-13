@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="167,166" extention="Button">
+  <controller name="button" pages="0,up,1,down,2,over,3,selectedOver" selected="3"/>
+  <displayList>
+    <image id="n0_sqzy" name="up" src="sqzy1y" fileName="sprite/game1/bigBtnBackground0000.png" xy="0,0" size="167,166">
+      <gearDisplay controller="button" pages="0"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <image id="n1_sqzy" name="down" src="sqzy1z" fileName="sprite/game1/bigBtnBackground0001.png" xy="0,0" size="167,166">
+      <gearDisplay controller="button" pages="1,2,3"/>
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <loader id="n3_sqzy" name="icon" xy="44,44" size="78,78" aspect="true" url="ui://moe42ygrsqzy6l" fill="scaleFree">
+      <gearIcon controller="button" pages="0,1,2,3" values="ui://moe42ygrsqzy6k|ui://moe42ygrsqzy6l|ui://moe42ygrsqzy6l|ui://moe42ygrsqzy6l"/>
+    </loader>
+  </displayList>
+  <Button/>
+</component>

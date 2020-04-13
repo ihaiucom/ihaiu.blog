@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="292,391">
+  <displayList>
+    <image id="n32_sqzy" name="n32" src="sqzy6z" fileName="sprite/game1/shields0002.png" xy="15,60" aspect="true"/>
+    <image id="n33_sqzy" name="n33" src="sqzy4k" fileName="sprite/game1/lightning0000.png" xy="103,0"/>
+    <image id="n34_sqzy" name="n34" src="sqzy16" fileName="sprite/game2/trap0000.png" xy="0,192" scale="0.35,0.35"/>
+    <image id="n36_sqzy" name="n36" src="sqzy13" fileName="sprite/game2/heroGun0000.png" xy="91,195" scale="0.5,0.5"/>
+    <text id="n37_sqzy" name="n37" xy="110,87" size="35,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="→"/>
+    <text id="n38_sqzy" name="n38" xy="165,213" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="="/>
+    <text id="n39_sqzy" name="n39" xy="68,214" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+"/>
+    <image id="n40_sqzy" name="n40" src="sqzy7d" fileName="sprite/game1/smile0000.png" xy="178,192"/>
+  </displayList>
+</component>

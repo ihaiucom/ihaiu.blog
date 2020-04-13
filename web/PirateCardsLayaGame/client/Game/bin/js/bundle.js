@@ -753,7 +753,9 @@
 
     class GuiPackageNames {
     }
+    GuiPackageNames.GameHome = "GameHome";
     GuiPackageNames.GameLaunch = "GameLaunch";
+    GuiPackageNames.GameMain = "GameMain";
     GuiPackageNames.ModuleLogin = "ModuleLogin";
     GuiPackageNames.Sound = "Sound";
 
@@ -4424,15 +4426,8 @@
             config.packageName = "GameLaunch";
             config.resBin = "GameLaunch.bin";
             config.resAtlas.push("GameLaunch_atlas0.png");
-            config.resAtlas.push("GameLaunch_atlas_9wtpw2k.png");
             config.resAtlas.push("GameLaunch_atlas_qyvzw2s.png");
-            config.resAtlas.push("GameLaunch_atlas_tilsw3o.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw30.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw32.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw34.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw35.png");
             config.resAtlas.push("GameLaunch_atlas_tnlhw3c.png");
-            config.resAtlas.push("GameLaunch_atlas_tnlhw3m.png");
             this.addconfig(config);
             config = new GuiResPackageConfig();
             config.resDir = "fgui";
@@ -4913,29 +4908,11 @@
         }
         static init() {
             let dict = SoundKey._idDict = new Dictionary();
-            dict.add("MM_BGM_Award.mp3", "i7ne2w");
-            dict.add("MM_BGM_01.mp3", "tys94p");
-            dict.add("MM01_Button.wav", "tys94s");
-            dict.add("MM02_Popup.wav", "tys94t");
-            dict.add("MM04_Lose.wav", "tys94v");
-            dict.add("MM05_Upgrade.wav", "tys94w");
             let exts = SoundKey._extDict = new Dictionary();
-            exts.add("MM_BGM_Award.mp3", ".mp3");
-            exts.add("MM_BGM_01.mp3", ".mp3");
-            exts.add("MM01_Button.wav", ".wav");
-            exts.add("MM02_Popup.wav", ".wav");
-            exts.add("MM04_Lose.wav", ".wav");
-            exts.add("MM05_Upgrade.wav", ".wav");
         }
     }
     SoundKey.SoundPackageName = "Sound";
     SoundKey.SoundPackageId = "44whq70o";
-    SoundKey.MM_BGM_Award = "MM_BGM_Award.mp3";
-    SoundKey.MM_BGM_01 = "MM_BGM_01.mp3";
-    SoundKey.MM01_Button = "MM01_Button.wav";
-    SoundKey.MM02_Popup = "MM02_Popup.wav";
-    SoundKey.MM04_Lose = "MM04_Lose.wav";
-    SoundKey.MM05_Upgrade = "MM05_Upgrade.wav";
 
     var MenuCloseOtherType;
     (function (MenuCloseOtherType) {
@@ -7066,7 +7043,7 @@
         starTweenPrecent() {
             this.stopTweenPrecent();
             this._tweenHandler = setInterval(() => {
-                this.showPercent = Math.min(100, Math.ceil(Mathf.Lerp(this.showPercent, this.percent, 0.2)));
+                this.showPercent = Math.min(100, Math.ceil(Mathf.Lerp(this.showPercent, this.percent, 0.5)));
                 this.setPercent(this.showPercent);
                 if (this.showPercent >= 100)
                     this.stopTweenPrecent();
@@ -7301,15 +7278,12 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
-            this.m_Reconnection = this.getController("Reconnection");
             this.m_title = (this.getChild("title"));
             this.m_help = (this.getChild("help"));
             this.m_txt_resVer = (this.getChild("txt_resVer"));
             this.m_txt_gamever = (this.getChild("txt_gamever"));
-            this.m_screenBG = (this.getChild("screenBG"));
             this.m_progressBar = (this.getChild("progressBar"));
             this.m_imgLogo = (this.getChild("imgLogo"));
-            this.m_t0 = this.getTransition("t0");
         }
     }
     EnterLoginLoaderStruct.URL = "ui://47qsdr42mrzrw2o";
@@ -10040,45 +10014,6 @@
     class GMButton extends GMButtonStruct {
     }
 
-    class EnterWarItemStruct extends fgui.GComponent {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameLaunch", "EnterWarItem"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_imgHero = (this.getChild("imgHero"));
-            this.m_labName = (this.getChild("labName"));
-            this.m_labLevel = (this.getChild("labLevel"));
-            this.m_labProgess = (this.getChild("labProgess"));
-            this.m_playerIcon = (this.getChild("playerIcon"));
-            this.m_btnTalent = (this.getChild("btnTalent"));
-        }
-    }
-    EnterWarItemStruct.URL = "ui://47qsdr42kpvww2f";
-    EnterWarItemStruct.DependPackages = ["GameLaunch"];
-
-    class EnterWarItem extends EnterWarItemStruct {
-        RenderItem(gamer) {
-            this.ID = gamer.mini.id;
-            this.m_labName.text = gamer.mini.name;
-            this.m_labLevel.text = `${gamer.mini.level}级`;
-            this.m_labProgess.text = "0%";
-            let heroconfig = Game.config.hero.getConfig(gamer.heroList[0].id);
-            let avatarconfig = Game.config.avatar.getConfig(heroconfig.icon);
-            this.m_imgHero.icon = avatarconfig.heroTeamImgUrl;
-            let portraitCfg = Game.config.avatar.getConfig(gamer.mini.avatar);
-            if (!portraitCfg)
-                portraitCfg = Game.config.avatar.getConfig(1001);
-            this.m_playerIcon.icon = portraitCfg.iconUrl;
-        }
-        UpdatePer(per) {
-            this.m_labProgess.text = `${per}%`;
-        }
-    }
-
     class BGModelStruct extends fgui.GComponent {
         constructor() {
             super();
@@ -10144,7 +10079,6 @@
             bind(SystemConfirmMessage.URL, SystemConfirmMessage);
             bind(SystemToastMessage.URL, SystemToastMessage);
             bind(GMButton.URL, GMButton);
-            bind(EnterWarItem.URL, EnterWarItem);
             bind(BGModel.URL, BGModel);
             bind(GlobalModalWaiting.URL, GlobalModalWaiting);
             bind(WindowModalWaiting.URL, WindowModalWaiting);
@@ -10734,9 +10668,6 @@
             }
             if (callback) {
                 callback();
-            }
-            else {
-                Game.menu.open(MenuId.Login);
             }
         }
         loadVersion() {

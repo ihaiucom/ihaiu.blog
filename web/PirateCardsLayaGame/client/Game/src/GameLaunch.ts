@@ -130,7 +130,7 @@ export default class GameLaunch
 		}
 		else
 		{
-			Game.menu.open(MenuId.Login);
+			// Game.menu.open(MenuId.Login);
 		}
 
 

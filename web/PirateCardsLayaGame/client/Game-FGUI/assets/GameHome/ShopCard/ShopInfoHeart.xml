@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="129,66">
+  <displayList>
+    <text id="n20_sqzy" name="n20" xy="0,5" size="30,54" fontSize="50" color="#ffffff" strokeColor="#000000" text="+"/>
+    <image id="n22_sqzy" name="n22" src="sqzy3o" fileName="sprite/game1/heartBig0000.png" xy="43,0" size="86,66" aspect="true"/>
+  </displayList>
+</component>

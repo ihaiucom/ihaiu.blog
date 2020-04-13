@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="551,166">
+  <displayList>
+    <component id="n9_sqzy" name="groupBtn" src="sqzy84" fileName="Btn/BigGroupBtn.xml" xy="0,27">
+      <Button icon="ui://moe42ygrsqzy3k" selectedIcon="ui://moe42ygrsqzy3l"/>
+    </component>
+    <component id="n11_sqzy" name="soundBtn" src="sqzy87" fileName="Btn/BigSoundBtn.xml" xy="439,27" controller="button,0"/>
+    <component id="n12_sqzy" name="bigPlayBtn" src="sqzy7v" fileName="Btn/BigPlayBtn.xml" xy="192,0"/>
+  </displayList>
+</component>

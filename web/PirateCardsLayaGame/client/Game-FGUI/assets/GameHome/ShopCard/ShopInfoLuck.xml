@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="279,140">
+  <displayList>
+    <image id="n23_sqzy" name="n23" src="sqzy5t" fileName="sprite/game1/luckBig0000.png" xy="104,23" size="32,57" aspect="true"/>
+    <image id="n24_sqzy" name="n24" src="sqzy6m" fileName="sprite/game1/poison0000.png" xy="0,0" size="80,97" aspect="true"/>
+    <text id="n25_sqzy" name="n25" xy="77,36" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+"/>
+    <text id="n26_sqzy" name="n26" xy="143,39" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="="/>
+    <image id="n27_sqzy" name="n27" src="sqzy6m" fileName="sprite/game1/poison0000.png" xy="153,7" size="80,97" aspect="true"/>
+    <image id="n28_sqzy" name="n28" src="sqzy6f" fileName="sprite/game1/noIcon0000.png" xy="197,58" pivot="0.5,0.5" anchor="true" size="82,82" aspect="true"/>
+  </displayList>
+</component>

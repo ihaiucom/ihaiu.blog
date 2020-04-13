@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="300,367">
+  <controller name="format" exported="true" pages="0,format3x3,1,format4x4" selected="1"/>
+  <displayList>
+    <image id="n1_sqzy" name="bg" src="sqzy31" fileName="sprite/game1/choiceBackground0000.png" xy="0,0">
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <component id="n3_sqzy" name="lock" src="sqzy8o" fileName="Btn/Lock.xml" xy="9,294" controller="state,0">
+      <relation target="" sidePair="right-right,bottom-bottom"/>
+    </component>
+    <image id="n4_sqzy" name="coinIcon" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="88,52" group="n6_sqzy"/>
+    <text id="n5_sqzy" name="coinText" xy="134,55" size="100,26" group="n6_sqzy" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="1000"/>
+    <group id="n6_sqzy" name="coinGroup" xy="87,52" size="147,38" advanced="true" collapsed="true">
+      <relation target="" sidePair="center-center,top-top"/>
+    </group>
+    <component id="n8_sqzy" name="plusBtn" src="sqzy8i" fileName="Btn/SamallPlusBtn.xml" xy="234,284" size="120,120" aspect="true"/>
+    <component id="n10_sqzy" name="playBtn" src="sqzy92" fileName="Btn/SamallPlayBtn.xml" xy="234,284" size="120,120" aspect="true"/>
+    <component id="n11_sqzy" name="fxSmallRing" src="sqzy8w" fileName="Fx/FxSmallRing.xml" xy="150,183"/>
+    <component id="n12_sqzy" name="icon" src="sqzy8x" fileName="ShopCard/ShopIcon.xml" xy="121,157">
+      <gearIcon controller="format" pages="1" values="ui://moe42ygrsqzy3j" default="ui://moe42ygrsqzy7n"/>
+      <Label icon="ui://moe42ygrsqzy3j"/>
+    </component>
+  </displayList>
+</component>

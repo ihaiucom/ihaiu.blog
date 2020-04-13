@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" restrictSize="0,0,1000,0">
+  <controller name="Tab" pages="0,mainMenu,1,chooseHero,2,shop,3,chooseGameFormat" selected="0"/>
+  <displayList>
+    <component id="n0_sqzy" name="bg" src="f84s1" fileName="ScreenBG.xml" pkg="47qsdr42" xy="14,0" size="750,1334">
+      <relation target="" sidePair="width-width,height-height"/>
+      <Label icon="ui://moe42ygrsqzy1"/>
+    </component>
+    <component id="n1_sqzy" name="mainMenu" src="sqzy7q" fileName="PanelMainMenu.xml" xy="0,0" size="855,1334">
+      <gearDisplay controller="Tab" pages="0"/>
+      <relation target="" sidePair="center-center,height-height"/>
+    </component>
+    <component id="n2_sqzy" name="chooseHero" src="sqzy89" fileName="PanelChooseHero.xml" xy="0,0" size="750,1334">
+      <gearDisplay controller="Tab" pages="1"/>
+      <relation target="" sidePair="center-center,height-height"/>
+    </component>
+    <component id="n3_sqzy" name="shop" src="sqzy8y" fileName="PanelShop.xml" xy="0,0" size="750,1334">
+      <gearDisplay controller="Tab" pages="2"/>
+      <relation target="" sidePair="center-center,height-height"/>
+    </component>
+    <component id="n4_sqzy" name="chooseGameFormat" src="sqzy8z" fileName="PanelChooseGameFormat.xml" xy="0,0">
+      <gearDisplay controller="Tab" pages="3"/>
+    </component>
+  </displayList>
+</component>

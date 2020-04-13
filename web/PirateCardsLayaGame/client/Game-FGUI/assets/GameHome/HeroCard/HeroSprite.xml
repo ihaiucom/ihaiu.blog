@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="128,165" extention="Label">
+  <controller name="hero" exported="true" pages="0,Base,1,Bomb,2,Gun,3,Key" selected="0"/>
+  <displayList>
+    <loader id="n0_sqzy" name="icon" xy="0,0" pivot="0.5,1" size="128,165" url="ui://moe42ygrsqzy11" align="center" vAlign="bottom">
+      <gearIcon controller="hero" pages="1,2,3" values="ui://moe42ygrsqzy12|ui://moe42ygrsqzy13|ui://moe42ygrsqzy14" default="ui://moe42ygrsqzy11"/>
+    </loader>
+  </displayList>
+  <transition name="t0" autoPlay="true" autoPlayRepeat="-1">
+    <item time="0" type="Scale" target="n0_sqzy" tween="true" startValue="1,1" endValue="1,0.97" duration="24"/>
+    <item time="24" type="Scale" target="n0_sqzy" tween="true" startValue="1,0.97" endValue="1,1" duration="24"/>
+  </transition>
+</component>
