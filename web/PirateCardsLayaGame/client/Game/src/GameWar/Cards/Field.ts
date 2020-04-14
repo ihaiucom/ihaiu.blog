@@ -1,53 +1,125 @@
-var e = function() {
-    function e(t, e, i) {
-        this.step = 1,
-        this.game = t,
-        this.cardFactory = e,
-        this.keyboardManager = i
+import Game from "../../Game";
+import CardFactory from "./CardFactory";
+import keyboardManager from "./KeyboardManager";
+import GameStatus from "./GameStatus";
+import Consts from "../Consts";
+import RandomHelper from "../RandomHelper";
+import { CardGenerationType } from "../enums/CardGenerationType";
+import { MoveType } from "../enums/MoveType";
+
+export default class Field
+{
+    step = 1;
+    game: Game;
+    cardFactory: CardFactory;
+    keyboardManager: keyboardManager;
+
+    field: FieldItems;
+
+    // 鼠标按下的卡牌
+    downPointer: Card;
+
+    constructor(game: Game, cardFactory: CardFactory, keyboardManager: keyboardManager)
+    {
+        this.game = game;
+        this.cardFactory = cardFactory;
+        this.keyboardManager = keyboardManager;
     }
-    return e.prototype.initField = function() {
-        var e = [],
-        i = t.GameStatus.ColumnCount,
-        o = t.GameStatus.RowCount,
-        n = t.Consts.AnimationTime - (o * i == 9 ? 0 : 50);
-        this.field = new t.FieldItems(i, o);
-        for (var s = t.RandomHelper.getRandomIntInclusive(1, 5), a = 0; a < o; a++) for (var r = 0; r < i; r++) {
-            var h = void 0,
-            d = a === t.Consts.HeroStartRow - 1,
-            c = r === t.Consts.HeroStartColumn - 1;
-            if (d && c)(h = this.cardFactory.getHero()).shape.name = t.Consts.Hero,
-            t.GameStatus.isHeroAlive = !0,
-            t.GameStatus.isGameEnd = !1;
-            else if (t.GameStatus.isTutorialSeen) h = this.getCardFromFactory();
-            else if (d && r === t.Consts.HeroStartColumn) {
-                h = this.getEnemyCardFromFactory(s);
-                var u = new t.Arm(this.game, -30, 30);
-                h.shape.name = t.Consts.CardWithArm,
-                h.shape.add(u)
-            } else a === t.Consts.HeroStartRow && r === t.Consts.HeroStartColumn ? (h = this.getHealsCardFromFactory(s), this.movingArm = new t.Arm(this.game, -30, -50), this.movingArm.alpha = 0, h.shape.add(this.movingArm), h.shape.name = t.Consts.CardWithMovingArm, this.movingArmY = -200) : h = this.getCardFromFactory();
-            var p = new t.FieldPosition(r, a),
-            l = this.cardFactory.getDefault();
-            e.push(this.moveAndSetWithAnimation(p, l, n)),
-            e.push(this.replaceCardByPosition(p, h).setAnimationDuration(1))
+
+    initField()
+    {
+        var list = [],
+        columnCount = GameStatus.ColumnCount,
+        rowCount = GameStatus.RowCount,
+        animationTime = Consts.AnimationTime - (rowCount * columnCount == 9 ? 0 : 50);
+
+        this.field = new FieldItems(columnCount, rowCount);
+        
+        for (var randomVal = RandomHelper.getRandomIntInclusive(1, 5), row = 0; row < rowCount; row++) 
+        {
+            for (var column = 0; column < columnCount; column++) 
+            {
+                var hero = undefined,
+                // 是否是英雄开始位置所在行
+                isHeroStartRow = row === Consts.HeroStartRow - 1,
+                // 是否是英雄开始位置所在列
+                isHeroStartColumn = column === Consts.HeroStartColumn - 1;
+                
+                if (isHeroStartRow && isHeroStartColumn)
+                {
+                    hero = this.cardFactory.getHero();
+                    hero.shape.name = Consts.Hero,
+                    GameStatus.isHeroAlive = false,
+                    GameStatus.isGameEnd = false;
+                }
+                else if (GameStatus.isTutorialSeen)
+                {
+                    hero = this.getCardFromFactory();
+                }
+                // 英雄右侧格子，显示新手教程 手指
+                else if (isHeroStartRow && column === Consts.HeroStartColumn) 
+                {
+                    hero = this.getEnemyCardFromFactory(randomVal);
+                    var u = new Arm(this.game, -30, 30);
+                    hero.shape.name = Consts.CardWithArm;
+                    hero.shape.add(u);
+                } 
+                else
+                {
+                    if(row === Consts.HeroStartRow && column === Consts.HeroStartColumn)
+                    {
+                        hero = this.getHealsCardFromFactory(randomVal);
+                        this.movingArm = new Arm(this.game, -30, -50);
+                        this.movingArm.alpha = 0;
+                        hero.shape.add(this.movingArm);
+                        hero.shape.name = Consts.CardWithMovingArm;
+                        this.movingArmY = -200;
+
+                    }
+                    else
+                    {
+                        hero = this.getCardFromFactory();
+                    }
+                   
+                } 
+                var fieldPosition = new FieldPosition(column, row),
+                l = this.cardFactory.getDefault();
+                list.push(this.moveAndSetWithAnimation(fieldPosition, l, animationTime)),
+                list.push(this.replaceCardByPosition(fieldPosition, hero).setAnimationDuration(1))
+            }
         }
-        return t.GameStatus.isTutorialSeen || this.addShadow(),
-        e
-    },
-    e.prototype.addShadow = function() {
+
+        if(GameStatus.isTutorialSeen)
+        {
+            return GameStatus.isTutorialSeen;
+        }
+        else
+        {
+            this.addShadow();
+        }
+        return list;
+    }
+
+    // 添加遮罩
+    addShadow()
+    {
         var e = this.game.add.graphics(0, 0);
-        e.name = t.Consts.Shadow,
+        e.name = Consts.Shadow,
         e.alpha = .5,
         e.beginFill(0),
         e.drawRect(2 * -this.game.width, 2 * -this.game.height, 4 * this.game.width, 4 * this.game.height),
         this.cardFactory.container.add(e),
-        this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(t.Consts.Hero)),
-        this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(t.Consts.CardWithArm))
-    },
-    e.prototype.runArmTween = function() {
-        var e = this.cardFactory.container.getByName(t.Consts.Shadow);
+        this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.Hero)),
+        this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.CardWithArm))
+    }
+
+    // 手指 动画
+    runArmTween()
+    {
+        var e = this.cardFactory.container.getByName(Consts.Shadow);
         e && this.cardFactory.container.bringToTop(e),
-        this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(t.Consts.Hero)),
-        this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(t.Consts.CardWithMovingArm)),
+        this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.Hero)),
+        this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.CardWithMovingArm)),
         this.movingArm.alpha = 1,
         this.movingArm.y = this.movingArmY;
         var i = this.movingArmY + 150,
@@ -73,58 +145,87 @@ var e = function() {
         n.onComplete.add(this.runArmTween, this),
         o.chain(n),
         o.start()
-    },
-    e.prototype.getChestCardFromFactory = function() {
-        var t = this.cardFactory.getChestCard();
-        return t.setOnClickEvent(this.onCardDown, this.onCardUp, this),
-        t
-    },
-    e.prototype.getCardFromFactory = function(e, i) {
-        void 0 === e && (e = t.CardGenerationType.Random),
-        void 0 === i && (i = 0);
-        var o = this.cardFactory.getCard(e, i, this.getCardTypesOnTheTable());
-        return t.GameStatus.isTutorialSeen && o.setOnClickEvent(this.onCardDown, this.onCardUp, this),
-        o
-    },
-    e.prototype.getEnemyCardFromFactory = function(t) {
-        var e = this.cardFactory.getEnemy(t);
-        return e.setOnClickEvent(this.onCardDown, this.onCardUp, this),
-        e
-    },
-    e.prototype.getHealsCardFromFactory = function(t) {
+    }
+
+    // 生产卡牌 宝箱
+    getChestCardFromFactory()
+    {
+        var card = this.cardFactory.getChestCard();
+        card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+        return card;
+    }
+
+    // 生产卡牌 根据生成随机类型
+    getCardFromFactory(generationType:CardGenerationType = CardGenerationType.Random, i = 0)
+    {
+        var card = this.cardFactory.getCard(generationType, i, this.getCardTypesOnTheTable());
+        if(GameStatus.isTutorialSeen)
+        {
+            card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+        }
+        return card;
+    }
+
+    // 生成卡牌 敌人小兵
+    getEnemyCardFromFactory(t)
+    {
+        var card = this.cardFactory.getEnemy(t);
+        card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+        return card;
+    }
+
+    // 生成卡牌 血量
+    getHealsCardFromFactory(t)
+    {
         return this.cardFactory.getHealth(t)
-    },
-    e.prototype.getCardTypesOnTheTable = function() {
+    }
+
+    // 获取所有卡牌类型
+    getCardTypesOnTheTable()
+    {
         return this.field.getAll().filter(function(e) {
-            return e instanceof t.Card
+            return e instanceof Card
         }).map(function(t) {
             return t.type
         })
-    },
-    e.prototype.getCoinCardFromFactory = function(t) {
-        var e = this.cardFactory.getCoinCard(t);
-        return e.setOnClickEvent(this.onCardDown, this.onCardUp, this),
-        e
-    },
-    e.prototype.onCardDown = function(t, e, i, o) {
-        this.downPointer = e
-    },
-    e.prototype.onCardUp = function(e, i, o, n) {
-        if (!this.onAnimation) {
-            var s = new Phaser.Point(this.downPointer.x, this.downPointer.y),
-            a = new Phaser.Point(i.x, i.y);
-            if (s.distance(a) > 5) return;
-            var r = this.field.getPosition(function(t) {
-                return t === n
+    }
+
+    // 生成卡牌 金币
+    getCoinCardFromFactory(t)
+    {
+        var card = this.cardFactory.getCoinCard(t);
+        card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+        return card
+    }
+
+    onCardDown(t, e, i, o)
+    {
+        this.downPointer = e;
+    }
+
+    onCardUp(e, i, o, card)
+    {
+        if (!this.onAnimation) 
+        {
+            var point = new Phaser.Point(this.downPointer.x, this.downPointer.y),
+            point2 = new Phaser.Point(i.x, i.y);
+            if (point.distance(point2) > 5) return;
+            var field = this.field.getPosition(function(t) {
+                return t === card
             });
-            if (!r) return;
-            if (this.field.isPositionValid(r.getNewPosition(t.MoveType.Down)) && this.field.get(r.getNewPosition(t.MoveType.Down)) instanceof t.Hero) return void(this.keyboardManager.isUp = !0);
-            if (this.field.isPositionValid(r.getNewPosition(t.MoveType.Up)) && this.field.get(r.getNewPosition(t.MoveType.Up)) instanceof t.Hero) return void(this.keyboardManager.isDown = !0);
-            if (this.field.isPositionValid(r.getNewPosition(t.MoveType.Left)) && this.field.get(r.getNewPosition(t.MoveType.Left)) instanceof t.Hero) return void(this.keyboardManager.isRight = !0);
-            if (this.field.isPositionValid(r.getNewPosition(t.MoveType.Right)) && this.field.get(r.getNewPosition(t.MoveType.Right)) instanceof t.Hero) return void(this.keyboardManager.isLeft = !0);
-            n.playNoAccess()
+            if (!field) return;
+
+            if (this.field.isPositionValid(field.getNewPosition(MoveType.Down)) && this.field.get(field.getNewPosition(MoveType.Down)) instanceof Hero) return void(this.keyboardManager.isUp = true);
+            if (this.field.isPositionValid(field.getNewPosition(MoveType.Up)) && this.field.get(field.getNewPosition(MoveType.Up)) instanceof Hero) return void(this.keyboardManager.isDown = true);
+            if (this.field.isPositionValid(field.getNewPosition(MoveType.Left)) && this.field.get(field.getNewPosition(MoveType.Left)) instanceof Hero) return void(this.keyboardManager.isRight = true);
+            if (this.field.isPositionValid(field.getNewPosition(MoveType.Right)) && this.field.get(field.getNewPosition(MoveType.Right)) instanceof Hero) return void(this.keyboardManager.isLeft = true);
+            card.playNoAccess()
         }
-    },
+    }
+}
+
+var e = function() {
+   
     e.prototype.getHero = function() {
         return this.field.get(this.getHeroPosition())
     },

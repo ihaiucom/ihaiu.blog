@@ -1,5 +1,7 @@
 import KeyedCollection from "./KeyedCollection";
 import GMath from "../GMath";
+import GameStatus from "./GameStatus";
+import { CardScoreType } from "../enums/CardScoreType";
 
 export default class Basket
 {
@@ -58,11 +60,11 @@ export default class Basket
 
     static AfterChestBasket() {
         var i = new e(.5, .2, !0);
-        return i.add(t.CardScoreType.Horseshoe.toString(), 1),
-        i.add(t.CardScoreType.Bomb.toString(), 1),
-        i.add(t.CardScoreType.Lightning.toString(), 1),
-        i.add(t.CardScoreType.Skull.toString(), 1),
-        i.add(t.CardScoreType.Multiplier.toString(), 1),
+        return i.add(CardScoreType.Horseshoe.toString(), 1),
+        i.add(CardScoreType.Bomb.toString(), 1),
+        i.add(CardScoreType.Lightning.toString(), 1),
+        i.add(CardScoreType.Skull.toString(), 1),
+        i.add(CardScoreType.Multiplier.toString(), 1),
         i
     }
     add(t, e) {

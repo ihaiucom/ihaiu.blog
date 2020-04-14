@@ -1,5 +1,6 @@
 export default class RandomHelper
 {
+    // 随机 两个数之间的值
     static getRandomIntInclusive(min: number, max: number)
     {
         return min = Math.ceil(min),

@@ -1,241 +1,378 @@
-var i = function() {
-    function i() {}
-    return Object.defineProperty(i, "gold", {
-        get: function() {
-            return i.data.gold
-        },
-        set: function(t) {
-            i.data.gold = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "bestGoldPerGame", {
-        get: function() {
-            return i.data.bestGoldPerGame
-        },
-        set: function(t) {
-            i.data.bestGoldPerGame = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isTutorialSeen", {
-        get: function() {
-            return i.data.isTutorialSeen
-        },
-        set: function(e) {
-            i.data.isTutorialSeen = e,
-            i.save(),
-            0 == t.Consts.IsAndroid && window.famobi_analytics.trackEvent(window.famobi_analytics.EVENT_TUTORIALCOMPLETED)
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isTutorialStep1Done", {
-        get: function() {
-            return i.data.isTutorialStep1Done
-        },
-        set: function(t) {
-            i.data.isTutorialStep1Done = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isTutorialStep2Done", {
-        get: function() {
-            return i.data.isTutorialStep2Done
-        },
-        set: function(t) {
-            i.data.isTutorialStep2Done = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isTutorialChestSeen", {
-        get: function() {
-            return i.data.isTutorialChestSeen
-        },
-        set: function(t) {
-            i.data.isTutorialChestSeen = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isBombHero", {
-        get: function() {
-            return i.data.isBombHero
-        },
-        set: function(t) {
-            i.data.isBombHero = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isKeyHero", {
-        get: function() {
-            return i.data.isKeyHero
-        },
-        set: function(t) {
-            i.data.isKeyHero = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isGunHero", {
-        get: function() {
-            return i.data.isGunHero
-        },
-        set: function(t) {
-            i.data.isGunHero = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isFourXFour", {
-        get: function() {
-            return i.data.isFourXFour
-        },
-        set: function(t) {
-            i.data.isFourXFour = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isHorseshoe", {
-        get: function() {
-            return i.data.isHorseshoe
-        },
-        set: function(t) {
-            i.data.isHorseshoe = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isHeart", {
-        get: function() {
-            return i.data.isHeart
-        },
-        set: function(t) {
-            i.data.isHeart = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isLuck", {
-        get: function() {
-            return i.data.isLuck
-        },
-        set: function(t) {
-            i.data.isLuck = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "isKey", {
-        get: function() {
-            return i.data.isKey
-        },
-        set: function(t) {
-            i.data.isKey = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "lastAdvCoolDown", {
-        get: function() {
-            return i.data.lastAdvCoolDown
-        },
-        set: function(t) {
-            i.data.lastAdvCoolDown = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "lastResultAdvCoolDown", {
-        get: function() {
-            return i.data.lastResultAdvCoolDown
-        },
-        set: function(t) {
-            i.data.lastResultAdvCoolDown = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    Object.defineProperty(i, "lastItemWithAdv", {
-        get: function() {
-            return i.data.lastItemWithAdv
-        },
-        set: function(t) {
-            i.data.lastItemWithAdv = t,
-            i.save()
-        },
-        enumerable: !0,
-        configurable: !0
-    }),
-    i.addGold = function(t) {
-        i.goldPerGame += t,
-        i.bestGoldPerGame < i.goldPerGame && (i.bestGoldPerGame = i.goldPerGame)
-    },
-    i.init = function() {
-        i.gameLevel = 1,
-        i.levelStep = 10,
-        i.turnsToBoss = i.levelStep,
-        i.goldPerGame = 0,
-        i.movesAfterLastSpecialCard = 0,
-        i.cardCounter = 0,
-        i.isNeedCreateBoss = !1,
-        i.currentHero == t.HeroType.Key && (i.isKey = !0)
-    },
-    i.resetShop = function() {
-        i.isHeart = !1,
-        i.isHorseshoe = !1,
-        i.isLuck = !1,
-        i.isKey = !1
-    },
-    i.updateMovesAfterSpecialCard = function(e) {
-        e == t.CardScoreType.Health || e == t.CardScoreType.Armor ? i.movesAfterLastSpecialCard = 0 : i.movesAfterLastSpecialCard++
-    },
-    i.updateCardCounter = function(e) {
-        t.CardScoreTypeHelper.isCardScoreTypeNegative(e) && i.cardCounter--,
-        t.CardScoreTypeHelper.isCardScoreTypePositive(e) && i.cardCounter++
-    },
-    i.stepUpdate = function() {
-        i.isBossShouldBeCreated() && (i.isNeedCreateBoss = !0, i.levelStep++, i.turnsToBoss = i.levelStep + 1),
-        i.isNeedCreateChestOnNextStep && (i.isNeedCreateChestOnNextStep = !1, i.isNeedCreateChest = !0)
-    },
-    i.isBossShouldBeCreated = function() {
-        return ! i.isNeedCreateBoss && 1 == i.turnsToBoss
-    },
-    i.decreaseTurnsToBoss = function() {
-        i.turnsToBoss > 0 && i.turnsToBoss--
-    },
-    i.save = function() {
-        t.Consts.IsAndroid ? localStorage.setItem(t.Consts.StorageName, JSON.stringify(i.data)) : window.famobi.localStorage.setItem(t.Consts.StorageName, JSON.stringify(i.data))
-    },
-    i.load = function() {
-        return t.Consts.IsAndroid ? JSON.parse(localStorage.getItem(t.Consts.StorageName)) || new e: (window.famobi = window.famobi || {},
-        window.famobi.localStorage = window.famobi.localStorage || window.localStorage, JSON.parse(window.famobi.localStorage.getItem(t.Consts.StorageName)) || new e)
-    },
-    i.data = i.load(),
-    i.levelStep = 10,
-    i.RowCount = 3,
-    i.ColumnCount = 3,
-    i
-} ();
-t.GameStatus = i
+import Game from "../../Game";
+import { HeroType } from "../HeroType";
+import { CardScoreType } from "../enums/CardScoreType";
+import CardScoreTypeHelper from "../enums/CardScoreTypeHelper";
+
+export default class GameStatus
+{
+    private static DATE_KEY = "GameStatus";
+    private static data = 
+    {
+        // 当前金本
+        gold: 0,
+        // 历史最大金本
+        bestGoldPerGame: 0,
+        // 是否跑过新手教程
+        isTutorialSeen: false,
+        // 是否新手教程完成了第1个步骤
+        isTutorialStep1Done: false,
+        // 是否新手教程完成了第2个步骤
+        isTutorialStep2Done: false,
+        // 是否跑过新手教程开启宝箱
+        isTutorialChestSeen: false,
+        // 是否购买了炸弹英雄
+        isBombHero: false,
+        // 是否购买了钥匙英雄
+        isKeyHero: false,
+        // 是否购买了枪管英雄
+        isGunHero: false,
+        // 是否购买了4x4地形
+        isFourXFour: false,
+        // 是否购买了道具 马铁蹄
+        isHorseshoe: false,
+        // 是否购买了道具 生命
+        isHeart: false,
+        // 是否购买了道具 运气
+        isLuck: false,
+        // 是否购买了道具 钥匙
+        isKey: false,
+        // 最后一次广告使用道具的冷却时间 时间戳 Date.now
+        lastAdvCoolDown: 0,
+        // 最后一次广告使用的道具ID
+        lastItemWithAdv: 0,
+        // 最后一次广告结果 时间戳 Date.now
+        lastResultAdvCoolDown: 0
+    };
+
+    
+    // 游戏等级
+    static gameLevel = 1;
+    // 一个级别步骤
+    static levelStep = 10;
+    // 开出boss在第几个步骤
+    static turnsToBoss = 10;
+    // 游戏币叠加
+    static goldPerGame = 0;
+    // 卡牌数量
+    static cardCounter = 0;
+    // 是否需要Boss
+    static isNeedCreateBoss: boolean = false;
+    // 当前英雄
+    static currentHero: HeroType = HeroType.Base;
+    // 行数
+    static RowCount = 3;
+    // 列数
+    static ColumnCount = 3;
+
+    // 英雄是否活着
+    static isHeroAlive: boolean =  false;
+    // 游戏是否结束
+    static isGameEnd: boolean =  false;
+
+
+    static init()
+    {
+        if(this.currentHero == HeroType.Key)
+        {
+            this.isKey = true;
+        }
+    }
+
+
+    static load()
+    {
+        if(Game.localStorage.hasItem(this.DATE_KEY, false))
+        {
+            this.data = Game.localStorage.getJSON(this.DATE_KEY);
+        }
+    }
+
+    static save()
+    {
+        Game.localStorage.setJSON(this.DATE_KEY, this.data, false);
+    }
+
+    static get gold(): number
+    {
+        return this.data.gold;
+    }
+
+    static set gold(val: number)
+    {
+        this.data.gold = val;
+        this.save();
+    }
+
+    
+    static get bestGoldPerGame(): number
+    {
+        return this.data.bestGoldPerGame;
+    }
+
+    static set bestGoldPerGame(val: number)
+    {
+        this.data.bestGoldPerGame = val;
+        this.save();
+    }
+
+    
+    static get isTutorialSeen(): boolean
+    {
+        return this.data.isTutorialSeen;
+    }
+
+    static set isTutorialSeen(val: boolean)
+    {
+        this.data.isTutorialSeen = val;
+        this.save();
+    }
+
+
+    static get isTutorialStep1Done(): boolean
+    {
+        return this.data.isTutorialSeen;
+    }
+
+    static set isTutorialStep1Done(val: boolean)
+    {
+        this.data.isTutorialStep1Done = val;
+        this.save();
+    }
+
+
+    static get isTutorialStep2Done(): boolean
+    {
+        return this.data.isTutorialStep2Done;
+    }
+
+    static set isTutorialStep2Done(val: boolean)
+    {
+        this.data.isTutorialStep2Done = val;
+        this.save();
+    }
+    
+
+    static get isTutorialChestSeen(): boolean
+    {
+        return this.data.isTutorialChestSeen;
+    }
+
+    static set isTutorialChestSeen(val: boolean)
+    {
+        this.data.isTutorialChestSeen = val;
+        this.save();
+    }
+
+
+
+    static get isBombHero(): boolean
+    {
+        return this.data.isBombHero;
+    }
+
+    static set isBombHero(val: boolean)
+    {
+        this.data.isBombHero = val;
+        this.save();
+    }
+    
+
+    static get isKeyHero(): boolean
+    {
+        return this.data.isKeyHero;
+    }
+
+    static set isKeyHero(val: boolean)
+    {
+        this.data.isKeyHero = val;
+        this.save();
+    }
+
+    
+
+    static get isGunHero(): boolean
+    {
+        return this.data.isGunHero;
+    }
+
+    static set isGunHero(val: boolean)
+    {
+        this.data.isGunHero = val;
+        this.save();
+    }
+
+    
+    static get isFourXFour(): boolean
+    {
+        return this.data.isFourXFour;
+    }
+
+    static set isFourXFour(val: boolean)
+    {
+        this.data.isFourXFour = val;
+        this.save();
+    }
+
+
+
+    static get isHorseshoe(): boolean
+    {
+        return this.data.isHorseshoe;
+    }
+
+    static set isHorseshoe(val: boolean)
+    {
+        this.data.isHorseshoe = val;
+        this.save();
+    }
+
+    
+
+    static get isHeart(): boolean
+    {
+        return this.data.isHeart;
+    }
+
+    static set isHeart(val: boolean)
+    {
+        this.data.isHeart = val;
+        this.save();
+    }
+
+    
+
+    static get isLuck(): boolean
+    {
+        return this.data.isLuck;
+    }
+
+    static set isLuck(val: boolean)
+    {
+        this.data.isLuck = val;
+        this.save();
+    }
+
+     
+
+    static get isKey(): boolean
+    {
+        return this.data.isKey;
+    }
+
+    static set isKey(val: boolean)
+    {
+        this.data.isKey = val;
+        this.save();
+    }
+    
+    
+    static get lastAdvCoolDown(): number
+    {
+        return this.data.lastAdvCoolDown;
+    }
+
+    static set lastAdvCoolDown(val: number)
+    {
+        this.data.lastAdvCoolDown = val;
+        this.save();
+    }
+
+
+    
+    static get lastResultAdvCoolDown(): number
+    {
+        return this.data.lastResultAdvCoolDown;
+    }
+
+    static set lastResultAdvCoolDown(val: number)
+    {
+        this.data.lastResultAdvCoolDown = val;
+        this.save();
+    }
+
+
+    
+    
+    static get lastItemWithAdv(): number
+    {
+        return this.data.lastItemWithAdv;
+    }
+
+    static set lastItemWithAdv(val: number)
+    {
+        this.data.lastItemWithAdv = val;
+        this.save();
+    }
+
+
+    static addGold(t: number)
+    {
+        this.goldPerGame += t;
+        if(this.bestGoldPerGame < this.goldPerGame)
+        {
+            this.bestGoldPerGame = this.goldPerGame;
+        }
+    }
+
+    static resetShop()
+    {
+        this.isHeart = false;
+        this.isHorseshoe = false;
+        this.isLuck = false;
+        this.isKey = false;
+    }
+
+    // 移动后的特殊卡牌数量
+    static movesAfterLastSpecialCard: number = 0;
+
+    // 移动后，刷新特殊卡
+    static updateMovesAfterSpecialCard(cardScoreType:CardScoreType)
+    {
+        // 血瓶, 盔甲
+        if(cardScoreType == CardScoreType.Health 
+            || cardScoreType == CardScoreType.Armor)
+        {
+            this.movesAfterLastSpecialCard = 0;
+        }
+        else
+        {
+            this.movesAfterLastSpecialCard ++;
+        }
+    }
+
+    static updateCardCounter(cardScoreType: CardScoreType)
+    {
+        if(CardScoreTypeHelper.isCardScoreTypeNegative(cardScoreType))
+        {
+            this.cardCounter --;
+        }
+        
+        if(CardScoreTypeHelper.isCardScoreTypePositive(cardScoreType))
+        {
+            this.cardCounter ++;
+        }
+    }
+
+    static stepUpdate()
+    {
+        if(this.isBossShouldBeCreated())
+        {
+            this.isNeedCreateBoss = true;
+            this.levelStep ++;
+            this.turnsToBoss = this.levelStep + 1;
+        }
+    }
+
+    // 是否应该创建Boss
+    static isBossShouldBeCreated()
+    {
+        return !this.isNeedCreateBoss && 1 == this.turnsToBoss;
+    }
+
+    // 翻转Boss
+    static decreaseTurnsToBoss()
+    {
+        return this.turnsToBoss && this.turnsToBoss ++;
+    }
+
+}

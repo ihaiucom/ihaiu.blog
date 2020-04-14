@@ -2,6 +2,7 @@ export default class Consts
 {
     static Width = 640;
     static Height = 960;
+    // 英雄开始位置
     static HeroStartRow = 2;
     static HeroStartColumn = 2;
     static CardWidth = 198;

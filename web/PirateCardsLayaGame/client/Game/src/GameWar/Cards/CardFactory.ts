@@ -1,37 +1,56 @@
+import Game from "../../Game";
+import Basket from "./Basket";
+import GameStatus from "./GameStatus";
+
 export default class CardFactory
 {
-    
+    game: Game;
+    container;
+    cardShapeFactory: CardShapeFactory;
+    movesAfterLastSpecialCard = 0;
+
+    healthBasket = new Basket();
+    armorBasket = new Basket();
+    cannonBasket = new Basket();
+    enemyBasket = new Basket();
+    goldBasket = new Basket();
+    chestBasket = Basket.AfterChestBasket();
+
+    constructor(game: Game, container)
+    {
+        this.game = game;
+        this.container = container;
+        this.cardShapeFactory = new CardShapeFactory(game, container);
+    }
+
+    getDefault()
+    {
+        var e = this.cardShapeFactory.getDefaultShape();
+        return Card.GetDefault(e, this.game)
+    }
+
+    getHero()
+    {
+        var shape = this.cardShapeFactory.getHeroShape(GameStatus.currentHero),
+        hero = new Hero(shape, this.game);
+        hero.setShopItemsStatus(),
+        hero.totalLife = 10,
+        hero.currentLife = 10,
+        hero.armor = 0,
+        GameStatus.isHorseshoe && (hero.totalLife += 1, hero.currentLife += 1),
+        hero.setStatus(),
+        this.movesAfterLastSpecialCard++;
+        return hero;
+    }
+
+    getCard()
+    {
+        return void 0 === e && (e = t.CardGenerationType.Random),
+        t.GameStatus.isNeedCreateBoss && e == t.CardGenerationType.Random ? (t.GameStatus.isNeedCreateBoss = !1, this.getBoss()) : t.GameStatus.isNeedCreateChest && e == t.CardGenerationType.Random ? (t.GameStatus.isNeedCreateChest = !1, this.getChestCard()) : this.generateCardType(e, o) == t.CardBackgroundType.Warrior ? this.getEnemy(i) : this.getPowerUp(e, i, o)
+    }
 }
     
     var e = function() {
-    function e(game, container) {
-        this.healthBasket = new t.Basket,
-        this.armorBasket = new t.Basket,
-        this.cannonBasket = new t.Basket,
-        this.enemyBasket = new t.Basket,
-        this.goldBasket = new t.Basket,
-        this.chestBasket = t.Basket.AfterChestBasket(),
-        this.movesAfterLastSpecialCard = 0,
-        this.game = game,
-        this.container = container,
-        this.cardShapeFactory = new t.CardShapeFactory(game, container)
-    }
-    return e.prototype.getDefault = function() {
-        var e = this.cardShapeFactory.getDefaultShape();
-        return t.Card.GetDefault(e, this.game)
-    },
-    e.prototype.getHero = function() {
-        var e = this.cardShapeFactory.getHeroShape(t.GameStatus.currentHero),
-        i = new t.Hero(e, this.game);
-        return i.setShopItemsStatus(),
-        i.totalLife = 10,
-        i.currentLife = 10,
-        i.armor = 0,
-        t.GameStatus.isHorseshoe && (i.totalLife += 1, i.currentLife += 1),
-        i.setStatus(),
-        this.movesAfterLastSpecialCard++,
-        i
-    },
     e.prototype.getCard = function(e, i, o) {
         return void 0 === e && (e = t.CardGenerationType.Random),
         t.GameStatus.isNeedCreateBoss && e == t.CardGenerationType.Random ? (t.GameStatus.isNeedCreateBoss = !1, this.getBoss()) : t.GameStatus.isNeedCreateChest && e == t.CardGenerationType.Random ? (t.GameStatus.isNeedCreateChest = !1, this.getChestCard()) : this.generateCardType(e, o) == t.CardBackgroundType.Warrior ? this.getEnemy(i) : this.getPowerUp(e, i, o)
