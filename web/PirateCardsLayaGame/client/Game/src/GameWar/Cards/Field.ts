@@ -616,9 +616,9 @@ export default class Field
         case CardScoreType.Health:
         case CardScoreType.Poison:
         case CardScoreType.Cannon:
-            return ! 0;
+            return true;
         default:
-            return ! 1
+            return false
         }
     }
     smashBomb () {
