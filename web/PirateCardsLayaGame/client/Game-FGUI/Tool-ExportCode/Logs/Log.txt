@@ -171,3 +171,14 @@
 2020-04-14 04:03:55.0587   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= GuestPanel.xml nodename=btn_back
 2020-04-14 04:03:55.0587   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= WxPanel.xml nodename=btn_login
 2020-04-14 04:03:55.0587   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= CancelPanel.xml nodename=btn_cancel
+2020-04-15 00:11:28.3447   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= LoginWindowUI.xml nodename=btnBulletin
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= LoginPanel.xml nodename=btn_offLine
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= LoginPanel.xml nodename=btn_randomLogin
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= LoginPanel.xml nodename=btn_testWar
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= RegisterPanel.xml nodename=btn_onRegister
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= RegisterPanel.xml nodename=btn_registerback
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= GuestPanel.xml nodename=btn_guestlogin
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= GuestPanel.xml nodename=btn_linkaccount
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= GuestPanel.xml nodename=btn_back
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= WxPanel.xml nodename=btn_login
+2020-04-15 00:11:28.3964   (Program.cs:22) 没有找到 resourceComponent packagename= ModuleLogin comname= CancelPanel.xml nodename=btn_cancel

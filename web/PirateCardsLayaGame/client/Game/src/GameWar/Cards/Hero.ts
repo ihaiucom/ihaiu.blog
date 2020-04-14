@@ -1,83 +1,94 @@
-var e = function(e) {
-    function i(t, i) {
-        return e.call(this, t, i) || this
-    }
-    return __extends(i, e),
-    i.prototype.fight = function(e) {
-        var i = new t.FightResult(!0, !1, !0);
-        switch (e.type) {
-        case t.CardScoreType.Trap:
-            e.getLife() > 0 && t.GameStatus.currentHero != t.HeroType.Gun && (t.SoundController.instance.playSound(t.SoundConsts.Trap), this.currentLife > e.getScore() ? (this.currentLife -= e.getScore(), t.GameStatus.addGold(e.getScore()), i.isHeroAlive = !0) : i.isHeroAlive = !1);
+import Card from "./Card";
+import FightResult from "./FightResult";
+import { CardScoreType } from "../enums/CardScoreType";
+import GameStatus from "./GameStatus";
+import ArtConsts from "../ArtConsts";
+import SoundConsts from "../SoundConsts";
+
+export default class Hero extends Card
+{
+    currentLife: number = 0;
+    armor: number = 0;
+    totalLife: number = 0;
+
+    needRunLightning: boolean = false;
+    lightningScore: number = 0;
+    
+    fight(card: Card) {
+        var fightResult = new FightResult(true, false, true);
+        switch (card.type) {
+        case CardScoreType.Trap:
+            card.getLife() > 0 && GameStatus.currentHero != t.HeroType.Gun && (SoundController.instance.playSound(SoundConsts.Trap), this.currentLife > card.getScore() ? (this.currentLife -= card.getScore(), GameStatus.addGold(card.getScore()), fightResult.isHeroAlive = !0) : fightResult.isHeroAlive = !1);
             break;
-        case t.CardScoreType.Warrior:
-            t.SoundController.instance.playSound(Phaser.ArrayUtils.getRandomItem([t.SoundConsts.Hit1, t.SoundConsts.Hit2])),
-            i.isHeroAlive = this.fightWithEnemy(e),
-            i.isHeroAlive && e.isBoss() && (i.isNeedIncreaseLifeByOneAfterBoss = !0);
+        case CardScoreType.Warrior:
+            SoundController.instance.playSound(Phaser.ArrayUtils.getRandomItem([SoundConsts.Hit1, SoundConsts.Hit2])),
+            fightResult.isHeroAlive = this.fightWithEnemy(card),
+            fightResult.isHeroAlive && card.isBoss() && (fightResult.isNeedIncreaseLifeByOneAfterBoss = !0);
             break;
-        case t.CardScoreType.Armor:
-            e.getScore(),
-            t.SoundController.instance.playSound(t.SoundConsts.ShieldWood),
-            t.GameStatus.currentHero == t.HeroType.Gun ? this.needSmashLightning(e.getScore()) : this.armor < e.getScore() ? (this.armor = e.getScore(), this.setArmorFrame(e)) : t.GameStatus.currentHero == t.HeroType.Base && this.armor++;
+        case CardScoreType.Armor:
+            card.getScore(),
+            SoundController.instance.playSound(SoundConsts.ShieldWood),
+            GameStatus.currentHero == t.HeroType.Gun ? this.needSmashLightning(card.getScore()) : this.armor < card.getScore() ? (this.armor = card.getScore(), this.setArmorFrame(card)) : GameStatus.currentHero == t.HeroType.Base && this.armor++;
             break;
-        case t.CardScoreType.Gold:
-            e.shape.getByName(t.Consts.CardManAnimation) instanceof t.Coin ? t.SoundController.instance.playSound(t.SoundConsts.Coin) : t.SoundController.instance.playSound(t.SoundConsts.CoinsBag),
-            t.GameStatus.addGold(e.getScore());
+        case CardScoreType.Gold:
+            card.shape.getByName(t.Consts.CardManAnimation) instanceof t.Coin ? SoundController.instance.playSound(SoundConsts.Coin) : SoundController.instance.playSound(SoundConsts.CoinsBag),
+            GameStatus.addGold(card.getScore());
             break;
-        case t.CardScoreType.Health:
-            t.SoundController.instance.playSound(Phaser.ArrayUtils.getRandomItem([t.SoundConsts.Health1, t.SoundConsts.Health2])),
-            this.currentLife += e.getScore(),
+        case CardScoreType.Health:
+            SoundController.instance.playSound(Phaser.ArrayUtils.getRandomItem([SoundConsts.Health1, SoundConsts.Health2])),
+            this.currentLife += card.getScore(),
             this.currentLife > this.totalLife && (this.currentLife = this.totalLife);
             break;
-        case t.CardScoreType.Cannon:
+        case CardScoreType.Cannon:
             this.needShoot = !0,
-            this.shootScore = e.getScore();
+            this.shootScore = card.getScore();
             break;
-        case t.CardScoreType.Chest:
-            i.isChest = !0;
+        case CardScoreType.Chest:
+            fightResult.isChest = !0;
             break;
-        case t.CardScoreType.Poison:
-            if (t.SoundController.instance.playSound(t.SoundConsts.Poison), t.GameStatus.isLuck) return i.isHeroAlive = !0,
+        case CardScoreType.Poison:
+            if (SoundController.instance.playSound(SoundConsts.Poison), GameStatus.isLuck) return fightResult.isHeroAlive = !0,
             this.useLuck(),
-            i;
-            if (e.getScore() >= this.currentLife) return i.isHeroAlive = !1,
-            i;
-            this.currentLife -= e.getScore();
+            fightResult;
+            if (card.getScore() >= this.currentLife) return fightResult.isHeroAlive = !1,
+            fightResult;
+            this.currentLife -= card.getScore();
             break;
-        case t.CardScoreType.Horseshoe:
-            i.isNeedIncreaseLifeByOne = !0;
+        case CardScoreType.Horseshoe:
+            fightResult.isNeedIncreaseLifeByOne = !0;
             break;
-        case t.CardScoreType.Bomb:
+        case CardScoreType.Bomb:
             break;
-        case t.CardScoreType.Lightning:
-            this.needSmashLightning(e.getScore());
+        case CardScoreType.Lightning:
+            this.needSmashLightning(card.getScore());
             break;
-        case t.CardScoreType.Multiplier:
+        case CardScoreType.Multiplier:
             this.needShootMultiplier = !0,
-            this.multiplierScore = e.getScore();
+            this.multiplierScore = card.getScore();
             break;
-        case t.CardScoreType.Skull:
+        case CardScoreType.Skull:
             this.needShootSkull = !0;
             break;
-        case t.CardScoreType.Barrel:
-            t.SoundController.instance.playSound(Phaser.ArrayUtils.getRandomItem([t.SoundConsts.Barrel1, t.SoundConsts.Barrel2])),
-            i.isMove = !1
+        case CardScoreType.Barrel:
+            SoundController.instance.playSound(Phaser.ArrayUtils.getRandomItem([SoundConsts.Barrel1, SoundConsts.Barrel2])),
+            fightResult.isMove = !1
         }
         return this.setStatus(),
-        i
-    },
-    i.prototype.needSmashLightning = function(t) {
-        this.needRunLightning = !0,
-        this.lightningScore = t
-    },
-    i.prototype.setStatus = function() {
+        fightResult
+    }
+    needSmashLightning(score) {
+        this.needRunLightning =  true,
+        this.lightningScore = score
+    }
+    setStatus() {
         this.setLife(),
         this.setArmor()
-    },
-    i.prototype.stepUpdate = function() {},
-    i.prototype.getScore = function() {
+    }
+    stepUpdate() {},
+    getScore() {
         return this.currentLife + this.armor
-    },
-    i.prototype.reduceScoreInNSeconds = function(t, e) {
+    }
+    reduceScoreInNSeconds(t, e) {
         if (t <= this.armor) this.armor -= t;
         else {
             var i = t - this.armor;
@@ -85,47 +96,47 @@ var e = function(e) {
             this.currentLife -= i
         }
         setTimeout(this.setStatus.bind(this), e)
-    },
-    i.prototype.increaseScoreInNSeconds = function(t, e) {
+    }
+    increaseScoreInNSeconds(t, e) {
         this.totalLife - this.currentLife > t ? this.currentLife = this.totalLife: this.currentLife += t,
         setTimeout(this.setStatus.bind(this), e)
-    },
-    i.prototype.setShopItemsStatus = function() {
+    }
+    setShopItemsStatus() {
         var e = 1;
-        this.destroySpriteByName(t.ArtConsts.SmallHeart),
-        this.destroySpriteByName(t.ArtConsts.SmallHorseshoe),
-        this.destroySpriteByName(t.ArtConsts.SmallLuck),
-        this.destroySpriteByName(t.ArtConsts.SmallKey),
-        t.GameStatus.isHeart && this.addSpriteByName(t.ArtConsts.SmallHeart, e++, 0, 1),
-        t.GameStatus.isHorseshoe,
-        t.GameStatus.isLuck && this.addSpriteByName(t.ArtConsts.SmallLuck, e++, 30),
-        t.GameStatus.isKey && this.addSpriteByName(t.ArtConsts.SmallKey, e, 30)
-    },
-    i.prototype.addSpriteByName = function(e, i, o, n) {
+        this.destroySpriteByName(ArtConsts.SmallHeart),
+        this.destroySpriteByName(ArtConsts.SmallHorseshoe),
+        this.destroySpriteByName(ArtConsts.SmallLuck),
+        this.destroySpriteByName(ArtConsts.SmallKey),
+        GameStatus.isHeart && this.addSpriteByName(ArtConsts.SmallHeart, e++, 0, 1),
+        GameStatus.isHorseshoe,
+        GameStatus.isLuck && this.addSpriteByName(ArtConsts.SmallLuck, e++, 30),
+        GameStatus.isKey && this.addSpriteByName(ArtConsts.SmallKey, e, 30)
+    }
+    addSpriteByName(e, i, o, n) {
         void 0 === o && (o = 0),
         void 0 === n && (n = 1);
         var s = 38 * i - .5 * t.Consts.CardWidth,
-        a = t.ShapeFactoryHelper.getShape(this.game, s, 80, t.ArtConsts.Items1, e, 0);
+        a = t.ShapeFactoryHelper.getShape(this.game, s, 80, ArtConsts.Items1, e, 0);
         a.name = e,
         a.angle = o,
         a.scale.set(n),
         this.shape.add(a)
-    },
-    i.prototype.destroySpriteByName = function(t) {
+    }
+    destroySpriteByName(t) {
         var e = this.shape.getByName(t);
         e && e.destroy()
-    },
-    i.prototype.setLife = function() {
+    }
+    setLife() {
         this.getCardLifeText().setText(this.currentLife + "/" + this.totalLife)
-    },
-    i.prototype.setArmor = function() {
+    }
+    setArmor() {
         var e = this.shape.getByName(t.Consts.PowerUpCircle);
         e.visible && 0 == this.armor ? this.hideSprite(e) : e.visible = !0;
         var i = this.shape.getByName(t.Consts.PowerUp);
         i.setText(this.armor.toString()),
         0 == this.armor && i.setText("")
-    },
-    i.prototype.hideSprite = function(t) {
+    }
+    hideSprite(t) {
         this.game.add.tween(t).to({
             width: 0,
             height: 0,
@@ -137,8 +148,8 @@ var e = function(e) {
             t.rotation = 0,
             t.alpha = 1
         })
-    },
-    i.prototype.setArmorFrame = function(e) {
+}
+    setArmorFrame(e) {
         var i = e.shape.getByName(t.Consts.CardManAnimation),
         o = this.shape.getByName(t.Consts.PowerUpCircle);
         o.frameName = i.frameName;
@@ -164,23 +175,23 @@ var e = function(e) {
         100);
         n.chain(a),
         n.start()
-    },
-    i.prototype.fightWithEnemy = function(e) {
+    }
+    fightWithEnemy(e) {
         if (e.getScore() >= this.armor + this.currentLife) return ! 1;
-        if (e.getScore() <= this.armor) e.getScore() < this.armor && t.GameStatus.currentHero == t.HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
+        if (e.getScore() <= this.armor) e.getScore() < this.armor && GameStatus.currentHero == t.HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
         else if (this.armor > 0) {
             var i = e.getScore() - this.armor;
             this.armor = 0,
             this.currentLife -= i
         } else this.currentLife -= e.getScore();
-        return t.GameStatus.addGold(e.getScore()),
+        return GameStatus.addGold(e.getScore()),
         !0
-    },
-    i.prototype.useHeart = function() {
-        var e = this.shape.getByName(t.ArtConsts.SmallHeart);
+    }
+    useHeart() {
+        var e = this.shape.getByName(ArtConsts.SmallHeart);
         this.shape.bringToTop(e);
-        t.SoundController.instance.playSound(t.SoundConsts.Revive),
-        e.animations.add("explode", Phaser.Animation.generateFrameNames(t.ArtConsts.SmallHeart, 0, 16, "", 4), 30, !1, !1),
+        SoundController.instance.playSound(SoundConsts.Revive),
+        e.animations.add("explode", Phaser.Animation.generateFrameNames(ArtConsts.SmallHeart, 0, 16, "", 4), 30, !1, !1),
         this.game.add.tween(e.scale).to({
             x: 1,
             y: 1
@@ -192,26 +203,26 @@ var e = function(e) {
         },
         this),
         this.currentLife = this.totalLife
-    },
-    i.prototype.isNegative = function() {
+    }
+    isNegative() {
         return ! 1
-    },
-    i.prototype.increaseLifeByOneTween = function() {
+    }
+    increaseLifeByOneTween() {
         var t = this.getScaleTween(this.getCardLifeText(), this.increaseLifeByOne);
         return t.onStart.add(this.playHorseshoe, this),
         t
-    },
-    i.prototype.playHorseshoe = function() {
-        t.SoundController.instance.playSound(t.SoundConsts.Horseshoe)
-    },
-    i.prototype.increaseLifeByOne = function() {
+    }
+    playHorseshoe() {
+        SoundController.instance.playSound(SoundConsts.Horseshoe)
+    }
+    increaseLifeByOne() {
         this.currentLife++,
         this.totalLife++,
         this.setLife()
-    },
-    i.prototype.useLuck = function() {
-        t.GameStatus.isLuck = !1;
-        var e = this.shape.getByName(t.ArtConsts.SmallLuck),
+    }
+    useLuck() {
+        GameStatus.isLuck = !1;
+        var e = this.shape.getByName(ArtConsts.SmallLuck),
         i = this.game.add.tween(e).to({
             width: 1.5 * e.width,
             height: 1.5 * e.height
@@ -224,10 +235,8 @@ var e = function(e) {
         150);
         i.onComplete.add(this.setShopItemsStatus, this),
         i.start()
-    },
-    i.prototype.getGoldValue = function() {
+    }
+    getGoldValue() {
         return 0
-    },
-    i
-} (t.CardBase);
-t.Hero = e
+    }
+}

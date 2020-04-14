@@ -5,8 +5,10 @@ export default class Consts
     // 英雄开始位置
     static HeroStartRow = 2;
     static HeroStartColumn = 2;
+    // 卡牌宽高
     static CardWidth = 198;
     static CardHeight = 226;
+    // 卡牌直接的间隔
     static CardSpaceBetweenWidth = 10;
     static CardSpaceBetweenHeight = 10;
     static AnimationTime = 185;
@@ -47,7 +49,8 @@ export default class Consts
     // static EasingTo = Phaser.Easing.Quadratic.In;
     // static EasingFrom = Phaser.Easing.Quadratic.Out;
     static StorageName = "pirated-cards-adventure";
-    static IsDev = !1;
+    // 是否是开发模式
+    static IsDev = false;
     static IsAndroid = !1;
     static HighResolutionScale = !1;
     static MaxPixelRatio = 3;

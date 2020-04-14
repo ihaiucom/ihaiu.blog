@@ -8,7 +8,7 @@
             return u.indexOf("Mobile") > -1;
         }
         static get scaleMode() {
-            return Laya.Stage.SCALE_FIXED_AUTO;
+            return Laya.Stage.SCALE_SHOWALL;
         }
         static get scaleX() {
             return Laya.stage.width / this.width;
@@ -28,7 +28,7 @@
     GameConfig.startScene = "test/TestScene.scene";
     GameConfig.sceneRoot = "";
     GameConfig.debug = false;
-    GameConfig.stat = false;
+    GameConfig.stat = true;
     GameConfig.physicsDebug = false;
     GameConfig.exportSceneToJson = true;
     GameConfig.isAntialias = true;
@@ -2676,7 +2676,9 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
+            this.m_arm = (this.getChild("arm"));
             this.m_bg = (this.getChild("bg"));
+            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
             this.m_pausePanel = (this.getChild("pausePanel"));
         }
     }
@@ -10156,6 +10158,107 @@
     class PanelResult extends PanelResultStruct {
     }
 
+    class MenuTopPanelWarStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "MenuTopPanelWar"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_coinText = (this.getChild("coinText"));
+            this.m_countText = (this.getChild("countText"));
+            this.m_levelTex = (this.getChild("levelTex"));
+            this.m_coinText = (this.getChild("coinText"));
+            this.m_puaseBtn = (this.getChild("puaseBtn"));
+        }
+    }
+    MenuTopPanelWarStruct.URL = "ui://moe42ygrsqzy9e";
+    MenuTopPanelWarStruct.DependPackages = ["GameHome"];
+
+    class MenuTopPanelWar extends MenuTopPanelWarStruct {
+    }
+
+    class FxBarrelStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxBarrel"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+        }
+    }
+    FxBarrelStruct.URL = "ui://moe42ygrsqzy9g";
+    FxBarrelStruct.DependPackages = ["GameHome"];
+
+    class FxBarrel extends FxBarrelStruct {
+    }
+
+    class CardViewFrontHeroStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontHero"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+            this.m_shield = (this.getChild("shield"));
+            this.m_shopBar = (this.getChild("shopBar"));
+        }
+    }
+    CardViewFrontHeroStruct.URL = "ui://moe42ygrsqzy9v";
+    CardViewFrontHeroStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontHero extends CardViewFrontHeroStruct {
+    }
+
+    class CardViewFrontWarriowEnemyStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowEnemy"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontWarriowEnemyStruct.URL = "ui://moe42ygrsqzya3";
+    CardViewFrontWarriowEnemyStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontWarriowEnemy extends CardViewFrontWarriowEnemyStruct {
+    }
+
+    class CardViewFrontWarriowBossStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowBoss"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontWarriowBossStruct.URL = "ui://moe42ygrsqzya6";
+    CardViewFrontWarriowBossStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontWarriowBoss extends CardViewFrontWarriowBossStruct {
+    }
+
     class GameHomeBinder {
         static bindAll() {
             let bind = fgui.UIObjectFactory.setPackageItemExtension;
@@ -10167,6 +10270,11 @@
             bind(PanelPause.URL, PanelPause);
             bind(WindowWarUI.URL, WindowWarUI);
             bind(PanelResult.URL, PanelResult);
+            bind(MenuTopPanelWar.URL, MenuTopPanelWar);
+            bind(FxBarrel.URL, FxBarrel);
+            bind(CardViewFrontHero.URL, CardViewFrontHero);
+            bind(CardViewFrontWarriowEnemy.URL, CardViewFrontWarriowEnemy);
+            bind(CardViewFrontWarriowBoss.URL, CardViewFrontWarriowBoss);
         }
     }
 

@@ -53,10 +53,12 @@ export default class GameStatus
     static turnsToBoss = 10;
     // 游戏币叠加
     static goldPerGame = 0;
-    // 卡牌数量
+    // 卡牌数量 = 好牌数量 - 坏牌数量
     static cardCounter = 0;
-    // 是否需要Boss
+    // 是否需要创建Boss
     static isNeedCreateBoss: boolean = false;
+    // 是否需要创建宝箱
+    static isNeedCreateChest: boolean = false;
     // 当前英雄
     static currentHero: HeroType = HeroType.Base;
     // 行数
@@ -228,6 +230,7 @@ export default class GameStatus
 
     
 
+    // 是否购买了道具 生命
     static get isHeart(): boolean
     {
         return this.data.isHeart;
@@ -253,7 +256,7 @@ export default class GameStatus
     }
 
      
-
+    // 是否购买了道具 钥匙
     static get isKey(): boolean
     {
         return this.data.isKey;

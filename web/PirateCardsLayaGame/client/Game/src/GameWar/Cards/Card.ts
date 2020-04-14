@@ -1,150 +1,154 @@
-var e = function(e) {
-    function i(t, i) {
-        var o = e.call(this, t, i) || this;
-        return o.isOnClickInitiated = !1,
-        o.powerUpAmount = 0,
-        o.lifeAmount = 0,
-        o
+import CardBase from "./CardBase";
+import { CardScoreType } from "../enums/CardScoreType";
+import GameStatus from "./GameStatus";
+
+export default class Card extends CardBase
+{
+    isOnClickInitiated = false;
+    powerUpAmount = 0;
+    lifeAmount = 0;
+    type: CardScoreType;
+    initialLife: number = 0;
+
+    static GetDefault(shape, game) 
+    {
+        return new Card(shape, game)
     }
-    return __extends(i, e),
-    i.GetDefault = function(t, e) {
-        return new i(t, e)
-    },
-    i.GetNew = function(e, o, n, s) {
-        var a = new i(e, o);
+    static GetNew(shape, game, n, s) {
+        var a = new Card(shape, game);
         return a.type = n,
         a.setScore(s),
-        t.GameStatus.updateCardCounter(n),
-        t.GameStatus.updateMovesAfterSpecialCard(n),
+        GameStatus.updateCardCounter(n),
+        GameStatus.updateMovesAfterSpecialCard(n),
         a
-    },
-    i.prototype.stepUpdate = function() {
+    }
+    stepUpdate() {
         var e = this.shape.getByName(t.Consts.CardManAnimation);
         if (e instanceof t.Trap) {
             var i = e.changeStatus(),
-            o = t.GameStatus.currentHero == t.HeroType.Gun;
+            o = GameStatus.currentHero == t.HeroType.Gun;
             this.lifeAmount = o ? 0 : i ? this.powerUpAmount: 0,
             this.setHealthText()
         }
-        this.type == t.CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
-        this.type == t.CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
-        this.type == t.CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
-    },
-    i.prototype.getScore = function() {
-        return this.type == t.CardScoreType.Trap ? this.lifeAmount: this.lifeAmount + this.powerUpAmount
-    },
-    i.prototype.getLife = function() {
+        this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
+        this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
+        this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
+    }
+    getScore() {
+        return this.type == CardScoreType.Trap ? this.lifeAmount: this.lifeAmount + this.powerUpAmount
+    }
+    getLife() {
         return this.lifeAmount
-    },
-    i.prototype.getPowerUp = function() {
+    }
+    getPowerUp() {
         return this.powerUpAmount
-    },
-    i.prototype.multiplyScore = function(t) {
+    }
+    multiplyScore(t) {
         return this.lifeAmount > 0 ? this.getScaleTween(this.getCardLifeText(), this.increaseLife, t) : this.powerUpAmount > 0 ? this.getScaleTween(this.getPowerUpText(), this.increasePowerUp, t) : null
-    },
-    i.prototype.increaseLife = function(e, i, o) {
+    }
+    increaseLife(e, i, o) {
         this.setLife(this.lifeAmount * o),
-        this.type === t.CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * o)
-    },
-    i.prototype.increasePowerUp = function(t, e, i) {
+        this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * o)
+    }
+    increasePowerUp(t, e, i) {
         this.setPowerUp(this.powerUpAmount * i)
-    },
-    i.prototype.reduceScoreInNSeconds = function(t, e) {
+    }
+    reduceScoreInNSeconds(t, e) {
         this.powerUpAmount > 0 && (this.powerUpAmount = this.powerUpAmount - t, setTimeout(this.setPowerUpText.bind(this), e)),
         this.lifeAmount > 0 && (this.lifeAmount = this.lifeAmount - t, setTimeout(this.setHealthText.bind(this), e))
-    },
-    i.prototype.increaseScoreInNSeconds = function(t, e) {
+    }
+    increaseScoreInNSeconds(t, e) {
         this.powerUpAmount > 0 && (this.powerUpAmount = this.powerUpAmount + t, setTimeout(this.increasePowerUpTween.bind(this), e)),
         this.lifeAmount > 0 && (this.lifeAmount = this.lifeAmount + t, setTimeout(this.increaseLifeTween.bind(this), e))
-    },
-    i.prototype.increasePowerUpTween = function() {
+    }
+    increasePowerUpTween() {
         this.getScaleTween(this.getPowerUpText(), this.setPowerUpText, this.powerUpAmount).start()
-    },
-    i.prototype.increaseLifeTween = function() {
+    }
+    increaseLifeTween() {
         this.getScaleTween(this.getCardLifeText(), this.setHealthText, this.lifeAmount).start()
-    },
-    i.prototype.setScore = function(e) {
+    }
+    setScore(e) {
         switch (this.type) {
-        case t.CardScoreType.Warrior:
+        case CardScoreType.Warrior:
             this.initialLife = e,
             this.setLife(e);
             break;
-        case t.CardScoreType.Gold:
-        case t.CardScoreType.Health:
-        case t.CardScoreType.Armor:
-        case t.CardScoreType.Poison:
-        case t.CardScoreType.Cannon:
-        case t.CardScoreType.Lightning:
-        case t.CardScoreType.Multiplier:
-        case t.CardScoreType.Skull:
-        case t.CardScoreType.Barrel:
+        case CardScoreType.Gold:
+        case CardScoreType.Health:
+        case CardScoreType.Armor:
+        case CardScoreType.Poison:
+        case CardScoreType.Cannon:
+        case CardScoreType.Lightning:
+        case CardScoreType.Multiplier:
+        case CardScoreType.Skull:
+        case CardScoreType.Barrel:
             this.setPowerUp(e);
             break;
-        case t.CardScoreType.Bomb:
+        case CardScoreType.Bomb:
             this.setLife(e),
             this.setPowerUp(10);
             break;
-        case t.CardScoreType.Trap:
+        case CardScoreType.Trap:
             this.setPowerUp(e),
             this.setLife(e);
             break;
-        case t.CardScoreType.Chest:
+        case CardScoreType.Chest:
             break;
-        case t.CardScoreType.Horseshoe:
+        case CardScoreType.Horseshoe:
             this.setPowerUp(1)
         }
-    },
-    i.prototype.setPowerUp = function(t) {
+    }
+    setPowerUp(t) {
         this.powerUpAmount = t,
         this.setPowerUpText()
-    },
-    i.prototype.setLife = function(t) {
+    }
+    setLife(t) {
         this.lifeAmount = t,
         this.setHealthText()
-    },
-    i.prototype.setHealthText = function() {
+    }
+    setHealthText() {
         var t = this.getCardLifeText();
         t && t && t.setText(this.lifeAmount.toString())
-    },
-    i.prototype.setPowerUpText = function() {
+    }
+    setPowerUpText() {
         var t = this.getPowerUpText();
         t && t && t.setText(this.powerUpAmount.toString())
-    },
-    i.prototype.getPowerUpText = function() {
+    }
+    getPowerUpText() {
         return this.shape.getByName(t.Consts.PowerUp)
-    },
-    i.prototype.setOnClickEvent = function(e, i, o) {
+    }
+    setOnClickEvent(e, i, o) {
         if (!this.isOnClickInitiated) for (var n = 0; n < this.shape.children.length; n++) {
             var s = this.shape.children[n];
             s.name == t.Consts.BackgroundName && (s.inputEnabled = !0, s.events.onInputDown.add(e, o, 1, this), s.events.onInputUp.add(i, o, 1, this), this.isOnClickInitiated = !0)
         }
-    },
-    i.prototype.isNegative = function() {
+    }
+    isNegative() {
         switch (this.type) {
-        case t.CardScoreType.Trap:
-        case t.CardScoreType.Warrior:
-        case t.CardScoreType.Bomb:
-        case t.CardScoreType.Poison:
+        case CardScoreType.Trap:
+        case CardScoreType.Warrior:
+        case CardScoreType.Bomb:
+        case CardScoreType.Poison:
             return ! 0;
-        case t.CardScoreType.Health:
-        case t.CardScoreType.Gold:
-        case t.CardScoreType.Armor:
-        case t.CardScoreType.Cannon:
-        case t.CardScoreType.Chest:
-        case t.CardScoreType.Barrel:
-        case t.CardScoreType.Horseshoe:
-        case t.CardScoreType.Lightning:
-        case t.CardScoreType.Multiplier:
-        case t.CardScoreType.Skull:
+        case CardScoreType.Health:
+        case CardScoreType.Gold:
+        case CardScoreType.Armor:
+        case CardScoreType.Cannon:
+        case CardScoreType.Chest:
+        case CardScoreType.Barrel:
+        case CardScoreType.Horseshoe:
+        case CardScoreType.Lightning:
+        case CardScoreType.Multiplier:
+        case CardScoreType.Skull:
             return ! 1
         }
-    },
-    i.prototype.isBoss = function() {
-        return this.type == t.CardScoreType.Warrior && this.shape.getByName(t.Consts.CardManAnimation) instanceof t.Boss
-    },
-    i.prototype.getGoldValue = function() {
+    }
+    isBoss() {
+        return this.type == CardScoreType.Warrior && this.shape.getByName(t.Consts.CardManAnimation) instanceof t.Boss
+    }
+    getGoldValue() {
         return this.initialLife
-    },
+    }
     i
 } (t.CardBase);
 t.Card = e

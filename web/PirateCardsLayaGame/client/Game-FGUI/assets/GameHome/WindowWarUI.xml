@@ -8,7 +8,7 @@
     <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="65,50" locked="true">
       <relation target="" sidePair="center-center,top-top%"/>
     </component>
-    <movieclip id="n10_sqzy" name="arm" src="sqzy9f" fileName="Fx/MVArm.jta" xy="484,503" pivot="0.29,0.07" anchor="true" visible="false"/>
+    <movieclip id="n10_sqzy" name="arm" src="sqzy9f" fileName="Fx/MVArm.jta" xy="484,503" pivot="0.29,0.07" anchor="true"/>
     <component id="n5_sqzy" name="pausePanel" src="sqzy9a" fileName="PanelPause.xml" xy="0,0" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>

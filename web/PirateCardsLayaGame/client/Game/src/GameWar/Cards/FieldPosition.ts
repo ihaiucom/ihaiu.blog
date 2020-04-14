@@ -1,30 +1,51 @@
-var e = function() {
-    function e(t, e) {
-        this.column = t,
-        this.row = e
+import { MoveType } from "../enums/MoveType";
+import Point from "./Point";
+import Consts from "../Consts";
+
+export default class FieldPosition
+{
+    column: number = 0;
+    row: number = 0;
+
+    constructor(column: number, row: number)
+    {
+        this.column = column;
+        this.row = row;
     }
-    return e.prototype.getNewPosition = function(i) {
-        var o = new e(this.column, this.row);
-        switch (i) {
-        case t.MoveType.Right:
-            o.column++;
-            break;
-        case t.MoveType.Down:
-            o.row++;
-            break;
-        case t.MoveType.Left:
-            o.column--;
-            break;
-        case t.MoveType.Up:
-            o.row--
+
+    getNewPosition (moveType: MoveType): FieldPosition
+    {
+        var fieldPosition = new FieldPosition(this.column, this.row);
+        switch (moveType) 
+        {
+            case MoveType.Right:
+                fieldPosition.column++;
+                break;
+            case MoveType.Down:
+                fieldPosition.row++;
+                break;
+            case MoveType.Left:
+                fieldPosition.column--;
+                break;
+            case MoveType.Up:
+                fieldPosition.row--
         }
-        return o
-    },
-    e.prototype.getPoint = function() {
-        var e = this.column * t.Consts.CardWidth + t.Consts.CardWidth / 2 + this.column * t.Consts.CardSpaceBetweenWidth,
-        i = this.row * t.Consts.CardHeight + t.Consts.CardHeight / 2 + this.row * t.Consts.CardSpaceBetweenHeight;
-        return new t.Point(e, i)
-    },
-    e
-} ();
-t.FieldPosition = e
+        return fieldPosition
+    }
+
+    
+    getPoint () : Point
+    {
+        return new Point(this.pointX, this.pointY);
+    }
+
+    get pointX(): number
+    {
+        return this.column * Consts.CardWidth + Consts.CardWidth / 2 + this.column * Consts.CardSpaceBetweenWidth;
+    }
+    
+    get pointY(): number
+    {
+        return this.row * Consts.CardHeight + Consts.CardHeight / 2 + this.row * Consts.CardSpaceBetweenHeight;
+    }
+}

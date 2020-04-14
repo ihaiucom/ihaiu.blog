@@ -6,6 +6,14 @@ import Consts from "../Consts";
 import RandomHelper from "../RandomHelper";
 import { CardGenerationType } from "../enums/CardGenerationType";
 import { MoveType } from "../enums/MoveType";
+import FieldItems from "./FieldItems";
+import Hero from "./Hero";
+import Card from "./Card";
+import { CardScoreType } from "../enums/CardScoreType";
+import NullCard from "./NullCard";
+import SoundConsts from "../SoundConsts";
+import FieldPosition from "./FieldPosition";
+import { CardPositionType } from "../enums/CardPositionType";
 
 export default class Field
 {
@@ -39,7 +47,7 @@ export default class Field
         {
             for (var column = 0; column < columnCount; column++) 
             {
-                var hero = undefined,
+                var card = undefined,
                 // 是否是英雄开始位置所在行
                 isHeroStartRow = row === Consts.HeroStartRow - 1,
                 // 是否是英雄开始位置所在列
@@ -47,45 +55,45 @@ export default class Field
                 
                 if (isHeroStartRow && isHeroStartColumn)
                 {
-                    hero = this.cardFactory.getHero();
-                    hero.shape.name = Consts.Hero,
+                    card = this.cardFactory.getHero();
+                    card.shape.name = Consts.Hero,
                     GameStatus.isHeroAlive = false,
                     GameStatus.isGameEnd = false;
                 }
                 else if (GameStatus.isTutorialSeen)
                 {
-                    hero = this.getCardFromFactory();
+                    card = this.getCardFromFactory();
                 }
                 // 英雄右侧格子，显示新手教程 手指
                 else if (isHeroStartRow && column === Consts.HeroStartColumn) 
                 {
-                    hero = this.getEnemyCardFromFactory(randomVal);
+                    card = this.getEnemyCardFromFactory(randomVal);
                     var u = new Arm(this.game, -30, 30);
-                    hero.shape.name = Consts.CardWithArm;
-                    hero.shape.add(u);
+                    card.shape.name = Consts.CardWithArm;
+                    card.shape.add(u);
                 } 
                 else
                 {
                     if(row === Consts.HeroStartRow && column === Consts.HeroStartColumn)
                     {
-                        hero = this.getHealsCardFromFactory(randomVal);
+                        card = this.getHealsCardFromFactory(randomVal);
                         this.movingArm = new Arm(this.game, -30, -50);
                         this.movingArm.alpha = 0;
-                        hero.shape.add(this.movingArm);
-                        hero.shape.name = Consts.CardWithMovingArm;
+                        card.shape.add(this.movingArm);
+                        card.shape.name = Consts.CardWithMovingArm;
                         this.movingArmY = -200;
 
                     }
                     else
                     {
-                        hero = this.getCardFromFactory();
+                        card = this.getCardFromFactory();
                     }
                    
                 } 
                 var fieldPosition = new FieldPosition(column, row),
                 l = this.cardFactory.getDefault();
                 list.push(this.moveAndSetWithAnimation(fieldPosition, l, animationTime)),
-                list.push(this.replaceCardByPosition(fieldPosition, hero).setAnimationDuration(1))
+                list.push(this.replaceCardByPosition(fieldPosition, card).setAnimationDuration(1))
             }
         }
 
@@ -156,9 +164,9 @@ export default class Field
     }
 
     // 生产卡牌 根据生成随机类型
-    getCardFromFactory(generationType:CardGenerationType = CardGenerationType.Random, i = 0)
+    getCardFromFactory(generationType:CardGenerationType = CardGenerationType.Random, score = 0)
     {
-        var card = this.cardFactory.getCard(generationType, i, this.getCardTypesOnTheTable());
+        var card = this.cardFactory.getCard(generationType, score, this.getCardTypesOnTheTable());
         if(GameStatus.isTutorialSeen)
         {
             card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
@@ -181,28 +189,32 @@ export default class Field
     }
 
     // 获取所有卡牌类型
-    getCardTypesOnTheTable()
+    getCardTypesOnTheTable(): CardScoreType[]
     {
-        return this.field.getAll().filter(function(e) {
-            return e instanceof Card
-        }).map(function(t) {
-            return t.type
+        return this.field.getAll().filter(function(item) 
+        {
+            return item instanceof Card
+        }).map(function(card: Card) 
+        {
+            return card.type
         })
     }
 
     // 生成卡牌 金币
-    getCoinCardFromFactory(t)
+    getCoinCardFromFactory(score)
     {
-        var card = this.cardFactory.getCoinCard(t);
+        var card = this.cardFactory.getCoinCard(score);
         card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
         return card
     }
 
+    // 鼠标按下卡牌
     onCardDown(t, e, i, o)
     {
         this.downPointer = e;
     }
 
+    // 鼠标松开卡牌
     onCardUp(e, i, o, card)
     {
         if (!this.onAnimation) 
@@ -222,72 +234,92 @@ export default class Field
             card.playNoAccess()
         }
     }
-}
 
-var e = function() {
-   
-    e.prototype.getHero = function() {
+    // 获取英雄Card
+    getHero(): Hero
+    {
         return this.field.get(this.getHeroPosition())
-    },
-    e.prototype.getHeroPosition = function() {
-        return this.field.getPosition(function(e) {
-            return e instanceof t.Hero
+    }
+
+    // 获取英雄FieldPosition
+    getHeroPosition() 
+    {
+        return this.field.getPosition(function(card) 
+        {
+            return card instanceof Hero;
         })
-    },
-    e.prototype.getCardToFight = function(e) {
-        var i = this.field.getPosition(function(e) {
-            return e instanceof t.Hero
+    }
+
+    // 获取战斗卡牌
+    getCardToFight (moveTyp: MoveType) 
+    {
+        var position = this.field.getPosition(function(e) {
+            return e instanceof Hero
         });
-        if (null != i) {
-            var o = i.getNewPosition(e);
-            if (this.field.isPositionValid(o)) return this.field.get(o)
+        if (null != position) {
+            var position2 = position.getNewPosition(moveType);
+            if (this.field.isPositionValid(position2)) 
+            {
+                return this.field.get(position2)
+            }
         }
         return null
-    },
-    e.prototype.replaceCard = function(e, i, o) {
-        void 0 === o && (o = 0);
-        var n = this.field.getPosition(function(e) {
-            return e instanceof t.Hero
-        }),
-        s = Array(),
-        a = this.getCardFromFactory(i, o);
-        return s.push(this.replaceCardByPosition(n.getNewPosition(e), a)),
-        t.GameStatus.isTutorialSeen || a.setOnClickEvent(this.onCardDown, this.onCardUp, this),
-        s
-    },
-    e.prototype.tutorialStep1 = function() {
+    }
+
+
+    // 替换卡牌
+    replaceCard (moveTyp: MoveType, cardGenerationType: CardGenerationType, score: number = 0) 
+    {
+        var position = this.field.getPosition(function(e) 
+        {
+            return e instanceof Hero
+        });
+
+        var list = Array();
+        var card = this.getCardFromFactory(cardGenerationType, score);
+
+        list.push(this.replaceCardByPosition(position.getNewPosition(moveType), card));
+
+        if(!GameStatus.isTutorialSeen)
+        {
+            card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+        }
+        return list
+    }
+
+    tutorialStep1 () {
         var e = this;
         this.movingArm.animations.stop(),
         this.runArmTween(),
-        t.GameStatus.isTutorialStep1Done = !0,
+        GameStatus.isTutorialStep1Done = !0,
         this.field.getAll().forEach(function(i) {
-            i instanceof t.Card && i.shape.name === t.Consts.CardWithMovingArm && i.setOnClickEvent(e.onCardDown, e.onCardUp, e)
+            i instanceof Card && i.shape.name === Consts.CardWithMovingArm && i.setOnClickEvent(e.onCardDown, e.onCardUp, e)
         })
-    },
-    e.prototype.tutorialStep2 = function(e) {
-        t.GameStatus.isTutorialStep2Done = !0,
+    }
+    tutorialStep2 (e) {
+        GameStatus.isTutorialStep2Done = !0,
         this.runAllCardsAroundHero(e)
-    },
-    e.prototype.tutorialStep3 = function(t) {
+    }
+    tutorialStep3 (t) {
         this.runAllCardsAroundHero(t)
-    },
-    e.prototype.tutorialStep4 = function() {
-        var e = this.cardFactory.container.getByName(t.Consts.Shadow);
+    }
+    tutorialStep4 () {
+        var e = this.cardFactory.container.getByName(Consts.Shadow);
         this.game.add.tween(e).to({
             alpha: 0
         },
         100).start().onComplete.add(function() {
             var i = this;
             e.destroy(),
-            t.GameStatus.isTutorialSeen = !0,
+            GameStatus.isTutorialSeen = !0,
             this.field.getAll().forEach(function(e) {
                 e instanceof t.Card && e.setOnClickEvent(i.onCardDown, i.onCardUp, i)
             })
         }.bind(this))
-    },
-    e.prototype.runAllCardsAroundHero = function(e) {
+    }
+    runAllCardsAroundHero (e) {
         for (var i = 0,
-        o = [e.getNewPosition(t.MoveType.Left), e.getNewPosition(t.MoveType.Up), e.getNewPosition(t.MoveType.Right), e.getNewPosition(t.MoveType.Down)]; i < o.length; i++) {
+        o = [e.getNewPosition(MoveType.Left), e.getNewPosition(MoveType.Up), e.getNewPosition(MoveType.Right), e.getNewPosition(MoveType.Down)]; i < o.length; i++) {
             var n = o[i];
             if (this.field.isPositionValid(n)) {
                 var s = this.field.get(n);
@@ -295,156 +327,253 @@ var e = function() {
                 s instanceof t.Card && s.setOnClickEvent(this.onCardDown, this.onCardUp, this)
             }
         }
-    },
-    e.prototype.move = function(e) {
-        var i = Array(),
-        o = this.getHeroPosition(),
-        n = o.getNewPosition(e),
-        s = this.field.get(n);
-        if (s instanceof t.NullCard) return i;
-        this.isPlayMove(s) && setTimeout(this.playMoveSound.bind(this), 115);
-        var a, r = this.field.get(o);
-        if (s.type === t.CardScoreType.Bomb) i.push(this.moveAndSetWithAnimation(o.getNewPosition(e), r, t.Consts.AnimationTime).setAnimationDuration(1)),
-        i.push(this.moveAndSetWithAnimation(o, s, t.Consts.AnimationTime));
-        else {
-            s.isBoss() && t.GameStatus.gameLevel++;
-            var h = this.getCardPositionType(e, o),
-            d = this.getCardToReplace(s),
-            c = new t.TweenContainer;
-            switch ((a = c.tweens).push.apply(a, s.removeChild()), i.push(c), h) {
-            case t.CardPositionType.Center:
-                switch (i.push(this.moveAndSetWithAnimation(o.getNewPosition(e), r, t.Consts.AnimationTime)), e) {
-                case t.MoveType.Left:
-                    0 === o.row ? i.push.apply(i, this.moveAllLine(t.MoveType.Down, t.MoveType.Up, o.getNewPosition(t.MoveType.Down), d)) : i.push.apply(i, this.moveAllLine(t.MoveType.Up, t.MoveType.Down, o.getNewPosition(t.MoveType.Up), d));
+    }
+    move (moveType: MoveType) 
+    {
+        var list = Array(),
+        heroPosition = this.getHeroPosition(),
+        fieldPosition = heroPosition.getNewPosition(moveType);
+        var card:Card = <any>this.field.get(fieldPosition);
+        if (card instanceof NullCard)
+             return list;
+             
+        //  卡牌是否播放声音
+        this.isPlayMove(card) && setTimeout(this.playMoveSound.bind(this), 115);
+
+        var tweens;
+        var heroCard:Hero =<any> this.field.get(heroPosition);
+
+        // 如果是炸弹，先把英雄移动炸弹位置，再播放炸弹动画
+        if (card.type === CardScoreType.Bomb) 
+        {
+            list.push(this.moveAndSetWithAnimation(heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime).setAnimationDuration(1));
+            list.push(this.moveAndSetWithAnimation(heroPosition, card, Consts.AnimationTime));
+        }
+        else 
+        {
+            // 如果是Boss，游戏关卡等级加1
+            card.isBoss() && GameStatus.gameLevel++;
+
+            var cardPositionType = this.getCardPositionType(moveType, heroPosition);
+            var replaceCard = this.getCardToReplace(card);
+            var tweenContainer = new TweenContainer;
+            tweens = tweenContainer.tweens;
+            // 移除卡牌
+            tweens.push(card.removeChild());
+            list.push(tweenContainer);
+
+            switch (cardPositionType) 
+            {
+            // 英雄往中间移动
+            case CardPositionType.Center:
+                // 移动英雄卡牌
+                list.push(this.moveAndSetWithAnimation(  heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime) );
+                
+                switch (moveType) 
+                {
+                case MoveType.Left:
+                    // 如果是在第1行 
+                    0 === heroPosition.row 
+                        ? list.push(this.moveAllLine(MoveType.Down, MoveType.Up, heroPosition.getNewPosition(MoveType.Down), replaceCard)) 
+                        : list.push(this.moveAllLine(MoveType.Up, MoveType.Down, heroPosition.getNewPosition(MoveType.Up), replaceCard));
                     break;
-                case t.MoveType.Right:
-                    o.row === this.field.getRowCount() - 1 ? i.push.apply(i, this.moveAllLine(t.MoveType.Up, t.MoveType.Down, o.getNewPosition(t.MoveType.Up), d)) : i.push.apply(i, this.moveAllLine(t.MoveType.Down, t.MoveType.Up, o.getNewPosition(t.MoveType.Down), d));
+                case MoveType.Right:
+                    heroPosition.row === this.field.getRowCount() - 1 ? list.push.apply(list, this.moveAllLine(MoveType.Up, MoveType.Down, heroPosition.getNewPosition(MoveType.Up), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Down, MoveType.Up, heroPosition.getNewPosition(MoveType.Down), replaceCard));
                     break;
-                case t.MoveType.Up:
-                    o.column === this.field.getColumnCount() - 1 ? i.push.apply(i, this.moveAllLine(t.MoveType.Left, t.MoveType.Right, o.getNewPosition(t.MoveType.Left), d)) : i.push.apply(i, this.moveAllLine(t.MoveType.Right, t.MoveType.Left, o.getNewPosition(t.MoveType.Right), d));
+                case MoveType.Up:
+                    heroPosition.column === this.field.getColumnCount() - 1 ? list.push.apply(list, this.moveAllLine(MoveType.Left, MoveType.Right, heroPosition.getNewPosition(MoveType.Left), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Right, MoveType.Left, heroPosition.getNewPosition(MoveType.Right), replaceCard));
                     break;
-                case t.MoveType.Down:
-                    0 === o.column ? i.push.apply(i, this.moveAllLine(t.MoveType.Right, t.MoveType.Left, o.getNewPosition(t.MoveType.Right), d)) : i.push.apply(i, this.moveAllLine(t.MoveType.Left, t.MoveType.Right, o.getNewPosition(t.MoveType.Left), d))
+                case MoveType.Down:
+                    0 === heroPosition.column ? list.push.apply(list, this.moveAllLine(MoveType.Right, MoveType.Left, heroPosition.getNewPosition(MoveType.Right), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Left, MoveType.Right, heroPosition.getNewPosition(MoveType.Left), replaceCard))
                 }
                 break;
-            case t.CardPositionType.End:
-                i.push.apply(i, this.moveAllLine(this.getOppositeMoveType(e), e, o, d))
+            case CardPositionType.End:
+                list.push.apply(list, this.moveAllLine(this.getOppositeMoveType(moveType), moveType, heroPosition, replaceCard))
             }
         }
-        if (!t.GameStatus.isTutorialSeen) {
-            var u, p = this.cardFactory.container.getByName(t.Consts.Shadow);
-            if (p && this.cardFactory.container.bringToTop(p), this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(t.Consts.Hero)), this.cardFactory.container.bringToTop(s.shape), 1 === this.step)(u = i[i.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
+        if (!GameStatus.isTutorialSeen) {
+            var u, p = this.cardFactory.container.getByName(Consts.Shadow);
+            if (p && this.cardFactory.container.bringToTop(p), this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.Hero)), this.cardFactory.container.bringToTop(card.shape), 1 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
                 this.tutorialStep1()
             }.bind(this));
-            if (2 === this.step)(u = i[i.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
-                this.tutorialStep2(n)
+            if (2 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
+                this.tutorialStep2(fieldPosition)
             }.bind(this));
-            if (3 === this.step)(u = i[i.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
-                this.tutorialStep3(n)
+            if (3 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
+                this.tutorialStep3(fieldPosition)
             }.bind(this));
-            if (4 === this.step)(u = i[i.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
+            if (4 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
                 this.tutorialStep4()
             }.bind(this));
             this.step++
         }
-        return i
-    },
-    e.prototype.isPlayMove = function(e) {
-        switch (e.type) {
-        case t.CardScoreType.Warrior:
-            return ! 1;
-        case t.CardScoreType.Trap:
-            return ! e.shape.getByName(t.Consts.CardManAnimation).isOpen;
-        case t.CardScoreType.Health:
-        case t.CardScoreType.Gold:
-        case t.CardScoreType.Armor:
-        case t.CardScoreType.Cannon:
-        case t.CardScoreType.Barrel:
-        case t.CardScoreType.Chest:
-        case t.CardScoreType.Bomb:
-        case t.CardScoreType.Poison:
-        case t.CardScoreType.Horseshoe:
-        case t.CardScoreType.Lightning:
-        case t.CardScoreType.Multiplier:
-        case t.CardScoreType.Skull:
-            return ! 0
+        return list
+    }
+
+    // 卡牌是否需要播放移动声音
+    isPlayMove (card:Card) 
+    {
+        switch (card.type) 
+        {
+        case CardScoreType.Warrior:
+            return false;
+        case CardScoreType.Trap:
+            return ! card.shape.getByName(Consts.CardManAnimation).isOpen;
+        case CardScoreType.Health:
+        case CardScoreType.Gold:
+        case CardScoreType.Armor:
+        case CardScoreType.Cannon:
+        case CardScoreType.Barrel:
+        case CardScoreType.Chest:
+        case CardScoreType.Bomb:
+        case CardScoreType.Poison:
+        case CardScoreType.Horseshoe:
+        case CardScoreType.Lightning:
+        case CardScoreType.Multiplier:
+        case CardScoreType.Skull:
+            return true
         }
-    },
-    e.prototype.playMoveSound = function() {
-        t.SoundController.instance.playSound(Phaser.ArrayUtils.getRandomItem([t.SoundConsts.Move01, t.SoundConsts.Move02]))
-    },
-    e.prototype.getCardToReplace = function(e) {
-        return e.shape.getByName(t.Consts.CardManAnimation) instanceof t.Boss ? this.getChestCardFromFactory() : this.getCardFromFactory()
-    },
-    e.prototype.getCardToReplaceAfterSmash = function(e) {
-        e.shape.getByName(t.Consts.CardManAnimation) instanceof t.Boss && (t.GameStatus.isNeedCreateChestOnNextStep = !0);
-        var i = e.getGoldValue() > 0 ? e.getGoldValue() : e.getScore();
-        return this.getCoinCardFromFactory(i)
-    },
-    e.prototype.getCardPositionType = function(e, i) {
-        switch (e) {
-        case t.MoveType.Right:
-            return i.column == this.field.getColumnCount() - 1 ? t.CardPositionType.Start: 0 == i.column ? t.CardPositionType.Center: t.CardPositionType.End;
-        case t.MoveType.Down:
-            return i.row == this.field.getRowCount() - 1 ? t.CardPositionType.Start: 0 == i.row ? t.CardPositionType.Center: t.CardPositionType.End;
-        case t.MoveType.Left:
-            return 0 == i.column ? t.CardPositionType.Start: i.column == this.field.getColumnCount() - 1 ? t.CardPositionType.Center: t.CardPositionType.End;
-        case t.MoveType.Up:
-            return 0 == i.row ? t.CardPositionType.Start: i.row == this.field.getRowCount() - 1 ? t.CardPositionType.Center: t.CardPositionType.End
+    }
+    playMoveSound () {
+        SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Move01, SoundConsts.Move02]))
+    }
+    // 获取替换的卡牌
+    getCardToReplace (card:Card) : Card
+    {
+        return card.shape.getByName(Consts.CardManAnimation) instanceof Boss 
+            ? this.getChestCardFromFactory() 
+            : this.getCardFromFactory()
+    }
+    getCardToReplaceAfterSmash (e) {
+        e.shape.getByName(Consts.CardManAnimation) instanceof Boss && (GameStatus.isNeedCreateChestOnNextStep = !0);
+        var score = e.getGoldValue() > 0 ? e.getGoldValue() : e.getScore();
+        return this.getCoinCardFromFactory(score)
+    }
+
+    // 移动后的卡牌位置类型
+    getCardPositionType (moveType: MoveType, fieldPosition: FieldPosition) 
+    {
+        switch (moveType) 
+        {
+        case MoveType.Right:
+            if(fieldPosition.column == this.field.getColumnCount() - 1)
+            {
+                return CardPositionType.Start;
+            }
+            else if(0 == fieldPosition.column)
+            {
+                return CardPositionType.Center;
+            }
+            else
+            {
+                CardPositionType.End;
+            }
+        case MoveType.Down:
+            
+            if(fieldPosition.row == this.field.getRowCount() - 1)
+            {
+                return CardPositionType.Start;
+            }
+            else if(0 == fieldPosition.row)
+            {
+                return CardPositionType.Center;
+            }
+            else
+            {
+                CardPositionType.End;
+            }
+
+        case MoveType.Left:
+            if(0 == fieldPosition.column )
+            {
+                return CardPositionType.Start;
+            }
+            else if(fieldPosition.column == this.field.getColumnCount() - 1)
+            {
+                return CardPositionType.Center;
+            }
+            else
+            {
+                CardPositionType.End;
+            }
+
+        case MoveType.Up:
+            if(0 == fieldPosition.row)
+            {
+                return CardPositionType.Start;
+            }
+            else if(fieldPosition.row == this.field.getRowCount() - 1 )
+            {
+                return CardPositionType.Center;
+            }
+            else
+            {
+                CardPositionType.End;
+            }
         }
-    },
-    e.prototype.removeAllChild = function() {
+    }
+    removeAllChild () {
         var e = [];
-        t.SoundController.instance.playSound(t.SoundConsts.HeroDies);
+        SoundController.instance.playSound(SoundConsts.HeroDies);
         for (var i, o = this.field.getAll(), n = 0, s = o = t.RandomHelper.shuffle(o); n < s.length; n++) {
             var a = s[n],
-            r = new t.TweenContainer;
+            r = new TweenContainer;
             r.animationDuration = t.RandomHelper.getRandomIntInclusive(50, 150),
             (i = r.tweens).push.apply(i, a.removeChild()),
             e.push(r)
         }
         return e
-    },
-    e.prototype.isBossInTheField = function() {
+    }
+    isBossInTheField () {
         return this.field.any(function(e) {
-            return ! (e instanceof t.NullCard) && e.shape.getByName(t.Consts.CardManAnimation) instanceof t.Boss
+            return ! (e instanceof NullCard) && e.shape.getByName(Consts.CardManAnimation) instanceof Boss
         })
-    },
-    e.prototype.moveAllLine = function(e, i, o, n) {
-        for (var s = [], a = t.Consts.AnimationTime * t.Consts.AnimationMultiplier; this.field.isPositionValid(o);) s.push(this.moveAndSetWithAnimation(o.getNewPosition(i), this.field.get(o), t.Consts.AnimationTime).setAnimationDuration(a)),
-        o = o.getNewPosition(e);
-        var r = this.cardFactory.getDefault(),
-        h = o.getNewPosition(i);
-        return s.push(this.moveAndSetWithAnimation(h, r, t.Consts.AnimationTime)),
-        s.push(this.replaceCardByPosition(h, n).setAnimationDuration(1)),
-        s
-    },
-    e.prototype.stepUpdate = function() {
-        for (var e = 0,
-        i = this.field.getAll(); e < i.length; e++) {
-            var o = i[e];
-            o.shape.getByName(t.Consts.CardManAnimation) instanceof t.Boss && this.cardFactory.container.bringToTop(o.shape),
-            o.stepUpdate()
+    }
+
+    // 移动卡牌，和这条线方向上的其他卡牌，在最后一个空位生成新的卡牌
+    moveAllLine (moveTypeA:MoveType, moveTypeB: MoveType, fieldPosition:FieldPosition, card:Card) 
+    {
+        var animationList = [];
+
+        for (var time = Consts.AnimationTime * Consts.AnimationMultiplier; this.field.isPositionValid(fieldPosition);) 
+        {
+            animationList.push(this.moveAndSetWithAnimation(fieldPosition.getNewPosition(moveTypeB), this.field.get(fieldPosition), Consts.AnimationTime).setAnimationDuration(time)),
+            fieldPosition = fieldPosition.getNewPosition(moveTypeA);
         }
-    },
-    e.prototype.shootCannon = function() {
-        t.SoundController.instance.playSound(t.SoundConsts.Cannon);
+
+        var card = this.cardFactory.getDefault(),
+        cardFieldPosition = fieldPosition.getNewPosition(moveTypeB);
+        animationList.push(this.moveAndSetWithAnimation(cardFieldPosition, card, Consts.AnimationTime)),
+        animationList.push(this.replaceCardByPosition(cardFieldPosition, card).setAnimationDuration(1));
+        return animationList;
+    }
+
+    stepUpdate () {
+        for (var e = 0,
+        cardList = this.field.getAll(); e < cardList.length; e++) {
+            var card = cardList[e];
+            card.shape.getByName(Consts.CardManAnimation) instanceof Boss && this.cardFactory.container.bringToTop(card.shape),
+            card.stepUpdate()
+        }
+    }
+    shootCannon () {
+        SoundController.instance.playSound(SoundConsts.Cannon);
         var e = this.getHeroPosition(),
         i = this.field.get(e),
         o = [];
-        return o.push.apply(o, this.shootCannonInDirection(t.MoveType.Right, i, e)),
-        o.push.apply(o, this.shootCannonInDirection(t.MoveType.Left, i, e)),
-        o.push.apply(o, this.shootCannonInDirection(t.MoveType.Up, i, e)),
-        o.push.apply(o, this.shootCannonInDirection(t.MoveType.Down, i, e)),
+        return o.push.apply(o, this.shootCannonInDirection(MoveType.Right, i, e)),
+        o.push.apply(o, this.shootCannonInDirection(MoveType.Left, i, e)),
+        o.push.apply(o, this.shootCannonInDirection(MoveType.Up, i, e)),
+        o.push.apply(o, this.shootCannonInDirection(MoveType.Down, i, e)),
         o
-    },
-    e.prototype.shootCannonInDirection = function(e, i, o) {
+    }
+    shootCannonInDirection (e, i, o) {
         var n = [],
         s = o.getNewPosition(e);
         if (!this.field.isPositionValid(s)) return n;
         var a = this.field.get(s);
         if (t.Field.canShootCard(a)) {
-            if (n.push(this.shootCard(i.getCenterX(), i.getCenterY(), a.getCenterX(), a.getCenterY(), 200)), a.type === t.CardScoreType.Cannon) a.increaseScoreInNSeconds(i.shootScore, 400);
+            if (n.push(this.shootCard(i.getCenterX(), i.getCenterY(), a.getCenterX(), a.getCenterY(), 200)), a.type === CardScoreType.Cannon) a.increaseScoreInNSeconds(i.shootScore, 400);
             else if (i.shootScore >= a.getScore()) {
                 var r = this.getCardToReplaceAfterSmash(a),
                 h = this.replaceCardByPosition(s, r, !0).setAnimationDuration(1);
@@ -453,8 +582,8 @@ var e = function() {
             } else a.reduceScoreInNSeconds(i.shootScore, 400)
         }
         return n
-    },
-    e.prototype.shootCard = function(e, i, o, n, s) {
+    }
+    shootCard (e, i, o, n, s) {
         var a = t.ShapeFactoryHelper.getShape(this.game, e, i, t.ArtConsts.Items1, t.ArtConsts.Core);
         this.cardFactory.container.add(a);
         var r = this.game.add.tween(a).to({
@@ -464,148 +593,154 @@ var e = function() {
         s);
         r.onUpdateCallback(this.onCoreFlyingUpdate, this),
         r.onComplete.add(this.onCoreFlyingComplete, this);
-        var h = new t.TweenContainer;
+        var h = new TweenContainer;
         return h.animationDuration = 1,
         h.tweens.push(r),
         h
-    },
-    e.prototype.onCoreFlyingUpdate = function(e) {
+    }
+    onCoreFlyingUpdate (e) {
         var i = new t.CannonFlyingSmoke(this.game, e.target.x, e.target.y);
         this.cardFactory.container.add(i)
-    },
-    e.prototype.onCoreFlyingComplete = function(t) {
+    }
+    onCoreFlyingComplete (t) {
         this.addBombExplosionAnimation(t.x, t.y, 0),
         t.kill()
-    },
-    e.canShootCard = function(e) {
-        if (e instanceof t.NullCard) return ! 1;
+    }
+    static canShootCard (e) {
+        if (e instanceof NullCard) return ! 1;
         if (! (e instanceof t.Card)) return ! 0;
         switch (e.type) {
-        case t.CardScoreType.Warrior:
-        case t.CardScoreType.Trap:
-        case t.CardScoreType.Armor:
-        case t.CardScoreType.Health:
-        case t.CardScoreType.Poison:
-        case t.CardScoreType.Cannon:
+        case CardScoreType.Warrior:
+        case CardScoreType.Trap:
+        case CardScoreType.Armor:
+        case CardScoreType.Health:
+        case CardScoreType.Poison:
+        case CardScoreType.Cannon:
             return ! 0;
         default:
             return ! 1
         }
-    },
-    e.prototype.smashBomb = function() {
+    }
+    smashBomb () {
         for (var e = [], i = 0, o = this.field.getPositions(function(e) {
             var i = e;
-            return i && i.type === t.CardScoreType.Bomb && i.getPowerUp() <= 0
+            return i && i.type === CardScoreType.Bomb && i.getPowerUp() <= 0
         }); i < o.length; i++) {
             var n = o[i];
-            t.SoundController.instance.playSound(t.SoundConsts.Bomb);
+            SoundController.instance.playSound(SoundConsts.Bomb);
             var s = this.field.get(n);
             this.addBombExplosionAnimation(s.shape.x, s.shape.y, 100);
             var a = this.getCardToReplaceAfterSmash(this.field.get(n)),
             r = this.replaceCardByPosition(n, a, !0);
             e.push(r);
-            for (var h = s.getLife(), d = 0, c = [t.MoveType.Up, t.MoveType.Down, t.MoveType.Left, t.MoveType.Right]; d < c.length; d++) {
+            for (var h = s.getLife(), d = 0, c = [MoveType.Up, MoveType.Down, MoveType.Left, MoveType.Right]; d < c.length; d++) {
                 var u = c[d];
-                if (e.push.apply(e, this.smashBombInDirection(u, n, h)), !t.GameStatus.isHeroAlive) return e
+                if (e.push.apply(e, this.smashBombInDirection(u, n, h)), !GameStatus.isHeroAlive) return e
             }
         }
         return e
-    },
-    e.prototype.smashBombInDirection = function(e, i, o) {
+    }
+    smashBombInDirection (e, i, o) {
         var n = [],
-        s = t.Consts.SmashDelay;
+        s = Consts.SmashDelay;
         for (i = i.getNewPosition(e); this.field.isPositionValid(i);) {
-            if (n.push.apply(n, this.smashBombInPosition(i, s, o)), !t.GameStatus.isHeroAlive) return n;
-            s += t.Consts.SmashDelay,
+            if (n.push.apply(n, this.smashBombInPosition(i, s, o)), !GameStatus.isHeroAlive) return n;
+            s += Consts.SmashDelay,
             i = i.getNewPosition(e)
         }
         return n
-    },
-    e.prototype.smashBombInPosition = function(e, i, o) {
+    }
+    smashBombInPosition (e, i, o) {
         var n = this.field.get(e),
-        s = 4 == t.GameStatus.RowCount ? 1e3: 500;
-        if (this.game.camera.shake(t.Consts.ShakeIntensity, s), this.addBombExplosionAnimation(n.shape.x, n.shape.y, i), n.type == t.CardScoreType.Chest) return [];
-        if (n instanceof t.Hero && t.GameStatus.currentHero == t.HeroType.Bomb) return [];
+        s = 4 == GameStatus.RowCount ? 1e3: 500;
+        if (this.game.camera.shake(Consts.ShakeIntensity, s), this.addBombExplosionAnimation(n.shape.x, n.shape.y, i), n.type == CardScoreType.Chest) return [];
+        if (n instanceof t.Hero && GameStatus.currentHero == t.HeroType.Bomb) return [];
         if (o >= n.getScore()) {
             if (! (n instanceof t.Hero)) {
                 var a = this.getCardToReplaceAfterSmash(n);
                 return [this.replaceCardByPosition(e, a, !0).setAnimationDuration(1)]
             }
-            if (!t.GameStatus.isHeart) return t.GameStatus.isHeroAlive = !1,
+            if (!GameStatus.isHeart) return GameStatus.isHeroAlive = !1,
             this.removeAllChild();
-            t.GameStatus.isHeart = !1,
+            GameStatus.isHeart = !1,
             this.keyboardManager.reset(),
             n.useHeart()
         } else n.reduceScoreInNSeconds(o, 1.2 * i);
         return []
-    },
-    e.prototype.addBombExplosionAnimation = function(t, e, i) {
+    }
+    addBombExplosionAnimation (t, e, i) {
         setTimeout(this.playBombExplosionAnimation.bind(this, t, e), i)
-    },
-    e.prototype.playBombExplosionAnimation = function(e, i) {
+    }
+    playBombExplosionAnimation (e, i) {
         var o = new t.Boom(this.game, e, i);
         o.play(t.AnimationConsts.Action, 60, !1, !0),
         this.cardFactory.container.add(o)
-    },
-    e.prototype.replaceCardByPosition = function(e, i, o) {
+    }
+    replaceCardByPosition (e, i, o) {
         void 0 === o && (o = !1);
-        var n, s, a = new t.TweenContainer,
+        var n, s, a = new TweenContainer,
         r = this.field.get(e),
-        h = r.shape.getByName(t.Consts.CardManAnimation);
+        h = r.shape.getByName(Consts.CardManAnimation);
         return a.tweens.push(),
         o || (h instanceof t.Chest && (n = a.tweens).push.apply(n, h.open()), h instanceof t.Barrel && (this.cardFactory.container.bringToTop(r.shape), (s = a.tweens).push.apply(s, h.open()))),
-        r.isBoss() && t.GameStatus.gameLevel++,
+        r.isBoss() && GameStatus.gameLevel++,
         this.moveAndSet(e, i),
         i.endTurnAnimationStart(),
         a.tweens.push(r.startTurnAnimation(i.endTurnAnimationEnd.bind(i))),
         a
-    },
-    e.prototype.moveAndSet = function(t, e) {
-        this.field.set(t, e),
-        e.setCoordinate(t.getPoint())
-    },
-    e.prototype.moveAndSetWithAnimation = function(e, i, o) {
-        var n = e.getPoint();
-        this.field.set(e, i);
-        var s = new t.TweenContainer;
-        return s.tweens.push(i.moveTo(n, o)),
-        s
-    },
-    e.prototype.getOppositeMoveType = function(e) {
-        switch (e) {
-        case t.MoveType.Up:
-            return t.MoveType.Down;
-        case t.MoveType.Down:
-            return t.MoveType.Up;
-        case t.MoveType.Left:
-            return t.MoveType.Right;
-        case t.MoveType.Right:
-            return t.MoveType.Left
+    }
+
+    // 设置卡牌新位置
+    moveAndSet (position:FieldPosition, card:Card) 
+    {
+        this.field.set(position, card),
+        card.setCoordinate(position.getPoint())
+    }
+
+    // 设置卡牌新位置，并且播放移动动画
+    moveAndSetWithAnimation (position:FieldPosition, card:Card, time: number) 
+    {
+        var point = position.getPoint();
+        this.field.set(position, card);
+        var s = new TweenContainer;
+         s.tweens.push(card.moveTo(point, time));
+         return s;
+    }
+    getOppositeMoveType (moveType: MoveType) {
+        switch (moveType) {
+        case MoveType.Up:
+            return MoveType.Down;
+        case MoveType.Down:
+            return MoveType.Up;
+        case MoveType.Left:
+            return MoveType.Right;
+        case MoveType.Right:
+            return MoveType.Left
         }
-    },
-    e.prototype.shootLightning = function() {
+    }
+    shootLightning () {
         var e = this.getHeroPosition(),
         i = this.field.get(e),
         o = [];
-        return o.push.apply(o, this.shootLightningInAllDirections(i.lightningScore, e, t.Consts.LightningDuration)),
+        return o.push.apply(o, this.shootLightningInAllDirections(i.lightningScore, e, Consts.LightningDuration)),
         this.clearLightning(),
-        o.length > 0 && t.SoundController.instance.playSound(t.SoundConsts.Lighting),
+        o.length > 0 && SoundController.instance.playSound(SoundConsts.Lighting),
         o
-    },
-    e.prototype.clearLightning = function() {
+    }
+    clearLightning () {
         this.field.getAll().forEach(function(t) {
             t.canLightningStrike = !1
         })
-    },
-    e.prototype.shootLightningInAllDirections = function(e, i, o) {
+    }
+    shootLightningInAllDirections (e, i, o) {
         var n = [];
-        return n.push.apply(n, this.shootLightningInDirection(t.MoveType.Right, e, i, o)),
-        n.push.apply(n, this.shootLightningInDirection(t.MoveType.Left, e, i, o)),
-        n.push.apply(n, this.shootLightningInDirection(t.MoveType.Up, e, i, o)),
-        n.push.apply(n, this.shootLightningInDirection(t.MoveType.Down, e, i, o)),
+        return n.push.apply(n, this.shootLightningInDirection(MoveType.Right, e, i, o)),
+        n.push.apply(n, this.shootLightningInDirection(MoveType.Left, e, i, o)),
+        n.push.apply(n, this.shootLightningInDirection(MoveType.Up, e, i, o)),
+        n.push.apply(n, this.shootLightningInDirection(MoveType.Down, e, i, o)),
         n
-    },
-    e.prototype.shootLightningInDirection = function(i, o, n, s) {
+    }
+    shootLightningInDirection (i, o, n, s) {
         var a = [],
         r = n.getNewPosition(i);
         if (!this.field.isPositionValid(r)) return a;
@@ -613,9 +748,9 @@ var e = function() {
         if (d instanceof t.Hero) return a;
         if (d.canLightningStrike) return a;
         if (e.canShootLightning(d)) {
-            var c = s + t.Consts.LightningDuration,
-            u = new t.TweenContainer;
-            if ((h = u.tweens).push.apply(h, d.runLightning()), u.setAnimationDuration(t.Consts.LightningDuration), a.push(u), o >= d.getScore()) {
+            var c = s + Consts.LightningDuration,
+            u = new TweenContainer;
+            if ((h = u.tweens).push.apply(h, d.runLightning()), u.setAnimationDuration(Consts.LightningDuration), a.push(u), o >= d.getScore()) {
                 var p = this.getCardToReplaceAfterSmash(d);
                 p.canLightningStrike = !0;
                 var l = this.replaceCardByPosition(r, p, !0).setAnimationDuration(1);
@@ -626,31 +761,31 @@ var e = function() {
             a.push.apply(a, this.shootLightningInAllDirections(o, r, c))
         }
         return a
-    },
-    e.canShootLightning = function(e) {
-        if (e instanceof t.NullCard) return ! 1;
+    }
+    static canShootLightning (e) {
+        if (e instanceof NullCard) return ! 1;
         if (! (e instanceof t.Card)) return ! 0;
         switch (e.type) {
-        case t.CardScoreType.Warrior:
-        case t.CardScoreType.Trap:
+        case CardScoreType.Warrior:
+        case CardScoreType.Trap:
             return ! 0;
         default:
             return ! 1
         }
-    },
-    e.prototype.shootMultiplier = function() {
-        t.SoundController.instance.playSound(t.SoundConsts.Idol);
+    }
+    shootMultiplier () {
+        SoundController.instance.playSound(SoundConsts.Idol);
         var e = this.getHeroPosition(),
         i = this.field.get(e),
         o = [];
-        return o.push.apply(o, this.shootMultiplierInDirection(t.MoveType.Right, i.multiplierScore, e)),
-        o.push.apply(o, this.shootMultiplierInDirection(t.MoveType.Left, i.multiplierScore, e)),
-        o.push.apply(o, this.shootMultiplierInDirection(t.MoveType.Up, i.multiplierScore, e)),
-        o.push.apply(o, this.shootMultiplierInDirection(t.MoveType.Down, i.multiplierScore, e)),
+        return o.push.apply(o, this.shootMultiplierInDirection(MoveType.Right, i.multiplierScore, e)),
+        o.push.apply(o, this.shootMultiplierInDirection(MoveType.Left, i.multiplierScore, e)),
+        o.push.apply(o, this.shootMultiplierInDirection(MoveType.Up, i.multiplierScore, e)),
+        o.push.apply(o, this.shootMultiplierInDirection(MoveType.Down, i.multiplierScore, e)),
         o
-    },
-    e.prototype.shootSkull = function() {
-        t.SoundController.instance.playSound(t.SoundConsts.Skull);
+    }
+    shootSkull () {
+        SoundController.instance.playSound(SoundConsts.Skull);
         for (var e = this.getHeroPosition().getPoint(), i = [], o = 0, n = this.field.getPositions(function(e) {
             return ! (e instanceof t.Hero)
         }); o < n.length; o++) {
@@ -663,8 +798,8 @@ var e = function() {
             i.push(h)
         }
         return i
-    },
-    e.prototype.shootSkullInCoordinate = function(e, i, o, n, s) {
+    }
+    shootSkullInCoordinate (e, i, o, n, s) {
         var a = new t.Skull(this.game, e, i);
         a.animations.play(t.AnimationConsts.Action),
         a.anchor.set(0, 0),
@@ -677,21 +812,21 @@ var e = function() {
         s);
         r.onUpdateCallback(this.onSkullFlyingUpdate, this),
         r.onComplete.add(this.onSkullFlyingComplete, this);
-        var h = new t.TweenContainer;
+        var h = new TweenContainer;
         return h.animationDuration = 1,
         h.tweens.push(r),
         h
-    },
-    e.prototype.onSkullFlyingUpdate = function(e) {
+    }
+    onSkullFlyingUpdate (e) {
         var i = new t.SkullLight(this.game, e.target.x, e.target.y);
         this.cardFactory.container.addChild(i),
         e.target.bringToTop()
-    },
-    e.prototype.onSkullFlyingComplete = function(t) {
+    }
+    onSkullFlyingComplete (t) {
         this.addBombExplosionAnimation(t.x, t.y, 0),
         t.kill()
-    },
-    e.prototype.shootMultiplierInDirection = function(i, o, n) {
+    }
+    shootMultiplierInDirection (i, o, n) {
         var s = [],
         a = n.getNewPosition(i);
         if (!this.field.isPositionValid(a)) return s;
@@ -699,34 +834,34 @@ var e = function() {
         if (e.canMultiply(r.type, r.getScore())) {
             var h = r.multiplyScore(o);
             if (!h) return s;
-            var d = (new t.TweenContainer).setAnimationDuration(1);
+            var d = (new TweenContainer).setAnimationDuration(1);
             return d.tweens.push(h),
             s.push(d),
             s
         }
-    },
-    e.canMultiply = function(e, i) {
+    }
+    static canMultiply (e, i) {
         switch (e) {
-        case t.CardScoreType.Armor:
-        case t.CardScoreType.Bomb:
-        case t.CardScoreType.Cannon:
-        case t.CardScoreType.Gold:
-        case t.CardScoreType.Health:
-        case t.CardScoreType.Lightning:
-        case t.CardScoreType.Poison:
-        case t.CardScoreType.Warrior:
-        case t.CardScoreType.Barrel:
+        case CardScoreType.Armor:
+        case CardScoreType.Bomb:
+        case CardScoreType.Cannon:
+        case CardScoreType.Gold:
+        case CardScoreType.Health:
+        case CardScoreType.Lightning:
+        case CardScoreType.Poison:
+        case CardScoreType.Warrior:
+        case CardScoreType.Barrel:
             return ! 0;
-        case t.CardScoreType.Trap:
+        case CardScoreType.Trap:
             return i > 0;
-        case t.CardScoreType.Multiplier:
-        case t.CardScoreType.Horseshoe:
-        case t.CardScoreType.Chest:
-        case t.CardScoreType.Skull:
+        case CardScoreType.Multiplier:
+        case CardScoreType.Horseshoe:
+        case CardScoreType.Chest:
+        case CardScoreType.Skull:
             return ! 1
         }
-    },
-    e.prototype.stopAllAnimations = function() {
+    }
+    stopAllAnimations () {
         for (var e = 0,
         i = this.field.getAll(); e < i.length; e++) {
             i[e].shape.children.filter(function(e) {
@@ -735,8 +870,8 @@ var e = function() {
                 t.stopAnimation()
             })
         }
-    },
-    e.prototype.playAllAnimations = function() {
+    }
+    playAllAnimations () {
         for (var e = 0,
         i = this.field.getAll(); e < i.length; e++) {
             i[e].shape.children.filter(function(e) {
@@ -745,8 +880,8 @@ var e = function() {
                 t.playAnimation()
             })
         }
-    },
-    e.prototype.replaceAllNegativeCards = function() {
+    }
+    replaceAllNegativeCards () {
         for (var e = [], i = 0, o = this.field.getPositions(function(e) {
             return ! (e instanceof t.Hero)
         }); i < o.length; i++) {
@@ -759,11 +894,9 @@ var e = function() {
             }
         }
         return e
-    },
-    e.prototype.smashHero = function(t) {
+    }
+    smashHero (t) {
         var e = this.getHero();
         this.addBombExplosionAnimation(e.shape.x, e.shape.y, t)
-    },
-    e
-} ();
-t.Field = e
+    }
+}

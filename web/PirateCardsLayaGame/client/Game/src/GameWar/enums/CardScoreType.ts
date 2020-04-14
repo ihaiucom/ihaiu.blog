@@ -2,7 +2,7 @@ export enum CardScoreType
 {
     // 陷阱
     Trap = 1,
-    // 勇士
+    // 小怪, Boss
     Warrior = 2,
     // 血瓶
     Health = 3,

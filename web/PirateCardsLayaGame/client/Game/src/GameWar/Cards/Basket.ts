@@ -33,43 +33,77 @@ export default class Basket
         }
     }
 
-    fillBasketWithStep(e, i, o, n) 
+    fillBasketWithStep(start, val, level, max) 
     {
-        this.fillBasket(e, GMath.clamp(i + Math.floor(GameStatus.gameLevel / o), e, n))
+        this.fillBasket(start, GMath.clamp(val + Math.floor(GameStatus.gameLevel / level), start, max))
     }
 
+    // 随机获取集合里的值
     getFromBasket() 
     {
-        for (var t = this.status.Values().reduce(function(t, e) {
+        var statusValTotal = this.status.Values().reduce(function(t, e) {
             return t + e
-        }), e = Math.random() * t, i = 0, o = 0, n = this.status.Keys(); o < n.length; o++) {
-            var s = n[o],
-            a = this.status.Item(s);
-            if (e > i && e < a + i) return this.removeFromBasket(s),
-            s;
-            i += a
+        });
+
+        var randomVal = Math.random() * statusValTotal;
+        var total = 0;
+
+        for (var o = 0, keys = this.status.Keys(); o < keys.length; o++) 
+        {
+            var key = keys[o],
+            val = this.status.Item(key);
+            if (randomVal > total && randomVal < val + total)
+            {
+                // 将该key值概率减少
+                this.removeFromBasket(key);
+                return key;
+            }
+            total += val
         }
         throw new Error("Item not found in the basked")
     }
-    removeFromBasket(t) {
-        var e = this;
-        this.status.Keys().forEach(function(i) {
-            i === t ? e.resetToZero ? e.status.Add(t, 0) : e.status.Add(t, e.initialStatus.Item(t)) : e.status.Add(i, e.status.Item(i) + e.updateVal)
+
+    // 将该值概率减少
+    removeFromBasket(key) 
+    {
+        this.status.Keys().forEach((itemKey) =>
+        {
+            if(itemKey === key )
+            {
+                if(this.resetToZero)
+                {
+                    this.status.Add(key, 0) 
+                }
+                else
+                {
+                    this.status.Add(key, this.initialStatus.Item(key)) 
+                }
+            }
+            else
+            {
+                this.status.Add(itemKey, this.status.Item(itemKey) + this.updateVal)
+            }
         })
     }
 
+    // 替换宝箱的卡牌类型
     static AfterChestBasket() {
-        var i = new e(.5, .2, !0);
-        return i.add(CardScoreType.Horseshoe.toString(), 1),
-        i.add(CardScoreType.Bomb.toString(), 1),
-        i.add(CardScoreType.Lightning.toString(), 1),
-        i.add(CardScoreType.Skull.toString(), 1),
-        i.add(CardScoreType.Multiplier.toString(), 1),
-        i
+        var basket = new Basket(.5, .2, !0);
+        // 马蹄铁
+        basket.add(CardScoreType.Horseshoe.toString(), 1),
+        // 炸弹
+        basket.add(CardScoreType.Bomb.toString(), 1),
+        // 闪电
+        basket.add(CardScoreType.Lightning.toString(), 1),
+        // 骷髅
+        basket.add(CardScoreType.Skull.toString(), 1),
+        // 倍数
+        basket.add(CardScoreType.Multiplier.toString(), 1);
+        return basket;
     }
-    add(t, e) {
-        this.status.Add(t, e),
-        this.initialStatus.Add(t, e)
+    add(key, val) {
+        this.status.Add(key, val),
+        this.initialStatus.Add(key, val)
     }
     print(t) {
         this.status.Values().reduce(function(t, e) {

@@ -16,7 +16,8 @@ export default class GameConfig{
     static get scaleMode():string
     {
         // return this.isMobile ? Laya.Stage.SCALE_FIXED_AUTO :Laya.Stage.SCALE_FULL ;
-        return Laya.Stage.SCALE_FIXED_AUTO ;
+        // return Laya.Stage.SCALE_FIXED_AUTO ;
+        return Laya.Stage.SCALE_SHOWALL ;
     } 
 
     static screenMode:string="none";
@@ -25,7 +26,7 @@ export default class GameConfig{
     static startScene:any="test/TestScene.scene";
     static sceneRoot:string="";
     static debug:boolean=false;
-    static stat:boolean=false;
+    static stat:boolean=true;
     static physicsDebug:boolean=false;
     static exportSceneToJson:boolean=true;
     static isAntialias: boolean = true;
