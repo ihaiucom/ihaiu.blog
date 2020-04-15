@@ -5,15 +5,14 @@
 
 import ScreenBG from "../../Extends/GameLaunch/ScreenBG";
 import MenuTopPanelWar from "../../Extends/GameHome/MenuTopPanelWar";
-import PanelPause from "../../Extends/GameHome/PanelPause";
+import Container from "../../Extends/GameHome/Container";
 import WindowWarUI from "../../Extends/GameHome/WindowWarUI";
 
 export default class WindowWarUIStruct extends fgui.GComponent
 {
-	public m_arm : fgui.GMovieClip;
 	public m_bg : ScreenBG;
 	public m_menuTopPanel : MenuTopPanelWar;
-	public m_pausePanel : PanelPause;
+	public m_container : Container;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy9c";
@@ -38,10 +37,9 @@ export default class WindowWarUIStruct extends fgui.GComponent
 		
 
 		
-		this.m_arm = <fgui.GMovieClip><any>(this.getChild("arm"));
 		this.m_bg = <ScreenBG><any>(this.getChild("bg"));
 		this.m_menuTopPanel = <MenuTopPanelWar><any>(this.getChild("menuTopPanel"));
-		this.m_pausePanel = <PanelPause><any>(this.getChild("pausePanel"));
+		this.m_container = <Container><any>(this.getChild("container"));
 		
 		
 	}

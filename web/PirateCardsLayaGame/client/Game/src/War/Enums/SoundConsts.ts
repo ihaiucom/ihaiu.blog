@@ -1,0 +1,36 @@
+export default class SoundConsts
+{
+    static Click = "click";
+    static Barrel1 = "barrel1";
+    static Barrel2 = "barrel2";
+    static Bomb = "bomb";
+    static BossAppearance = "bossAppearance";
+    static Buy = "buy";
+    static Cannon = "cannon";
+    static Card = "card";
+    static ChestOpening = "chestOpening";
+    static Coin = "coin";
+    static CoinsBag = "coinsBag";
+    static CoinsCounting = "coinsCounting";
+    static Health1 = "health1";
+    static Health2 = "health2";
+    static HeroDies = "heroDies";
+    static Hit1 = "hit1";
+    static Hit2 = "hit2";
+    static Horseshoe = "horseshoe";
+    static Idol = "idol";
+    static IncorrectClick = "incorrectClick";
+    static Lighting = "lighting";
+    static Melody = "melody";
+    static PickLockFail = "picklockFail";
+    static PickLockNeutral = "picklockNeutral";
+    static PickLockSuccess = "picklockSuccess";
+    static Poison = "poison";
+    static Revive = "revive";
+    static ShieldMetal = "shieldMetal";
+    static ShieldWood = "shieldWood";
+    static Skull = "skull";
+    static Move01 = "move01";
+    static Move02 = "move02";
+    static Trap = "trap";
+}

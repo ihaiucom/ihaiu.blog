@@ -1,5 +1,5 @@
-import Consts from "../Consts";
-import RandomHelper from "../RandomHelper";
+import Consts from "../../War/Enums/Consts";
+import RandomHelper from "../../War/Utils/RandomHelper";
 
 export default class CardBase
 {

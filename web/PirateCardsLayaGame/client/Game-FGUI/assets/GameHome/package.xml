@@ -348,18 +348,19 @@
     <component id="sqzy9s" name="CardView.xml" path="/Card/"/>
     <component id="sqzy9t" name="CardFrontView.xml" path="/Card/"/>
     <component id="sqzy9u" name="CardLifeHero.xml" path="/Card/"/>
-    <component id="sqzy9v" name="CardViewFrontHero.xml" path="/Card/"/>
-    <component id="sqzy9w" name="CardViewFrontWarriow.xml" path="/Card/"/>
+    <component id="sqzy9v" name="CardViewFrontHero.xml" path="/Card/" exported="true"/>
+    <component id="sqzy9w" name="CardViewFrontWarriow.xml" path="/Card/" exported="true"/>
     <component id="sqzy9x" name="CardLifeWarriow.xml" path="/Card/"/>
-    <component id="sqzy9y" name="CardViewFrontPowerUp.xml" path="/Card/"/>
+    <component id="sqzy9y" name="CardViewFrontPowerUp.xml" path="/Card/" exported="true"/>
     <component id="sqzy9z" name="CardLifePowerUp.xml" path="/Card/"/>
     <component id="sqzya0" name="CardShield.xml" path="/Card/"/>
     <component id="sqzya1" name="CardShopBar.xml" path="/Card/"/>
-    <component id="sqzya2" name="CardViewBack.xml" path="/Card/"/>
-    <component id="sqzya3" name="CardViewFrontWarriowEnemy.xml" path="/Card/"/>
+    <component id="sqzya2" name="CardViewBack.xml" path="/Card/" exported="true"/>
+    <component id="sqzya3" name="CardViewFrontWarriowEnemy.xml" path="/Card/" exported="true"/>
     <component id="sqzya4" name="SpriteEnemy.xml" path="/Card/"/>
     <component id="sqzya5" name="SpriteBoss.xml" path="/Card/"/>
-    <component id="sqzya6" name="CardViewFrontWarriowBoss.xml" path="/Card/"/>
+    <component id="sqzya6" name="CardViewFrontWarriowBoss.xml" path="/Card/" exported="true"/>
+    <component id="sqzya7" name="Container.xml" path="/"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

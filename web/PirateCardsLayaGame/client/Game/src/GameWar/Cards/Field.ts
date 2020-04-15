@@ -1,19 +1,19 @@
 import Game from "../../Game";
 import CardFactory from "./CardFactory";
-import keyboardManager from "./KeyboardManager";
-import GameStatus from "./GameStatus";
-import Consts from "../Consts";
-import RandomHelper from "../RandomHelper";
-import { CardGenerationType } from "../enums/CardGenerationType";
-import { MoveType } from "../enums/MoveType";
+import keyboardManager from "../../War/Datas/KeyboardManager";
+import GameStatus from "../../War/Datas/GameStatus";
+import Consts from "../../War/Enums/Consts";
+import RandomHelper from "../../War/Utils/RandomHelper";
+import { CardGenerationType } from "../../War/Enums/CardGenerationType";
+import { MoveType } from "../../War/Enums/MoveType";
 import FieldItems from "./FieldItems";
 import Hero from "./Hero";
 import Card from "./Card";
-import { CardScoreType } from "../enums/CardScoreType";
+import { CardScoreType } from "../../War/Enums/CardScoreType";
 import NullCard from "./NullCard";
-import SoundConsts from "../SoundConsts";
-import FieldPosition from "./FieldPosition";
-import { CardPositionType } from "../enums/CardPositionType";
+import SoundConsts from "../../War/Enums/SoundConsts";
+import FieldPosition from "../../War/Datas/FieldPosition";
+import { CardPositionType } from "../../War/Enums/CardPositionType";
 
 export default class Field
 {

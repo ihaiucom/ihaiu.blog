@@ -1,4 +1,4 @@
-import FieldPosition from "./FieldPosition";
+import FieldPosition from "../../War/Datas/FieldPosition";
 import CardBase from "./CardBase";
 import NullCard from "./NullCard";
 import Card from "./Card";

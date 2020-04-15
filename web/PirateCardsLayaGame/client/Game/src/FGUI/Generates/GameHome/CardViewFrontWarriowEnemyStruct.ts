@@ -3,13 +3,15 @@
 // http://blog.ihaiu.com
 /////////////////////////////////////
 
+import SpriteEnemy from "../../Extends/GameHome/SpriteEnemy";
+import CardLifeWarriow from "../../Extends/GameHome/CardLifeWarriow";
 import CardViewFrontWarriowEnemy from "../../Extends/GameHome/CardViewFrontWarriowEnemy";
 
 export default class CardViewFrontWarriowEnemyStruct extends fgui.GButton
 {
 	public m_bg : fgui.GLoader;
-	public m_icon : fgui.GLabel;
-	public m_life : fgui.GLabel;
+	public m_icon : SpriteEnemy;
+	public m_life : CardLifeWarriow;
 
 	
 	public static URL:string = "ui://moe42ygrsqzya3";
@@ -35,8 +37,8 @@ export default class CardViewFrontWarriowEnemyStruct extends fgui.GButton
 
 		
 		this.m_bg = <fgui.GLoader><any>(this.getChild("bg"));
-		this.m_icon = <fgui.GLabel><any>(this.getChild("icon"));
-		this.m_life = <fgui.GLabel><any>(this.getChild("life"));
+		this.m_icon = <SpriteEnemy><any>(this.getChild("icon"));
+		this.m_life = <CardLifeWarriow><any>(this.getChild("life"));
 		
 		
 	}

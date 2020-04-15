@@ -1,5 +1,5 @@
-import { HeroType } from "./HeroType";
-import PriceConsts from "./PriceConsts";
+import { HeroType } from "../War/Enums/HeroType";
+import PriceConsts from "../War/Enums/PriceConsts";
 
 export default class PriceHelper
 {

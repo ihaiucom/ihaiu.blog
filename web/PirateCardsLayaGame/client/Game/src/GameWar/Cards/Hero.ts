@@ -1,9 +1,9 @@
 import Card from "./Card";
-import FightResult from "./FightResult";
-import { CardScoreType } from "../enums/CardScoreType";
-import GameStatus from "./GameStatus";
-import ArtConsts from "../ArtConsts";
-import SoundConsts from "../SoundConsts";
+import FightResult from "../../War/Datas/FightResult";
+import { CardScoreType } from "../../War/Enums/CardScoreType";
+import GameStatus from "../../War/Datas/GameStatus";
+import ArtConsts from "../../War/Enums/ArtConsts";
+import SoundConsts from "../../War/Enums/SoundConsts";
 
 export default class Hero extends Card
 {

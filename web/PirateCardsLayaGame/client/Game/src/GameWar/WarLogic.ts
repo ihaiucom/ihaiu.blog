@@ -1,12 +1,12 @@
 import CardFactory from "./Cards/CardFactory";
-import Consts from "./Consts";
-import AnimationConsts from "./enums/AnimationConsts";
+import Consts from "../War/Enums/Consts";
+import AnimationConsts from "../War/Enums/AnimationConsts";
 import WindowsConsts from "./WindowsConsts";
 import Field from "./Cards/Field";
-import GameStatus from "./Cards/GameStatus";
-import FightResult from "./Cards/FightResult";
-import { HeroType } from "./HeroType";
-import { CardGenerationType } from "./enums/CardGenerationType";
+import GameStatus from "../War/Datas/GameStatus";
+import FightResult from "../War/Datas/FightResult";
+import { HeroType } from "../War/Enums/HeroType";
+import { CardGenerationType } from "../War/Enums/CardGenerationType";
 
 export default class WarLogic
 {
