@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component size="203,229">
-  <displayList>
-    <image id="n0_sqzy" name="cardBack" src="sqzy2q" fileName="sprite/game1/cardBackrounds0000.png" xy="101,114" pivot="0.5,0.5" anchor="true"/>
-    <component id="n1_sqzy" name="cardFront" src="sqzy9t" fileName="Card/CardFrontView.xml" xy="101,114" pivot="0.5,0.5" anchor="true" controller="CardBackgroundType,0"/>
-  </displayList>
+<component size="203,229" pivot="0.5,0.5" anchor="true">
+  <displayList/>
 </component>

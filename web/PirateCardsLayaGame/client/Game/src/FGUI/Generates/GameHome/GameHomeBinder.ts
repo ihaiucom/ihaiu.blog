@@ -13,6 +13,7 @@ import PanelChooseGameFormat from "../../Extends/GameHome/PanelChooseGameFormat"
 import WindowWarUI from "../../Extends/GameHome/WindowWarUI";
 import PanelResult from "../../Extends/GameHome/PanelResult";
 import MenuTopPanelWar from "../../Extends/GameHome/MenuTopPanelWar";
+import CardView from "../../Extends/GameHome/CardView";
 import CardLifeHero from "../../Extends/GameHome/CardLifeHero";
 import CardViewFrontHero from "../../Extends/GameHome/CardViewFrontHero";
 import CardViewFrontWarriow from "../../Extends/GameHome/CardViewFrontWarriow";
@@ -42,6 +43,7 @@ export default class GameHomeBinder
 		bind(WindowWarUI.URL, WindowWarUI);
 		bind(PanelResult.URL, PanelResult);
 		bind(MenuTopPanelWar.URL, MenuTopPanelWar);
+		bind(CardView.URL, CardView);
 		bind(CardLifeHero.URL, CardLifeHero);
 		bind(CardViewFrontHero.URL, CardViewFrontHero);
 		bind(CardViewFrontWarriow.URL, CardViewFrontWarriow);

@@ -8,6 +8,7 @@ export default class FightResult
     isMove: boolean;
     // 是否增加一条生命
     isNeedIncreaseLifeByOne: boolean;
+    isNeedIncreaseLifeByOneAfterBoss: boolean;
 
     constructor(isHeroAlive, isChest, isMove) 
     {

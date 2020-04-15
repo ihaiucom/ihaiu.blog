@@ -1,0 +1,243 @@
+import CardView from "../../FGUI/Extends/GameHome/CardView";
+import { CardScoreType } from "../Enums/CardScoreType";
+import GameStatus from "../Datas/GameStatus";
+import WarGame from "../WarGame";
+import Consts from "../Enums/Consts";
+import { HeroType } from "../Enums/HeroType";
+import Point from "../Datas/Point";
+import TweenUtil from "../Utils/TweenUtil";
+import TweenHelper from "../Utils/TweenHelper";
+import SoundController from "./SoundController";
+import SoundConsts from "../Enums/SoundConsts";
+import TweenContainer from "../Utils/TweenContainer";
+import CardViewFrontWarriowBoss from "../../FGUI/Extends/GameHome/CardViewFrontWarriowBoss";
+import CardViewBack from "../../FGUI/Extends/GameHome/CardViewBack";
+
+export default class Card
+{
+    
+    static GetDefault(game) 
+    {
+        var card = <Card> Pool.createByClass(Card);
+        card.game = game;
+        card.view = CardViewBack.createInstance();
+        card.type = CardScoreType.None;
+        return card;
+    }
+    static GetNew(frontView, game, cardScoreType: CardScoreType, score: number) {
+        
+        var card = <Card> Pool.createByClass(Card);
+        card.game = game;
+        card.view = frontView;
+        card.type = cardScoreType;
+        // card.setScore(score),
+        GameStatus.updateCardCounter(cardScoreType),
+        GameStatus.updateMovesAfterSpecialCard(cardScoreType);
+        return card;
+    }
+
+
+
+    game: WarGame;
+    view: CardView | any;
+    
+    isOnClickInitiated = false;
+    powerUpAmount = 0;
+    lifeAmount = 0;
+    type: CardScoreType = CardScoreType.None;
+    initialLife: number = 0;
+
+    
+    constructor()
+    {
+    }
+
+
+    stepUpdate() {
+        var e = this.view.getByName(Consts.CardManAnimation);
+        if (e instanceof Trap) {
+            var i = e.changeStatus(),
+            o = GameStatus.currentHero == HeroType.Gun;
+            this.lifeAmount = o ? 0 : i ? this.powerUpAmount: 0,
+            this.setHealthText()
+        }
+        this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
+        this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
+        this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
+    }
+    getScore() {
+        return this.type == CardScoreType.Trap ? this.lifeAmount: this.lifeAmount + this.powerUpAmount
+    }
+    getLife() {
+        return this.lifeAmount
+    }
+    getPowerUp() {
+        return this.powerUpAmount
+    }
+    multiplyScore(t) {
+        return this.lifeAmount > 0 ? this.getScaleTween(this.getCardLifeText(), this.increaseLife, t) : this.powerUpAmount > 0 ? this.getScaleTween(this.getPowerUpText(), this.increasePowerUp, t) : null
+    }
+    increaseLife(e, i, o) {
+        this.setLife(this.lifeAmount * o),
+        this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * o)
+    }
+    increasePowerUp(t, e, i) {
+        this.setPowerUp(this.powerUpAmount * i)
+    }
+    reduceScoreInNSeconds(t, e) {
+        this.powerUpAmount > 0 && (this.powerUpAmount = this.powerUpAmount - t, setTimeout(this.setPowerUpText.bind(this), e)),
+        this.lifeAmount > 0 && (this.lifeAmount = this.lifeAmount - t, setTimeout(this.setHealthText.bind(this), e))
+    }
+    increaseScoreInNSeconds(t, e) {
+        this.powerUpAmount > 0 && (this.powerUpAmount = this.powerUpAmount + t, setTimeout(this.increasePowerUpTween.bind(this), e)),
+        this.lifeAmount > 0 && (this.lifeAmount = this.lifeAmount + t, setTimeout(this.increaseLifeTween.bind(this), e))
+    }
+    increasePowerUpTween() {
+        this.getScaleTween(this.getPowerUpText(), this.setPowerUpText, this.powerUpAmount).start()
+    }
+    increaseLifeTween() {
+        this.getScaleTween(this.getCardLifeText(), this.setHealthText, this.lifeAmount).start()
+    }
+    setScore(e) {
+        switch (this.type) {
+        case CardScoreType.Warrior:
+            this.initialLife = e,
+            this.setLife(e);
+            break;
+        case CardScoreType.Gold:
+        case CardScoreType.Health:
+        case CardScoreType.Armor:
+        case CardScoreType.Poison:
+        case CardScoreType.Cannon:
+        case CardScoreType.Lightning:
+        case CardScoreType.Multiplier:
+        case CardScoreType.Skull:
+        case CardScoreType.Barrel:
+            this.setPowerUp(e);
+            break;
+        case CardScoreType.Bomb:
+            this.setLife(e),
+            this.setPowerUp(10);
+            break;
+        case CardScoreType.Trap:
+            this.setPowerUp(e),
+            this.setLife(e);
+            break;
+        case CardScoreType.Chest:
+            break;
+        case CardScoreType.Horseshoe:
+            this.setPowerUp(1)
+        }
+    }
+    setPowerUp(t) {
+        this.powerUpAmount = t,
+        this.setPowerUpText()
+    }
+    setLife(t) {
+        this.lifeAmount = t,
+        this.setHealthText()
+    }
+    setHealthText() {
+        var t = this.getCardLifeText();
+        t && t && t.setText(this.lifeAmount.toString())
+    }
+    setPowerUpText() {
+        var t = this.getPowerUpText();
+        t && t && t.setText(this.powerUpAmount.toString())
+    }
+    getPowerUpText() {
+        return this.view.getByName(Consts.PowerUp)
+    }
+    setOnClickEvent(onCardDown, onCardUp, listener) {
+        if (!this.isOnClickInitiated) for (var n = 0; n < this.view.children.length; n++) {
+            var s = this.view.children[n];
+            s.name == Consts.BackgroundName && (s.inputEnabled = !0, s.events.onInputDown.add(onCardDown, listener, 1, this), s.events.onInputUp.add(onCardUp, listener, 1, this), this.isOnClickInitiated = !0)
+        }
+    }
+    isNegative() {
+        switch (this.type) {
+        case CardScoreType.Trap:
+        case CardScoreType.Warrior:
+        case CardScoreType.Bomb:
+        case CardScoreType.Poison:
+            return ! 0;
+        case CardScoreType.Health:
+        case CardScoreType.Gold:
+        case CardScoreType.Armor:
+        case CardScoreType.Cannon:
+        case CardScoreType.Chest:
+        case CardScoreType.Barrel:
+        case CardScoreType.Horseshoe:
+        case CardScoreType.Lightning:
+        case CardScoreType.Multiplier:
+        case CardScoreType.Skull:
+            return ! 1
+        }
+    }
+    isBoss() {
+        return this.type == CardScoreType.Warrior && this.view.front instanceof CardViewFrontWarriowBoss;
+    }
+    getGoldValue() {
+        return this.initialLife
+    }
+
+    moveTo(point: Point, time: number): Laya.Tween
+    {
+        this.game.container.addChild(this.view);
+        return TweenUtil.to(this.view, point, time);
+    }
+
+    setCoordinate(point: Point)
+    {
+        this.game.container.addChild(this.view);
+        this.view.setXY(point.x, point.y);
+    }
+
+    open(): Laya.Tween
+    {
+        return null;
+    }
+
+    endTurnAnimationStart()
+    {
+        this.view.setScale(0, Consts.FlipZoom);
+    }
+
+    startTurnAnimation(endCallback: () => void, endCaller:any): TweenContainer
+    { 
+        var i = this.removeShapeFromStage;
+        var tweenContainer = TweenHelper.turnAnimationStart(null, this.view);
+        tweenContainer.onStart.add(this.playCardSoundInSeconds, this);
+        tweenContainer.onComplete.add(this.removeShapeFromStage, this);
+        tweenContainer.onComplete.add(endCallback, endCaller);
+        return tweenContainer;
+    }
+
+    playCardSoundInSeconds()
+    {
+        setTimeout(this.playCardSound.bind(this), 50)
+    }
+
+    playCardSound()
+    {
+        SoundController.instance.playSound(SoundConsts.Card);
+    }
+
+    
+
+    endTurnAnimationEnd()
+    {
+        if(this.isBoss)
+        {
+            SoundController.instance.playSound(SoundConsts.BossAppearance);
+        }
+        this.view.scaleX = 0.1;
+        
+        TweenHelper.turnAnimationEnd(null, this.view).restart();
+    }
+
+    removeShapeFromStage()
+    {
+        this.view.removeFromParent();
+    }
+}

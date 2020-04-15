@@ -8,7 +8,7 @@
     <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="65,50" locked="true">
       <relation target="" sidePair="center-center,top-top%"/>
     </component>
-    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="0,180" size="640,960">
+    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="55,180" size="640,960">
       <relation target="" sidePair="center-center,middle-middle"/>
     </component>
   </displayList>

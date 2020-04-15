@@ -2676,16 +2676,3107 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
-            this.m_arm = (this.getChild("arm"));
             this.m_bg = (this.getChild("bg"));
             this.m_menuTopPanel = (this.getChild("menuTopPanel"));
-            this.m_pausePanel = (this.getChild("pausePanel"));
+            this.m_container = (this.getChild("container"));
         }
     }
     WindowWarUIStruct.URL = "ui://moe42ygrsqzy9c";
     WindowWarUIStruct.DependPackages = ["GameHome", "GameLaunch"];
 
+    var CardScoreType;
+    (function (CardScoreType) {
+        CardScoreType[CardScoreType["None"] = 0] = "None";
+        CardScoreType[CardScoreType["Trap"] = 1] = "Trap";
+        CardScoreType[CardScoreType["Warrior"] = 2] = "Warrior";
+        CardScoreType[CardScoreType["Health"] = 3] = "Health";
+        CardScoreType[CardScoreType["Gold"] = 4] = "Gold";
+        CardScoreType[CardScoreType["Armor"] = 5] = "Armor";
+        CardScoreType[CardScoreType["Cannon"] = 6] = "Cannon";
+        CardScoreType[CardScoreType["Barrel"] = 7] = "Barrel";
+        CardScoreType[CardScoreType["Chest"] = 8] = "Chest";
+        CardScoreType[CardScoreType["Bomb"] = 9] = "Bomb";
+        CardScoreType[CardScoreType["Poison"] = 10] = "Poison";
+        CardScoreType[CardScoreType["Horseshoe"] = 11] = "Horseshoe";
+        CardScoreType[CardScoreType["Lightning"] = 12] = "Lightning";
+        CardScoreType[CardScoreType["Multiplier"] = 13] = "Multiplier";
+        CardScoreType[CardScoreType["Skull"] = 14] = "Skull";
+    })(CardScoreType || (CardScoreType = {}));
+
+    var HeroType;
+    (function (HeroType) {
+        HeroType[HeroType["Base"] = 0] = "Base";
+        HeroType[HeroType["Bomb"] = 1] = "Bomb";
+        HeroType[HeroType["Gun"] = 2] = "Gun";
+        HeroType[HeroType["Key"] = 3] = "Key";
+    })(HeroType || (HeroType = {}));
+
+    class GMath {
+        static degToRad(deg) {
+            return deg * GMath.DEG_TO_RAD;
+        }
+        static radToDeg(rad) {
+            return rad * GMath.RAD_TO_DEG;
+        }
+        static getNextPowerOfTwo(v) {
+            if (v > 0 && 0 == (v & v - 1))
+                return v;
+            for (var e = 1; e < v;)
+                e <<= 1;
+            return e;
+        }
+        static isPowerOfTwo(t, e) {
+            return t > 0 && 0 == (t & t - 1) && e > 0 && 0 == (e & e - 1);
+        }
+        static random(t, e) {
+            if (void 0 === t && (t = 0), void 0 === e && (e = 1), t === e)
+                return t;
+            if (t > e) {
+                var i = t;
+                t = e,
+                    e = i;
+            }
+            return Math.random() * (e - t) + t;
+        }
+        static between(t, e) {
+            if (void 0 === t && (t = 0), void 0 === e && (e = 1), t === e)
+                return t;
+            if (t > e) {
+                var i = t;
+                t = e,
+                    e = i;
+            }
+            return t = Math.ceil(t),
+                e = Math.floor(e),
+                Math.floor(Math.random() * (e - t + 1)) + t;
+        }
+        static fuzzyEqual(t, e, i) {
+            return void 0 === i && (i = 1e-4),
+                Math.abs(t - e) < i;
+        }
+        static fuzzyLessThan(t, e, i) {
+            return void 0 === i && (i = 1e-4),
+                t < e + i;
+        }
+        static fuzzyGreaterThan(t, e, i) {
+            return void 0 === i && (i = 1e-4),
+                t > e - i;
+        }
+        static fuzzyCeil(t, e) {
+            return void 0 === e && (e = 1e-4),
+                Math.ceil(t - e);
+        }
+        static fuzzyFloor(t, e) {
+            return void 0 === e && (e = 1e-4),
+                Math.floor(t + e);
+        }
+        static average() {
+            for (var t = 0, e = arguments.length, i = 0; i < e; i++)
+                t += +arguments[i];
+            return t / e;
+        }
+        static shear(t) {
+            return t % 1;
+        }
+        static snapTo(t, e, i) {
+            return void 0 === i && (i = 0),
+                0 === e ? t : (t -= i, i + (t = e * Math.round(t / e)));
+        }
+        static snapToFloor(t, e, i) {
+            return void 0 === i && (i = 0),
+                0 === e ? t : (t -= i, i + (t = e * Math.floor(t / e)));
+        }
+        static snapToCeil(t, e, i) {
+            return void 0 === i && (i = 0),
+                0 === e ? t : (t -= i, i + (t = e * Math.ceil(t / e)));
+        }
+        static roundTo(t, e, i) {
+            void 0 === e && (e = 0),
+                void 0 === i && (i = 10);
+            var s = Math.pow(i, -e);
+            return Math.round(t * s) / s;
+        }
+        static floorTo(t, e, i) {
+            void 0 === e && (e = 0),
+                void 0 === i && (i = 10);
+            var s = Math.pow(i, -e);
+            return Math.floor(t * s) / s;
+        }
+        static ceilTo(t, e, i) {
+            void 0 === e && (e = 0),
+                void 0 === i && (i = 10);
+            var s = Math.pow(i, -e);
+            return Math.ceil(t * s) / s;
+        }
+        static trunc(t) {
+            return isFinite(t) ? t - t % 1 || (t < 0 ? -0 : 0 === t ? t : 0) : t;
+        }
+        static rotateToAngle(e, i, s) {
+            return void 0 === s && (s = .05),
+                e === i ? e : (Math.abs(i - e) <= s || Math.abs(i - e) >= GMath.PI2 - s ? e = i : (Math.abs(i - e) > Math.PI && (i < e ? i += GMath.PI2 : i -= GMath.PI2), i > e ? e += s : i < e && (e -= s)), e);
+        }
+        static getShortestAngle(t, e) {
+            var i = e - t;
+            return 0 === i ? 0 : i - 360 * Math.floor((i - -180) / 360);
+        }
+        static angleBetween(t, e, i, s) {
+            return Math.atan2(s - e, i - t);
+        }
+        static angleBetweenY(t, e, i, s) {
+            return Math.atan2(i - t, s - e);
+        }
+        static angleBetweenPoints(t, e) {
+            return Math.atan2(e.y - t.y, e.x - t.x);
+        }
+        static angleBetweenPointsY(t, e) {
+            return Math.atan2(e.x - t.x, e.y - t.y);
+        }
+        static reverseAngle(t) {
+            return this.normalizeAngle(t + Math.PI);
+        }
+        static normalizeAngle(t) {
+            return (t %= 2 * Math.PI) >= 0 ? t : t + 2 * Math.PI;
+        }
+        static maxAdd(t, e, i) {
+            return Math.min(t + e, i);
+        }
+        static minSub(t, e, i) {
+            return Math.max(t - e, i);
+        }
+        static wrap(t, e, i) {
+            var s = i - e;
+            if (s <= 0)
+                return 0;
+            var n = (t - e) % s;
+            return n < 0 && (n += s),
+                n + e;
+        }
+        static wrapValue(t, e, i) {
+            return ((t = Math.abs(t)) + (e = Math.abs(e))) % (i = Math.abs(i));
+        }
+        static isOdd(t) {
+            return !!(1 & t);
+        }
+        static isEven(t) {
+            return !(1 & t);
+        }
+        static min() {
+            if (1 === arguments.length && "object" == typeof arguments[0])
+                t = arguments[0];
+            else
+                var t = arguments;
+            for (var e = 1, i = 0, s = t.length; e < s; e++)
+                t[e] < t[i] && (i = e);
+            return t[i];
+        }
+        static max() {
+            if (1 === arguments.length && "object" == typeof arguments[0])
+                t = arguments[0];
+            else
+                var t = arguments;
+            for (var e = 1, i = 0, s = t.length; e < s; e++)
+                t[e] > t[i] && (i = e);
+            return t[i];
+        }
+        static minProperty(t) {
+            if (2 === arguments.length && "object" == typeof arguments[1])
+                e = arguments[1];
+            else
+                var e = arguments.slice(1);
+            for (var i = 1, s = 0, n = e.length; i < n; i++)
+                e[i][t] < e[s][t] && (s = i);
+            return e[s][t];
+        }
+        static maxProperty(t) {
+            if (2 === arguments.length && "object" == typeof arguments[1])
+                e = arguments[1];
+            else
+                var e = arguments.slice(1);
+            for (var i = 1, s = 0, n = e.length; i < n; i++)
+                e[i][t] > e[s][t] && (s = i);
+            return e[s][t];
+        }
+        static wrapAngle(t, e) {
+            return e ? this.wrap(t, -Math.PI, Math.PI) : this.wrap(t, -180, 180);
+        }
+        static linearInterpolation(t, e) {
+            var i = t.length - 1, s = i * e, n = Math.floor(s);
+            return e < 0 ? this.linear(t[0], t[1], s) : e > 1 ? this.linear(t[i], t[i - 1], i - s) : this.linear(t[n], t[n + 1 > i ? i : n + 1], s - n);
+        }
+        static bezierInterpolation(t, e) {
+            for (var i = 0, s = t.length - 1, n = 0; n <= s; n++)
+                i += Math.pow(1 - e, s - n) * Math.pow(e, n) * t[n] * this.bernstein(s, n);
+            return i;
+        }
+        static catmullRomInterpolation(t, e) {
+            var i = t.length - 1, s = i * e, n = Math.floor(s);
+            return t[0] === t[i] ? (e < 0 && (n = Math.floor(s = i * (1 + e))), this.catmullRom(t[(n - 1 + i) % i], t[n], t[(n + 1) % i], t[(n + 2) % i], s - n)) : e < 0 ? t[0] - (this.catmullRom(t[0], t[0], t[1], t[1], -s) - t[0]) : e > 1 ? t[i] - (this.catmullRom(t[i], t[i], t[i - 1], t[i - 1], s - i) - t[i]) : this.catmullRom(t[n ? n - 1 : 0], t[n], t[i < n + 1 ? i : n + 1], t[i < n + 2 ? i : n + 2], s - n);
+        }
+        static linear(t, e, i) {
+            return (e - t) * i + t;
+        }
+        static bernstein(t, e) {
+            return this.factorial(t) / this.factorial(e) / this.factorial(t - e);
+        }
+        static factorial(t) {
+            if (0 === t)
+                return 1;
+            for (var e = t; --t;)
+                e *= t;
+            return e;
+        }
+        static catmullRom(t, e, i, s, n) {
+            var r = .5 * (i - t), o = .5 * (s - e), a = n * n;
+            return (2 * e - 2 * i + r + o) * (n * a) + (-3 * e + 3 * i - 2 * r - o) * a + r * n + e;
+        }
+        static difference(t, e) {
+            return Math.abs(t - e);
+        }
+        static roundAwayFromZero(t) {
+            return t > 0 ? Math.ceil(t) : Math.floor(t);
+        }
+        static sinCosGenerator(t, e, i, s) {
+            void 0 === e && (e = 1),
+                void 0 === i && (i = 1),
+                void 0 === s && (s = 1);
+            for (var n = e, r = i, o = s * Math.PI / t, a = [], h = [], l = 0; l < t; l++)
+                n += (r -= n * o) * o,
+                    a[l] = r,
+                    h[l] = n;
+            return {
+                sin: h,
+                cos: a,
+                length: t
+            };
+        }
+        static hypot(t, e) {
+            return Math.sqrt(t * t + e * e);
+        }
+        static distance(t, e, i, s) {
+            var n = t - i, r = e - s;
+            return Math.sqrt(n * n + r * r);
+        }
+        static distanceSq(t, e, i, s) {
+            var n = t - i, r = e - s;
+            return n * n + r * r;
+        }
+        static distancePow(t, e, i, s, n) {
+            return void 0 === n && (n = 2),
+                Math.sqrt(Math.pow(i - t, n) + Math.pow(s - e, n));
+        }
+        static clamp(v, min, max) {
+            return v < min ? min : max < v ? max : v;
+        }
+        static clampBottom(val, min) {
+            return val < min ? min : val;
+        }
+        static within(t, e, i) {
+            return Math.abs(t - e) <= i;
+        }
+        static mapLinear(t, e, i, s, n) {
+            return s + (t - e) * (n - s) / (i - e);
+        }
+        static smoothstep(t, e, i) {
+            return (t = Math.max(0, Math.min(1, (t - e) / (i - e)))) * t * (3 - 2 * t);
+        }
+        static smootherstep(t, e, i) {
+            return (t = Math.max(0, Math.min(1, (t - e) / (i - e)))) * t * t * (t * (6 * t - 15) + 10);
+        }
+        static sign(t) {
+            return t < 0 ? -1 : t > 0 ? 1 : 0;
+        }
+        static percent(t, e, i) {
+            return void 0 === i && (i = 0),
+                t > e || i > e ? 1 : t < i || i > t ? 0 : (t - i) / e;
+        }
+    }
+    GMath.PI2 = 2 * Math.PI;
+    GMath.HALF_PI = .5 * Math.PI;
+    GMath.DEG_TO_RAD = Math.PI / 180;
+    GMath.RAD_TO_DEG = 180 / Math.PI;
+
+    class ArrayUtils {
+        static getRandomItem(arr, e, i) {
+            if (null === arr)
+                return null;
+            void 0 === e && (e = 0),
+                void 0 === i && (i = arr.length);
+            var s = e + Math.floor(Math.random() * i);
+            return void 0 === arr[s] ? null : arr[s];
+        }
+        static removeRandomItem(t, e, i) {
+            if (null == t)
+                return null;
+            void 0 === e && (e = 0),
+                void 0 === i && (i = t.length);
+            var s = e + Math.floor(Math.random() * i);
+            if (s < t.length) {
+                var n = t.splice(s, 1);
+                return void 0 === n[0] ? null : n[0];
+            }
+            return null;
+        }
+        static remove(t, e, i) {
+            var s = t.length;
+            if (!(e >= s || 0 === i)) {
+                null == i && (i = 1);
+                for (var n = s - i, r = e; r < n; ++r)
+                    t[r] = t[r + i];
+                t.length = n;
+            }
+        }
+        static shuffle(t) {
+            for (var e = t.length - 1; e > 0; e--) {
+                var i = Math.floor(Math.random() * (e + 1)), s = t[e];
+                t[e] = t[i],
+                    t[i] = s;
+            }
+            return t;
+        }
+        static transposeMatrix(t) {
+            for (var e = t.length, i = t[0].length, s = new Array(i), n = 0; n < i; n++) {
+                s[n] = new Array(e);
+                for (var r = e - 1; r > -1; r--)
+                    s[n][r] = t[r][n];
+            }
+            return s;
+        }
+        static rotateMatrix(e, i) {
+            if ("string" != typeof i && (i = (i % 360 + 360) % 360), 90 === i || -270 === i || "rotateLeft" === i)
+                e = (e = ArrayUtils.transposeMatrix(e)).reverse();
+            else if (-90 === i || 270 === i || "rotateRight" === i)
+                e = e.reverse(),
+                    e = ArrayUtils.transposeMatrix(e);
+            else if (180 === Math.abs(i) || "rotate180" === i) {
+                for (var s = 0; s < e.length; s++)
+                    e[s].reverse();
+                e = e.reverse();
+            }
+            return e;
+        }
+        static findClosest(t, e) {
+            if (!e.length)
+                return NaN;
+            if (1 === e.length || t < e[0])
+                return e[0];
+            for (var i = 1; e[i] < t;)
+                i++;
+            var s = e[i - 1], n = i < e.length ? e[i] : Number.POSITIVE_INFINITY;
+            return n - t <= t - s ? n : s;
+        }
+        static rotateRight(t) {
+            var e = t.pop();
+            return t.unshift(e),
+                e;
+        }
+        static rotateLeft(t) {
+            var e = t.shift();
+            return t.push(e),
+                e;
+        }
+        static numberArray(t, e) {
+            null != e || (e = t, t = 0);
+            for (var i = [], s = t; s <= e; s++)
+                i.push(s);
+            return i;
+        }
+        static numberArrayStep(e, i, s) {
+            null != e || (e = 0),
+                null != i || (i = e, e = 0),
+                void 0 === s && (s = 1);
+            for (var n = [], r = Math.max(GMath.roundAwayFromZero((i - e) / (s || 1)), 0), o = 0; o < r; o++)
+                n.push(e),
+                    e += s;
+            return n;
+        }
+    }
+
+    class CardScoreTypeHelper {
+        static isCardScoreTypeNegative(cardScoreType) {
+            return cardScoreType == CardScoreType.Trap ||
+                cardScoreType == CardScoreType.Warrior ||
+                cardScoreType == CardScoreType.Poison;
+        }
+        static isCardScoreTypePositive(cardScoreType) {
+            return cardScoreType == CardScoreType.Health ||
+                cardScoreType == CardScoreType.Armor ||
+                cardScoreType == CardScoreType.Cannon ||
+                cardScoreType == CardScoreType.Horseshoe ||
+                cardScoreType == CardScoreType.Lightning ||
+                cardScoreType == CardScoreType.Skull;
+        }
+        static getRandomFromChest() {
+            return ArrayUtils.getRandomItem(this.itemsFromChest);
+        }
+        static getRandomPowerUpFromBarrel() {
+            return ArrayUtils.getRandomItem(this.itemsFromBarrel);
+        }
+        static getRandomPowerUp() {
+            return ArrayUtils.getRandomItem(this.powerUps);
+        }
+    }
+    CardScoreTypeHelper.itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.Multiplier, CardScoreType.Skull];
+    CardScoreTypeHelper.itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
+    CardScoreTypeHelper.powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
+
+    class GameStatus {
+        static init() {
+            if (this.currentHero == HeroType.Key) {
+                this.isKey = true;
+            }
+        }
+        static load() {
+            if (Game.localStorage.hasItem(this.DATE_KEY, false)) {
+                this.data = Game.localStorage.getJSON(this.DATE_KEY);
+            }
+        }
+        static save() {
+            Game.localStorage.setJSON(this.DATE_KEY, this.data, false);
+        }
+        static get gold() {
+            return this.data.gold;
+        }
+        static set gold(val) {
+            this.data.gold = val;
+            this.save();
+        }
+        static get bestGoldPerGame() {
+            return this.data.bestGoldPerGame;
+        }
+        static set bestGoldPerGame(val) {
+            this.data.bestGoldPerGame = val;
+            this.save();
+        }
+        static get isTutorialSeen() {
+            return this.data.isTutorialSeen;
+        }
+        static set isTutorialSeen(val) {
+            this.data.isTutorialSeen = val;
+            this.save();
+        }
+        static get isTutorialStep1Done() {
+            return this.data.isTutorialSeen;
+        }
+        static set isTutorialStep1Done(val) {
+            this.data.isTutorialStep1Done = val;
+            this.save();
+        }
+        static get isTutorialStep2Done() {
+            return this.data.isTutorialStep2Done;
+        }
+        static set isTutorialStep2Done(val) {
+            this.data.isTutorialStep2Done = val;
+            this.save();
+        }
+        static get isTutorialChestSeen() {
+            return this.data.isTutorialChestSeen;
+        }
+        static set isTutorialChestSeen(val) {
+            this.data.isTutorialChestSeen = val;
+            this.save();
+        }
+        static get isBombHero() {
+            return this.data.isBombHero;
+        }
+        static set isBombHero(val) {
+            this.data.isBombHero = val;
+            this.save();
+        }
+        static get isKeyHero() {
+            return this.data.isKeyHero;
+        }
+        static set isKeyHero(val) {
+            this.data.isKeyHero = val;
+            this.save();
+        }
+        static get isGunHero() {
+            return this.data.isGunHero;
+        }
+        static set isGunHero(val) {
+            this.data.isGunHero = val;
+            this.save();
+        }
+        static get isFourXFour() {
+            return this.data.isFourXFour;
+        }
+        static set isFourXFour(val) {
+            this.data.isFourXFour = val;
+            this.save();
+        }
+        static get isHorseshoe() {
+            return this.data.isHorseshoe;
+        }
+        static set isHorseshoe(val) {
+            this.data.isHorseshoe = val;
+            this.save();
+        }
+        static get isHeart() {
+            return this.data.isHeart;
+        }
+        static set isHeart(val) {
+            this.data.isHeart = val;
+            this.save();
+        }
+        static get isLuck() {
+            return this.data.isLuck;
+        }
+        static set isLuck(val) {
+            this.data.isLuck = val;
+            this.save();
+        }
+        static get isKey() {
+            return this.data.isKey;
+        }
+        static set isKey(val) {
+            this.data.isKey = val;
+            this.save();
+        }
+        static get lastAdvCoolDown() {
+            return this.data.lastAdvCoolDown;
+        }
+        static set lastAdvCoolDown(val) {
+            this.data.lastAdvCoolDown = val;
+            this.save();
+        }
+        static get lastResultAdvCoolDown() {
+            return this.data.lastResultAdvCoolDown;
+        }
+        static set lastResultAdvCoolDown(val) {
+            this.data.lastResultAdvCoolDown = val;
+            this.save();
+        }
+        static get lastItemWithAdv() {
+            return this.data.lastItemWithAdv;
+        }
+        static set lastItemWithAdv(val) {
+            this.data.lastItemWithAdv = val;
+            this.save();
+        }
+        static addGold(t) {
+            this.goldPerGame += t;
+            if (this.bestGoldPerGame < this.goldPerGame) {
+                this.bestGoldPerGame = this.goldPerGame;
+            }
+        }
+        static resetShop() {
+            this.isHeart = false;
+            this.isHorseshoe = false;
+            this.isLuck = false;
+            this.isKey = false;
+        }
+        static updateMovesAfterSpecialCard(cardScoreType) {
+            if (cardScoreType == CardScoreType.Health
+                || cardScoreType == CardScoreType.Armor) {
+                this.movesAfterLastSpecialCard = 0;
+            }
+            else {
+                this.movesAfterLastSpecialCard++;
+            }
+        }
+        static updateCardCounter(cardScoreType) {
+            if (CardScoreTypeHelper.isCardScoreTypeNegative(cardScoreType)) {
+                this.cardCounter--;
+            }
+            if (CardScoreTypeHelper.isCardScoreTypePositive(cardScoreType)) {
+                this.cardCounter++;
+            }
+        }
+        static stepUpdate() {
+            if (this.isBossShouldBeCreated()) {
+                this.isNeedCreateBoss = true;
+                this.levelStep++;
+                this.turnsToBoss = this.levelStep + 1;
+            }
+        }
+        static isBossShouldBeCreated() {
+            return !this.isNeedCreateBoss && 1 == this.turnsToBoss;
+        }
+        static decreaseTurnsToBoss() {
+            return this.turnsToBoss && this.turnsToBoss++;
+        }
+    }
+    GameStatus.DATE_KEY = "GameStatus";
+    GameStatus.data = {
+        gold: 0,
+        bestGoldPerGame: 0,
+        isTutorialSeen: false,
+        isTutorialStep1Done: false,
+        isTutorialStep2Done: false,
+        isTutorialChestSeen: false,
+        isBombHero: false,
+        isKeyHero: false,
+        isGunHero: false,
+        isFourXFour: false,
+        isHorseshoe: false,
+        isHeart: false,
+        isLuck: false,
+        isKey: false,
+        lastAdvCoolDown: 0,
+        lastItemWithAdv: 0,
+        lastResultAdvCoolDown: 0
+    };
+    GameStatus.gameLevel = 1;
+    GameStatus.levelStep = 10;
+    GameStatus.turnsToBoss = 10;
+    GameStatus.goldPerGame = 0;
+    GameStatus.cardCounter = 0;
+    GameStatus.isNeedCreateBoss = false;
+    GameStatus.isNeedCreateChest = false;
+    GameStatus.currentHero = HeroType.Base;
+    GameStatus.RowCount = 3;
+    GameStatus.ColumnCount = 3;
+    GameStatus.isHeroAlive = false;
+    GameStatus.isGameEnd = false;
+    GameStatus.movesAfterLastSpecialCard = 0;
+
+    class Consts {
+    }
+    Consts.Width = 640;
+    Consts.Height = 960;
+    Consts.HeroStartRow = 2;
+    Consts.HeroStartColumn = 2;
+    Consts.CardWidth = 198;
+    Consts.CardHeight = 226;
+    Consts.CardSpaceBetweenWidth = 10;
+    Consts.CardSpaceBetweenHeight = 10;
+    Consts.AnimationTime = 185;
+    Consts.AnimationMultiplier = .5;
+    Consts.ScaleZoom = 1.2;
+    Consts.ScaleSpeed = 50;
+    Consts.FlipSpeed = 200;
+    Consts.FlipZoom = 1.3;
+    Consts.SmashDelay = 200;
+    Consts.HeroCurrentLife1 = "HeroCurrentLife1";
+    Consts.HeroCurrentLife2 = "HeroCurrentLife2";
+    Consts.HeroTotalLife1 = "HeroTotalLife1";
+    Consts.HeroTotalLife2 = "HeroTotalLife2";
+    Consts.CardLife = "CardLife";
+    Consts.CardLife1 = "CardLife1";
+    Consts.CardLife2 = "CardLife2";
+    Consts.PowerUpCircle = "PowerUpCircle";
+    Consts.PowerUp = "PowerUp";
+    Consts.CardManAnimation = "CardManAnimation";
+    Consts.WaveSize = 7;
+    Consts.ScaleSize = 30;
+    Consts.textFontWeight = 22;
+    Consts.numbersFontWeight = 28;
+    Consts.resultNumbersFontWeight = 35;
+    Consts.creditsColor = "#ffffff";
+    Consts.creditsFontWeight = 24;
+    Consts.BackgroundImageName = "BackgroundImageName";
+    Consts.BackgroundName = "BackgroundName";
+    Consts.LightningDuration = 50;
+    Consts.ShakeIntensity = .02;
+    Consts.ContainerName = "container";
+    Consts.CoinMaxValue = 5;
+    Consts.Shadow = "shadow";
+    Consts.Hero = "hero";
+    Consts.CardWithArm = "cardWithArm";
+    Consts.CardWithMovingArm = "cardWithMovingArm";
+    Consts.ShowTime = 300;
+    Consts.StorageName = "pirated-cards-adventure";
+    Consts.IsDev = false;
+    Consts.IsAndroid = !1;
+    Consts.HighResolutionScale = !1;
+    Consts.MaxPixelRatio = 3;
+    Consts.WarriorAnimationDuration = 500;
+
+    var Tween$1 = Laya.Tween;
+    class TweenUtil {
+        static to(target, props, duration, ease = null, complete = null, delay = 0, coverBefore = false, autoRecover = true) {
+            return Pool.getItemByClass("tween", Tween$1)._create(target, props, duration, ease, complete, delay, coverBefore, true, autoRecover, false);
+        }
+        static from(target, props, duration, ease = null, complete = null, delay = 0, coverBefore = false, autoRecover = true) {
+            return Pool.getItemByClass("tween", Tween$1)._create(target, props, duration, ease, complete, delay, coverBefore, false, autoRecover, false);
+        }
+    }
+
+    class TweenContainer {
+        constructor() {
+            this.onStart = new Signal();
+            this.onComplete = new Signal();
+            this.tweens = [];
+            this.duration = null;
+        }
+        static PoolGet() {
+            return Pool.createByClass(TweenContainer);
+        }
+        recover() {
+            while (this.tweens.length > 0) {
+                var tween = this.tweens.shift();
+                if (tween) {
+                    tween.recover();
+                }
+            }
+            this.tweens.length = 0;
+            this.onStart.removeAll();
+            this.onComplete.removeAll();
+            this.duration = null;
+            Pool.recoverByClass(this);
+        }
+        get animationDuration() {
+            if (this.duration === null) {
+                var time = 0;
+                for (var i = 0, len = this.tweens.length; i < len; i++) {
+                    var tween = this.tweens[i];
+                    if (tween) {
+                        if (tween instanceof TweenContainer) {
+                            time = Math.max(tween.animationDuration, time);
+                        }
+                        else {
+                            var t = tween._duration + tween._delay;
+                            time = Math.max(t, time);
+                        }
+                    }
+                }
+                this.duration = time;
+            }
+            return this.duration;
+        }
+        setAnimationDuration(duration) {
+            this.duration = duration;
+            return this;
+        }
+        restart() {
+            setTimeout(this.onEnd.bind(this), this.animationDuration);
+            this.onStart.dispatch();
+            while (this.tweens.length > 0) {
+                var tween = this.tweens.shift();
+                if (tween) {
+                    tween.restart();
+                }
+            }
+        }
+        onEnd() {
+            this.onComplete.dispatch();
+            this.recover();
+        }
+    }
+
+    class TweenHelper {
+        static turnAnimationStart(tweenContainer, view) {
+            if (!tweenContainer)
+                tweenContainer = new TweenContainer();
+            var t1 = TweenUtil.to(view, {
+                scaleX: Consts.ScaleZoom,
+                scaleY: Consts.ScaleZoom
+            }, Consts.ScaleSpeed);
+            tweenContainer.tweens.push(t1);
+            var t2 = TweenUtil.to(view, {
+                scaleX: 0.1,
+                scaleY: Consts.FlipZoom
+            }, Consts.FlipSpeed / 2, null, null, Consts.ScaleSpeed, false);
+            tweenContainer.tweens.push(t2);
+            return tweenContainer;
+        }
+        static turnAnimationEnd(tweenContainer, view) {
+            if (!tweenContainer)
+                tweenContainer = new TweenContainer();
+            var t1 = TweenUtil.to(view, {
+                scaleX: Consts.ScaleZoom,
+                scaleY: Consts.ScaleZoom
+            }, Consts.FlipSpeed / 2);
+            tweenContainer.tweens.push(t1);
+            var t2 = TweenUtil.to(view, {
+                scaleX: 1,
+                scaleY: 1
+            }, Consts.FlipSpeed);
+            tweenContainer.tweens.push(t2);
+            return tweenContainer;
+        }
+        static scaleIn(tweenContainer, view, o = true) {
+            if (!tweenContainer)
+                tweenContainer = new TweenContainer();
+            view.enabled = false;
+            var t1 = TweenUtil.to(view, {
+                scaleX: 0,
+                scaleY: 0
+            }, .25 * Consts.ShowTime, null, Laya.Handler.create(this, () => {
+                view.setScale(1, 1);
+                view.visible = false;
+                view.enabled = true;
+            }));
+            tweenContainer.tweens.push(t1);
+            return tweenContainer;
+        }
+        static scaleOut(tweenContainer, view, scale = 1) {
+            view.setScale(0, 0);
+            view.visible = true;
+            view.enabled = true;
+            if (!tweenContainer)
+                tweenContainer = new TweenContainer();
+            var t1 = TweenUtil.to(view, {
+                scaleX: scale,
+                scaleY: scale
+            }, .25 * Consts.ShowTime);
+            tweenContainer.tweens.push(t1);
+            return tweenContainer;
+        }
+    }
+
+    class SoundController {
+        static get instance() {
+            if (!this._instance) {
+                this._instance = new SoundController();
+            }
+            return this._instance;
+        }
+        playSound(key) {
+        }
+    }
+
+    class SoundConsts {
+    }
+    SoundConsts.Click = "click";
+    SoundConsts.Barrel1 = "barrel1";
+    SoundConsts.Barrel2 = "barrel2";
+    SoundConsts.Bomb = "bomb";
+    SoundConsts.BossAppearance = "bossAppearance";
+    SoundConsts.Buy = "buy";
+    SoundConsts.Cannon = "cannon";
+    SoundConsts.Card = "card";
+    SoundConsts.ChestOpening = "chestOpening";
+    SoundConsts.Coin = "coin";
+    SoundConsts.CoinsBag = "coinsBag";
+    SoundConsts.CoinsCounting = "coinsCounting";
+    SoundConsts.Health1 = "health1";
+    SoundConsts.Health2 = "health2";
+    SoundConsts.HeroDies = "heroDies";
+    SoundConsts.Hit1 = "hit1";
+    SoundConsts.Hit2 = "hit2";
+    SoundConsts.Horseshoe = "horseshoe";
+    SoundConsts.Idol = "idol";
+    SoundConsts.IncorrectClick = "incorrectClick";
+    SoundConsts.Lighting = "lighting";
+    SoundConsts.Melody = "melody";
+    SoundConsts.PickLockFail = "picklockFail";
+    SoundConsts.PickLockNeutral = "picklockNeutral";
+    SoundConsts.PickLockSuccess = "picklockSuccess";
+    SoundConsts.Poison = "poison";
+    SoundConsts.Revive = "revive";
+    SoundConsts.ShieldMetal = "shieldMetal";
+    SoundConsts.ShieldWood = "shieldWood";
+    SoundConsts.Skull = "skull";
+    SoundConsts.Move01 = "move01";
+    SoundConsts.Move02 = "move02";
+    SoundConsts.Trap = "trap";
+
+    class CardViewFrontWarriowBossStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowBoss"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontWarriowBossStruct.URL = "ui://moe42ygrsqzya6";
+    CardViewFrontWarriowBossStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontWarriowBoss extends CardViewFrontWarriowBossStruct {
+    }
+
+    class CardViewBackStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewBack"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_cardBack = (this.getChild("cardBack"));
+        }
+    }
+    CardViewBackStruct.URL = "ui://moe42ygrsqzya2";
+    CardViewBackStruct.DependPackages = ["GameHome"];
+
+    class CardViewBack extends CardViewBackStruct {
+    }
+
+    class Card {
+        constructor() {
+            this.isOnClickInitiated = false;
+            this.powerUpAmount = 0;
+            this.lifeAmount = 0;
+            this.type = CardScoreType.None;
+            this.initialLife = 0;
+        }
+        static GetDefault(game) {
+            var card = Pool.createByClass(Card);
+            card.game = game;
+            card.view = CardViewBack.createInstance();
+            card.type = CardScoreType.None;
+            return card;
+        }
+        static GetNew(frontView, game, cardScoreType, score) {
+            var card = Pool.createByClass(Card);
+            card.game = game;
+            card.view = frontView;
+            card.type = cardScoreType;
+            GameStatus.updateCardCounter(cardScoreType),
+                GameStatus.updateMovesAfterSpecialCard(cardScoreType);
+            return card;
+        }
+        stepUpdate() {
+            var e = this.view.getByName(Consts.CardManAnimation);
+            if (e instanceof Trap) {
+                var i = e.changeStatus(), o = GameStatus.currentHero == HeroType.Gun;
+                this.lifeAmount = o ? 0 : i ? this.powerUpAmount : 0,
+                    this.setHealthText();
+            }
+            this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
+                this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
+                this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1);
+        }
+        getScore() {
+            return this.type == CardScoreType.Trap ? this.lifeAmount : this.lifeAmount + this.powerUpAmount;
+        }
+        getLife() {
+            return this.lifeAmount;
+        }
+        getPowerUp() {
+            return this.powerUpAmount;
+        }
+        multiplyScore(t) {
+            return this.lifeAmount > 0 ? this.getScaleTween(this.getCardLifeText(), this.increaseLife, t) : this.powerUpAmount > 0 ? this.getScaleTween(this.getPowerUpText(), this.increasePowerUp, t) : null;
+        }
+        increaseLife(e, i, o) {
+            this.setLife(this.lifeAmount * o),
+                this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * o);
+        }
+        increasePowerUp(t, e, i) {
+            this.setPowerUp(this.powerUpAmount * i);
+        }
+        reduceScoreInNSeconds(t, e) {
+            this.powerUpAmount > 0 && (this.powerUpAmount = this.powerUpAmount - t, setTimeout(this.setPowerUpText.bind(this), e)),
+                this.lifeAmount > 0 && (this.lifeAmount = this.lifeAmount - t, setTimeout(this.setHealthText.bind(this), e));
+        }
+        increaseScoreInNSeconds(t, e) {
+            this.powerUpAmount > 0 && (this.powerUpAmount = this.powerUpAmount + t, setTimeout(this.increasePowerUpTween.bind(this), e)),
+                this.lifeAmount > 0 && (this.lifeAmount = this.lifeAmount + t, setTimeout(this.increaseLifeTween.bind(this), e));
+        }
+        increasePowerUpTween() {
+            this.getScaleTween(this.getPowerUpText(), this.setPowerUpText, this.powerUpAmount).start();
+        }
+        increaseLifeTween() {
+            this.getScaleTween(this.getCardLifeText(), this.setHealthText, this.lifeAmount).start();
+        }
+        setScore(e) {
+            switch (this.type) {
+                case CardScoreType.Warrior:
+                    this.initialLife = e,
+                        this.setLife(e);
+                    break;
+                case CardScoreType.Gold:
+                case CardScoreType.Health:
+                case CardScoreType.Armor:
+                case CardScoreType.Poison:
+                case CardScoreType.Cannon:
+                case CardScoreType.Lightning:
+                case CardScoreType.Multiplier:
+                case CardScoreType.Skull:
+                case CardScoreType.Barrel:
+                    this.setPowerUp(e);
+                    break;
+                case CardScoreType.Bomb:
+                    this.setLife(e),
+                        this.setPowerUp(10);
+                    break;
+                case CardScoreType.Trap:
+                    this.setPowerUp(e),
+                        this.setLife(e);
+                    break;
+                case CardScoreType.Chest:
+                    break;
+                case CardScoreType.Horseshoe:
+                    this.setPowerUp(1);
+            }
+        }
+        setPowerUp(t) {
+            this.powerUpAmount = t,
+                this.setPowerUpText();
+        }
+        setLife(t) {
+            this.lifeAmount = t,
+                this.setHealthText();
+        }
+        setHealthText() {
+            var t = this.getCardLifeText();
+            t && t && t.setText(this.lifeAmount.toString());
+        }
+        setPowerUpText() {
+            var t = this.getPowerUpText();
+            t && t && t.setText(this.powerUpAmount.toString());
+        }
+        getPowerUpText() {
+            return this.view.getByName(Consts.PowerUp);
+        }
+        setOnClickEvent(onCardDown, onCardUp, listener) {
+            if (!this.isOnClickInitiated)
+                for (var n = 0; n < this.view.children.length; n++) {
+                    var s = this.view.children[n];
+                    s.name == Consts.BackgroundName && (s.inputEnabled = !0, s.events.onInputDown.add(onCardDown, listener, 1, this), s.events.onInputUp.add(onCardUp, listener, 1, this), this.isOnClickInitiated = !0);
+                }
+        }
+        isNegative() {
+            switch (this.type) {
+                case CardScoreType.Trap:
+                case CardScoreType.Warrior:
+                case CardScoreType.Bomb:
+                case CardScoreType.Poison:
+                    return !0;
+                case CardScoreType.Health:
+                case CardScoreType.Gold:
+                case CardScoreType.Armor:
+                case CardScoreType.Cannon:
+                case CardScoreType.Chest:
+                case CardScoreType.Barrel:
+                case CardScoreType.Horseshoe:
+                case CardScoreType.Lightning:
+                case CardScoreType.Multiplier:
+                case CardScoreType.Skull:
+                    return !1;
+            }
+        }
+        isBoss() {
+            return this.type == CardScoreType.Warrior && this.view.front instanceof CardViewFrontWarriowBoss;
+        }
+        getGoldValue() {
+            return this.initialLife;
+        }
+        moveTo(point, time) {
+            this.game.container.addChild(this.view);
+            return TweenUtil.to(this.view, point, time);
+        }
+        setCoordinate(point) {
+            this.game.container.addChild(this.view);
+            this.view.setXY(point.x, point.y);
+        }
+        open() {
+            return null;
+        }
+        endTurnAnimationStart() {
+            this.view.setScale(0, Consts.FlipZoom);
+        }
+        startTurnAnimation(endCallback, endCaller) {
+            var i = this.removeShapeFromStage;
+            var tweenContainer = TweenHelper.turnAnimationStart(null, this.view);
+            tweenContainer.onStart.add(this.playCardSoundInSeconds, this);
+            tweenContainer.onComplete.add(this.removeShapeFromStage, this);
+            tweenContainer.onComplete.add(endCallback, endCaller);
+            return tweenContainer;
+        }
+        playCardSoundInSeconds() {
+            setTimeout(this.playCardSound.bind(this), 50);
+        }
+        playCardSound() {
+            SoundController.instance.playSound(SoundConsts.Card);
+        }
+        endTurnAnimationEnd() {
+            if (this.isBoss) {
+                SoundController.instance.playSound(SoundConsts.BossAppearance);
+            }
+            this.view.scaleX = 0.1;
+            TweenHelper.turnAnimationEnd(null, this.view).restart();
+        }
+        removeShapeFromStage() {
+            this.view.removeFromParent();
+        }
+    }
+
+    var MoveType;
+    (function (MoveType) {
+        MoveType[MoveType["Right"] = 1] = "Right";
+        MoveType[MoveType["Down"] = 2] = "Down";
+        MoveType[MoveType["Left"] = 3] = "Left";
+        MoveType[MoveType["Up"] = 4] = "Up";
+    })(MoveType || (MoveType = {}));
+
+    class Point$1 {
+        constructor(x, y) {
+            this.x = 0;
+            this.y = 0;
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    class FieldPosition {
+        constructor(column, row) {
+            this.column = 0;
+            this.row = 0;
+            this.column = column;
+            this.row = row;
+        }
+        getNewPosition(moveType) {
+            var fieldPosition = new FieldPosition(this.column, this.row);
+            switch (moveType) {
+                case MoveType.Right:
+                    fieldPosition.column++;
+                    break;
+                case MoveType.Down:
+                    fieldPosition.row++;
+                    break;
+                case MoveType.Left:
+                    fieldPosition.column--;
+                    break;
+                case MoveType.Up:
+                    fieldPosition.row--;
+            }
+            return fieldPosition;
+        }
+        getPoint() {
+            return new Point$1(this.pointX, this.pointY);
+        }
+        get pointX() {
+            return this.column * Consts.CardWidth + Consts.CardWidth / 2 + this.column * Consts.CardSpaceBetweenWidth;
+        }
+        get pointY() {
+            return this.row * Consts.CardHeight + Consts.CardHeight / 2 + this.row * Consts.CardSpaceBetweenHeight;
+        }
+    }
+
+    class FieldItems {
+        constructor(columnCount = 3, rowCount = 3, game) {
+            this.columnCount = 3;
+            this.rowCount = 3;
+            this.columnCount = columnCount;
+            this.rowCount = rowCount;
+            this.game = game;
+            this.initArray();
+        }
+        initArray() {
+            this.items = [];
+            for (var y = 0; y < this.rowCount; y++) {
+                var rowItems = [];
+                for (var x = 0; x < this.columnCount; x++) {
+                    rowItems.push(Card.GetDefault(this.game));
+                }
+                this.items.push(rowItems);
+            }
+        }
+        getColumnCount() {
+            return this.columnCount;
+        }
+        getRowCount() {
+            return this.rowCount;
+        }
+        getAll() {
+            var list = [];
+            for (var y = 0; y < this.rowCount; y++) {
+                for (var x = 0; x < this.columnCount; x++) {
+                    list.push(this.items[x][y]);
+                }
+            }
+            return list;
+        }
+        getPosition(filterFun) {
+            for (var y = 0; y < this.rowCount; y++) {
+                for (var x = 0; x < this.columnCount; x++) {
+                    var filedPosition = new FieldPosition(x, y);
+                    if (filterFun(this.get(filedPosition))) {
+                        return filedPosition;
+                    }
+                }
+            }
+            return null;
+        }
+        getPositions(filterFun) {
+            var list = [];
+            for (var y = 0; y < this.rowCount; y++) {
+                for (var x = 0; x < this.columnCount; x++) {
+                    var fieldPosition = new FieldPosition(x, y);
+                    if (filterFun(this.get(fieldPosition))) {
+                        list.push(fieldPosition);
+                    }
+                }
+            }
+            return list;
+        }
+        get(f) {
+            return this.items[f.column][f.row];
+        }
+        set(f, card) {
+            this.items[f.column][f.row] = card;
+        }
+        any(filterFun) {
+            for (var y = 0; y < this.rowCount; y++) {
+                for (var x = 0; x < this.columnCount; x++) {
+                    var n = new FieldPosition(x, y);
+                    if (filterFun(this.get(n))) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        isPositionValid(f) {
+            return f.column >= 0 && f.column < this.columnCount && f.row >= 0 && f.row < this.rowCount;
+        }
+    }
+
+    class RandomHelper {
+        static getRandomIntInclusive(min, max) {
+            return min = Math.ceil(min),
+                max = Math.floor(max),
+                Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        static getRandomBool() {
+            return Math.random() > 0.5;
+        }
+        static shuffle(list) {
+            for (var e, i, o = list.length; 0 !== o;)
+                i = Math.floor(Math.random() * o),
+                    e = list[o -= 1],
+                    list[o] = list[i],
+                    list[i] = e;
+            return list;
+        }
+    }
+
+    var CardGenerationType;
+    (function (CardGenerationType) {
+        CardGenerationType[CardGenerationType["Random"] = 1] = "Random";
+        CardGenerationType[CardGenerationType["AfterChest"] = 1] = "AfterChest";
+        CardGenerationType[CardGenerationType["AfterBarrel"] = 2] = "AfterBarrel";
+        CardGenerationType[CardGenerationType["Positive"] = 3] = "Positive";
+    })(CardGenerationType || (CardGenerationType = {}));
+
+    var CardPositionType;
+    (function (CardPositionType) {
+        CardPositionType[CardPositionType["Start"] = 1] = "Start";
+        CardPositionType[CardPositionType["Center"] = 2] = "Center";
+        CardPositionType[CardPositionType["End"] = 3] = "End";
+    })(CardPositionType || (CardPositionType = {}));
+
+    class Field {
+        constructor(game) {
+            this.step = 1;
+            this.game = game;
+            this.cardFactory = game.cardFactory;
+        }
+        initField() {
+            var list = [], columnCount = GameStatus.ColumnCount, rowCount = GameStatus.RowCount, animationTime = Consts.AnimationTime - (rowCount * columnCount == 9 ? 0 : 50);
+            this.field = new FieldItems(columnCount, rowCount, this.game);
+            var randomVal = RandomHelper.getRandomIntInclusive(1, 5);
+            for (var row = 0; row < rowCount; row++) {
+                for (var column = 0; column < columnCount; column++) {
+                    var card = undefined, isHeroStartRow = row === Consts.HeroStartRow - 1, isHeroStartColumn = column === Consts.HeroStartColumn - 1;
+                    if (isHeroStartRow && isHeroStartColumn) {
+                        card = this.cardFactory.getHero();
+                        GameStatus.isHeroAlive = false,
+                            GameStatus.isGameEnd = false;
+                    }
+                    else {
+                        {
+                            card = this.getCardFromFactory();
+                        }
+                    }
+                    var fieldPosition = new FieldPosition(column, row);
+                    var defaultCard = this.cardFactory.getDefault();
+                    list.push(this.moveAndSetWithAnimation(fieldPosition, defaultCard, animationTime));
+                    list.push(this.replaceCardByPosition(fieldPosition, card).setAnimationDuration(1));
+                }
+            }
+            return list;
+        }
+        addShadow() {
+            var e = this.game.add.graphics(0, 0);
+            e.name = Consts.Shadow,
+                e.alpha = .5,
+                e.beginFill(0),
+                e.drawRect(2 * -this.game.width, 2 * -this.game.height, 4 * this.game.width, 4 * this.game.height),
+                this.cardFactory.container.add(e),
+                this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.Hero)),
+                this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.CardWithArm));
+        }
+        runArmTween() {
+            var e = this.cardFactory.container.getByName(Consts.Shadow);
+            e && this.cardFactory.container.bringToTop(e),
+                this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.Hero)),
+                this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.CardWithMovingArm)),
+                this.movingArm.alpha = 1,
+                this.movingArm.y = this.movingArmY;
+            var i = this.movingArmY + 150, o = this.game.add.tween(this.movingArm).to({
+                y: this.movingArmY
+            }, 200).to({
+                y: i
+            }, 600), n = this.game.add.tween(this.movingArm).to({
+                y: i
+            }, 200);
+            o.onStart.add(function () {
+                this.movingArm.changeFrame(1);
+            }, this),
+                n.onStart.add(function () {
+                    this.movingArm.changeFrame(0);
+                }, this),
+                n.onComplete.add(this.runArmTween, this),
+                o.chain(n),
+                o.start();
+        }
+        getChestCardFromFactory() {
+            var card = this.cardFactory.getChestCard();
+            card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+            return card;
+        }
+        getCardFromFactory(generationType = CardGenerationType.Random, score = 0) {
+            var card = this.cardFactory.getCard(generationType, score, this.getCardTypesOnTheTable());
+            return card;
+        }
+        getEnemyCardFromFactory(t) {
+            var card = this.cardFactory.getEnemy(t);
+            card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+            return card;
+        }
+        getHealsCardFromFactory(t) {
+            return this.cardFactory.getHealth(t);
+        }
+        getCardTypesOnTheTable() {
+            return this.field.getAll().map(function (card) {
+                return card.type;
+            });
+        }
+        getCoinCardFromFactory(score) {
+            var card = this.cardFactory.getCoinCard(score);
+            card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+            return card;
+        }
+        onCardDown(t, e, i, o) {
+            this.downPointer = e;
+        }
+        onCardUp(e, i, o, card) {
+            if (!this.onAnimation) {
+                var point = new Phaser.Point(this.downPointer.x, this.downPointer.y), point2 = new Phaser.Point(i.x, i.y);
+                if (point.distance(point2) > 5)
+                    return;
+                var field = this.field.getPosition(function (t) {
+                    return t === card;
+                });
+                if (!field)
+                    return;
+                if (this.field.isPositionValid(field.getNewPosition(MoveType.Down)) && this.field.get(field.getNewPosition(MoveType.Down)) instanceof Hero)
+                    return void (this.keyboardManager.isUp = true);
+                if (this.field.isPositionValid(field.getNewPosition(MoveType.Up)) && this.field.get(field.getNewPosition(MoveType.Up)) instanceof Hero)
+                    return void (this.keyboardManager.isDown = true);
+                if (this.field.isPositionValid(field.getNewPosition(MoveType.Left)) && this.field.get(field.getNewPosition(MoveType.Left)) instanceof Hero)
+                    return void (this.keyboardManager.isRight = true);
+                if (this.field.isPositionValid(field.getNewPosition(MoveType.Right)) && this.field.get(field.getNewPosition(MoveType.Right)) instanceof Hero)
+                    return void (this.keyboardManager.isLeft = true);
+                card.playNoAccess();
+            }
+        }
+        getHero() {
+            return this.field.get(this.getHeroPosition());
+        }
+        getHeroPosition() {
+            return this.field.getPosition(function (card) {
+                return card instanceof Hero;
+            });
+        }
+        getCardToFight(moveTyp) {
+            var position = this.field.getPosition(function (e) {
+                return e instanceof Hero;
+            });
+            if (null != position) {
+                var position2 = position.getNewPosition(moveType);
+                if (this.field.isPositionValid(position2)) {
+                    return this.field.get(position2);
+                }
+            }
+            return null;
+        }
+        replaceCard(moveTyp, cardGenerationType, score = 0) {
+            var position = this.field.getPosition(function (e) {
+                return e instanceof Hero;
+            });
+            var list = Array();
+            var card = this.getCardFromFactory(cardGenerationType, score);
+            list.push(this.replaceCardByPosition(position.getNewPosition(moveType), card));
+            if (!GameStatus.isTutorialSeen) {
+                card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+            }
+            return list;
+        }
+        tutorialStep1() {
+            var e = this;
+            this.movingArm.animations.stop(),
+                this.runArmTween(),
+                GameStatus.isTutorialStep1Done = !0,
+                this.field.getAll().forEach(function (i) {
+                    i instanceof Card && i.view.name === Consts.CardWithMovingArm && i.setOnClickEvent(e.onCardDown, e.onCardUp, e);
+                });
+        }
+        tutorialStep2(e) {
+            GameStatus.isTutorialStep2Done = !0,
+                this.runAllCardsAroundHero(e);
+        }
+        tutorialStep3(t) {
+            this.runAllCardsAroundHero(t);
+        }
+        tutorialStep4() {
+            var e = this.cardFactory.container.getByName(Consts.Shadow);
+            this.game.add.tween(e).to({
+                alpha: 0
+            }, 100).start().onComplete.add(function () {
+                var i = this;
+                e.destroy(),
+                    GameStatus.isTutorialSeen = !0,
+                    this.field.getAll().forEach(function (e) {
+                        e instanceof t.Card && e.setOnClickEvent(i.onCardDown, i.onCardUp, i);
+                    });
+            }.bind(this));
+        }
+        runAllCardsAroundHero(e) {
+            for (var i = 0, o = [e.getNewPosition(MoveType.Left), e.getNewPosition(MoveType.Up), e.getNewPosition(MoveType.Right), e.getNewPosition(MoveType.Down)]; i < o.length; i++) {
+                var n = o[i];
+                if (this.field.isPositionValid(n)) {
+                    var s = this.field.get(n);
+                    this.cardFactory.container.bringToTop(s.view),
+                        s instanceof t.Card && s.setOnClickEvent(this.onCardDown, this.onCardUp, this);
+                }
+            }
+        }
+        move(moveType) {
+            var list = Array(), heroPosition = this.getHeroPosition(), fieldPosition = heroPosition.getNewPosition(moveType);
+            var card = this.field.get(fieldPosition);
+            if (card instanceof NullCard)
+                return list;
+            this.isPlayMove(card) && setTimeout(this.playMoveSound.bind(this), 115);
+            var tweens;
+            var heroCard = this.field.get(heroPosition);
+            if (card.type === CardScoreType.Bomb) {
+                list.push(this.moveAndSetWithAnimation(heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime).setAnimationDuration(1));
+                list.push(this.moveAndSetWithAnimation(heroPosition, card, Consts.AnimationTime));
+            }
+            else {
+                card.isBoss() && GameStatus.gameLevel++;
+                var cardPositionType = this.getCardPositionType(moveType, heroPosition);
+                var replaceCard = this.getCardToReplace(card);
+                var tweenContainer = new TweenContainer;
+                tweens = tweenContainer.tweens;
+                tweens.push(card.removeChild());
+                list.push(tweenContainer);
+                switch (cardPositionType) {
+                    case CardPositionType.Center:
+                        list.push(this.moveAndSetWithAnimation(heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime));
+                        switch (moveType) {
+                            case MoveType.Left:
+                                0 === heroPosition.row
+                                    ? list.push(this.moveAllLine(MoveType.Down, MoveType.Up, heroPosition.getNewPosition(MoveType.Down), replaceCard))
+                                    : list.push(this.moveAllLine(MoveType.Up, MoveType.Down, heroPosition.getNewPosition(MoveType.Up), replaceCard));
+                                break;
+                            case MoveType.Right:
+                                heroPosition.row === this.field.getRowCount() - 1 ? list.push.apply(list, this.moveAllLine(MoveType.Up, MoveType.Down, heroPosition.getNewPosition(MoveType.Up), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Down, MoveType.Up, heroPosition.getNewPosition(MoveType.Down), replaceCard));
+                                break;
+                            case MoveType.Up:
+                                heroPosition.column === this.field.getColumnCount() - 1 ? list.push.apply(list, this.moveAllLine(MoveType.Left, MoveType.Right, heroPosition.getNewPosition(MoveType.Left), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Right, MoveType.Left, heroPosition.getNewPosition(MoveType.Right), replaceCard));
+                                break;
+                            case MoveType.Down:
+                                0 === heroPosition.column ? list.push.apply(list, this.moveAllLine(MoveType.Right, MoveType.Left, heroPosition.getNewPosition(MoveType.Right), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Left, MoveType.Right, heroPosition.getNewPosition(MoveType.Left), replaceCard));
+                        }
+                        break;
+                    case CardPositionType.End:
+                        list.push.apply(list, this.moveAllLine(this.getOppositeMoveType(moveType), moveType, heroPosition, replaceCard));
+                }
+            }
+            if (!GameStatus.isTutorialSeen) {
+                var u, p = this.cardFactory.container.getByName(Consts.Shadow);
+                if (p && this.cardFactory.container.bringToTop(p), this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.Hero)), this.cardFactory.container.bringToTop(card.view), 1 === this.step)
+                    (u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function () {
+                        this.tutorialStep1();
+                    }.bind(this));
+                if (2 === this.step)
+                    (u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function () {
+                        this.tutorialStep2(fieldPosition);
+                    }.bind(this));
+                if (3 === this.step)
+                    (u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function () {
+                        this.tutorialStep3(fieldPosition);
+                    }.bind(this));
+                if (4 === this.step)
+                    (u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function () {
+                        this.tutorialStep4();
+                    }.bind(this));
+                this.step++;
+            }
+            return list;
+        }
+        isPlayMove(card) {
+            switch (card.type) {
+                case CardScoreType.Warrior:
+                    return false;
+                case CardScoreType.Trap:
+                    return !card.view.getByName(Consts.CardManAnimation).isOpen;
+                case CardScoreType.Health:
+                case CardScoreType.Gold:
+                case CardScoreType.Armor:
+                case CardScoreType.Cannon:
+                case CardScoreType.Barrel:
+                case CardScoreType.Chest:
+                case CardScoreType.Bomb:
+                case CardScoreType.Poison:
+                case CardScoreType.Horseshoe:
+                case CardScoreType.Lightning:
+                case CardScoreType.Multiplier:
+                case CardScoreType.Skull:
+                    return true;
+            }
+        }
+        playMoveSound() {
+            SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Move01, SoundConsts.Move02]));
+        }
+        getCardToReplace(card) {
+            return card.view.getByName(Consts.CardManAnimation) instanceof Boss
+                ? this.getChestCardFromFactory()
+                : this.getCardFromFactory();
+        }
+        getCardToReplaceAfterSmash(e) {
+            e.shape.getByName(Consts.CardManAnimation) instanceof Boss && (GameStatus.isNeedCreateChestOnNextStep = !0);
+            var score = e.getGoldValue() > 0 ? e.getGoldValue() : e.getScore();
+            return this.getCoinCardFromFactory(score);
+        }
+        getCardPositionType(moveType, fieldPosition) {
+            switch (moveType) {
+                case MoveType.Right:
+                    if (fieldPosition.column == this.field.getColumnCount() - 1) {
+                        return CardPositionType.Start;
+                    }
+                    else if (0 == fieldPosition.column) {
+                        return CardPositionType.Center;
+                    }
+                    else {
+                        CardPositionType.End;
+                    }
+                case MoveType.Down:
+                    if (fieldPosition.row == this.field.getRowCount() - 1) {
+                        return CardPositionType.Start;
+                    }
+                    else if (0 == fieldPosition.row) {
+                        return CardPositionType.Center;
+                    }
+                    else {
+                        CardPositionType.End;
+                    }
+                case MoveType.Left:
+                    if (0 == fieldPosition.column) {
+                        return CardPositionType.Start;
+                    }
+                    else if (fieldPosition.column == this.field.getColumnCount() - 1) {
+                        return CardPositionType.Center;
+                    }
+                    else {
+                        CardPositionType.End;
+                    }
+                case MoveType.Up:
+                    if (0 == fieldPosition.row) {
+                        return CardPositionType.Start;
+                    }
+                    else if (fieldPosition.row == this.field.getRowCount() - 1) {
+                        return CardPositionType.Center;
+                    }
+                    else {
+                        CardPositionType.End;
+                    }
+            }
+        }
+        removeAllChild() {
+            var e = [];
+            SoundController.instance.playSound(SoundConsts.HeroDies);
+            for (var i, o = this.field.getAll(), n = 0, s = o = t.RandomHelper.shuffle(o); n < s.length; n++) {
+                var a = s[n], r = new TweenContainer;
+                r.animationDuration = t.RandomHelper.getRandomIntInclusive(50, 150),
+                    (i = r.tweens).push.apply(i, a.removeChild()),
+                    e.push(r);
+            }
+            return e;
+        }
+        isBossInTheField() {
+            return this.field.any(function (e) {
+                return !(e instanceof NullCard) && e.view.getByName(Consts.CardManAnimation) instanceof Boss;
+            });
+        }
+        moveAllLine(moveTypeA, moveTypeB, fieldPosition, card) {
+            var animationList = [];
+            for (var time = Consts.AnimationTime * Consts.AnimationMultiplier; this.field.isPositionValid(fieldPosition);) {
+                animationList.push(this.moveAndSetWithAnimation(fieldPosition.getNewPosition(moveTypeB), this.field.get(fieldPosition), Consts.AnimationTime).setAnimationDuration(time)),
+                    fieldPosition = fieldPosition.getNewPosition(moveTypeA);
+            }
+            var card = this.cardFactory.getDefault(), cardFieldPosition = fieldPosition.getNewPosition(moveTypeB);
+            animationList.push(this.moveAndSetWithAnimation(cardFieldPosition, card, Consts.AnimationTime)),
+                animationList.push(this.replaceCardByPosition(cardFieldPosition, card).setAnimationDuration(1));
+            return animationList;
+        }
+        stepUpdate() {
+            for (var e = 0, cardList = this.field.getAll(); e < cardList.length; e++) {
+                var card = cardList[e];
+                card.view.getByName(Consts.CardManAnimation) instanceof Boss && this.cardFactory.container.bringToTop(card.view),
+                    card.stepUpdate();
+            }
+        }
+        shootCannon() {
+            SoundController.instance.playSound(SoundConsts.Cannon);
+            var e = this.getHeroPosition(), i = this.field.get(e), o = [];
+            return o.push.apply(o, this.shootCannonInDirection(MoveType.Right, i, e)),
+                o.push.apply(o, this.shootCannonInDirection(MoveType.Left, i, e)),
+                o.push.apply(o, this.shootCannonInDirection(MoveType.Up, i, e)),
+                o.push.apply(o, this.shootCannonInDirection(MoveType.Down, i, e)),
+                o;
+        }
+        shootCannonInDirection(e, i, o) {
+            var n = [], s = o.getNewPosition(e);
+            if (!this.field.isPositionValid(s))
+                return n;
+            var a = this.field.get(s);
+            if (t.Field.canShootCard(a)) {
+                if (n.push(this.shootCard(i.getCenterX(), i.getCenterY(), a.getCenterX(), a.getCenterY(), 200)), a.type === CardScoreType.Cannon)
+                    a.increaseScoreInNSeconds(i.shootScore, 400);
+                else if (i.shootScore >= a.getScore()) {
+                    var r = this.getCardToReplaceAfterSmash(a), h = this.replaceCardByPosition(s, r, !0).setAnimationDuration(1);
+                    h.tweens[0].delay(400),
+                        n.push(h);
+                }
+                else
+                    a.reduceScoreInNSeconds(i.shootScore, 400);
+            }
+            return n;
+        }
+        shootCard(e, i, o, n, s) {
+            var a = t.ShapeFactoryHelper.getShape(this.game, e, i, t.ArtConsts.Items1, t.ArtConsts.Core);
+            this.cardFactory.container.add(a);
+            var r = this.game.add.tween(a).to({
+                x: o,
+                y: n
+            }, s);
+            r.onUpdateCallback(this.onCoreFlyingUpdate, this),
+                r.onComplete.add(this.onCoreFlyingComplete, this);
+            var h = new TweenContainer;
+            return h.animationDuration = 1,
+                h.tweens.push(r),
+                h;
+        }
+        onCoreFlyingUpdate(e) {
+            var i = new t.CannonFlyingSmoke(this.game, e.target.x, e.target.y);
+            this.cardFactory.container.add(i);
+        }
+        onCoreFlyingComplete(t) {
+            this.addBombExplosionAnimation(t.x, t.y, 0),
+                t.kill();
+        }
+        static canShootCard(e) {
+            if (e instanceof NullCard)
+                return !1;
+            if (!(e instanceof t.Card))
+                return !0;
+            switch (e.type) {
+                case CardScoreType.Warrior:
+                case CardScoreType.Trap:
+                case CardScoreType.Armor:
+                case CardScoreType.Health:
+                case CardScoreType.Poison:
+                case CardScoreType.Cannon:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        smashBomb() {
+            for (var e = [], i = 0, o = this.field.getPositions(function (e) {
+                var i = e;
+                return i && i.type === CardScoreType.Bomb && i.getPowerUp() <= 0;
+            }); i < o.length; i++) {
+                var n = o[i];
+                SoundController.instance.playSound(SoundConsts.Bomb);
+                var s = this.field.get(n);
+                this.addBombExplosionAnimation(s.view.x, s.view.y, 100);
+                var a = this.getCardToReplaceAfterSmash(this.field.get(n)), r = this.replaceCardByPosition(n, a, !0);
+                e.push(r);
+                for (var h = s.getLife(), d = 0, c = [MoveType.Up, MoveType.Down, MoveType.Left, MoveType.Right]; d < c.length; d++) {
+                    var u = c[d];
+                    if (e.push.apply(e, this.smashBombInDirection(u, n, h)), !GameStatus.isHeroAlive)
+                        return e;
+                }
+            }
+            return e;
+        }
+        smashBombInDirection(e, i, o) {
+            var n = [], s = Consts.SmashDelay;
+            for (i = i.getNewPosition(e); this.field.isPositionValid(i);) {
+                if (n.push.apply(n, this.smashBombInPosition(i, s, o)), !GameStatus.isHeroAlive)
+                    return n;
+                s += Consts.SmashDelay,
+                    i = i.getNewPosition(e);
+            }
+            return n;
+        }
+        smashBombInPosition(e, i, o) {
+            var n = this.field.get(e), s = 4 == GameStatus.RowCount ? 1e3 : 500;
+            if (this.game.camera.shake(Consts.ShakeIntensity, s), this.addBombExplosionAnimation(n.view.x, n.view.y, i), n.type == CardScoreType.Chest)
+                return [];
+            if (n instanceof t.Hero && GameStatus.currentHero == t.HeroType.Bomb)
+                return [];
+            if (o >= n.getScore()) {
+                if (!(n instanceof t.Hero)) {
+                    var a = this.getCardToReplaceAfterSmash(n);
+                    return [this.replaceCardByPosition(e, a, !0).setAnimationDuration(1)];
+                }
+                if (!GameStatus.isHeart)
+                    return GameStatus.isHeroAlive = !1,
+                        this.removeAllChild();
+                GameStatus.isHeart = !1,
+                    this.keyboardManager.reset(),
+                    n.useHeart();
+            }
+            else
+                n.reduceScoreInNSeconds(o, 1.2 * i);
+            return [];
+        }
+        addBombExplosionAnimation(t, e, i) {
+            setTimeout(this.playBombExplosionAnimation.bind(this, t, e), i);
+        }
+        playBombExplosionAnimation(e, i) {
+            var o = new t.Boom(this.game, e, i);
+            o.play(t.AnimationConsts.Action, 60, !1, !0),
+                this.cardFactory.container.add(o);
+        }
+        replaceCardByPosition(fieldPosition, card, isChangeState = false) {
+            var tweenContainer = new TweenContainer();
+            var tweens = tweenContainer.tweens;
+            var oldCard = this.field.get(fieldPosition);
+            if (isChangeState) {
+                if (oldCard.type == CardScoreType.Chest) {
+                    tweens.push(oldCard.open());
+                }
+                else if (oldCard.type == CardScoreType.Barrel) {
+                    tweens.push(oldCard.open());
+                }
+            }
+            oldCard.isBoss() && GameStatus.gameLevel++;
+            this.moveAndSet(fieldPosition, card);
+            card.endTurnAnimationStart();
+            tweenContainer.tweens.push(oldCard.startTurnAnimation(card.endTurnAnimationEnd, card));
+            return tweenContainer;
+        }
+        moveAndSet(position, card) {
+            this.field.set(position, card),
+                card.setCoordinate(position.getPoint());
+        }
+        moveAndSetWithAnimation(position, card, time) {
+            var point = position.getPoint();
+            this.field.set(position, card);
+            var tweenContainer = TweenContainer.PoolGet();
+            tweenContainer.tweens.push(card.moveTo(point, time));
+            return tweenContainer;
+        }
+        getOppositeMoveType(moveType) {
+            switch (moveType) {
+                case MoveType.Up:
+                    return MoveType.Down;
+                case MoveType.Down:
+                    return MoveType.Up;
+                case MoveType.Left:
+                    return MoveType.Right;
+                case MoveType.Right:
+                    return MoveType.Left;
+            }
+        }
+        shootLightning() {
+            var e = this.getHeroPosition(), i = this.field.get(e), o = [];
+            return o.push.apply(o, this.shootLightningInAllDirections(i.lightningScore, e, Consts.LightningDuration)),
+                this.clearLightning(),
+                o.length > 0 && SoundController.instance.playSound(SoundConsts.Lighting),
+                o;
+        }
+        clearLightning() {
+            this.field.getAll().forEach(function (t) {
+                t.canLightningStrike = !1;
+            });
+        }
+        shootLightningInAllDirections(e, i, o) {
+            var n = [];
+            return n.push.apply(n, this.shootLightningInDirection(MoveType.Right, e, i, o)),
+                n.push.apply(n, this.shootLightningInDirection(MoveType.Left, e, i, o)),
+                n.push.apply(n, this.shootLightningInDirection(MoveType.Up, e, i, o)),
+                n.push.apply(n, this.shootLightningInDirection(MoveType.Down, e, i, o)),
+                n;
+        }
+        shootLightningInDirection(i, o, n, s) {
+            var a = [], r = n.getNewPosition(i);
+            if (!this.field.isPositionValid(r))
+                return a;
+            var h, d = this.field.get(r);
+            if (d instanceof t.Hero)
+                return a;
+            if (d.canLightningStrike)
+                return a;
+            if (e.canShootLightning(d)) {
+                var c = s + Consts.LightningDuration, u = new TweenContainer;
+                if ((h = u.tweens).push.apply(h, d.runLightning()), u.setAnimationDuration(Consts.LightningDuration), a.push(u), o >= d.getScore()) {
+                    var p = this.getCardToReplaceAfterSmash(d);
+                    p.canLightningStrike = !0;
+                    var l = this.replaceCardByPosition(r, p, !0).setAnimationDuration(1);
+                    l.tweens[0].delay(2 * c),
+                        a.push(l);
+                }
+                else
+                    d.reduceScoreInNSeconds(o, 2 * c);
+                d.canLightningStrike = !0,
+                    a.push.apply(a, this.shootLightningInAllDirections(o, r, c));
+            }
+            return a;
+        }
+        static canShootLightning(e) {
+            if (e instanceof NullCard)
+                return !1;
+            if (!(e instanceof t.Card))
+                return !0;
+            switch (e.type) {
+                case CardScoreType.Warrior:
+                case CardScoreType.Trap:
+                    return !0;
+                default:
+                    return !1;
+            }
+        }
+        shootMultiplier() {
+            SoundController.instance.playSound(SoundConsts.Idol);
+            var e = this.getHeroPosition(), i = this.field.get(e), o = [];
+            return o.push.apply(o, this.shootMultiplierInDirection(MoveType.Right, i.multiplierScore, e)),
+                o.push.apply(o, this.shootMultiplierInDirection(MoveType.Left, i.multiplierScore, e)),
+                o.push.apply(o, this.shootMultiplierInDirection(MoveType.Up, i.multiplierScore, e)),
+                o.push.apply(o, this.shootMultiplierInDirection(MoveType.Down, i.multiplierScore, e)),
+                o;
+        }
+        shootSkull() {
+            SoundController.instance.playSound(SoundConsts.Skull);
+            for (var e = this.getHeroPosition().getPoint(), i = [], o = 0, n = this.field.getPositions(function (e) {
+                return !(e instanceof t.Hero);
+            }); o < n.length; o++) {
+                var s = n[o], a = s.getPoint();
+                i.push(this.shootSkullInCoordinate(e.x, e.y, a.x, a.y, 300));
+                var r = this.getCardToReplaceAfterSmash(this.field.get(s)), h = this.replaceCardByPosition(s, r, !0).setAnimationDuration(1);
+                h.tweens[0].delay(350),
+                    i.push(h);
+            }
+            return i;
+        }
+        shootSkullInCoordinate(e, i, o, n, s) {
+            var a = new t.Skull(this.game, e, i);
+            a.animations.play(t.AnimationConsts.Action),
+                a.anchor.set(0, 0),
+                a.rotation = Phaser.Point.angle(new Phaser.Point(o, n), new Phaser.Point(e, i)),
+                this.cardFactory.container.add(a);
+            var r = this.game.add.tween(a).to({
+                x: o,
+                y: n
+            }, s);
+            r.onUpdateCallback(this.onSkullFlyingUpdate, this),
+                r.onComplete.add(this.onSkullFlyingComplete, this);
+            var h = new TweenContainer;
+            return h.animationDuration = 1,
+                h.tweens.push(r),
+                h;
+        }
+        onSkullFlyingUpdate(e) {
+            var i = new t.SkullLight(this.game, e.target.x, e.target.y);
+            this.cardFactory.container.addChild(i),
+                e.target.bringToTop();
+        }
+        onSkullFlyingComplete(t) {
+            this.addBombExplosionAnimation(t.x, t.y, 0),
+                t.kill();
+        }
+        shootMultiplierInDirection(i, o, n) {
+            var s = [], a = n.getNewPosition(i);
+            if (!this.field.isPositionValid(a))
+                return s;
+            var r = this.field.get(a);
+            if (e.canMultiply(r.type, r.getScore())) {
+                var h = r.multiplyScore(o);
+                if (!h)
+                    return s;
+                var d = (new TweenContainer).setAnimationDuration(1);
+                return d.tweens.push(h),
+                    s.push(d),
+                    s;
+            }
+        }
+        static canMultiply(e, i) {
+            switch (e) {
+                case CardScoreType.Armor:
+                case CardScoreType.Bomb:
+                case CardScoreType.Cannon:
+                case CardScoreType.Gold:
+                case CardScoreType.Health:
+                case CardScoreType.Lightning:
+                case CardScoreType.Poison:
+                case CardScoreType.Warrior:
+                case CardScoreType.Barrel:
+                    return !0;
+                case CardScoreType.Trap:
+                    return i > 0;
+                case CardScoreType.Multiplier:
+                case CardScoreType.Horseshoe:
+                case CardScoreType.Chest:
+                case CardScoreType.Skull:
+                    return !1;
+            }
+        }
+        stopAllAnimations() {
+            for (var e = 0, i = this.field.getAll(); e < i.length; e++) {
+                i[e].view.children.filter(function (e) {
+                    return e instanceof t.SpriteAnimationBase;
+                }).forEach(function (t) {
+                    t.stopAnimation();
+                });
+            }
+        }
+        playAllAnimations() {
+            for (var e = 0, i = this.field.getAll(); e < i.length; e++) {
+                i[e].view.children.filter(function (e) {
+                    return e instanceof t.SpriteAnimationBase;
+                }).forEach(function (t) {
+                    t.playAnimation();
+                });
+            }
+        }
+        replaceAllNegativeCards() {
+            for (var e = [], i = 0, o = this.field.getPositions(function (e) {
+                return !(e instanceof t.Hero);
+            }); i < o.length; i++) {
+                var n = o[i];
+                if (this.field.get(n).isNegative()) {
+                    var s = this.getCardFromFactory(t.CardGenerationType.Positive), a = this.replaceCardByPosition(n, s, !0).setAnimationDuration(1);
+                    a.tweens[0].delay(200),
+                        e.push(a);
+                }
+            }
+            return e;
+        }
+        smashHero(t) {
+            var e = this.getHero();
+            this.addBombExplosionAnimation(e.shape.x, e.shape.y, t);
+        }
+    }
+
+    class FxMovieClipKey {
+    }
+    FxMovieClipKey.MVMouseClick = "MVMouseClick";
+
+    class StageClickFx {
+        constructor() {
+            this._isInstalled = false;
+            this._lastTime = 0;
+            this.gap = 100;
+        }
+        install() {
+            if (this._isInstalled)
+                return;
+            this._isInstalled = true;
+            Laya.stage.on(Laya.Event.MOUSE_DOWN, this, this.onMouseDown);
+        }
+        uninstall() {
+            Laya.stage.off(Laya.Event.MOUSE_DOWN, this, this.onMouseDown);
+        }
+        onMouseDown(event) {
+            if (StageClickFxItem.showCount < 10 && Laya.timer.currTimer - this._lastTime > this.gap) {
+                let item = StageClickFxItem.poolGet();
+                item.setXY(event.stageX, event.stageY);
+                item.show();
+                this._lastTime = Laya.timer.currTimer;
+            }
+        }
+    }
+    class StageClickFxItem {
+        constructor() {
+            this.halfWidth = 100;
+            this.halfHeight = 100;
+            this.fx = fgui.UIPackage.createObject(GuiPackageNames.GameHome, FxMovieClipKey.MVMouseClick);
+            this.fx.displayObject.blendMode = Laya.BlendMode.ADD;
+            this.halfWidth = this.fx.width >> 1;
+            this.halfHeight = this.fx.height >> 1;
+        }
+        show() {
+            StageClickFxItem.showCount++;
+            this.fx.setPlaySettings(0, -1, 1, -1, Laya.Handler.create(this, this.hide, null, true));
+            MenuLayer.floatMsg.addChild(this.fx);
+        }
+        hide() {
+            this.fx.removeFromParent();
+            this.poolRecover();
+            StageClickFxItem.showCount--;
+        }
+        setXY(x, y) {
+            x -= this.halfWidth;
+            y -= this.halfHeight;
+            this.fx.setXY(x, y);
+        }
+        poolRecover() {
+            StageClickFxItem._poolRecover(this);
+        }
+        static poolGet() {
+            let item;
+            if (StageClickFxItem.pool.length > 0) {
+                item = StageClickFxItem.pool.pop();
+            }
+            else {
+                item = new StageClickFxItem();
+            }
+            return item;
+        }
+        static _poolRecover(item) {
+            if (this.pool.indexOf(item) == -1)
+                this.pool.push(item);
+        }
+    }
+    StageClickFxItem.showCount = 0;
+    StageClickFxItem.pool = [];
+
+    class KeyedCollection {
+        constructor() {
+            this.items = {};
+            this.count = 0;
+        }
+        ContainsKey(key) {
+            return this.items.hasOwnProperty(key);
+        }
+        Count() {
+            return this.count;
+        }
+        Add(key, val) {
+            this.items.hasOwnProperty(key) || this.count++,
+                this.items[key] = val;
+        }
+        Remove(key) {
+            var e = this.items[key];
+            return delete this.items[key],
+                this.count--,
+                e;
+        }
+        Item(key) {
+            return this.items[key];
+        }
+        Keys() {
+            var list = [];
+            for (var key in this.items)
+                this.items.hasOwnProperty(key) && list.push(key);
+            return list;
+        }
+        Values() {
+            var list = [];
+            for (var key in this.items)
+                this.items.hasOwnProperty(key) && list.push(this.items[key]);
+            return list;
+        }
+    }
+
+    class Basket {
+        constructor(updateVal = 0.2, step = 0.2, resetToZero = false) {
+            this.status = new KeyedCollection();
+            this.initialStatus = new KeyedCollection();
+            this.updateVal = 0.2;
+            this.step = 0.2;
+            this.resetToZero = false;
+            this.updateVal = updateVal,
+                this.step = step,
+                this.resetToZero = resetToZero;
+        }
+        fillBasket(start, len) {
+            for (var i = start; i <= len; i++) {
+                var val = 3 - (i - 1) * this.step;
+                if (this.initialStatus.ContainsKey(i.toString())) {
+                    this.initialStatus.Add(i.toString(), val);
+                    this.status.Add(i.toString(), val);
+                }
+            }
+        }
+        fillBasketWithStep(start, val, level, max) {
+            this.fillBasket(start, GMath.clamp(val + Math.floor(GameStatus.gameLevel / level), start, max));
+        }
+        getFromBasket() {
+            var statusValTotal = this.status.Values().reduce(function (t, e) {
+                return t + e;
+            });
+            var randomVal = Math.random() * statusValTotal;
+            var total = 0;
+            for (var o = 0, keys = this.status.Keys(); o < keys.length; o++) {
+                var key = keys[o], val = this.status.Item(key);
+                if (randomVal > total && randomVal < val + total) {
+                    this.removeFromBasket(key);
+                    return key;
+                }
+                total += val;
+            }
+            throw new Error("Item not found in the basked");
+        }
+        removeFromBasket(key) {
+            this.status.Keys().forEach((itemKey) => {
+                if (itemKey === key) {
+                    if (this.resetToZero) {
+                        this.status.Add(key, 0);
+                    }
+                    else {
+                        this.status.Add(key, this.initialStatus.Item(key));
+                    }
+                }
+                else {
+                    this.status.Add(itemKey, this.status.Item(itemKey) + this.updateVal);
+                }
+            });
+        }
+        static AfterChestBasket() {
+            var basket = new Basket(.5, .2, !0);
+            basket.add(CardScoreType.Horseshoe.toString(), 1),
+                basket.add(CardScoreType.Bomb.toString(), 1),
+                basket.add(CardScoreType.Lightning.toString(), 1),
+                basket.add(CardScoreType.Skull.toString(), 1),
+                basket.add(CardScoreType.Multiplier.toString(), 1);
+            return basket;
+        }
+        add(key, val) {
+            this.status.Add(key, val),
+                this.initialStatus.Add(key, val);
+        }
+        print(t) {
+            this.status.Values().reduce(function (t, e) {
+                return t + e;
+            });
+            for (var e = 0, i = this.status.Keys(); e < i.length; e++) {
+                var o = i[e];
+                this.status.Item(o),
+                    this.initialStatus.Item(o);
+            }
+            console.groupEnd();
+        }
+    }
+
+    var CardBackgroundType;
+    (function (CardBackgroundType) {
+        CardBackgroundType[CardBackgroundType["Default"] = 0] = "Default";
+        CardBackgroundType[CardBackgroundType["Warrior"] = 1] = "Warrior";
+        CardBackgroundType[CardBackgroundType["Hero"] = 2] = "Hero";
+        CardBackgroundType[CardBackgroundType["PowerUp"] = 3] = "PowerUp";
+    })(CardBackgroundType || (CardBackgroundType = {}));
+
+    class LogInfo {
+        static reset() {
+            this.PositiveCardProbability = 0,
+                this.CurrentPositiveCardProbability = 0,
+                this.ChanceOfNegativeFromBox = 0,
+                this.ChanceOfPositiveFromBox = 0;
+        }
+    }
+    LogInfo.PositiveCardProbability = 0;
+    LogInfo.CurrentPositiveCardProbability = 0;
+    LogInfo.ChanceOfNegativeFromBox = 0;
+    LogInfo.ChanceOfPositiveFromBox = 0;
+
+    class FightResult {
+        constructor(isHeroAlive, isChest, isMove) {
+            this.isHeroAlive = isHeroAlive,
+                this.isChest = isChest,
+                this.isMove = isMove;
+        }
+    }
+
+    class ArtConsts {
+    }
+    ArtConsts.Items1 = "Items1";
+    ArtConsts.Items2 = "Items2";
+    ArtConsts.Barrel = "Barrel";
+    ArtConsts.Background = "background";
+    ArtConsts.BackgroundMenu = "backgroundMenu";
+    ArtConsts.BackgroundPause = "backgroundPause";
+    ArtConsts.FamobiLogo = "famobiLogo";
+    ArtConsts.PauseLogo = "PauseLogo";
+    ArtConsts.Skull = "skull";
+    ArtConsts.SkullLight = "skull_light";
+    ArtConsts.MenuStar = "menuStar";
+    ArtConsts.MenuLogo = "menuLogo";
+    ArtConsts.Loading = "loading";
+    ArtConsts.ChoiceBackground = "choiceBackground";
+    ArtConsts.Lock = "lock";
+    ArtConsts.CoinPanel = "coinPanel";
+    ArtConsts.ThreeXThree = "ThreeXThree";
+    ArtConsts.FourXFour = "FourXFour";
+    ArtConsts.CardBackground = "cardBackrounds";
+    ArtConsts.NoAccess = "noAccess";
+    ArtConsts.Boss = "boss";
+    ArtConsts.Enemy = "enemy";
+    ArtConsts.Shield = "shields";
+    ArtConsts.CardLifeCircle = "cardLifeCircle";
+    ArtConsts.CardPowerUpCircle = "cardPowerUpCircle";
+    ArtConsts.SmallRing = "smallRing";
+    ArtConsts.BigRing = "bigRing";
+    ArtConsts.Hero = "hero";
+    ArtConsts.HeroBomb = "heroBomb";
+    ArtConsts.HeroKey = "heroKey";
+    ArtConsts.HeroGun = "heroGun";
+    ArtConsts.Health = "health";
+    ArtConsts.Coin = "coin";
+    ArtConsts.CoinBag = "coinBag";
+    ArtConsts.Cannon = "cannon";
+    ArtConsts.BombFlame = "bomb_flame";
+    ArtConsts.GameStatusPanel = "menuPanel";
+    ArtConsts.SmallBtnBackground = "smallBtnBackground";
+    ArtConsts.BigBtnBackground = "bigBtnBackground";
+    ArtConsts.SoundBtn = "soundBtn";
+    ArtConsts.PauseBtn = "pauseBtn";
+    ArtConsts.HomeBtn = "homeBtn";
+    ArtConsts.HomeSmallBtn = "homeBtnSmall";
+    ArtConsts.GroupBtn = "groupBtn";
+    ArtConsts.NextBtn = "nextBtn";
+    ArtConsts.PrevBtn = "prevBtn";
+    ArtConsts.PlayBtn = "playBtn";
+    ArtConsts.PlusBtn = "plusBtn";
+    ArtConsts.ResumeBtn = "resumeBtn";
+    ArtConsts.SettingsBtn = "settingsBtn";
+    ArtConsts.ControlBtn = "controlBtn";
+    ArtConsts.AdvPlayBtn = "advPlayBtn";
+    ArtConsts.IBtn = "iBtn";
+    ArtConsts.Shadow = "shadow";
+    ArtConsts.ShopItemBackground = "shopItemBackground";
+    ArtConsts.BigHeart = "heartBig";
+    ArtConsts.BigHorseshoe = "horseshoeBig";
+    ArtConsts.BigLuck = "luckBig";
+    ArtConsts.Key2 = "key2";
+    ArtConsts.Key3 = "key3";
+    ArtConsts.Key4 = "key4";
+    ArtConsts.SmallHeart = "heartSmall";
+    ArtConsts.SmallHorseshoe = "horseshoeSmall";
+    ArtConsts.SmallLuck = "luckSmall";
+    ArtConsts.SmallKey = "key_small";
+    ArtConsts.Medal = "medal";
+    ArtConsts.Trap = "trap";
+    ArtConsts.Chest = "chest";
+    ArtConsts.LockBody = "lockBody";
+    ArtConsts.LockBridge = "lockBridge";
+    ArtConsts.LockSwitch = "lockSwitch";
+    ArtConsts.LockArrow = "lockArrow";
+    ArtConsts.LockRod = "lockRod";
+    ArtConsts.LockDoubleRod = "lockDoubleRod";
+    ArtConsts.LockBomb = "lockBomb";
+    ArtConsts.LockBombLamp = "lockBombLamp";
+    ArtConsts.LockFixedRod = "lockFixedRod";
+    ArtConsts.LockDoubleFixedRod = "lockDoubleFixedRod";
+    ArtConsts.MouseClick = "mouse_click";
+    ArtConsts.Core = "core";
+    ArtConsts.Smoke1 = "smoke_1";
+    ArtConsts.Smoke2 = "smoke_2";
+    ArtConsts.Smoke3 = "smoke_3";
+    ArtConsts.Smoke4 = "smoke_4";
+    ArtConsts.Smoke5 = "smoke_5";
+    ArtConsts.Bomb = "bomb";
+    ArtConsts.Poison = "poison";
+    ArtConsts.Boom = "boom";
+    ArtConsts.Lightning = "lightning";
+    ArtConsts.BigLightning = "lightning_1";
+    ArtConsts.SmallLightning = "lightning_2";
+    ArtConsts.Multiplier2 = "multiplier2";
+    ArtConsts.Multiplier3 = "multiplier3";
+    ArtConsts.Dust = "dust";
+    ArtConsts.BarrelIronDot = "barrelIronDot";
+    ArtConsts.BarrelIron = "barrelIron";
+    ArtConsts.BarrelCircleDark = "barrelCircleDark";
+    ArtConsts.BarrelCircleLight = "barrelCircleLight";
+    ArtConsts.BarrelBoardRight1 = "barrelBoardRight1";
+    ArtConsts.BarrelBoardRight2 = "barrelBoardRight2";
+    ArtConsts.BarrelBoard1 = "barrelBoard1";
+    ArtConsts.BarrelBoard2 = "barrelBoard2";
+    ArtConsts.BarrelBoard3 = "barrelBoard3";
+    ArtConsts.BarrelBoard4 = "barrelBoard4";
+    ArtConsts.BarrelBoard5 = "barrelBoard5";
+    ArtConsts.BarrelBoard6 = "barrelBoard6";
+    ArtConsts.BarrelBoard7 = "barrelBoard7";
+    ArtConsts.BarrelBoard8 = "barrelBoard8";
+    ArtConsts.BarrelBoard9 = "barrelBoard9";
+    ArtConsts.BarrelBoard10 = "barrelBoard10";
+    ArtConsts.BarrelBoardStraight1 = "barrelBoardStraight1";
+    ArtConsts.BarrelBoardStraight2 = "barrelBoardStraight2";
+    ArtConsts.Enemy9Vane = "enemy_9_vane";
+    ArtConsts.Enemy9Pipe = "enemy_9_pipe";
+    ArtConsts.TurnsToBoss = "turnsToBoss";
+    ArtConsts.CheckMark = "check";
+    ArtConsts.Arm = "arm";
+    ArtConsts.MoreGames = "more_games";
+    ArtConsts.BigPlayBtn = "bigPlayBtn";
+    ArtConsts.AdvPanel = "advPanel";
+    ArtConsts.Smile = "smile";
+    ArtConsts.NoIcon = "noIcon";
+
+    class Hero$1 extends Card {
+        constructor() {
+            super(...arguments);
+            this.currentLife = 0;
+            this.armor = 0;
+            this.totalLife = 0;
+            this.needRunLightning = false;
+            this.lightningScore = 0;
+        }
+        fight(card) {
+            var fightResult = new FightResult(true, false, true);
+            switch (card.type) {
+                case CardScoreType.Trap:
+                    card.getLife() > 0 && GameStatus.currentHero != t.HeroType.Gun && (SoundController.instance.playSound(SoundConsts.Trap), this.currentLife > card.getScore() ? (this.currentLife -= card.getScore(), GameStatus.addGold(card.getScore()), fightResult.isHeroAlive = !0) : fightResult.isHeroAlive = !1);
+                    break;
+                case CardScoreType.Warrior:
+                    SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Hit1, SoundConsts.Hit2])),
+                        fightResult.isHeroAlive = this.fightWithEnemy(card),
+                        fightResult.isHeroAlive && card.isBoss() && (fightResult.isNeedIncreaseLifeByOneAfterBoss = !0);
+                    break;
+                case CardScoreType.Armor:
+                    card.getScore(),
+                        SoundController.instance.playSound(SoundConsts.ShieldWood),
+                        GameStatus.currentHero == t.HeroType.Gun ? this.needSmashLightning(card.getScore()) : this.armor < card.getScore() ? (this.armor = card.getScore(), this.setArmorFrame(card)) : GameStatus.currentHero == t.HeroType.Base && this.armor++;
+                    break;
+                case CardScoreType.Gold:
+                    card.view.getByName(t.Consts.CardManAnimation) instanceof t.Coin ? SoundController.instance.playSound(SoundConsts.Coin) : SoundController.instance.playSound(SoundConsts.CoinsBag),
+                        GameStatus.addGold(card.getScore());
+                    break;
+                case CardScoreType.Health:
+                    SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Health1, SoundConsts.Health2])),
+                        this.currentLife += card.getScore(),
+                        this.currentLife > this.totalLife && (this.currentLife = this.totalLife);
+                    break;
+                case CardScoreType.Cannon:
+                    this.needShoot = !0,
+                        this.shootScore = card.getScore();
+                    break;
+                case CardScoreType.Chest:
+                    fightResult.isChest = !0;
+                    break;
+                case CardScoreType.Poison:
+                    if (SoundController.instance.playSound(SoundConsts.Poison), GameStatus.isLuck)
+                        return fightResult.isHeroAlive = !0,
+                            this.useLuck(),
+                            fightResult;
+                    if (card.getScore() >= this.currentLife)
+                        return fightResult.isHeroAlive = !1,
+                            fightResult;
+                    this.currentLife -= card.getScore();
+                    break;
+                case CardScoreType.Horseshoe:
+                    fightResult.isNeedIncreaseLifeByOne = !0;
+                    break;
+                case CardScoreType.Bomb:
+                    break;
+                case CardScoreType.Lightning:
+                    this.needSmashLightning(card.getScore());
+                    break;
+                case CardScoreType.Multiplier:
+                    this.needShootMultiplier = !0,
+                        this.multiplierScore = card.getScore();
+                    break;
+                case CardScoreType.Skull:
+                    this.needShootSkull = !0;
+                    break;
+                case CardScoreType.Barrel:
+                    SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Barrel1, SoundConsts.Barrel2])),
+                        fightResult.isMove = !1;
+            }
+            return this.setStatus(),
+                fightResult;
+        }
+        needSmashLightning(score) {
+            this.needRunLightning = true,
+                this.lightningScore = score;
+        }
+        setStatus() {
+            this.setLife(),
+                this.setArmor();
+        }
+        stepUpdate() { }
+        getScore() {
+            return this.currentLife + this.armor;
+        }
+        reduceScoreInNSeconds(t, e) {
+            if (t <= this.armor)
+                this.armor -= t;
+            else {
+                var i = t - this.armor;
+                this.armor = 0,
+                    this.currentLife -= i;
+            }
+            setTimeout(this.setStatus.bind(this), e);
+        }
+        increaseScoreInNSeconds(t, e) {
+            this.totalLife - this.currentLife > t ? this.currentLife = this.totalLife : this.currentLife += t,
+                setTimeout(this.setStatus.bind(this), e);
+        }
+        setShopItemsStatus() {
+            var e = 1;
+            this.destroySpriteByName(ArtConsts.SmallHeart),
+                this.destroySpriteByName(ArtConsts.SmallHorseshoe),
+                this.destroySpriteByName(ArtConsts.SmallLuck),
+                this.destroySpriteByName(ArtConsts.SmallKey),
+                GameStatus.isHeart && this.addSpriteByName(ArtConsts.SmallHeart, e++, 0, 1),
+                GameStatus.isLuck && this.addSpriteByName(ArtConsts.SmallLuck, e++, 30),
+                GameStatus.isKey && this.addSpriteByName(ArtConsts.SmallKey, e, 30);
+        }
+        addSpriteByName(e, i, o, n) {
+            void 0 === o && (o = 0),
+                void 0 === n && (n = 1);
+            var s = 38 * i - .5 * t.Consts.CardWidth, a = t.ShapeFactoryHelper.getShape(this.game, s, 80, ArtConsts.Items1, e, 0);
+            a.name = e,
+                a.angle = o,
+                a.scale.set(n),
+                this.view.add(a);
+        }
+        destroySpriteByName(t) {
+            var e = this.view.getByName(t);
+            e && e.destroy();
+        }
+        setLife() {
+            this.getCardLifeText().setText(this.currentLife + "/" + this.totalLife);
+        }
+        setArmor() {
+            var e = this.view.getByName(t.Consts.PowerUpCircle);
+            e.visible && 0 == this.armor ? this.hideSprite(e) : e.visible = !0;
+            var i = this.view.getByName(t.Consts.PowerUp);
+            i.setText(this.armor.toString()),
+                0 == this.armor && i.setText("");
+        }
+        hideSprite(t) {
+            this.game.add.tween(t).to({
+                width: 0,
+                height: 0,
+                angle: 360,
+                alpha: 0
+            }, 700, null, !0).onComplete.add(function () {
+                t.visible = !1,
+                    t.rotation = 0,
+                    t.alpha = 1;
+            });
+        }
+        setArmorFrame(e) {
+            var i = e.shape.getByName(t.Consts.CardManAnimation), o = this.view.getByName(t.Consts.PowerUpCircle);
+            o.frameName = i.frameName;
+            var n = this.game.add.tween(o.scale).to({
+                x: 0,
+                y: 0
+            }, 100).to({
+                x: 1.5,
+                y: 1.5
+            }, 250).to({
+                x: 1,
+                y: 1
+            }, 100), s = this.view.getByName(t.Consts.PowerUp);
+            s.scale.set(0);
+            var a = this.game.add.tween(s.scale).to({
+                x: 1,
+                y: 1
+            }, 100);
+            n.chain(a),
+                n.start();
+        }
+        fightWithEnemy(e) {
+            if (e.getScore() >= this.armor + this.currentLife)
+                return !1;
+            if (e.getScore() <= this.armor)
+                e.getScore() < this.armor && GameStatus.currentHero == t.HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
+            else if (this.armor > 0) {
+                var i = e.getScore() - this.armor;
+                this.armor = 0,
+                    this.currentLife -= i;
+            }
+            else
+                this.currentLife -= e.getScore();
+            return GameStatus.addGold(e.getScore()),
+                !0;
+        }
+        useHeart() {
+            var e = this.view.getByName(ArtConsts.SmallHeart);
+            this.view.bringToTop(e);
+            SoundController.instance.playSound(SoundConsts.Revive),
+                e.animations.add("explode", Phaser.Animation.generateFrameNames(ArtConsts.SmallHeart, 0, 16, "", 4), 30, !1, !1),
+                this.game.add.tween(e.scale).to({
+                    x: 1,
+                    y: 1
+                }, 100, null, !0).onComplete.add(function () {
+                    var t = e.animations.play("explode", 60, !1, !1);
+                    t.onComplete.add(this.setStatus, this),
+                        t.onComplete.add(this.setShopItemsStatus, this);
+                }, this),
+                this.currentLife = this.totalLife;
+        }
+        isNegative() {
+            return !1;
+        }
+        increaseLifeByOneTween() {
+            var t = this.getScaleTween(this.getCardLifeText(), this.increaseLifeByOne);
+            return t.onStart.add(this.playHorseshoe, this),
+                t;
+        }
+        playHorseshoe() {
+            SoundController.instance.playSound(SoundConsts.Horseshoe);
+        }
+        increaseLifeByOne() {
+            this.currentLife++,
+                this.totalLife++,
+                this.setLife();
+        }
+        useLuck() {
+            GameStatus.isLuck = !1;
+            var e = this.view.getByName(ArtConsts.SmallLuck), i = this.game.add.tween(e).to({
+                width: 1.5 * e.width,
+                height: 1.5 * e.height
+            }, 250).to({
+                width: 0,
+                height: 0,
+                alpha: 0
+            }, 150);
+            i.onComplete.add(this.setShopItemsStatus, this),
+                i.start();
+        }
+        getGoldValue() {
+            return 0;
+        }
+    }
+
+    class CardFactory {
+        constructor(game) {
+            this.movesAfterLastSpecialCard = 0;
+            this.healthBasket = new Basket();
+            this.armorBasket = new Basket();
+            this.cannonBasket = new Basket();
+            this.enemyBasket = new Basket();
+            this.goldBasket = new Basket();
+            this.chestBasket = Basket.AfterChestBasket();
+            this.game = game;
+            this.container = game.container;
+            this.cardShapeFactory = game.cardShapeFactory;
+        }
+        getDefault() {
+            return Card.GetDefault(this.game);
+        }
+        getHero() {
+            var shape = this.cardShapeFactory.getHeroShape(GameStatus.currentHero), hero = new Hero$1();
+            hero.game = this.game;
+            hero.view = shape;
+            hero.totalLife = 10,
+                hero.currentLife = 10,
+                hero.armor = 0,
+                GameStatus.isHorseshoe && (hero.totalLife += 1, hero.currentLife += 1),
+                this.movesAfterLastSpecialCard++;
+            return hero;
+        }
+        getCard(cardGenerationType = CardGenerationType.Random, score, cardTypeList) {
+            if (GameStatus.isNeedCreateBoss && cardGenerationType == CardGenerationType.Random) {
+                GameStatus.isNeedCreateBoss = false;
+                return this.getBoss();
+            }
+            else if (GameStatus.isNeedCreateChest && cardGenerationType == CardGenerationType.Random) {
+                GameStatus.isNeedCreateChest = false;
+                return this.getChestCard();
+            }
+            else if (this.generateCardType(cardGenerationType, cardTypeList) == CardBackgroundType.Warrior) {
+                return this.getEnemy(score);
+            }
+            else {
+                return this.getPowerUp(cardGenerationType, score, cardTypeList);
+            }
+        }
+        getHealth(e) {
+            var cardScoreType = CardScoreType.Health;
+            return Card.GetNew(this.cardShapeFactory.getPowerUpCardShape(cardScoreType, e), this.game, cardScoreType, e);
+        }
+        generateCardType(cardGenerationType, cardTypeList) {
+            if (cardGenerationType == CardGenerationType.AfterBarrel && GameStatus.currentHero == HeroType.Key) {
+                return CardBackgroundType.PowerUp;
+            }
+            if (cardGenerationType == CardGenerationType.AfterChest || cardGenerationType == CardGenerationType.Positive) {
+                return CardBackgroundType.PowerUp;
+            }
+            if (cardGenerationType == CardGenerationType.AfterBarrel && Math.random() < .75) {
+                return CardBackgroundType.PowerUp;
+            }
+            LogInfo.reset();
+            if (GameStatus.cardCounter > 2) {
+                var n = Math.random();
+                if (LogInfo.ChanceOfNegativeFromBox = n, n < .8) {
+                    return CardBackgroundType.Warrior;
+                }
+            }
+            if (GameStatus.cardCounter < -3) {
+                var s = Math.random();
+                if (LogInfo.ChanceOfPositiveFromBox = s, s < .8) {
+                    return CardBackgroundType.PowerUp;
+                }
+            }
+            if (CardFactory.isShouldBePositiveCard(cardTypeList)) {
+                return CardBackgroundType.PowerUp;
+            }
+            else {
+                CardBackgroundType.Warrior;
+            }
+        }
+        static isShouldBePositiveCard(cardTypeList) {
+            var positiveCount = cardTypeList.filter(CardScoreTypeHelper.isCardScoreTypePositive).length;
+            var negativeCount = cardTypeList.filter(CardScoreTypeHelper.isCardScoreTypeNegative).length;
+            if (!GameStatus.isFourXFour && Math.random() < .85 && positiveCount <= 1) {
+                return Math.random() < .8;
+            }
+            if (GameStatus.isFourXFour && Math.random() < .85 && positiveCount <= 2) {
+                return Math.random() < .8;
+            }
+            var n = Math.min(.35, .4 - .01 * GameStatus.levelStep), s = negativeCount * (GameStatus.isFourXFour ? .02 : .03), a = GMath.clamp(n + s, .2, .75);
+            var r = Math.random();
+            LogInfo.PositiveCardProbability = a;
+            LogInfo.CurrentPositiveCardProbability = r;
+            return r < a;
+        }
+        getPowerUp(cardGenerationTyp, score, cardTypeList) {
+            var cardScoreType = this.generatePowerUpType(cardGenerationTyp, cardTypeList);
+            return score = this.generateCardScore(cardScoreType, score),
+                Card.GetNew(this.cardShapeFactory.getPowerUpCardShape(cardScoreType, score), this.game, cardScoreType, score);
+        }
+        generateCardScore(cardScoreType, score = 0) {
+            if (score == 0) {
+                switch (cardScoreType) {
+                    case CardScoreType.Armor:
+                        this.armorBasket.fillBasketWithStep(1, 4, 3, 10),
+                            score = Number(this.armorBasket.getFromBasket());
+                        break;
+                    case CardScoreType.Health:
+                        this.healthBasket.fillBasketWithStep(1, 4, 3, 10),
+                            score = Number(this.healthBasket.getFromBasket());
+                        break;
+                    case CardScoreType.Cannon:
+                        this.cannonBasket.fillBasketWithStep(1, 1, 3, 10),
+                            score = Number(this.cannonBasket.getFromBasket()),
+                            GameStatus.currentHero == HeroType.Bomb && (score += 2);
+                        break;
+                    case CardScoreType.Barrel:
+                        score = this.generateScore(2, 4, 3, 10);
+                        break;
+                    case CardScoreType.Poison:
+                        var o = 1 + Math.ceil(GameStatus.gameLevel / 2);
+                        score = o > 10 ? 10 : o;
+                        break;
+                    case CardScoreType.Lightning:
+                        score = this.generateScore(1, 4, 3, 10);
+                        break;
+                    case CardScoreType.Gold:
+                        this.goldBasket.fillBasketWithStep(1, 4, 2, 1e3),
+                            score = Number(this.goldBasket.getFromBasket());
+                        break;
+                    default:
+                        score = this.game.rnd.integerInRange(1, 5);
+                }
+            }
+            if (cardScoreType === CardScoreType.Bomb) {
+                score = this.game.rnd.integerInRange(1, 4 + Math.ceil(GameStatus.gameLevel / 2));
+                if (score > 10) {
+                    score = 10;
+                }
+            }
+            if (cardScoreType === CardScoreType.Multiplier) {
+                score = 2;
+            }
+            return score;
+        }
+        generateScore(min, start, level, max) {
+            var s = start + Math.ceil(GameStatus.gameLevel / level), a = this.game.rnd.integerInRange(min, s);
+            return GMath.clamp(a, min, max);
+        }
+        getEnemy(score) {
+            var cardType = this.generateEnemyPower(score);
+            Consts.IsDev && this.enemyBasket.print("Enemy");
+            if (0 == score) {
+                score = cardType;
+                if (GameStatus.gameLevel > 10) {
+                    score += Math.floor((GameStatus.gameLevel - 10) / 2);
+                }
+            }
+            if (0 == cardType) {
+                return this.getTrap(score + 1);
+            }
+            else {
+                return this.getWarrior(cardType, score);
+            }
+        }
+        getTrap(score) {
+            return Card.GetNew(this.cardShapeFactory.getTrapCardShape(), this.game, CardScoreType.Trap, score);
+        }
+        getWarrior(cardType, score) {
+            return Card.GetNew(this.cardShapeFactory.getEnemyCardShape(cardType), this.game, CardScoreType.Warrior, score);
+        }
+        static getTrapScore() {
+            if (GameStatus.currentHero == HeroType.Gun) {
+                return 0;
+            }
+            else {
+                return 1 + RandomHelper.getRandomIntInclusive(0, Math.ceil(GameStatus.gameLevel / 4));
+            }
+        }
+        getBoss() {
+            var i = this.cardShapeFactory.getBossCardShape(CardFactory.generateBossPower()), o = 8 + GameStatus.gameLevel;
+            return Card.GetNew(i, this.game, CardScoreType.Warrior, o);
+        }
+        getChestCard() {
+            var e = CardScoreType.Chest, i = this.cardShapeFactory.getPowerUpCardShape(e, 0);
+            return Card.GetNew(i, this.game, e, 0);
+        }
+        getCoinCard(score) {
+            var i = CardScoreType.Gold;
+            0 === score && (score = this.generateCardScore(i));
+            var o = this.cardShapeFactory.getPowerUpCardShape(i, score);
+            return Card.GetNew(o, this.game, i, score);
+        }
+        static generateBossPower() {
+            return RandomHelper.getRandomIntInclusive(1, 3);
+        }
+        generatePowerUpType(cardGenerationTyp, cardTypeList) {
+            if (cardGenerationTyp == CardGenerationType.AfterChest) {
+                return this.generatePowerUpTypeFromChest();
+            }
+            else if (cardGenerationTyp == CardGenerationType.AfterBarrel) {
+                CardFactory.generatePowerUpTypeFromBarrel(cardTypeList);
+            }
+            else {
+                CardFactory.generatePowerUpCardScoreType(cardTypeList);
+            }
+        }
+        generatePowerUpTypeFromChest() {
+            return Number(this.chestBasket.getFromBasket());
+        }
+        static generatePowerUpTypeFromBarrel(cardTypeList) {
+            return CardFactory.generateFromBasket(cardTypeList, CardScoreTypeHelper.getRandomPowerUpFromBarrel, this.maxPowerUpNumber());
+        }
+        static generatePowerUpCardScoreType(cardTypeList) {
+            return CardFactory.generateFromBasket(cardTypeList, CardScoreTypeHelper.getRandomPowerUp, this.maxPowerUpNumber());
+        }
+        static generateFromBasket(cardTypeList, randomPowerUpFromBarrelFun, maxPowerUpNumber) {
+            var filterFun = (itemCardScoreType) => {
+                return itemCardScoreType === cardScoreType;
+            };
+            var cardScoreType;
+            for (var i = 0; i < 10 && (cardScoreType = randomPowerUpFromBarrelFun(), !(cardTypeList.filter(filterFun).length < maxPowerUpNumber)); i++)
+                ;
+            return cardScoreType;
+        }
+        static maxPowerUpNumber() {
+            return RandomHelper.getRandomIntInclusive(1, 2);
+        }
+        generateEnemyPower(score) {
+            this.enemyBasket.fillBasketWithStep(0, 4, 2, 9);
+            if (0 == score) {
+                return Number(this.enemyBasket.getFromBasket());
+            }
+            var power = GMath.clamp(score, 0, 9);
+            this.enemyBasket.removeFromBasket(power.toString());
+            return power;
+        }
+    }
+
+    class CardViewFrontHeroStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontHero"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+            this.m_shield = (this.getChild("shield"));
+            this.m_shopBar = (this.getChild("shopBar"));
+        }
+    }
+    CardViewFrontHeroStruct.URL = "ui://moe42ygrsqzy9v";
+    CardViewFrontHeroStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontHero extends CardViewFrontHeroStruct {
+    }
+
+    class CardViewFrontWarriowEnemyStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowEnemy"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontWarriowEnemyStruct.URL = "ui://moe42ygrsqzya3";
+    CardViewFrontWarriowEnemyStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontWarriowEnemy extends CardViewFrontWarriowEnemyStruct {
+    }
+
+    class CardViewFrontPowerUpStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontPowerUp"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontPowerUpStruct.URL = "ui://moe42ygrsqzy9y";
+    CardViewFrontPowerUpStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontPowerUp extends CardViewFrontPowerUpStruct {
+    }
+
+    class CardViewFactory {
+        constructor(game) {
+            this.game = game;
+            this.container = game.container;
+        }
+        getHeroShape(heroType) {
+            return CardViewFrontHero.createInstance();
+        }
+        getDefaultShape() {
+            return CardViewBack.createInstance();
+        }
+        getTrapCardShape() {
+            return CardViewFrontWarriowEnemy.createInstance();
+        }
+        getEnemyCardShape(cardType) {
+            return CardViewFrontWarriowEnemy.createInstance();
+        }
+        getBossCardShape(cardType) {
+            return CardViewFrontWarriowBoss.createInstance();
+        }
+        getPowerUpCardShape(cardScoreType, score) {
+            return CardViewFrontPowerUp.createInstance();
+        }
+    }
+
+    class RandomDataGenerator {
+        constructor(t = []) {
+            this.c = 1;
+            this.s0 = 0;
+            this.s1 = 0;
+            this.s2 = 0;
+            if (typeof t == "string") {
+                this.state(t);
+            }
+            else {
+                this.sow(t);
+            }
+        }
+        rnd() {
+            var t = 2091639 * this.s0 + 2.3283064365386963e-10 * this.c;
+            this.c = 0 | t,
+                this.s0 = this.s1,
+                this.s1 = this.s2,
+                this.s2 = t - this.c;
+            return this.s2;
+        }
+        sow(t) {
+            if (this.s0 = this.hash(" "), this.s1 = this.hash(this.s0), this.s2 = this.hash(this.s1), this.c = 1, t)
+                for (var e = 0; e < t.length && null != t[e]; e++) {
+                    var i = t[e];
+                    this.s0 -= this.hash(i),
+                        this.s0 += ~~(this.s0 < 0),
+                        this.s1 -= this.hash(i),
+                        this.s1 += ~~(this.s1 < 0),
+                        this.s2 -= this.hash(i),
+                        this.s2 += ~~(this.s2 < 0);
+                }
+        }
+        hash(t) {
+            var e, i, s;
+            for (s = 4022871197, t = t.toString(), i = 0; i < t.length; i++)
+                e = .02519603282416938 * (s += t.charCodeAt(i)),
+                    e -= s = e >>> 0,
+                    s = (e *= s) >>> 0,
+                    s += 4294967296 * (e -= s);
+            return 2.3283064365386963e-10 * (s >>> 0);
+        }
+        integer() {
+            return 4294967296 * this.rnd.apply(this);
+        }
+        frac() {
+            return this.rnd.apply(this) + 1.1102230246251565e-16 * (2097152 * this.rnd.apply(this) | 0);
+        }
+        real() {
+            return this.integer() + this.frac();
+        }
+        integerInRange(t, e) {
+            return Math.floor(this.realInRange(0, e - t + 1) + t);
+        }
+        between(t, e) {
+            return this.integerInRange(t, e);
+        }
+        realInRange(t, e) {
+            return this.frac() * (e - t) + t;
+        }
+        normal() {
+            return 1 - 2 * this.frac();
+        }
+        uuid() {
+            var t = 0, e = "";
+            for (; t++ < 36; e +=
+                ~t % 5 | 3 * t & 4
+                    ? (15 ^ t
+                        ? 8 ^ this.frac() * (20 ^ t
+                            ? 16 : 4)
+                        : 4).toString(16)
+                    : "-")
+                ;
+            return e;
+        }
+        pick(t) {
+            return t[this.integerInRange(0, t.length - 1)];
+        }
+        sign() {
+            return this.pick([-1, 1]);
+        }
+        weightedPick(t) {
+            return t[~~(Math.pow(this.frac(), 2) * (t.length - 1) + .5)];
+        }
+        timestamp(t, e) {
+            return this.realInRange(t || 9466848e5, e || 1577862e6);
+        }
+        angle() {
+            return this.integerInRange(-180, 180);
+        }
+        state(t) {
+            return "string" == typeof t && t.match(/^!rnd/) && (t = t.split(","), this.c = parseFloat(t[1]), this.s0 = parseFloat(t[2]), this.s1 = parseFloat(t[3]), this.s2 = parseFloat(t[4])),
+                ["!rnd", this.c, this.s0, this.s1, this.s2].join(",");
+        }
+    }
+
+    class keyboardManager {
+        constructor() {
+            this.isUp = false;
+            this.isDown = false;
+            this.isLeft = false;
+            this.isRight = false;
+            this.isSpace = false;
+        }
+        reset() {
+            this.isUp = false;
+            this.isDown = false;
+            this.isLeft = false;
+            this.isRight = false;
+            this.isSpace = false;
+        }
+        getMoveType() {
+            if (this.isDown) {
+                return MoveType.Down;
+            }
+            if (this.isLeft) {
+                return MoveType.Left;
+            }
+            if (this.isRight) {
+                return MoveType.Right;
+            }
+            if (this.isUp) {
+                return MoveType.Up;
+            }
+        }
+        isPressed() {
+            return this.isUp || this.isDown || this.isLeft || this.isRight || this.isSpace;
+        }
+    }
+
+    class WarGame {
+        constructor() {
+            this.animationQueue = [];
+            this.keyboardManager = new keyboardManager();
+            this.isAnimationing = false;
+            this.isPause = false;
+            this.isChest = false;
+        }
+        init(windowUI) {
+            this.windowUI = windowUI;
+            this.container = windowUI.m_container;
+            this.stageClickFx = new StageClickFx();
+            this.rnd = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
+            this.cardShapeFactory = new CardViewFactory(this);
+            this.cardFactory = new CardFactory(this);
+            this.field = new Field(this);
+        }
+        launch() {
+            this.stageClickFx.install();
+            GameStatus.init(),
+                this.animationQueue = this.field.initField();
+            Laya.timer.frameLoop(1, this, this.update);
+        }
+        stop() {
+            Laya.timer.clear(this, this.update);
+            this.stageClickFx.uninstall();
+        }
+        update() {
+            if (this.isPause) {
+                return;
+            }
+            if (!this.isAnimationing) {
+                if (this.animationQueue.length > 0) {
+                    this.runAnimationFromQueue();
+                }
+            }
+        }
+        runAnimationFromQueue() {
+            var animation = this.animationQueue.shift();
+            var animationDuration = animation.animationDuration;
+            this.isAnimationing = true;
+            animation.restart();
+            setTimeout(this.onAnimationComplete.bind(this), animationDuration);
+        }
+        onAnimationComplete() {
+            this.isAnimationing = false;
+            this.keyboardManager.reset();
+        }
+        fillQueue() {
+        }
+    }
+
+    class War {
+        static init(windowUI) {
+            if (this.isInited)
+                return;
+            this.game = new WarGame();
+            this.game.init(windowUI);
+            this.isInited = true;
+        }
+        static launch() {
+            this.game.launch();
+        }
+        static stop() {
+            this.game.stop();
+        }
+        static uninstall() {
+        }
+    }
+    War.isInited = false;
+
     class WindowWarUI extends WindowWarUIStruct {
+        onWindowInited() {
+            War.init(this);
+        }
+        onWindowDestory() {
+            return false;
+        }
+        onWindowWillShow() {
+        }
+        onWindowWillHide() {
+        }
+        onWindowShow() {
+            War.launch();
+        }
+        onWindowHide() {
+        }
     }
 
     class WarWindow extends MWindow {
@@ -10070,6 +13161,26 @@
     class PanelChooseHero extends PanelChooseHeroStruct {
     }
 
+    class HeroSpriteStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "HeroSprite"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_sprite = this.getController("sprite");
+            this.m_icon = (this.getChild("icon"));
+            this.m_t0 = this.getTransition("t0");
+        }
+    }
+    HeroSpriteStruct.URL = "ui://moe42ygrsqzy8m";
+    HeroSpriteStruct.DependPackages = ["GameHome"];
+
+    class HeroSprite extends HeroSpriteStruct {
+    }
+
     class PanelShopStruct extends fgui.GComponent {
         constructor() {
             super();
@@ -10108,29 +13219,6 @@
     PanelChooseGameFormatStruct.DependPackages = ["GameHome"];
 
     class PanelChooseGameFormat extends PanelChooseGameFormatStruct {
-    }
-
-    class PanelPauseStruct extends fgui.GComponent {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "PanelPause"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_btnGroup = (this.getChild("btnGroup"));
-            this.m_bg = (this.getChild("bg"));
-            this.m_logo = (this.getChild("logo"));
-            this.m_homeBtn = (this.getChild("homeBtn"));
-            this.m_soundBtn = (this.getChild("soundBtn"));
-            this.m_resumeBtn = (this.getChild("resumeBtn"));
-        }
-    }
-    PanelPauseStruct.URL = "ui://moe42ygrsqzy9a";
-    PanelPauseStruct.DependPackages = ["GameHome", "GameLaunch"];
-
-    class PanelPause extends PanelPauseStruct {
     }
 
     class PanelResultStruct extends fgui.GComponent {
@@ -10180,83 +13268,209 @@
     class MenuTopPanelWar extends MenuTopPanelWarStruct {
     }
 
-    class FxBarrelStruct extends fgui.GComponent {
+    class CardViewStruct extends fgui.GComponent {
         constructor() {
             super();
         }
         static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "FxBarrel"));
+            return (fgui.UIPackage.createObject("GameHome", "CardView"));
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
         }
     }
-    FxBarrelStruct.URL = "ui://moe42ygrsqzy9g";
-    FxBarrelStruct.DependPackages = ["GameHome"];
+    CardViewStruct.URL = "ui://moe42ygrsqzy9s";
+    CardViewStruct.DependPackages = ["GameHome"];
 
-    class FxBarrel extends FxBarrelStruct {
+    class CardView extends CardViewStruct {
+        constructor() {
+            super();
+            this.back = CardViewBack.createInstance();
+            this.addChild(this.back);
+            this.setXY(-200, -200);
+        }
+        showFront() {
+            if (this.front) {
+                this.addChild(this.front);
+                this.back.removeFromParent();
+            }
+        }
+        showBack() {
+            this.addChild(this.back);
+            if (this.front) {
+                this.front.removeFromParent();
+            }
+        }
     }
 
-    class CardViewFrontHeroStruct extends fgui.GButton {
+    class CardLifeHeroStruct extends fgui.GLabel {
         constructor() {
             super();
         }
         static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontHero"));
+            return (fgui.UIPackage.createObject("GameHome", "CardLifeHero"));
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
-            this.m_bg = (this.getChild("bg"));
-            this.m_icon = (this.getChild("icon"));
-            this.m_life = (this.getChild("life"));
-            this.m_shield = (this.getChild("shield"));
-            this.m_shopBar = (this.getChild("shopBar"));
+            this.m_title = (this.getChild("title"));
         }
     }
-    CardViewFrontHeroStruct.URL = "ui://moe42ygrsqzy9v";
-    CardViewFrontHeroStruct.DependPackages = ["GameHome"];
+    CardLifeHeroStruct.URL = "ui://moe42ygrsqzy9u";
+    CardLifeHeroStruct.DependPackages = ["GameHome"];
 
-    class CardViewFrontHero extends CardViewFrontHeroStruct {
+    class CardLifeHero extends CardLifeHeroStruct {
     }
 
-    class CardViewFrontWarriowEnemyStruct extends fgui.GButton {
+    class CardViewFrontWarriowStruct extends fgui.GComponent {
         constructor() {
             super();
         }
         static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowEnemy"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_bg = (this.getChild("bg"));
-            this.m_icon = (this.getChild("icon"));
-            this.m_life = (this.getChild("life"));
-        }
-    }
-    CardViewFrontWarriowEnemyStruct.URL = "ui://moe42ygrsqzya3";
-    CardViewFrontWarriowEnemyStruct.DependPackages = ["GameHome"];
-
-    class CardViewFrontWarriowEnemy extends CardViewFrontWarriowEnemyStruct {
-    }
-
-    class CardViewFrontWarriowBossStruct extends fgui.GButton {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowBoss"));
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriow"));
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
             this.m_bg = (this.getChild("bg"));
-            this.m_icon = (this.getChild("icon"));
             this.m_life = (this.getChild("life"));
         }
     }
-    CardViewFrontWarriowBossStruct.URL = "ui://moe42ygrsqzya6";
-    CardViewFrontWarriowBossStruct.DependPackages = ["GameHome"];
+    CardViewFrontWarriowStruct.URL = "ui://moe42ygrsqzy9w";
+    CardViewFrontWarriowStruct.DependPackages = ["GameHome"];
 
-    class CardViewFrontWarriowBoss extends CardViewFrontWarriowBossStruct {
+    class CardViewFrontWarriow extends CardViewFrontWarriowStruct {
+    }
+
+    class CardLifeWarriowStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardLifeWarriow"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_title = (this.getChild("title"));
+        }
+    }
+    CardLifeWarriowStruct.URL = "ui://moe42ygrsqzy9x";
+    CardLifeWarriowStruct.DependPackages = ["GameHome"];
+
+    class CardLifeWarriow extends CardLifeWarriowStruct {
+    }
+
+    class CardLifePowerUpStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardLifePowerUp"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_title = (this.getChild("title"));
+        }
+    }
+    CardLifePowerUpStruct.URL = "ui://moe42ygrsqzy9z";
+    CardLifePowerUpStruct.DependPackages = ["GameHome"];
+
+    class CardLifePowerUp extends CardLifePowerUpStruct {
+    }
+
+    class CardShieldStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardShield"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_title = (this.getChild("title"));
+        }
+    }
+    CardShieldStruct.URL = "ui://moe42ygrsqzya0";
+    CardShieldStruct.DependPackages = ["GameHome"];
+
+    class CardShield extends CardShieldStruct {
+    }
+
+    class CardShopBarStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardShopBar"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_shopHeart = (this.getChild("shopHeart"));
+            this.m_shopHorseshoe = (this.getChild("shopHorseshoe"));
+            this.m_shopLock = (this.getChild("shopLock"));
+            this.m_shopKey = (this.getChild("shopKey"));
+            this.m_fxHeart = (this.getChild("fxHeart"));
+        }
+    }
+    CardShopBarStruct.URL = "ui://moe42ygrsqzya1";
+    CardShopBarStruct.DependPackages = ["GameHome"];
+
+    class CardShopBar extends CardShopBarStruct {
+    }
+
+    class SpriteEnemyStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "SpriteEnemy"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_sprite = this.getController("sprite");
+            this.m_icon = (this.getChild("icon"));
+            this.m_t0 = this.getTransition("t0");
+        }
+    }
+    SpriteEnemyStruct.URL = "ui://moe42ygrsqzya4";
+    SpriteEnemyStruct.DependPackages = ["GameHome"];
+
+    class SpriteEnemy extends SpriteEnemyStruct {
+    }
+
+    class SpriteBossStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "SpriteBoss"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_sprite = this.getController("sprite");
+            this.m_icon = (this.getChild("icon"));
+            this.m_t0 = this.getTransition("t0");
+        }
+    }
+    SpriteBossStruct.URL = "ui://moe42ygrsqzya5";
+    SpriteBossStruct.DependPackages = ["GameHome"];
+
+    class SpriteBoss extends SpriteBossStruct {
+    }
+
+    class ContainerStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "Container"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+        }
+    }
+    ContainerStruct.URL = "ui://moe42ygrsqzya7";
+    ContainerStruct.DependPackages = ["GameHome"];
+
+    class Container extends ContainerStruct {
     }
 
     class GameHomeBinder {
@@ -10265,16 +13479,27 @@
             bind(PanelMainMenu.URL, PanelMainMenu);
             bind(PanelChooseHero.URL, PanelChooseHero);
             bind(WindowHomeUI.URL, WindowHomeUI);
+            bind(HeroSprite.URL, HeroSprite);
             bind(PanelShop.URL, PanelShop);
             bind(PanelChooseGameFormat.URL, PanelChooseGameFormat);
-            bind(PanelPause.URL, PanelPause);
             bind(WindowWarUI.URL, WindowWarUI);
             bind(PanelResult.URL, PanelResult);
             bind(MenuTopPanelWar.URL, MenuTopPanelWar);
-            bind(FxBarrel.URL, FxBarrel);
+            bind(CardView.URL, CardView);
+            bind(CardLifeHero.URL, CardLifeHero);
             bind(CardViewFrontHero.URL, CardViewFrontHero);
+            bind(CardViewFrontWarriow.URL, CardViewFrontWarriow);
+            bind(CardLifeWarriow.URL, CardLifeWarriow);
+            bind(CardViewFrontPowerUp.URL, CardViewFrontPowerUp);
+            bind(CardLifePowerUp.URL, CardLifePowerUp);
+            bind(CardShield.URL, CardShield);
+            bind(CardShopBar.URL, CardShopBar);
+            bind(CardViewBack.URL, CardViewBack);
             bind(CardViewFrontWarriowEnemy.URL, CardViewFrontWarriowEnemy);
+            bind(SpriteEnemy.URL, SpriteEnemy);
+            bind(SpriteBoss.URL, SpriteBoss);
             bind(CardViewFrontWarriowBoss.URL, CardViewFrontWarriowBoss);
+            bind(Container.URL, Container);
         }
     }
 

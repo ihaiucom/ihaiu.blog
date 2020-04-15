@@ -1,5 +1,7 @@
 export enum CardScoreType
 {
+    // 未知 空的
+    None = 0,
     // 陷阱
     Trap = 1,
     // 小怪, Boss
@@ -27,5 +29,5 @@ export enum CardScoreType
     // 倍数
     Multiplier = 13,
     // 骷髅
-    Skull = 14
+    Skull = 14,
 }

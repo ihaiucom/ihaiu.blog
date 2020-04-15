@@ -1,6 +1,6 @@
 import Game from "../../Game";
 import CardFactory from "./CardFactory";
-import keyboardManager from "../../War/Datas/KeyboardManager";
+import keyboardManager from "../../War/Logics/KeyboardManager";
 import GameStatus from "../../War/Datas/GameStatus";
 import Consts from "../../War/Enums/Consts";
 import RandomHelper from "../../War/Utils/RandomHelper";

@@ -15,7 +15,7 @@ export default class WindowWarUI extends WindowWarUIStruct
     // 窗口初始化完毕
     onWindowInited(): void
     {
-
+        War.init(this);
     }
 
     // 窗口销毁

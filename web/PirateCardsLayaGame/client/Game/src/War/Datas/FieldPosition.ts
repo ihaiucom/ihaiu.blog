@@ -41,11 +41,13 @@ export default class FieldPosition
 
     get pointX(): number
     {
+        // return this.column * Consts.CardWidth  + this.column * Consts.CardSpaceBetweenWidth;
         return this.column * Consts.CardWidth + Consts.CardWidth / 2 + this.column * Consts.CardSpaceBetweenWidth;
     }
     
     get pointY(): number
     {
+        // return this.row * Consts.CardHeight  + this.row * Consts.CardSpaceBetweenHeight;
         return this.row * Consts.CardHeight + Consts.CardHeight / 2 + this.row * Consts.CardSpaceBetweenHeight;
     }
 }

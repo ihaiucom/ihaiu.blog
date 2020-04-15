@@ -42971,12 +42971,12 @@ declare module laya.utils {
 		/**
 		 * @private 
 		 */
-		private _duration:any;
+		 _duration:any;
 
 		/**
 		 * @private 
 		 */
-		private _delay:any;
+		 _delay:any;
 
 		/**
 		 * @private 

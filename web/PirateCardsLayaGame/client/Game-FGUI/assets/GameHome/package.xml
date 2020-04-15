@@ -340,12 +340,12 @@
     <movieclip id="sqzy9k" name="MVLockBombLamp.jta" path="/Fx/"/>
     <movieclip id="sqzy9l" name="MVBoom.jta" path="/Fx/"/>
     <movieclip id="sqzy9m" name="MVCoin.jta" path="/Fx/"/>
-    <movieclip id="sqzy9n" name="MVMouseClick.jta" path="/Fx/"/>
+    <movieclip id="sqzy9n" name="MVMouseClick.jta" path="/Fx/" exported="true"/>
     <movieclip id="sqzy9o" name="MVSkull.jta" path="/Fx/"/>
     <movieclip id="sqzy9p" name="MVSmoke.jta" path="/Fx/"/>
     <movieclip id="sqzy9q" name="MVBombFlame.jta" path="/Fx/"/>
     <movieclip id="sqzy9r" name="MVEnemy_9_vane0000.jta" path="/Fx/"/>
-    <component id="sqzy9s" name="CardView.xml" path="/Card/"/>
+    <component id="sqzy9s" name="CardView.xml" path="/Card/" exported="true"/>
     <component id="sqzy9t" name="CardFrontView.xml" path="/Card/"/>
     <component id="sqzy9u" name="CardLifeHero.xml" path="/Card/"/>
     <component id="sqzy9v" name="CardViewFrontHero.xml" path="/Card/" exported="true"/>
