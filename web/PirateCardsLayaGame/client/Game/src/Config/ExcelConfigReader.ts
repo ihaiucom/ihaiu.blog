@@ -1,7 +1,7 @@
 import { ExcelConfigManager } from "./ExcelConfigManager";
 import BaseConfig from "./BaseConfig";
 
-export default class ExcelConfigReader<T extends BaseConfig>
+export default class ExcelConfigReader<T extends {id: number}>
 {
     // 表名
     tableName: string;
@@ -35,7 +35,6 @@ export default class ExcelConfigReader<T extends BaseConfig>
     {
         if(this._configList.length == 0)
         {
-            let dict = this.configDict;
             for(let id in this.configDict)
             {
                 this._configList.push(this.configDict[id]);

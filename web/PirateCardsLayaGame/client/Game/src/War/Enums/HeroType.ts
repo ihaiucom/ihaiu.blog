@@ -1,6 +1,6 @@
 export enum HeroType
 {
-    Base,
+    Base = 1,
     Bomb,
     Gun,
     Key

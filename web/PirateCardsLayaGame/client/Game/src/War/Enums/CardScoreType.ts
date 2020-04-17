@@ -2,32 +2,38 @@ export enum CardScoreType
 {
     // 未知 空的
     None = 0,
+    // 英雄
+    Hero = 1,
     // 陷阱
-    Trap = 1,
+    Trap = 2,
+    // 小怪
+    Enemy = 3,
+    // 小怪
+    Boss = 4,
     // 小怪, Boss
-    Warrior = 2,
+    Warrior = 3,
     // 血瓶
-    Health = 3,
+    Health = 5,
     // 金币
-    Gold = 4,
+    Gold = 6,
     // 盔甲
-    Armor = 5,
+    Armor = 7,
     // 加农炮,炮管
-    Cannon = 6,
+    Cannon = 8,
     // 桶
-    Barrel = 7,
+    Barrel = 9,
     // 宝箱
-    Chest = 8,
+    Chest = 10,
     // 炸弹
-    Bomb = 9,
+    Bomb = 11,
     // 毒药
-    Poison = 10,
+    Poison = 12,
     // 马蹄铁
-    Horseshoe = 11,
+    Horseshoe = 13,
     // 闪电
-    Lightning = 12,
+    Lightning = 14,
     // 倍数
-    Multiplier = 13,
+    Multiplier = 15,
     // 骷髅
-    Skull = 14,
+    Skull = 16,
 }

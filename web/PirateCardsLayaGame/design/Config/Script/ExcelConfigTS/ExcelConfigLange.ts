@@ -1,6 +1,42 @@
 import Game from '../Game';
 
 
+export class CardConfigLang extends excelconfigSources.Card
+{
+
+	get name():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnName
+
+		let value = <string> Game.lang.getValue('Card', this.id, 'zhCnName');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnName
+	}
+
+}
+
+export class CardScoreTypeConfigLang extends excelconfigSources.CardScoreType
+{
+
+	get name():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnName
+
+		let value = <string> Game.lang.getValue('CardScoreType', this.id, 'zhCnName');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnName
+	}
+
+}
+
 export class LoaderConfigLang extends excelconfigSources.Loader
 {
 

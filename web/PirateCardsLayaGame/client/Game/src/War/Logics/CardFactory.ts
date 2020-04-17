@@ -1,5 +1,4 @@
 import WarGame from "../WarGame";
-import CardViewFactory from "./CardViewFactory";
 import RandomHelper from "../Utils/RandomHelper";
 import Basket from "../Datas/Basket";
 import GameStatus from "../Datas/GameStatus";
@@ -13,14 +12,14 @@ import GMath from "../Utils/GMath";
 import { HeroType } from "../Enums/HeroType";
 import Consts from "../Enums/Consts";
 import Hero from "./Hero";
+import Game from "../../Game";
+import CardConfig from "../../Config/ConfigExtends/CardConfig";
 
 export default class CardFactory
 {
     game: WarGame;
     /** 卡牌容器 */
     container: fgui.GComponent;
-    /** 卡牌视图工厂 */
-    cardShapeFactory: CardViewFactory;
     movesAfterLastSpecialCard = 0;
 
     
@@ -41,7 +40,6 @@ export default class CardFactory
     {
         this.game =game;
         this.container = game.container;
-        this.cardShapeFactory = game.cardShapeFactory;
     }
 
     getDefault()
@@ -52,10 +50,10 @@ export default class CardFactory
 
     getHero()
     {
-        var shape = this.cardShapeFactory.getHeroShape(GameStatus.currentHero),
-        hero = new Hero();
+        var cardConfig = Game.config.card.getTypeLevelConfig(CardScoreType.Hero, GameStatus.currentHero);
+        var hero = new Hero();
         hero.game = this.game;
-        hero.view = shape;
+        hero.SetConfig(cardConfig);
         // hero.setShopItemsStatus(),
         hero.totalLife = 10,
         hero.currentLife = 10,
@@ -94,9 +92,15 @@ export default class CardFactory
 
     }
     
-    getHealth(e) {
+    getHealth(score: number) 
+    {
         var cardScoreType = CardScoreType.Health;
-        return Card.GetNew(this.cardShapeFactory.getPowerUpCardShape(cardScoreType, e), this.game, cardScoreType, e)
+        var level = 1;
+        if(score <= 5)
+        {
+            level = 2;
+        }
+        return Card.GetNew(this.game, cardScoreType, level, score)
     }
     // 根据生成方式 生成卡牌类型
     generateCardType(cardGenerationType:CardGenerationType, cardTypeList: CardScoreType[]) 
@@ -195,8 +199,10 @@ export default class CardFactory
     getPowerUp(cardGenerationTyp: CardGenerationType, score: number, cardTypeList: CardScoreType[]) 
     {
         var cardScoreType = this.generatePowerUpType(cardGenerationTyp, cardTypeList);
-        return score = this.generateCardScore(cardScoreType, score),
-        Card.GetNew(this.cardShapeFactory.getPowerUpCardShape(cardScoreType, score), this.game, cardScoreType, score)
+        var level = 1;
+        var score = this.generateCardScore(cardScoreType, score);
+
+        return Card.GetNew(this.game, cardScoreType, level,  score)
     }
 
     // 生成牌的分数
@@ -262,12 +268,12 @@ export default class CardFactory
     }
     // 生成坏牌
     getEnemy(score: number) {
-        var cardType = this.generateEnemyPower(score);
+        var level = this.generateEnemyPower(score);
         Consts.IsDev && this.enemyBasket.print("Enemy");
 
         if(0 == score)
         {
-            score = cardType;
+            score = level;
 
             if(GameStatus.gameLevel > 10)
             {
@@ -275,7 +281,7 @@ export default class CardFactory
             }
         }
 
-        if(0 == cardType)
+        if(0 == level)
         {
             // 桥
             return this.getTrap(score + 1);
@@ -283,17 +289,18 @@ export default class CardFactory
         else
         {
             // 怪
-            return this.getWarrior(cardType, score);
+            return this.getWarrior(level, score);
         }
 
     }
      // 桥
     getTrap(score) {
-        return Card.GetNew(this.cardShapeFactory.getTrapCardShape(), this.game, CardScoreType.Trap, score)
+        return Card.GetNew(this.game, CardScoreType.Trap, 1, score);
     }
     // 怪
-    getWarrior(cardType, score) {
-        return Card.GetNew(this.cardShapeFactory.getEnemyCardShape(cardType), this.game, CardScoreType.Warrior, score)
+    getWarrior(level, score) 
+    {
+        return Card.GetNew(this.game, CardScoreType.Enemy, level, score);
     }
     // 获取桥的伤害
     static getTrapScore() 
@@ -312,22 +319,20 @@ export default class CardFactory
     }
     // boss
     getBoss() {
-        var i = this.cardShapeFactory.getBossCardShape(CardFactory.generateBossPower()),
-        o = 8 + GameStatus.gameLevel;
-        return Card.GetNew(i, this.game, CardScoreType.Warrior, o)
+        var level = CardFactory.generateBossPower();
+        var score = 8 + GameStatus.gameLevel;
+        return Card.GetNew(this.game, CardScoreType.Boss, level, score)
     }
     // 宝箱
     getChestCard() {
-        var e = CardScoreType.Chest,
-        i = this.cardShapeFactory.getPowerUpCardShape(e, 0);
-        return Card.GetNew(i, this.game, e, 0)
+        return Card.GetNew(this.game, CardScoreType.Chest, 1, 0);
     }
     // 金币
     getCoinCard(score) {
-        var i = CardScoreType.Gold;
-        0 === score && (score = this.generateCardScore(i));
-        var o = this.cardShapeFactory.getPowerUpCardShape(i, score);
-        return Card.GetNew(o, this.game, i, score)
+        var cardScoreType = CardScoreType.Gold;
+        0 === score && (score = this.generateCardScore(cardScoreType));
+        var level = score < 6 ? 1 : 2;
+        return Card.GetNew(this.game, cardScoreType, level, score);
     }
 
     // 生成Boss卡牌类型

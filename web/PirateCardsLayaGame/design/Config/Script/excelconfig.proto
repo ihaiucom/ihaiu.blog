@@ -29,6 +29,28 @@ message Global
 	bool wordCheck = 13;
 }
 
+message Card 
+{
+	int32 id = 1;
+	string scoreTypeKey = 2;
+	string en_name = 3;
+	string zh_cn_name = 4;
+	int32 level = 5;
+	string sprite = 6;
+}
+
+message CardScoreType 
+{
+	int32 id = 1;
+	string key = 2;
+	string zh_cn_name = 3;
+	int32 backgroundType = 4;
+	string frontView = 5;
+	bool isInChest = 6;
+	bool isInBarrel = 7;
+	bool isPowerUp = 8;
+}
+
 message Loader 
 {
 	int32 id = 1;
@@ -85,9 +107,11 @@ message Unlock
 message ConfigMng
 {
 	Global Global = 1;
-	map<int32,Loader> Loader = 2;
-	map<int32,Menu> Menu = 3;
-	map<int32,Msg> Msg = 4;
-	map<int32,Unlock> Unlock = 5;
+	map<int32,Card> Card = 2;
+	map<int32,CardScoreType> CardScoreType = 3;
+	map<int32,Loader> Loader = 4;
+	map<int32,Menu> Menu = 5;
+	map<int32,Msg> Msg = 6;
+	map<int32,Unlock> Unlock = 7;
 
 }

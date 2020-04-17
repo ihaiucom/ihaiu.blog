@@ -16,6 +16,7 @@ import { MoveType } from "../Enums/MoveType";
 import { CardPositionType } from "../Enums/CardPositionType";
 import TweenUtil from "../Utils/TweenUtil";
 import TweenContainer from "../Utils/TweenContainer";
+import Hero from "./Hero";
 
 export default class Field
 {
@@ -236,25 +237,21 @@ export default class Field
     // 获取英雄Card
     getHero(): Hero
     {
-        return this.field.get(this.getHeroPosition())
+        return <Hero>this.field.get(this.getHeroPosition())
     }
 
     // 获取英雄FieldPosition
     getHeroPosition() 
     {
-        return this.field.getPosition(function(card) 
-        {
-            return card instanceof Hero;
-        })
+        return this.field.findHeroPosition();
     }
 
     // 获取战斗卡牌
-    getCardToFight (moveTyp: MoveType) 
+    getCardToFight (moveType: MoveType):Card
     {
-        var position = this.field.getPosition(function(e) {
-            return e instanceof Hero
-        });
-        if (null != position) {
+        var position = this.field.findHeroPosition();
+        if (null != position) 
+        {
             var position2 = position.getNewPosition(moveType);
             if (this.field.isPositionValid(position2)) 
             {
@@ -350,7 +347,7 @@ export default class Field
         else 
         {
             // 如果是Boss，游戏关卡等级加1
-            card.isBoss() && GameStatus.gameLevel++;
+            card.isBoss && GameStatus.gameLevel++;
 
             var cardPositionType = this.getCardPositionType(moveType, heroPosition);
             var replaceCard = this.getCardToReplace(card);
@@ -522,9 +519,11 @@ export default class Field
         }
         return e
     }
-    isBossInTheField () {
-        return this.field.any(function(e) {
-            return ! (e instanceof NullCard) && e.view.getByName(Consts.CardManAnimation) instanceof Boss
+    isBossInTheField () 
+    {
+        return this.field.any(function(card:Card) 
+        {
+            return card.isBoss;
         })
     }
 
@@ -547,10 +546,10 @@ export default class Field
     }
 
     stepUpdate () {
-        for (var e = 0,
-        cardList = this.field.getAll(); e < cardList.length; e++) {
-            var card = cardList[e];
-            card.view.getByName(Consts.CardManAnimation) instanceof Boss && this.cardFactory.container.bringToTop(card.view),
+        for (var i = 0, cardList = this.field.getAll(); i < cardList.length; i++) 
+        {
+            var card = cardList[i];
+            // card.view.getByName(Consts.CardManAnimation) instanceof Boss && this.cardFactory.container.bringToTop(card.view),
             card.stepUpdate()
         }
     }
@@ -693,7 +692,7 @@ export default class Field
         }
 
         // 如果是Boss , 关卡等级+1
-        oldCard.isBoss() && GameStatus.gameLevel++;
+        oldCard.isBoss && GameStatus.gameLevel++;
         // 设置新卡牌到对应位置
         this.moveAndSet(fieldPosition, card);
 

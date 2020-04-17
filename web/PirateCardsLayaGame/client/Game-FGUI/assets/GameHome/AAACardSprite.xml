@@ -60,5 +60,6 @@
     <image id="n38_sqzy" name="n38" src="sqzyg" fileName="sprite/game2/enemy_80000.png" xy="496,2388"/>
     <movieclip id="n40_sqzy" name="n40" src="sqzy9r" fileName="Fx/MVEnemy_9_vane0000.jta" xy="648,2473"/>
     <image id="n39_sqzy" name="n39" src="sqzyh" fileName="sprite/game2/enemy_90000.png" xy="686,2389"/>
+    <movieclip id="n41_sqzy" name="n41" src="sqzy9o" fileName="Fx/MVSkull.jta" xy="9,798"/>
   </displayList>
 </component>

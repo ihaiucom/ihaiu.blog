@@ -9,9 +9,8 @@ import CardShield from "../../Extends/GameHome/CardShield";
 import CardShopBar from "../../Extends/GameHome/CardShopBar";
 import CardViewFrontHero from "../../Extends/GameHome/CardViewFrontHero";
 
-export default class CardViewFrontHeroStruct extends fgui.GButton
+export default class CardViewFrontHeroStruct extends fgui.GComponent
 {
-	public m_bg : fgui.GLoader;
 	public m_icon : HeroSprite;
 	public m_life : CardLifeHero;
 	public m_shield : CardShield;
@@ -40,7 +39,6 @@ export default class CardViewFrontHeroStruct extends fgui.GButton
 		
 
 		
-		this.m_bg = <fgui.GLoader><any>(this.getChild("bg"));
 		this.m_icon = <HeroSprite><any>(this.getChild("icon"));
 		this.m_life = <CardLifeHero><any>(this.getChild("life"));
 		this.m_shield = <CardShield><any>(this.getChild("shield"));

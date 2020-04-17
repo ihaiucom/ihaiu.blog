@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component size="209,229" pivot="0.5,0.5" anchor="true" extention="Button">
+<component size="209,229" pivot="0.5,0.5" anchor="true">
   <displayList>
-    <loader id="n1_sqzy" name="bg" xy="104,114" pivot="0.5,0.5" anchor="true" size="209,229" url="ui://moe42ygrsqzy2s"/>
     <component id="n9_sqzy" name="icon" src="sqzy8m" fileName="HeroCard/HeroSprite.xml" xy="40,32" controller="sprite,0"/>
     <component id="n2_sqzy" name="life" src="sqzy9u" fileName="Card/CardLifeHero.xml" xy="7,2"/>
     <component id="n3_sqzy" name="shield" src="sqzya0" fileName="Card/CardShield.xml" xy="150,-18"/>
     <component id="n4_sqzy" name="shopBar" src="sqzya1" fileName="Card/CardShopBar.xml" xy="39,185"/>
   </displayList>
-  <Button downEffect="scale" downEffectValue="0.99"/>
 </component>

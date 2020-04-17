@@ -2,6 +2,16 @@
 declare namespace excelconfigSources
 {
 
+	class Card extends excelconfig.Card 
+    {
+
+    }
+
+	class CardScoreType extends excelconfig.CardScoreType 
+    {
+
+    }
+
 	class Loader extends excelconfig.Loader 
     {
 

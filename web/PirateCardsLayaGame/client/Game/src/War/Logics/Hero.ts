@@ -6,6 +6,7 @@ import SoundConsts from "../Enums/SoundConsts";
 import ArrayUtils from "../Utils/ArrayUtils";
 import ArtConsts from "../Enums/ArtConsts";
 import SoundController from "./SoundController";
+import { HeroType } from "../Enums/HeroType";
 
 export default class Hero extends Card
 {
@@ -16,49 +17,114 @@ export default class Hero extends Card
 
     needRunLightning: boolean = false;
     lightningScore: number = 0;
+
+    //  CardScoreType.Cannon
+    needShoot: boolean = false;
+    shootScore: number = 0;
+
+    // CardScoreType.Multiplier
+    needShootMultiplier: boolean = false;
+    multiplierScore: number = 0;
+
+
+    // CardScoreType.Skull
+    needShootSkull: boolean = false;
     
-    fight(card: Card) {
+    fight(card: Card) 
+    {
         var fightResult = new FightResult(true, false, true);
-        switch (card.type) {
+        switch (card.type) 
+        {
         case CardScoreType.Trap:
-            card.getLife() > 0 && GameStatus.currentHero != t.HeroType.Gun && (SoundController.instance.playSound(SoundConsts.Trap), this.currentLife > card.getScore() ? (this.currentLife -= card.getScore(), GameStatus.addGold(card.getScore()), fightResult.isHeroAlive = !0) : fightResult.isHeroAlive = !1);
+            if(card.getLife() > 0 &&  GameStatus.currentHero != HeroType.Gun)
+            {
+                SoundController.instance.playSound(SoundConsts.Trap);
+                if(this.currentLife > card.getScore())
+                {
+                    this.currentLife -= card.getScore();
+                    GameStatus.addGold(card.getScore());
+                    fightResult.isHeroAlive = true;
+                }
+                else
+                {
+                    fightResult.isHeroAlive = false;
+                }
+            }
             break;
         case CardScoreType.Warrior:
-            SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Hit1, SoundConsts.Hit2])),
-            fightResult.isHeroAlive = this.fightWithEnemy(card),
-            fightResult.isHeroAlive && card.isBoss() && (fightResult.isNeedIncreaseLifeByOneAfterBoss = !0);
+        case CardScoreType.Boss:
+        case CardScoreType.Enemy:
+            SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Hit1, SoundConsts.Hit2]));
+            fightResult.isHeroAlive = this.fightWithEnemy(card);
+            if(fightResult.isHeroAlive && card.isBoss)
+            {
+                fightResult.isNeedIncreaseLifeByOneAfterBoss =  true;
+            }
             break;
         case CardScoreType.Armor:
             card.getScore(),
-            SoundController.instance.playSound(SoundConsts.ShieldWood),
-            GameStatus.currentHero == t.HeroType.Gun ? this.needSmashLightning(card.getScore()) : this.armor < card.getScore() ? (this.armor = card.getScore(), this.setArmorFrame(card)) : GameStatus.currentHero == t.HeroType.Base && this.armor++;
+            SoundController.instance.playSound(SoundConsts.ShieldWood);
+            if(GameStatus.currentHero == HeroType.Gun )
+            {
+                this.needSmashLightning(card.getScore());
+            }
+            else
+            {
+                if(this.armor < card.getScore() )
+                {
+                    this.armor = card.getScore();
+                    this.setArmorFrame(card);
+                }
+                else if(GameStatus.currentHero == HeroType.Base)
+                {
+                    this.armor++;
+                }
+            }
             break;
         case CardScoreType.Gold:
-            card.view.getByName(t.Consts.CardManAnimation) instanceof t.Coin ? SoundController.instance.playSound(SoundConsts.Coin) : SoundController.instance.playSound(SoundConsts.CoinsBag),
+            if(card.level == 1)
+            {
+                SoundController.instance.playSound(SoundConsts.Coin);
+            }
+            else
+            {
+                SoundController.instance.playSound(SoundConsts.CoinsBag);
+            }
             GameStatus.addGold(card.getScore());
             break;
         case CardScoreType.Health:
-            SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Health1, SoundConsts.Health2])),
-            this.currentLife += card.getScore(),
-            this.currentLife > this.totalLife && (this.currentLife = this.totalLife);
+            SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Health1, SoundConsts.Health2]));
+            this.currentLife += card.getScore();
+            if(this.currentLife > this.totalLife)
+            {
+                this.currentLife = this.totalLife;
+            }
             break;
         case CardScoreType.Cannon:
-            this.needShoot = !0,
+            this.needShoot = true,
             this.shootScore = card.getScore();
             break;
         case CardScoreType.Chest:
-            fightResult.isChest = !0;
+            fightResult.isChest = true;
             break;
         case CardScoreType.Poison:
-            if (SoundController.instance.playSound(SoundConsts.Poison), GameStatus.isLuck) return fightResult.isHeroAlive = !0,
-            this.useLuck(),
-            fightResult;
-            if (card.getScore() >= this.currentLife) return fightResult.isHeroAlive = !1,
-            fightResult;
+            SoundController.instance.playSound(SoundConsts.Poison);
+            if (GameStatus.isLuck)
+            {
+                fightResult.isHeroAlive = true;
+                this.useLuck();
+                return fightResult;
+            } 
+
+            if (card.getScore() >= this.currentLife) 
+            {
+                fightResult.isHeroAlive = false;
+                return fightResult;
+            }
             this.currentLife -= card.getScore();
             break;
         case CardScoreType.Horseshoe:
-            fightResult.isNeedIncreaseLifeByOne = !0;
+            fightResult.isNeedIncreaseLifeByOne = true;
             break;
         case CardScoreType.Bomb:
             break;
@@ -66,27 +132,30 @@ export default class Hero extends Card
             this.needSmashLightning(card.getScore());
             break;
         case CardScoreType.Multiplier:
-            this.needShootMultiplier = !0,
+            this.needShootMultiplier = true,
             this.multiplierScore = card.getScore();
             break;
         case CardScoreType.Skull:
-            this.needShootSkull = !0;
+            this.needShootSkull = true;
             break;
         case CardScoreType.Barrel:
-            SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Barrel1, SoundConsts.Barrel2])),
-            fightResult.isMove = !1
+            SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Barrel1, SoundConsts.Barrel2]));
+            fightResult.isMove = false;
         }
-        return this.setStatus(),
-        fightResult
+        this.setStatus();
+        return fightResult;
     }
+
     needSmashLightning(score) {
         this.needRunLightning =  true,
         this.lightningScore = score
     }
-    setStatus() {
+    setStatus() 
+    {
         this.setLife(),
         this.setArmor()
     }
+
     stepUpdate() {}
     getScore() {
         return this.currentLife + this.armor
@@ -129,9 +198,7 @@ export default class Hero extends Card
         var e = this.view.getByName(t);
         e && e.destroy()
     }
-    setLife() {
-        this.getCardLifeText().setText(this.currentLife + "/" + this.totalLife)
-    }
+    
     setArmor() {
         var e = this.view.getByName(t.Consts.PowerUpCircle);
         e.visible && 0 == this.armor ? this.hideSprite(e) : e.visible = !0;
@@ -181,7 +248,7 @@ export default class Hero extends Card
     }
     fightWithEnemy(e) {
         if (e.getScore() >= this.armor + this.currentLife) return ! 1;
-        if (e.getScore() <= this.armor) e.getScore() < this.armor && GameStatus.currentHero == t.HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
+        if (e.getScore() <= this.armor) e.getScore() < this.armor && GameStatus.currentHero == HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
         else if (this.armor > 0) {
             var i = e.getScore() - this.armor;
             this.armor = 0,
@@ -223,8 +290,9 @@ export default class Hero extends Card
         this.totalLife++,
         this.setLife()
     }
-    useLuck() {
-        GameStatus.isLuck = !1;
+    useLuck() 
+    {
+        GameStatus.isLuck = false;
         var e = this.view.getByName(ArtConsts.SmallLuck),
         i = this.game.add.tween(e).to({
             width: 1.5 * e.width,

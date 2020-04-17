@@ -55,6 +55,59 @@ export default class FieldItems
         return list
     }
 
+    findHeroCard(): Card
+    {
+        var item: Card;
+        for (var y = 0; y < this.rowCount; y++) 
+        {
+            for (var x = 0; x < this.columnCount; x++) 
+            {
+                item = this.items[x][y];
+                if(item.isHero)
+                {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    findHeroPosition(): FieldPosition
+    {
+        var item: Card;
+        for (var y = 0; y < this.rowCount; y++)
+        {
+            for (var x = 0; x < this.columnCount; x++) 
+            {
+                item = this.items[x][y];
+                if(item.isHero)
+                {
+                    return new FieldPosition(x, y);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    findPosition(card:Card)
+    {
+        var item: Card;
+        for (var y = 0; y < this.rowCount; y++)
+        {
+            for (var x = 0; x < this.columnCount; x++) 
+            {
+                item = this.items[x][y];
+                if(item == card)
+                {
+                    var filedPosition = new FieldPosition(x, y);
+                    return filedPosition;
+                }
+            }
+        }
+        return null;
+    }
+
     getPosition(    filterFun: (card:Card) => boolean    ) : FieldPosition
     {
         for (var y = 0; y < this.rowCount; y++)

@@ -4,8 +4,9 @@ import ExcelConfigReader from "../ExcelConfigReader";
 import MsgConfig from "../ConfigExtends/MsgConfig";
 export default class MsgConfigReader extends ExcelConfigReader<MsgConfig>
 {
+    
     // 配置字典
-    configsByKey: Dictionary<TKey, MsgConfig> = new Dictionary<TKey, MsgConfig>();
+    configsByKey: Map<TKey, MsgConfig> = new Map<TKey, MsgConfig>();
 
     onGameLoadedAll()
     {
@@ -19,15 +20,14 @@ export default class MsgConfigReader extends ExcelConfigReader<MsgConfig>
                 key = list[i].id;
             }
 
-            this.configsByKey.add(key, list[i]);
+            this.configsByKey.set(key, list[i]);
         }
     }
 
-
-
+    
     getConfig(key: TKey)
     {
-        if (!this.configsByKey.hasKey(key))
+        if (!this.configsByKey.has(key))
         {
             if (this.hasConfig(key))
             {
@@ -35,7 +35,7 @@ export default class MsgConfigReader extends ExcelConfigReader<MsgConfig>
             }
             console.log(`${this.tableName} 没有 key=${key} 的配置`);
         }
-        return this.configsByKey.getValue(key);
+        return this.configsByKey.get(key);
     }
 
     getTxt(key: TKey): string

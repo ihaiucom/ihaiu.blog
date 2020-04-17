@@ -152,6 +152,7 @@ export default class GuiResPackageConfigReader
             config.resBin = "GameHome.bin";
             config.resAtlas.push("GameHome_atlas0.png");
             config.resAtlas.push("GameHome_atlas0_1.png");
+            config.resAtlas.push("GameHome_atlas0_2.png");
             config.sounds.push("GameHome_sqzy7p.mp3");
             this.addconfig(config)
 

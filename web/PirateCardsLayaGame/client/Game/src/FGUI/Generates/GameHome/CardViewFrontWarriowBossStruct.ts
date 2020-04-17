@@ -9,7 +9,6 @@ import CardViewFrontWarriowBoss from "../../Extends/GameHome/CardViewFrontWarrio
 
 export default class CardViewFrontWarriowBossStruct extends fgui.GButton
 {
-	public m_bg : fgui.GLoader;
 	public m_icon : SpriteBoss;
 	public m_life : CardLifeWarriow;
 
@@ -36,7 +35,6 @@ export default class CardViewFrontWarriowBossStruct extends fgui.GButton
 		
 
 		
-		this.m_bg = <fgui.GLoader><any>(this.getChild("bg"));
 		this.m_icon = <SpriteBoss><any>(this.getChild("icon"));
 		this.m_life = <CardLifeWarriow><any>(this.getChild("life"));
 		

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="209,229" pivot="0.5,0.5" anchor="true" extention="Button">
+  <controller name="state" exported="true" pages="0,Open,1,Close" selected="0"/>
+  <displayList>
+    <loader id="n4_sqzy" name="icon" xy="104,214" pivot="0.5,1" anchor="true" size="172,199" url="ui://moe42ygrsqzy16" align="center" vAlign="bottom" autoSize="true">
+      <gearIcon controller="state" pages="1" values="ui://moe42ygrsqzy19" default="ui://moe42ygrsqzy16"/>
+    </loader>
+    <component id="n2_sqzy" name="life" src="sqzy9x" fileName="Card/CardLifeWarriow.xml" xy="3,1"/>
+  </displayList>
+  <Button downEffect="scale" downEffectValue="0.99"/>
+  <transition name="DoClose">
+    <item time="0" type="Icon" target="n4_sqzy" value="ui://moe42ygrsqzy16"/>
+    <item time="3" type="Icon" target="n4_sqzy" value="ui://moe42ygrsqzy17"/>
+    <item time="6" type="Icon" target="n4_sqzy" value="ui://moe42ygrsqzy18"/>
+    <item time="9" type="Icon" target="n4_sqzy" value="ui://moe42ygrsqzy19"/>
+  </transition>
+  <transition name="DoOpen">
+    <item time="0" type="Icon" target="n4_sqzy" value="ui://moe42ygrsqzy19"/>
+    <item time="3" type="Icon" target="n4_sqzy" value="ui://moe42ygrsqzy18"/>
+    <item time="6" type="Icon" target="n4_sqzy" value="ui://moe42ygrsqzy17"/>
+    <item time="9" type="Icon" target="n4_sqzy" value="ui://moe42ygrsqzy16"/>
+  </transition>
+</component>

@@ -22,6 +22,24 @@ namespace configs{
 		public worldMailMaxCnt : number = 0;
 		public wordCheck : boolean = false;
 	}
+	export class ConfigCard {
+		public id : number = 0;
+		public scoreTypeKey : string = "";
+		public en_name : string = "";
+		public zh_cn_name : string = "";
+		public level : number = 0;
+		public sprite : string = "";
+	}
+	export class ConfigCardScoreType {
+		public id : number = 0;
+		public key : string = "";
+		public zh_cn_name : string = "";
+		public backgroundType : number = 0;
+		public frontView : string = "";
+		public isInChest : boolean = false;
+		public isInBarrel : boolean = false;
+		public isPowerUp : boolean = false;
+	}
 	export class ConfigLoader {
 		public id : number = 0;
 		public name : string = "";
@@ -70,6 +88,8 @@ namespace configs{
 	export class ConfigManager {
 		private m_Global : ConfigGlobal = null;
 		private m_ErrStr : Map<number, string > = null;
+		private m_Card : Map<number, ConfigCard > = null;
+		private m_CardScoreType : Map<number, ConfigCardScoreType > = null;
 		private m_Loader : Map<number, ConfigLoader > = null;
 		private m_Menu : Map<number, ConfigMenu > = null;
 		private m_Msg : Map<number, ConfigMsg > = null;
@@ -83,6 +103,14 @@ namespace configs{
 			return this.m_Global;
 		}
 				
+		public get Card(){
+			return this.m_Card;
+		}
+	
+		public get CardScoreType(){
+			return this.m_CardScoreType;
+		}
+	
 		public get Loader(){
 			return this.m_Loader;
 		}
@@ -107,6 +135,22 @@ namespace configs{
 			return obj;
 		}
 		
+		public getCard(id: number): ConfigCard {
+			let obj = this.m_Card[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
+		public getCardScoreType(id: number): ConfigCardScoreType {
+			let obj = this.m_CardScoreType[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
 		public getLoader(id: number): ConfigLoader {
 			let obj = this.m_Loader[id];
 			if (obj == null){

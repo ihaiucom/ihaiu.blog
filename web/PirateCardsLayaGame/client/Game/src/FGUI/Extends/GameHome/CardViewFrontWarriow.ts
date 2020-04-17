@@ -5,6 +5,31 @@
 
 import CardViewFrontWarriowStruct from "../../Generates/GameHome/CardViewFrontWarriowStruct";
 
+import CardConfig from "../../../Config/ConfigExtends/CardConfig";
+import Card from "../../../War/Logics/Card";
+import CardView from "./CardView";
+
 export default class CardViewFrontWarriow extends CardViewFrontWarriowStruct
 {
+    cardView: CardView;
+    cardConfig: CardConfig;
+    card: Card;
+
+    SetConfig(cardConfig: CardConfig)
+    {
+        this.cardConfig = cardConfig;
+        this.m_icon.url = cardConfig.spriteUrl;
+    }
+
+    SetCard(card: Card)
+    {
+        this.card = card;
+    }
+
+    OnRecover()
+    {
+        this.cardView = null;
+        this.cardConfig = null;
+        this.card = null;
+    }
 }

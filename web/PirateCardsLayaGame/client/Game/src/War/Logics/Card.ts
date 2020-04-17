@@ -12,6 +12,9 @@ import SoundConsts from "../Enums/SoundConsts";
 import TweenContainer from "../Utils/TweenContainer";
 import CardViewFrontWarriowBoss from "../../FGUI/Extends/GameHome/CardViewFrontWarriowBoss";
 import CardViewBack from "../../FGUI/Extends/GameHome/CardViewBack";
+import CardConfig from "../../Config/ConfigExtends/CardConfig";
+import { CardBackgroundType } from "../Enums/CardBackgroundType";
+import Game from "../../Game";
 
 export default class Card
 {
@@ -20,16 +23,18 @@ export default class Card
     {
         var card = <Card> Pool.createByClass(Card);
         card.game = game;
-        card.view = CardViewBack.createInstance();
         card.type = CardScoreType.None;
+        card.SetEmpty();
         return card;
     }
-    static GetNew(frontView, game, cardScoreType: CardScoreType, score: number) {
+    static GetNew(game, cardScoreType: CardScoreType, level: number, score: number) {
         
+        var config: CardConfig = Game.config.card.getTypeLevelConfig(cardScoreType, level);
+
         var card = <Card> Pool.createByClass(Card);
         card.game = game;
-        card.view = frontView;
         card.type = cardScoreType;
+        card.SetConfig(config);
         // card.setScore(score),
         GameStatus.updateCardCounter(cardScoreType),
         GameStatus.updateMovesAfterSpecialCard(cardScoreType);
@@ -39,25 +44,70 @@ export default class Card
 
 
     game: WarGame;
-    view: CardView | any;
+    config: CardConfig;
+    type: CardScoreType = CardScoreType.None;
+    view: CardView;
     
     isOnClickInitiated = false;
     powerUpAmount = 0;
     lifeAmount = 0;
-    type: CardScoreType = CardScoreType.None;
     initialLife: number = 0;
+
+    // 是否是打开状态
+    isOpen: boolean = false;
+    
 
     
     constructor()
     {
+        this.view = CardView.PoolGet();
+    }
+
+    SetEmpty()
+    {
+        this.SetConfig(null);
+    }
+
+    SetConfig(config: CardConfig)
+    {
+        this.config = config;
+        this.view.game = this.game;
+        this.view.SetConfig(config);
+        this.view.SetCard(this);
+    }
+
+    get isEmpty()
+    {
+        return this.type == CardScoreType.None;
+    }
+
+    get isHero(): boolean
+    {
+        return this.type == CardScoreType.Hero;
+    }
+
+    get isBoss(): boolean
+    {
+        return this.type == CardScoreType.Boss;
+    }
+
+    get isTrap(): boolean
+    {
+        return this.type == CardScoreType.Trap;
+    }
+
+    get level(): number
+    {
+        return this.config.level;
     }
 
 
-    stepUpdate() {
-        var e = this.view.getByName(Consts.CardManAnimation);
-        if (e instanceof Trap) {
-            var i = e.changeStatus(),
-            o = GameStatus.currentHero == HeroType.Gun;
+    stepUpdate() 
+    {
+        if (this.isTrap) 
+        {
+            this.changeStatus();
+            var isGrun = GameStatus.currentHero == HeroType.Gun;
             this.lifeAmount = o ? 0 : i ? this.powerUpAmount: 0,
             this.setHealthText()
         }
@@ -65,6 +115,21 @@ export default class Card
         this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
         this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
     }
+
+    changeStatus()
+    {
+        if(this.isOpen)
+        {
+            this.view.setClose()
+            this.isOpen = false;
+        }
+        else
+        {
+            this.view.setClose()
+            this.isOpen = true;
+        }
+    }
+
     getScore() {
         return this.type == CardScoreType.Trap ? this.lifeAmount: this.lifeAmount + this.powerUpAmount
     }
@@ -74,7 +139,8 @@ export default class Card
     getPowerUp() {
         return this.powerUpAmount
     }
-    multiplyScore(t) {
+    multiplyScore(t) 
+    {
         return this.lifeAmount > 0 ? this.getScaleTween(this.getCardLifeText(), this.increaseLife, t) : this.powerUpAmount > 0 ? this.getScaleTween(this.getPowerUpText(), this.increasePowerUp, t) : null
     }
     increaseLife(e, i, o) {
@@ -133,13 +199,16 @@ export default class Card
         this.powerUpAmount = t,
         this.setPowerUpText()
     }
-    setLife(t) {
-        this.lifeAmount = t,
+    setLife(val?: number) {
+        if(val != undefined)
+        {
+            this.lifeAmount = val;
+        }
         this.setHealthText()
     }
-    setHealthText() {
-        var t = this.getCardLifeText();
-        t && t && t.setText(this.lifeAmount.toString())
+    setHealthText() 
+    {
+        this.view.setHealthText();
     }
     setPowerUpText() {
         var t = this.getPowerUpText();
@@ -174,9 +243,7 @@ export default class Card
             return ! 1
         }
     }
-    isBoss() {
-        return this.type == CardScoreType.Warrior && this.view.front instanceof CardViewFrontWarriowBoss;
-    }
+
     getGoldValue() {
         return this.initialLife
     }
@@ -239,5 +306,23 @@ export default class Card
     removeShapeFromStage()
     {
         this.view.removeFromParent();
+    }
+
+    getScaleTween(view, e) 
+    {
+        for (var i = [], o = 2; o < arguments.length; o++) i[o - 2] = arguments[o];
+        var n, s = this.game.add.tween(view.scale).to({
+            x: 2.5,
+            y: 2.5
+        },
+        200),
+        a = this.game.add.tween(view.scale).to({
+            x: 1,
+            y: 1
+        },
+        200);
+        return (n = s.onComplete).add.apply(n, [e, this, null].concat(i)),
+        s.chain(a),
+        s
     }
 }

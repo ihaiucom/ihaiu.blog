@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="209,229" pivot="0.5,0.5" anchor="true">
+  <displayList>
+    <movieclip id="n8_sqzy" name="fx" src="sqzy9o" fileName="Fx/MVSkull.jta" xy="66,75"/>
+    <component id="n2_sqzy" name="life" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="4,173"/>
+  </displayList>
+</component>

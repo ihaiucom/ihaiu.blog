@@ -75,6 +75,62 @@ declare module excelconfig {
 	    public static toObject(message: Global, options?: $protobuf.IConversionOptions): { [k: string]: any };
 	    public toJSON(): { [k: string]: any };
 	}
+	 interface ICard {
+	    id?: (number|null);
+	    scoreTypeKey?: (string|null);
+	    enName?: (string|null);
+	    zhCnName?: (string|null);
+	    level?: (number|null);
+	    sprite?: (string|null);
+	}
+	 class Card implements ICard {
+	    constructor(properties?: ICard);
+	    public id: number;
+	    public scoreTypeKey: string;
+	    public enName: string;
+	    public zhCnName: string;
+	    public level: number;
+	    public sprite: string;
+	    public static create(properties?: ICard): Card;
+	    public static encode(message: ICard, writer?: $protobuf.Writer): $protobuf.Writer;
+	    public static encodeDelimited(message: ICard, writer?: $protobuf.Writer): $protobuf.Writer;
+	    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Card;
+	    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Card;
+	    public static verify(message: { [k: string]: any }): (string|null);
+	    public static fromObject(object: { [k: string]: any }): Card;
+	    public static toObject(message: Card, options?: $protobuf.IConversionOptions): { [k: string]: any };
+	    public toJSON(): { [k: string]: any };
+	}
+	 interface ICardScoreType {
+	    id?: (number|null);
+	    key?: (string|null);
+	    zhCnName?: (string|null);
+	    backgroundType?: (number|null);
+	    frontView?: (string|null);
+	    isInChest?: (boolean|null);
+	    isInBarrel?: (boolean|null);
+	    isPowerUp?: (boolean|null);
+	}
+	 class CardScoreType implements ICardScoreType {
+	    constructor(properties?: ICardScoreType);
+	    public id: number;
+	    public key: string;
+	    public zhCnName: string;
+	    public backgroundType: number;
+	    public frontView: string;
+	    public isInChest: boolean;
+	    public isInBarrel: boolean;
+	    public isPowerUp: boolean;
+	    public static create(properties?: ICardScoreType): CardScoreType;
+	    public static encode(message: ICardScoreType, writer?: $protobuf.Writer): $protobuf.Writer;
+	    public static encodeDelimited(message: ICardScoreType, writer?: $protobuf.Writer): $protobuf.Writer;
+	    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): CardScoreType;
+	    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): CardScoreType;
+	    public static verify(message: { [k: string]: any }): (string|null);
+	    public static fromObject(object: { [k: string]: any }): CardScoreType;
+	    public static toObject(message: CardScoreType, options?: $protobuf.IConversionOptions): { [k: string]: any };
+	    public toJSON(): { [k: string]: any };
+	}
 	 interface ILoader {
 	    id?: (number|null);
 	    name?: (string|null);
@@ -205,6 +261,8 @@ declare module excelconfig {
 	}
 	 interface IConfigMng {
 	    Global?: (IGlobal|null);
+	    Card?: ({ [k: string]: ICard }|null);
+	    CardScoreType?: ({ [k: string]: ICardScoreType }|null);
 	    Loader?: ({ [k: string]: ILoader }|null);
 	    Menu?: ({ [k: string]: IMenu }|null);
 	    Msg?: ({ [k: string]: IMsg }|null);
@@ -213,6 +271,8 @@ declare module excelconfig {
 	 class ConfigMng implements IConfigMng {
 	    constructor(properties?: IConfigMng);
 	    public Global?: (IGlobal|null);
+	    public Card: { [k: string]: ICard };
+	    public CardScoreType: { [k: string]: ICardScoreType };
 	    public Loader: { [k: string]: ILoader };
 	    public Menu: { [k: string]: IMenu };
 	    public Msg: { [k: string]: IMsg };

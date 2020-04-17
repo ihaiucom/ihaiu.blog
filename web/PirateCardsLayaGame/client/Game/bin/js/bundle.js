@@ -34,6 +34,28 @@
     GameConfig.isAntialias = true;
     GameConfig.init();
 
+    class CardConfigLang extends excelconfigSources.Card {
+        get name() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnName;
+            let value = Game.lang.getValue('Card', this.id, 'zhCnName');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnName;
+        }
+    }
+    class CardScoreTypeConfigLang extends excelconfigSources.CardScoreType {
+        get name() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnName;
+            let value = Game.lang.getValue('CardScoreType', this.id, 'zhCnName');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnName;
+        }
+    }
     class LoaderConfigLang extends excelconfigSources.Loader {
     }
     class MenuConfigLang extends excelconfigSources.Menu {
@@ -68,6 +90,505 @@
             }
             return this.zhCnName;
         }
+    }
+
+    class CardViewStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardView"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+        }
+    }
+    CardViewStruct.URL = "ui://moe42ygrsqzy9s";
+    CardViewStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontBgStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontBg"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_state = this.getController("state");
+            this.m_icon = (this.getChild("icon"));
+        }
+    }
+    CardViewFrontBgStruct.URL = "ui://moe42ygrsqzya8";
+    CardViewFrontBgStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontBg extends CardViewFrontBgStruct {
+    }
+
+    class CardViewFrontHeroStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontHero"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+            this.m_shield = (this.getChild("shield"));
+            this.m_shopBar = (this.getChild("shopBar"));
+        }
+    }
+    CardViewFrontHeroStruct.URL = "ui://moe42ygrsqzy9v";
+    CardViewFrontHeroStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontHero extends CardViewFrontHeroStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+            this.m_icon.m_sprite.setSelectedIndex(cardConfig.id % 100 - 1);
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontPowerUpStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontPowerUp"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontPowerUpStruct.URL = "ui://moe42ygrsqzyaa";
+    CardViewFrontPowerUpStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontPowerUp extends CardViewFrontPowerUpStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+            this.m_icon.url = cardConfig.spriteUrl;
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontPowerUpBarrelStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontPowerUpBarrel"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = (this.getChild("icon"));
+            this.m_openFx = (this.getChild("openFx"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontPowerUpBarrelStruct.URL = "ui://moe42ygrsqzyab";
+    CardViewFrontPowerUpBarrelStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontPowerUpBarrel extends CardViewFrontPowerUpBarrelStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontPowerUpCannonStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontPowerUpCannon"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = (this.getChild("icon"));
+            this.m_fx = (this.getChild("fx"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontPowerUpCannonStruct.URL = "ui://moe42ygrsqzy9y";
+    CardViewFrontPowerUpCannonStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontPowerUpCannon extends CardViewFrontPowerUpCannonStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontPowerUpBombStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontPowerUpBomb"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = (this.getChild("icon"));
+            this.m_fx = (this.getChild("fx"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontPowerUpBombStruct.URL = "ui://moe42ygrsqzyad";
+    CardViewFrontPowerUpBombStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontPowerUpBomb extends CardViewFrontPowerUpBombStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontPowerUpChestStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontPowerUpChest"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_state = this.getController("state");
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontPowerUpChestStruct.URL = "ui://moe42ygrsqzyac";
+    CardViewFrontPowerUpChestStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontPowerUpChest extends CardViewFrontPowerUpChestStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontPowerUpSkullStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontPowerUpSkull"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_fx = (this.getChild("fx"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontPowerUpSkullStruct.URL = "ui://moe42ygrsqzyae";
+    CardViewFrontPowerUpSkullStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontPowerUpSkull extends CardViewFrontPowerUpSkullStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontWarriowBossStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowBoss"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontWarriowBossStruct.URL = "ui://moe42ygrsqzya6";
+    CardViewFrontWarriowBossStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontWarriowBoss extends CardViewFrontWarriowBossStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+            this.m_icon.m_sprite.setSelectedIndex(cardConfig.id % 100 - 1);
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontWarriowEnemyStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowEnemy"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontWarriowEnemyStruct.URL = "ui://moe42ygrsqzya3";
+    CardViewFrontWarriowEnemyStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontWarriowEnemy extends CardViewFrontWarriowEnemyStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+            this.m_icon.m_sprite.setSelectedIndex(cardConfig.id % 100 - 1);
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontWarriowTrapStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowTrap"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_state = this.getController("state");
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+            this.m_DoClose = this.getTransition("DoClose");
+            this.m_DoOpen = this.getTransition("DoOpen");
+        }
+    }
+    CardViewFrontWarriowTrapStruct.URL = "ui://moe42ygrsqzya9";
+    CardViewFrontWarriowTrapStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontWarriowTrap extends CardViewFrontWarriowTrapStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardViewFrontWarriowStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriow"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = (this.getChild("icon"));
+            this.m_life = (this.getChild("life"));
+        }
+    }
+    CardViewFrontWarriowStruct.URL = "ui://moe42ygrsqzy9w";
+    CardViewFrontWarriowStruct.DependPackages = ["GameHome"];
+
+    class CardViewFrontWarriow extends CardViewFrontWarriowStruct {
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+            this.m_icon.url = cardConfig.spriteUrl;
+        }
+        SetCard(card) {
+            this.card = card;
+        }
+        OnRecover() {
+            this.cardView = null;
+            this.cardConfig = null;
+            this.card = null;
+        }
+    }
+
+    class CardView extends CardViewStruct {
+        static get FrontClassMap() {
+            if (!this._FrontClassMap) {
+                var map = new Map();
+                this._FrontClassMap = map;
+                map.set("CardViewFrontHero", CardViewFrontHero);
+                map.set("CardViewFrontPowerUp", CardViewFrontPowerUp);
+                map.set("CardViewFrontPowerUpBarrel", CardViewFrontPowerUpBarrel);
+                map.set("CardViewFrontPowerUpBomb", CardViewFrontPowerUpBomb);
+                map.set("CardViewFrontPowerUpCannon", CardViewFrontPowerUpCannon);
+                map.set("CardViewFrontPowerUpChest", CardViewFrontPowerUpChest);
+                map.set("CardViewFrontPowerUpSkull", CardViewFrontPowerUpSkull);
+                map.set("CardViewFrontWarriow", CardViewFrontWarriow);
+                map.set("CardViewFrontWarriowBoss", CardViewFrontWarriowBoss);
+                map.set("CardViewFrontWarriowEnemy", CardViewFrontWarriowEnemy);
+                map.set("CardViewFrontWarriowTrap", CardViewFrontWarriowTrap);
+            }
+            return this._FrontClassMap;
+        }
+        static GetFrontClass(key) {
+            if (!this.FrontClassMap.has(key)) {
+                console.error("没有找到卡牌视图组件", key);
+                return CardViewFrontPowerUp;
+            }
+            return this.FrontClassMap.get(key);
+        }
+        static GetFrontView(key) {
+            var cls = CardView.GetFrontClass(key);
+            var item = Pool.getItem(cls.URL);
+            if (!item) {
+                item = cls.createInstance();
+            }
+            return item;
+        }
+        static GetSpriteUrl(name) {
+            return "ui://GameHome" + "/" + name;
+        }
+        static PoolGet() {
+            var item = Pool.getItem(this.URL);
+            if (!item) {
+                item = CardView.createInstance();
+            }
+            return item;
+        }
+        PoolRecover() {
+            if (this.front) {
+                this.front.removeFromParent();
+                var fun = this.front['OnRecover'];
+                if (fun) {
+                    fun.call(this.front);
+                }
+                var signal = this.front.constructor.URL;
+                Pool.recover(signal, this.front);
+                this.front = null;
+            }
+            this.cardConfig = null;
+            this.cardScoreConfig = null;
+            Pool.recover(CardView.URL, this);
+        }
+        constructor() {
+            super();
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.InitBg();
+        }
+        InitBg() {
+            this.bg = CardViewFrontBg.createInstance();
+            this.addChild(this.bg);
+            this.bg.setXY(this.width * 0.5, this.height * 0.5);
+        }
+        SetBg(type) {
+            this.bg.m_state.setSelectedIndex(type);
+        }
+        SetFront(frontComponentClassName) {
+            var view = CardView.GetFrontView(frontComponentClassName);
+            view.displayListContainer.mouseThrough = true;
+            view.displayListContainer.mouseEnabled = false;
+            view.cardView = this;
+            this.addChild(view);
+            view.setXY(this.width * 0.5, this.height * 0.5);
+            this.front = view;
+            var fun = this.front['SetConfig'];
+            if (fun) {
+                fun.call(this.front, this.cardConfig);
+            }
+        }
+        SetConfig(cardConfig) {
+            this.cardConfig = cardConfig;
+            var cardScoreConfig = this.cardScoreConfig = cardConfig.cardScoreConfig;
+            if (!cardScoreConfig || cardScoreConfig.backgroundType == undefined) {
+                console.error("!cardScoreConfig || cardScoreConfig.backgroundType == undefined", cardScoreConfig, cardConfig);
+            }
+            this.SetBg(cardScoreConfig.backgroundType);
+            this.SetFront(cardScoreConfig.frontView);
+        }
+        SetCard(card) {
+            this.card = card;
+            if (this.front) {
+                var fun = this.front['SetCard'];
+                if (fun) {
+                    fun.call(this.front, this.card);
+                }
+            }
+        }
+    }
+
+    class CardConfig extends CardConfigLang {
+        get cardScoreConfig() {
+            return Game.config.cardScoreType.getConfig(this.scoreTypeKey);
+        }
+        get spriteUrl() {
+            if (!this._spriteUrl) {
+                this._spriteUrl = CardView.GetSpriteUrl(this.sprite);
+            }
+            return this._spriteUrl;
+        }
+    }
+
+    class CardScoreTypeConfig extends CardScoreTypeConfigLang {
     }
 
     class LoaderConfig extends LoaderConfigLang {
@@ -2687,28 +3208,31 @@
     var CardScoreType;
     (function (CardScoreType) {
         CardScoreType[CardScoreType["None"] = 0] = "None";
-        CardScoreType[CardScoreType["Trap"] = 1] = "Trap";
-        CardScoreType[CardScoreType["Warrior"] = 2] = "Warrior";
-        CardScoreType[CardScoreType["Health"] = 3] = "Health";
-        CardScoreType[CardScoreType["Gold"] = 4] = "Gold";
-        CardScoreType[CardScoreType["Armor"] = 5] = "Armor";
-        CardScoreType[CardScoreType["Cannon"] = 6] = "Cannon";
-        CardScoreType[CardScoreType["Barrel"] = 7] = "Barrel";
-        CardScoreType[CardScoreType["Chest"] = 8] = "Chest";
-        CardScoreType[CardScoreType["Bomb"] = 9] = "Bomb";
-        CardScoreType[CardScoreType["Poison"] = 10] = "Poison";
-        CardScoreType[CardScoreType["Horseshoe"] = 11] = "Horseshoe";
-        CardScoreType[CardScoreType["Lightning"] = 12] = "Lightning";
-        CardScoreType[CardScoreType["Multiplier"] = 13] = "Multiplier";
-        CardScoreType[CardScoreType["Skull"] = 14] = "Skull";
+        CardScoreType[CardScoreType["Hero"] = 1] = "Hero";
+        CardScoreType[CardScoreType["Trap"] = 2] = "Trap";
+        CardScoreType[CardScoreType["Enemy"] = 3] = "Enemy";
+        CardScoreType[CardScoreType["Boss"] = 4] = "Boss";
+        CardScoreType[CardScoreType["Warrior"] = 3] = "Warrior";
+        CardScoreType[CardScoreType["Health"] = 5] = "Health";
+        CardScoreType[CardScoreType["Gold"] = 6] = "Gold";
+        CardScoreType[CardScoreType["Armor"] = 7] = "Armor";
+        CardScoreType[CardScoreType["Cannon"] = 8] = "Cannon";
+        CardScoreType[CardScoreType["Barrel"] = 9] = "Barrel";
+        CardScoreType[CardScoreType["Chest"] = 10] = "Chest";
+        CardScoreType[CardScoreType["Bomb"] = 11] = "Bomb";
+        CardScoreType[CardScoreType["Poison"] = 12] = "Poison";
+        CardScoreType[CardScoreType["Horseshoe"] = 13] = "Horseshoe";
+        CardScoreType[CardScoreType["Lightning"] = 14] = "Lightning";
+        CardScoreType[CardScoreType["Multiplier"] = 15] = "Multiplier";
+        CardScoreType[CardScoreType["Skull"] = 16] = "Skull";
     })(CardScoreType || (CardScoreType = {}));
 
     var HeroType;
     (function (HeroType) {
-        HeroType[HeroType["Base"] = 0] = "Base";
-        HeroType[HeroType["Bomb"] = 1] = "Bomb";
-        HeroType[HeroType["Gun"] = 2] = "Gun";
-        HeroType[HeroType["Key"] = 3] = "Key";
+        HeroType[HeroType["Base"] = 1] = "Base";
+        HeroType[HeroType["Bomb"] = 2] = "Bomb";
+        HeroType[HeroType["Gun"] = 3] = "Gun";
+        HeroType[HeroType["Key"] = 4] = "Key";
     })(HeroType || (HeroType = {}));
 
     class GMath {
@@ -3561,67 +4085,55 @@
     SoundConsts.Move02 = "move02";
     SoundConsts.Trap = "trap";
 
-    class CardViewFrontWarriowBossStruct extends fgui.GButton {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowBoss"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_bg = (this.getChild("bg"));
-            this.m_icon = (this.getChild("icon"));
-            this.m_life = (this.getChild("life"));
-        }
-    }
-    CardViewFrontWarriowBossStruct.URL = "ui://moe42ygrsqzya6";
-    CardViewFrontWarriowBossStruct.DependPackages = ["GameHome"];
-
-    class CardViewFrontWarriowBoss extends CardViewFrontWarriowBossStruct {
-    }
-
-    class CardViewBackStruct extends fgui.GComponent {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardViewBack"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_cardBack = (this.getChild("cardBack"));
-        }
-    }
-    CardViewBackStruct.URL = "ui://moe42ygrsqzya2";
-    CardViewBackStruct.DependPackages = ["GameHome"];
-
-    class CardViewBack extends CardViewBackStruct {
-    }
+    var CardBackgroundType;
+    (function (CardBackgroundType) {
+        CardBackgroundType[CardBackgroundType["Default"] = 0] = "Default";
+        CardBackgroundType[CardBackgroundType["Warrior"] = 1] = "Warrior";
+        CardBackgroundType[CardBackgroundType["Hero"] = 2] = "Hero";
+        CardBackgroundType[CardBackgroundType["PowerUp"] = 3] = "PowerUp";
+    })(CardBackgroundType || (CardBackgroundType = {}));
 
     class Card {
         constructor() {
+            this.type = CardScoreType.None;
             this.isOnClickInitiated = false;
             this.powerUpAmount = 0;
             this.lifeAmount = 0;
-            this.type = CardScoreType.None;
             this.initialLife = 0;
+            this.view = CardView.PoolGet();
         }
         static GetDefault(game) {
             var card = Pool.createByClass(Card);
             card.game = game;
-            card.view = CardViewBack.createInstance();
             card.type = CardScoreType.None;
+            card.SetEmpty();
             return card;
         }
-        static GetNew(frontView, game, cardScoreType, score) {
+        static GetNew(game, cardScoreType, level, score) {
+            var config = Game.config.card.getTypeLevelConfig(cardScoreType, level);
             var card = Pool.createByClass(Card);
             card.game = game;
-            card.view = frontView;
             card.type = cardScoreType;
+            card.SetConfig(config);
             GameStatus.updateCardCounter(cardScoreType),
                 GameStatus.updateMovesAfterSpecialCard(cardScoreType);
             return card;
+        }
+        SetEmpty() {
+            this.config = null;
+            this.view.SetBg(CardBackgroundType.Default);
+        }
+        SetConfig(config) {
+            this.config = config;
+            this.view.game = this.game;
+            this.view.SetConfig(config);
+            this.view.SetCard(this);
+        }
+        get isHero() {
+            return this.type == CardScoreType.Hero;
+        }
+        get isBoss() {
+            return this.type == CardScoreType.Boss;
         }
         stepUpdate() {
             var e = this.view.getByName(Consts.CardManAnimation);
@@ -3743,9 +4255,6 @@
                 case CardScoreType.Skull:
                     return !1;
             }
-        }
-        isBoss() {
-            return this.type == CardScoreType.Warrior && this.view.front instanceof CardViewFrontWarriowBoss;
         }
         getGoldValue() {
             return this.initialLife;
@@ -4155,7 +4664,7 @@
                 list.push(this.moveAndSetWithAnimation(heroPosition, card, Consts.AnimationTime));
             }
             else {
-                card.isBoss() && GameStatus.gameLevel++;
+                card.isBoss && GameStatus.gameLevel++;
                 var cardPositionType = this.getCardPositionType(moveType, heroPosition);
                 var replaceCard = this.getCardToReplace(card);
                 var tweenContainer = new TweenContainer;
@@ -4456,7 +4965,7 @@
                     tweens.push(oldCard.open());
                 }
             }
-            oldCard.isBoss() && GameStatus.gameLevel++;
+            oldCard.isBoss && GameStatus.gameLevel++;
             this.moveAndSet(fieldPosition, card);
             card.endTurnAnimationStart();
             tweenContainer.tweens.push(oldCard.startTurnAnimation(card.endTurnAnimationEnd, card));
@@ -4855,14 +5364,6 @@
         }
     }
 
-    var CardBackgroundType;
-    (function (CardBackgroundType) {
-        CardBackgroundType[CardBackgroundType["Default"] = 0] = "Default";
-        CardBackgroundType[CardBackgroundType["Warrior"] = 1] = "Warrior";
-        CardBackgroundType[CardBackgroundType["Hero"] = 2] = "Hero";
-        CardBackgroundType[CardBackgroundType["PowerUp"] = 3] = "PowerUp";
-    })(CardBackgroundType || (CardBackgroundType = {}));
-
     class LogInfo {
         static reset() {
             this.PositiveCardProbability = 0,
@@ -5027,7 +5528,7 @@
                 case CardScoreType.Warrior:
                     SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Hit1, SoundConsts.Hit2])),
                         fightResult.isHeroAlive = this.fightWithEnemy(card),
-                        fightResult.isHeroAlive && card.isBoss() && (fightResult.isNeedIncreaseLifeByOneAfterBoss = !0);
+                        fightResult.isHeroAlive && card.isBoss && (fightResult.isNeedIncreaseLifeByOneAfterBoss = !0);
                     break;
                 case CardScoreType.Armor:
                     card.getScore(),
@@ -5249,15 +5750,15 @@
             this.chestBasket = Basket.AfterChestBasket();
             this.game = game;
             this.container = game.container;
-            this.cardShapeFactory = game.cardShapeFactory;
         }
         getDefault() {
             return Card.GetDefault(this.game);
         }
         getHero() {
-            var shape = this.cardShapeFactory.getHeroShape(GameStatus.currentHero), hero = new Hero$1();
+            var cardConfig = Game.config.card.getTypeLevelConfig(CardScoreType.Hero, GameStatus.currentHero);
+            var hero = new Hero$1();
             hero.game = this.game;
-            hero.view = shape;
+            hero.SetConfig(cardConfig);
             hero.totalLife = 10,
                 hero.currentLife = 10,
                 hero.armor = 0,
@@ -5281,9 +5782,13 @@
                 return this.getPowerUp(cardGenerationType, score, cardTypeList);
             }
         }
-        getHealth(e) {
+        getHealth(score) {
             var cardScoreType = CardScoreType.Health;
-            return Card.GetNew(this.cardShapeFactory.getPowerUpCardShape(cardScoreType, e), this.game, cardScoreType, e);
+            var level = 1;
+            if (score <= 5) {
+                level = 2;
+            }
+            return Card.GetNew(this.game, cardScoreType, level, score);
         }
         generateCardType(cardGenerationType, cardTypeList) {
             if (cardGenerationType == CardGenerationType.AfterBarrel && GameStatus.currentHero == HeroType.Key) {
@@ -5332,8 +5837,9 @@
         }
         getPowerUp(cardGenerationTyp, score, cardTypeList) {
             var cardScoreType = this.generatePowerUpType(cardGenerationTyp, cardTypeList);
-            return score = this.generateCardScore(cardScoreType, score),
-                Card.GetNew(this.cardShapeFactory.getPowerUpCardShape(cardScoreType, score), this.game, cardScoreType, score);
+            var level = 1;
+            var score = this.generateCardScore(cardScoreType, score);
+            return Card.GetNew(this.game, cardScoreType, level, score);
         }
         generateCardScore(cardScoreType, score = 0) {
             if (score == 0) {
@@ -5385,26 +5891,26 @@
             return GMath.clamp(a, min, max);
         }
         getEnemy(score) {
-            var cardType = this.generateEnemyPower(score);
+            var level = this.generateEnemyPower(score);
             Consts.IsDev && this.enemyBasket.print("Enemy");
             if (0 == score) {
-                score = cardType;
+                score = level;
                 if (GameStatus.gameLevel > 10) {
                     score += Math.floor((GameStatus.gameLevel - 10) / 2);
                 }
             }
-            if (0 == cardType) {
+            if (0 == level) {
                 return this.getTrap(score + 1);
             }
             else {
-                return this.getWarrior(cardType, score);
+                return this.getWarrior(level, score);
             }
         }
         getTrap(score) {
-            return Card.GetNew(this.cardShapeFactory.getTrapCardShape(), this.game, CardScoreType.Trap, score);
+            return Card.GetNew(this.game, CardScoreType.Trap, 1, score);
         }
-        getWarrior(cardType, score) {
-            return Card.GetNew(this.cardShapeFactory.getEnemyCardShape(cardType), this.game, CardScoreType.Warrior, score);
+        getWarrior(level, score) {
+            return Card.GetNew(this.game, CardScoreType.Enemy, level, score);
         }
         static getTrapScore() {
             if (GameStatus.currentHero == HeroType.Gun) {
@@ -5415,18 +5921,18 @@
             }
         }
         getBoss() {
-            var i = this.cardShapeFactory.getBossCardShape(CardFactory.generateBossPower()), o = 8 + GameStatus.gameLevel;
-            return Card.GetNew(i, this.game, CardScoreType.Warrior, o);
+            var level = CardFactory.generateBossPower();
+            var score = 8 + GameStatus.gameLevel;
+            return Card.GetNew(this.game, CardScoreType.Boss, level, score);
         }
         getChestCard() {
-            var e = CardScoreType.Chest, i = this.cardShapeFactory.getPowerUpCardShape(e, 0);
-            return Card.GetNew(i, this.game, e, 0);
+            return Card.GetNew(this.game, CardScoreType.Chest, 1, 0);
         }
         getCoinCard(score) {
-            var i = CardScoreType.Gold;
-            0 === score && (score = this.generateCardScore(i));
-            var o = this.cardShapeFactory.getPowerUpCardShape(i, score);
-            return Card.GetNew(o, this.game, i, score);
+            var cardScoreType = CardScoreType.Gold;
+            0 === score && (score = this.generateCardScore(cardScoreType));
+            var level = score < 6 ? 1 : 2;
+            return Card.GetNew(this.game, cardScoreType, level, score);
         }
         static generateBossPower() {
             return RandomHelper.getRandomIntInclusive(1, 3);
@@ -5471,92 +5977,6 @@
             var power = GMath.clamp(score, 0, 9);
             this.enemyBasket.removeFromBasket(power.toString());
             return power;
-        }
-    }
-
-    class CardViewFrontHeroStruct extends fgui.GButton {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontHero"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_bg = (this.getChild("bg"));
-            this.m_icon = (this.getChild("icon"));
-            this.m_life = (this.getChild("life"));
-            this.m_shield = (this.getChild("shield"));
-            this.m_shopBar = (this.getChild("shopBar"));
-        }
-    }
-    CardViewFrontHeroStruct.URL = "ui://moe42ygrsqzy9v";
-    CardViewFrontHeroStruct.DependPackages = ["GameHome"];
-
-    class CardViewFrontHero extends CardViewFrontHeroStruct {
-    }
-
-    class CardViewFrontWarriowEnemyStruct extends fgui.GButton {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriowEnemy"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_bg = (this.getChild("bg"));
-            this.m_icon = (this.getChild("icon"));
-            this.m_life = (this.getChild("life"));
-        }
-    }
-    CardViewFrontWarriowEnemyStruct.URL = "ui://moe42ygrsqzya3";
-    CardViewFrontWarriowEnemyStruct.DependPackages = ["GameHome"];
-
-    class CardViewFrontWarriowEnemy extends CardViewFrontWarriowEnemyStruct {
-    }
-
-    class CardViewFrontPowerUpStruct extends fgui.GComponent {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontPowerUp"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_bg = (this.getChild("bg"));
-            this.m_life = (this.getChild("life"));
-        }
-    }
-    CardViewFrontPowerUpStruct.URL = "ui://moe42ygrsqzy9y";
-    CardViewFrontPowerUpStruct.DependPackages = ["GameHome"];
-
-    class CardViewFrontPowerUp extends CardViewFrontPowerUpStruct {
-    }
-
-    class CardViewFactory {
-        constructor(game) {
-            this.game = game;
-            this.container = game.container;
-        }
-        getHeroShape(heroType) {
-            return CardViewFrontHero.createInstance();
-        }
-        getDefaultShape() {
-            return CardViewBack.createInstance();
-        }
-        getTrapCardShape() {
-            return CardViewFrontWarriowEnemy.createInstance();
-        }
-        getEnemyCardShape(cardType) {
-            return CardViewFrontWarriowEnemy.createInstance();
-        }
-        getBossCardShape(cardType) {
-            return CardViewFrontWarriowBoss.createInstance();
-        }
-        getPowerUpCardShape(cardScoreType, score) {
-            return CardViewFrontPowerUp.createInstance();
         }
     }
 
@@ -5688,6 +6108,15 @@
         isPressed() {
             return this.isUp || this.isDown || this.isLeft || this.isRight || this.isSpace;
         }
+        StartListenKeyboard() {
+            Laya.stage.on(Laya.Event.KEY_UP, this, this.OnKeyboard);
+        }
+        StopListenKeyboard() {
+            Laya.stage.off(Laya.Event.KEY_UP, this, this.OnKeyboard);
+        }
+        OnKeyboard(e) {
+            console.log(e);
+        }
     }
 
     class WarGame {
@@ -5703,19 +6132,35 @@
             this.container = windowUI.m_container;
             this.stageClickFx = new StageClickFx();
             this.rnd = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
-            this.cardShapeFactory = new CardViewFactory(this);
             this.cardFactory = new CardFactory(this);
             this.field = new Field(this);
         }
+        testCardViews() {
+            var colMax = 5;
+            var list = Game.config.card.getConfigList();
+            for (var i = 0, len = list.length; i < len; i++) {
+                var config = list[i];
+                var view = CardView.PoolGet();
+                view.SetConfig(config);
+                this.container.addChild(view);
+                var x = i % colMax * view.width + view.width * 0.5;
+                var y = Math.floor(i / colMax) * view.height;
+                view.setXY(x, y);
+                console.log(i, x, y, config.name, config.id);
+            }
+            this.container.setScale(0.5, 0.5);
+        }
         launch() {
-            this.stageClickFx.install();
             GameStatus.init(),
-                this.animationQueue = this.field.initField();
+                this.stageClickFx.install();
+            this.keyboardManager.StartListenKeyboard();
+            this.animationQueue = this.field.initField();
             Laya.timer.frameLoop(1, this, this.update);
         }
         stop() {
             Laya.timer.clear(this, this.update);
             this.stageClickFx.uninstall();
+            this.keyboardManager.StopListenKeyboard();
         }
         update() {
             if (this.isPause) {
@@ -5972,7 +6417,6 @@
         }
         get configList() {
             if (this._configList.length == 0) {
-                let dict = this.configDict;
                 for (let id in this.configDict) {
                     this._configList.push(this.configDict[id]);
                 }
@@ -6004,6 +6448,43 @@
                         }
                 }
             }
+        }
+    }
+
+    class CardConfigReader extends ExcelConfigReader {
+        static GetId(type, level = 1) {
+            return type * 100 + level;
+        }
+        getTypeLevelConfig(type, level = 1) {
+            var id = CardConfigReader.GetId(type, level);
+            return this.getConfig(id);
+        }
+    }
+
+    class CardScoreTypeConfigReader extends ExcelConfigReader {
+        constructor() {
+            super(...arguments);
+            this.configsByKey = new Map();
+        }
+        onGameLoadedAll() {
+            super.onGameLoadedAll();
+            let list = this.configList;
+            for (let i = 0; i < list.length; i++) {
+                let key = list[i].key;
+                if (isNullOrEmpty(key)) {
+                    key = list[i].id;
+                }
+                this.configsByKey.set(key, list[i]);
+            }
+        }
+        getConfig(key) {
+            if (!this.configsByKey.has(key)) {
+                if (this.hasConfig(key)) {
+                    return super.getConfig(key);
+                }
+                console.log(`${this.tableName} 没有 key=${key} 的配置`);
+            }
+            return this.configsByKey.get(key);
         }
     }
 
@@ -6060,7 +6541,7 @@
     class MsgConfigReader extends ExcelConfigReader {
         constructor() {
             super(...arguments);
-            this.configsByKey = new Dictionary();
+            this.configsByKey = new Map();
         }
         onGameLoadedAll() {
             super.onGameLoadedAll();
@@ -6070,17 +6551,17 @@
                 if (isNullOrEmpty(key)) {
                     key = list[i].id;
                 }
-                this.configsByKey.add(key, list[i]);
+                this.configsByKey.set(key, list[i]);
             }
         }
         getConfig(key) {
-            if (!this.configsByKey.hasKey(key)) {
+            if (!this.configsByKey.has(key)) {
                 if (this.hasConfig(key)) {
                     return super.getConfig(key);
                 }
                 console.log(`${this.tableName} 没有 key=${key} 的配置`);
             }
-            return this.configsByKey.getValue(key);
+            return this.configsByKey.get(key);
         }
         getTxt(key) {
             let config = this.getConfig(key);
@@ -6156,12 +6637,16 @@
 
     class ExcelConfigManager {
         constructor() {
+            this.card = new CardConfigReader('Card', CardConfig);
+            this.cardScoreType = new CardScoreTypeConfigReader('CardScoreType', CardScoreTypeConfig);
             this.loader = new LoaderConfigReader('Loader', LoaderConfig);
             this.menu = new MenuConfigReader('Menu', MenuConfig);
             this.msg = new MsgConfigReader('Msg', MsgConfig);
             this.unlock = new UnlockConfigReader('Unlock', UnlockConfig);
         }
         static Init() {
+            excelconfig.Card = CardConfig;
+            excelconfig.CardScoreType = CardScoreTypeConfig;
             excelconfig.Loader = LoaderConfig;
             excelconfig.Menu = MenuConfig;
             excelconfig.Msg = MsgConfig;
@@ -7586,6 +8071,7 @@
             config.resBin = "GameHome.bin";
             config.resAtlas.push("GameHome_atlas0.png");
             config.resAtlas.push("GameHome_atlas0_1.png");
+            config.resAtlas.push("GameHome_atlas0_2.png");
             config.sounds.push("GameHome_sqzy7p.mp3");
             this.addconfig(config);
             config = new GuiResPackageConfig();
@@ -13268,39 +13754,21 @@
     class MenuTopPanelWar extends MenuTopPanelWarStruct {
     }
 
-    class CardViewStruct extends fgui.GComponent {
+    class FxBarrelStruct extends fgui.GComponent {
         constructor() {
             super();
         }
         static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardView"));
+            return (fgui.UIPackage.createObject("GameHome", "FxBarrel"));
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
         }
     }
-    CardViewStruct.URL = "ui://moe42ygrsqzy9s";
-    CardViewStruct.DependPackages = ["GameHome"];
+    FxBarrelStruct.URL = "ui://moe42ygrsqzy9g";
+    FxBarrelStruct.DependPackages = ["GameHome"];
 
-    class CardView extends CardViewStruct {
-        constructor() {
-            super();
-            this.back = CardViewBack.createInstance();
-            this.addChild(this.back);
-            this.setXY(-200, -200);
-        }
-        showFront() {
-            if (this.front) {
-                this.addChild(this.front);
-                this.back.removeFromParent();
-            }
-        }
-        showBack() {
-            this.addChild(this.back);
-            if (this.front) {
-                this.front.removeFromParent();
-            }
-        }
+    class FxBarrel extends FxBarrelStruct {
     }
 
     class CardLifeHeroStruct extends fgui.GLabel {
@@ -13319,25 +13787,6 @@
     CardLifeHeroStruct.DependPackages = ["GameHome"];
 
     class CardLifeHero extends CardLifeHeroStruct {
-    }
-
-    class CardViewFrontWarriowStruct extends fgui.GComponent {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "CardViewFrontWarriow"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_bg = (this.getChild("bg"));
-            this.m_life = (this.getChild("life"));
-        }
-    }
-    CardViewFrontWarriowStruct.URL = "ui://moe42ygrsqzy9w";
-    CardViewFrontWarriowStruct.DependPackages = ["GameHome"];
-
-    class CardViewFrontWarriow extends CardViewFrontWarriowStruct {
     }
 
     class CardLifeWarriowStruct extends fgui.GLabel {
@@ -13385,6 +13834,8 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
+            this.m_level = this.getController("level");
+            this.m_icon = (this.getChild("icon"));
             this.m_title = (this.getChild("title"));
         }
     }
@@ -13414,6 +13865,24 @@
     CardShopBarStruct.DependPackages = ["GameHome"];
 
     class CardShopBar extends CardShopBarStruct {
+    }
+
+    class CardViewBackStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardViewBack"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_cardBack = (this.getChild("cardBack"));
+        }
+    }
+    CardViewBackStruct.URL = "ui://moe42ygrsqzya2";
+    CardViewBackStruct.DependPackages = ["GameHome"];
+
+    class CardViewBack extends CardViewBackStruct {
     }
 
     class SpriteEnemyStruct extends fgui.GLabel {
@@ -13485,12 +13954,13 @@
             bind(WindowWarUI.URL, WindowWarUI);
             bind(PanelResult.URL, PanelResult);
             bind(MenuTopPanelWar.URL, MenuTopPanelWar);
+            bind(FxBarrel.URL, FxBarrel);
             bind(CardView.URL, CardView);
             bind(CardLifeHero.URL, CardLifeHero);
             bind(CardViewFrontHero.URL, CardViewFrontHero);
             bind(CardViewFrontWarriow.URL, CardViewFrontWarriow);
             bind(CardLifeWarriow.URL, CardLifeWarriow);
-            bind(CardViewFrontPowerUp.URL, CardViewFrontPowerUp);
+            bind(CardViewFrontPowerUpCannon.URL, CardViewFrontPowerUpCannon);
             bind(CardLifePowerUp.URL, CardLifePowerUp);
             bind(CardShield.URL, CardShield);
             bind(CardShopBar.URL, CardShopBar);
@@ -13500,6 +13970,13 @@
             bind(SpriteBoss.URL, SpriteBoss);
             bind(CardViewFrontWarriowBoss.URL, CardViewFrontWarriowBoss);
             bind(Container.URL, Container);
+            bind(CardViewFrontBg.URL, CardViewFrontBg);
+            bind(CardViewFrontWarriowTrap.URL, CardViewFrontWarriowTrap);
+            bind(CardViewFrontPowerUp.URL, CardViewFrontPowerUp);
+            bind(CardViewFrontPowerUpBarrel.URL, CardViewFrontPowerUpBarrel);
+            bind(CardViewFrontPowerUpChest.URL, CardViewFrontPowerUpChest);
+            bind(CardViewFrontPowerUpBomb.URL, CardViewFrontPowerUpBomb);
+            bind(CardViewFrontPowerUpSkull.URL, CardViewFrontPowerUpSkull);
         }
     }
 

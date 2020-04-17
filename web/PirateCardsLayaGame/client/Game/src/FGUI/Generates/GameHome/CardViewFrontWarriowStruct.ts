@@ -8,7 +8,7 @@ import CardViewFrontWarriow from "../../Extends/GameHome/CardViewFrontWarriow";
 
 export default class CardViewFrontWarriowStruct extends fgui.GComponent
 {
-	public m_bg : fgui.GLoader;
+	public m_icon : fgui.GLoader;
 	public m_life : CardLifeWarriow;
 
 	
@@ -34,7 +34,7 @@ export default class CardViewFrontWarriowStruct extends fgui.GComponent
 		
 
 		
-		this.m_bg = <fgui.GLoader><any>(this.getChild("bg"));
+		this.m_icon = <fgui.GLoader><any>(this.getChild("icon"));
 		this.m_life = <CardLifeWarriow><any>(this.getChild("life"));
 		
 		

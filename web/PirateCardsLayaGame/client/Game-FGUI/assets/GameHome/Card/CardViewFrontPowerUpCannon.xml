@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="209,229" pivot="0.5,0.5" anchor="true">
+  <displayList>
+    <image id="n4_sqzy" name="icon" src="sqzy2p" fileName="sprite/game1/cannon0000.png" xy="59,69"/>
+    <movieclip id="n5_sqzy" name="fx" src="sqzy9q" fileName="Fx/MVBombFlame.jta" xy="54,44"/>
+    <component id="n2_sqzy" name="life" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="4,173"/>
+  </displayList>
+</component>

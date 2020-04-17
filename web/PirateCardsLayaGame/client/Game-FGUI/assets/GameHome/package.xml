@@ -110,7 +110,7 @@
     <image id="sqzy30" name="chest0001.png" path="/sprite/game1/"/>
     <image id="sqzy31" name="choiceBackground0000.png" path="/sprite/game1/"/>
     <image id="sqzy32" name="choiceBackground0001.png" path="/sprite/game1/"/>
-    <image id="sqzy33" name="coin0000.png" path="/sprite/game1/"/>
+    <image id="sqzy33" name="coin0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy34" name="coin0001.png" path="/sprite/game1/"/>
     <image id="sqzy35" name="coin0002.png" path="/sprite/game1/"/>
     <image id="sqzy36" name="coin0003.png" path="/sprite/game1/"/>
@@ -120,7 +120,7 @@
     <image id="sqzy3a" name="coin0007.png" path="/sprite/game1/"/>
     <image id="sqzy3b" name="coin0008.png" path="/sprite/game1/"/>
     <image id="sqzy3c" name="coin0009.png" path="/sprite/game1/"/>
-    <image id="sqzy3d" name="coinBag0000.png" path="/sprite/game1/"/>
+    <image id="sqzy3d" name="coinBag0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy3e" name="coinPanel0000.png" path="/sprite/game1/" scale="9grid" scale9grid="64,23,128,46"/>
     <image id="sqzy3f" name="controlBtn0000.png" path="/sprite/game1/"/>
     <image id="sqzy3g" name="controlBtn0001.png" path="/sprite/game1/"/>
@@ -129,8 +129,8 @@
     <image id="sqzy3j" name="FourXFour0000.png" path="/sprite/game1/"/>
     <image id="sqzy3k" name="groupBtn0000.png" path="/sprite/game1/"/>
     <image id="sqzy3l" name="groupBtn0001.png" path="/sprite/game1/"/>
-    <image id="sqzy3m" name="health_10000.png" path="/sprite/game1/"/>
-    <image id="sqzy3n" name="health_20000.png" path="/sprite/game1/"/>
+    <image id="sqzy3m" name="health_10000.png" path="/sprite/game1/" exported="true"/>
+    <image id="sqzy3n" name="health_20000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy3o" name="heartBig0000.png" path="/sprite/game1/"/>
     <image id="sqzy3p" name="heartSmall0000.png" path="/sprite/game1/"/>
     <image id="sqzy3q" name="heartSmall0001.png" path="/sprite/game1/"/>
@@ -154,7 +154,7 @@
     <image id="sqzy48" name="homeBtn0001.png" path="/sprite/game1/"/>
     <image id="sqzy49" name="homeBtnSmall0000.png" path="/sprite/game1/"/>
     <image id="sqzy4a" name="homeBtnSmall0001.png" path="/sprite/game1/"/>
-    <image id="sqzy4b" name="horseshoeBig0000.png" path="/sprite/game1/"/>
+    <image id="sqzy4b" name="horseshoeBig0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy4c" name="horseshoeSmall0000.png" path="/sprite/game1/"/>
     <image id="sqzy4d" name="iBtn0000.png" path="/sprite/game1/"/>
     <image id="sqzy4e" name="iBtn0001.png" path="/sprite/game1/"/>
@@ -163,7 +163,7 @@
     <image id="sqzy4h" name="key30000.png" path="/sprite/game1/"/>
     <image id="sqzy4i" name="key40000.png" path="/sprite/game1/"/>
     <image id="sqzy4j" name="key_small0000.png" path="/sprite/game1/"/>
-    <image id="sqzy4k" name="lightning0000.png" path="/sprite/game1/"/>
+    <image id="sqzy4k" name="lightning0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy4l" name="lightning_10000.png" path="/sprite/game1/"/>
     <image id="sqzy4m" name="lightning_10001.png" path="/sprite/game1/"/>
     <image id="sqzy4n" name="lightning_10002.png" path="/sprite/game1/"/>
@@ -220,8 +220,8 @@
     <image id="sqzy62" name="mouse_click0003.png" path="/sprite/game1/"/>
     <image id="sqzy63" name="mouse_click0004.png" path="/sprite/game1/"/>
     <image id="sqzy64" name="mouse_click0005.png" path="/sprite/game1/"/>
-    <image id="sqzy65" name="multiplier20000.png" path="/sprite/game1/"/>
-    <image id="sqzy66" name="multiplier30000.png" path="/sprite/game1/"/>
+    <image id="sqzy65" name="multiplier20000.png" path="/sprite/game1/" exported="true"/>
+    <image id="sqzy66" name="multiplier30000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy67" name="nextBtn0000.png" path="/sprite/game1/"/>
     <image id="sqzy68" name="nextBtn0001.png" path="/sprite/game1/"/>
     <image id="sqzy69" name="noAccess0000.png" path="/sprite/game1/"/>
@@ -237,7 +237,7 @@
     <image id="sqzy6j" name="playBtn0001.png" path="/sprite/game1/"/>
     <image id="sqzy6k" name="plusBtn0000.png" path="/sprite/game1/"/>
     <image id="sqzy6l" name="plusBtn0001.png" path="/sprite/game1/"/>
-    <image id="sqzy6m" name="poison0000.png" path="/sprite/game1/"/>
+    <image id="sqzy6m" name="poison0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy6n" name="powerUpBigRing0000.png" path="/sprite/game1/"/>
     <image id="sqzy6o" name="powerUpSmallRing0000.png" path="/sprite/game1/"/>
     <image id="sqzy6p" name="prevBtn0000.png" path="/sprite/game1/"/>
@@ -351,7 +351,7 @@
     <component id="sqzy9v" name="CardViewFrontHero.xml" path="/Card/" exported="true"/>
     <component id="sqzy9w" name="CardViewFrontWarriow.xml" path="/Card/" exported="true"/>
     <component id="sqzy9x" name="CardLifeWarriow.xml" path="/Card/"/>
-    <component id="sqzy9y" name="CardViewFrontPowerUp.xml" path="/Card/" exported="true"/>
+    <component id="sqzy9y" name="CardViewFrontPowerUpCannon.xml" path="/Card/" exported="true"/>
     <component id="sqzy9z" name="CardLifePowerUp.xml" path="/Card/"/>
     <component id="sqzya0" name="CardShield.xml" path="/Card/"/>
     <component id="sqzya1" name="CardShopBar.xml" path="/Card/"/>
@@ -361,6 +361,13 @@
     <component id="sqzya5" name="SpriteBoss.xml" path="/Card/"/>
     <component id="sqzya6" name="CardViewFrontWarriowBoss.xml" path="/Card/" exported="true"/>
     <component id="sqzya7" name="Container.xml" path="/"/>
+    <component id="sqzya8" name="CardViewFrontBg.xml" path="/Card/" exported="true"/>
+    <component id="sqzya9" name="CardViewFrontWarriowTrap.xml" path="/Card/" exported="true"/>
+    <component id="sqzyaa" name="CardViewFrontPowerUp.xml" path="/Card/" exported="true"/>
+    <component id="sqzyab" name="CardViewFrontPowerUpBarrel.xml" path="/Card/" exported="true"/>
+    <component id="sqzyac" name="CardViewFrontPowerUpChest.xml" path="/Card/" exported="true"/>
+    <component id="sqzyad" name="CardViewFrontPowerUpBomb.xml" path="/Card/" exported="true"/>
+    <component id="sqzyae" name="CardViewFrontPowerUpSkull.xml" path="/Card/" exported="true"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

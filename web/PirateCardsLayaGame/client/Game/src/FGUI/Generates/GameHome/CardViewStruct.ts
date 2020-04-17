@@ -5,7 +5,7 @@
 
 import CardView from "../../Extends/GameHome/CardView";
 
-export default class CardViewStruct extends fgui.GComponent
+export default class CardViewStruct extends fgui.GButton
 {
 
 	
