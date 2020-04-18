@@ -179,6 +179,7 @@ export default class CardView extends CardViewStruct
     /** 设置配置 */
     SetConfig(cardConfig: CardConfig)
     {
+        this.RecoverFront();
         this.cardConfig = cardConfig;
         if(cardConfig)
         {
@@ -193,7 +194,6 @@ export default class CardView extends CardViewStruct
         else
         {
             this.cardScoreConfig = null;
-            this.RecoverFront();
             this.SetBg(CardBackgroundType.Default);
         }
     }
@@ -258,6 +258,23 @@ export default class CardView extends CardViewStruct
             }
             heroView.m_shield.title = hero.armor.toString();
         }
+    }
+
+    tweenLife()
+    {
+        var view = (<CardViewFrontHero>this.front).m_life;
+        var tweenContainer = this.card.getScaleTween(view);
+        tweenContainer.onComplete.addOnce(this.setHealthText, this);
+        return tweenContainer;
+    }
+
+    
+    tweenPowerUp()
+    {
+        var view = (<CardViewFrontHero>this.front).m_life;
+        var tweenContainer = this.card.getScaleTween(view);
+        tweenContainer.onComplete.addOnce(this.setHealthText, this);
+        return tweenContainer;
     }
 
     // 使用道具， 生命

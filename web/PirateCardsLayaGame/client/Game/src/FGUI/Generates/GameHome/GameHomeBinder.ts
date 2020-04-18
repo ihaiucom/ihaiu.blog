@@ -36,6 +36,12 @@ import CardViewFrontPowerUpBarrel from "../../Extends/GameHome/CardViewFrontPowe
 import CardViewFrontPowerUpChest from "../../Extends/GameHome/CardViewFrontPowerUpChest";
 import CardViewFrontPowerUpBomb from "../../Extends/GameHome/CardViewFrontPowerUpBomb";
 import CardViewFrontPowerUpSkull from "../../Extends/GameHome/CardViewFrontPowerUpSkull";
+import FxShootCannon from "../../Extends/GameHome/FxShootCannon";
+import FxShootSmoke from "../../Extends/GameHome/FxShootSmoke";
+import FxShootBoom from "../../Extends/GameHome/FxShootBoom";
+import FxShootLightningBig from "../../Extends/GameHome/FxShootLightningBig";
+import FxShootLightningSmall from "../../Extends/GameHome/FxShootLightningSmall";
+import FxSkull from "../../Extends/GameHome/FxSkull";
 
 export default class GameHomeBinder
 {
@@ -74,5 +80,11 @@ export default class GameHomeBinder
 		bind(CardViewFrontPowerUpChest.URL, CardViewFrontPowerUpChest);
 		bind(CardViewFrontPowerUpBomb.URL, CardViewFrontPowerUpBomb);
 		bind(CardViewFrontPowerUpSkull.URL, CardViewFrontPowerUpSkull);
+		bind(FxShootCannon.URL, FxShootCannon);
+		bind(FxShootSmoke.URL, FxShootSmoke);
+		bind(FxShootBoom.URL, FxShootBoom);
+		bind(FxShootLightningBig.URL, FxShootLightningBig);
+		bind(FxShootLightningSmall.URL, FxShootLightningSmall);
+		bind(FxSkull.URL, FxSkull);
 	}
 }

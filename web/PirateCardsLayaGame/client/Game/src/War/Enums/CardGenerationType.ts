@@ -2,9 +2,9 @@ export enum CardGenerationType
 {
     Random = 1,
     // 替换宝箱
-    AfterChest = 1,
+    AfterChest = 2,
     // 替换木桶
-    AfterBarrel = 2,
+    AfterBarrel = 3,
     // 好的牌
-    Positive
+    Positive = 4
 }

@@ -151,6 +151,292 @@
     CardViewFrontHeroStruct.URL = "ui://moe42ygrsqzy9v";
     CardViewFrontHeroStruct.DependPackages = ["GameHome"];
 
+    class Consts {
+    }
+    Consts.Width = 640;
+    Consts.Height = 960;
+    Consts.HeroStartRow = 2;
+    Consts.HeroStartColumn = 2;
+    Consts.CardWidth = 198;
+    Consts.CardHeight = 226;
+    Consts.CardSpaceBetweenWidth = 10;
+    Consts.CardSpaceBetweenHeight = 10;
+    Consts.AnimationTime = 185;
+    Consts.AnimationMultiplier = .5;
+    Consts.ScaleZoom = 1.2;
+    Consts.ScaleSpeed = 50;
+    Consts.FlipSpeed = 200;
+    Consts.FlipZoom = 1.3;
+    Consts.SmashDelay = 200;
+    Consts.HeroCurrentLife1 = "HeroCurrentLife1";
+    Consts.HeroCurrentLife2 = "HeroCurrentLife2";
+    Consts.HeroTotalLife1 = "HeroTotalLife1";
+    Consts.HeroTotalLife2 = "HeroTotalLife2";
+    Consts.CardLife = "CardLife";
+    Consts.CardLife1 = "CardLife1";
+    Consts.CardLife2 = "CardLife2";
+    Consts.PowerUpCircle = "PowerUpCircle";
+    Consts.PowerUp = "PowerUp";
+    Consts.CardManAnimation = "CardManAnimation";
+    Consts.WaveSize = 7;
+    Consts.ScaleSize = 30;
+    Consts.textFontWeight = 22;
+    Consts.numbersFontWeight = 28;
+    Consts.resultNumbersFontWeight = 35;
+    Consts.creditsColor = "#ffffff";
+    Consts.creditsFontWeight = 24;
+    Consts.BackgroundImageName = "BackgroundImageName";
+    Consts.BackgroundName = "BackgroundName";
+    Consts.LightningDuration = 50;
+    Consts.ShakeIntensity = 20;
+    Consts.ContainerName = "container";
+    Consts.CoinMaxValue = 5;
+    Consts.Shadow = "shadow";
+    Consts.Hero = "hero";
+    Consts.CardWithArm = "cardWithArm";
+    Consts.CardWithMovingArm = "cardWithMovingArm";
+    Consts.ShowTime = 300;
+    Consts.StorageName = "pirated-cards-adventure";
+    Consts.IsDev = false;
+    Consts.IsAndroid = !1;
+    Consts.HighResolutionScale = !1;
+    Consts.MaxPixelRatio = 3;
+    Consts.WarriorAnimationDuration = 500;
+
+    class TweenContainer {
+        constructor() {
+            this.onStart = new Signal();
+            this.onComplete = new Signal();
+            this.tweens = [];
+            this.duration = null;
+            this._delay = 0;
+        }
+        static PoolGet() {
+            return Pool.createByClass(TweenContainer);
+        }
+        recover() {
+            Laya.timer.clearAll(this);
+            this.recoverArray(this.tweens);
+            this.tweens.length = 0;
+            this.onStart.removeAll();
+            this.onComplete.removeAll();
+            this.duration = null;
+            this._delay = 0;
+            Pool.recoverByClass(this);
+        }
+        recoverArray(tweens) {
+            if (tweens == null)
+                return;
+            if (tweens instanceof Array) {
+                for (var item of tweens) {
+                    if (item == null)
+                        continue;
+                    if (item instanceof Array) {
+                        this.recoverArray(item);
+                    }
+                    else {
+                        item.recover();
+                    }
+                }
+            }
+            else {
+                tweens.recover();
+            }
+        }
+        get animationDuration() {
+            if (this.duration === null) {
+                var time = 0;
+                for (var i = 0, len = this.tweens.length; i < len; i++) {
+                    var tween = this.tweens[i];
+                    if (tween) {
+                        if (tween instanceof TweenContainer) {
+                            time = Math.max(tween.animationDuration, time);
+                        }
+                        else if (tween instanceof Array) {
+                            if (tween.length > 0) {
+                                var item = tween[0];
+                                if (item) {
+                                    if (item instanceof TweenContainer) {
+                                        time = Math.max(item.animationDuration, time);
+                                    }
+                                    else {
+                                        var t = item._duration + item._delay;
+                                        time = Math.max(t, time);
+                                    }
+                                }
+                                else {
+                                    this.duration = 100;
+                                }
+                            }
+                            else {
+                                this.duration = 100;
+                            }
+                        }
+                        else {
+                            var t = tween._duration + tween._delay;
+                            time = Math.max(t, time);
+                        }
+                    }
+                }
+                this.duration = time;
+            }
+            return this.duration;
+        }
+        set animationDuration(val) {
+            this.duration = val;
+        }
+        setAnimationDuration(duration) {
+            this.duration = duration;
+            return this;
+        }
+        setFirstDelay(delay) {
+            this._delay = delay;
+        }
+        restart() {
+            setTimeout(this.onEnd.bind(this), this.animationDuration);
+            this.onStart.dispatch();
+            console.log(this.tweens);
+            if (this._delay > 0) {
+                Laya.timer.once(this._delay, this, this.playTweens);
+            }
+            else {
+                this.playTweens();
+            }
+        }
+        playTweens() {
+            this.playArray(this.tweens);
+        }
+        playArray(tweens) {
+            if (tweens == null)
+                return;
+            if (tweens instanceof Array) {
+                for (var item of tweens) {
+                    if (item == null)
+                        continue;
+                    if (item instanceof Array) {
+                        this.playArray(item);
+                    }
+                    else {
+                        if (item instanceof Laya.Tween) {
+                            if (!item['_props'] || item['_props'].length == 0) {
+                                console.error("没设置属性");
+                                continue;
+                            }
+                        }
+                        item.restart();
+                    }
+                }
+            }
+            else {
+                tweens.restart();
+            }
+        }
+        onEnd() {
+            this.onComplete.dispatch();
+            Laya.timer.once(3000, this, this.recover);
+        }
+    }
+
+    var Tween$1 = Laya.Tween;
+    class TweenUtil {
+        static to(target, props, duration, ease = null, complete = null, delay = 0, coverBefore = false, autoRecover = true) {
+            return Pool.getItemByClass("tween", Tween$1)._create(target, props, duration, ease, complete, delay, coverBefore, true, autoRecover, false);
+        }
+        static from(target, props, duration, ease = null, complete = null, delay = 0, coverBefore = false, autoRecover = true) {
+            return Pool.getItemByClass("tween", Tween$1)._create(target, props, duration, ease, complete, delay, coverBefore, false, autoRecover, false);
+        }
+    }
+
+    class TweenHelper {
+        static spriteHide(view) {
+            Laya.Tween.clearAll(view);
+            Laya.Tween.to(view, {
+                scaleX: 0,
+                scaleY: 0,
+                rotation: 360,
+                alpha: 0
+            }, 700, null, Laya.Handler.create(this, () => {
+                view.visible = false;
+                view.rotation = 0;
+                view.alpha = 0;
+            }));
+        }
+        static spriteShow(view) {
+            view.visible = true;
+            Laya.Tween.clearAll(view);
+            Laya.Tween.to(view, {
+                scaleX: 0,
+                scaleY: 0
+            }, 100);
+            Laya.Tween.to(view, {
+                scaleX: 1.5,
+                scaleY: 1.5
+            }, 250, null, null, 100);
+            Laya.Tween.to(view, {
+                scaleX: 1,
+                scaleY: 1
+            }, 100, null, null, 100 + 250);
+        }
+        static turnAnimationStart(tweenContainer, view) {
+            if (!tweenContainer)
+                tweenContainer = new TweenContainer();
+            var t1 = TweenUtil.to(view, {
+                scaleX: Consts.ScaleZoom,
+                scaleY: Consts.ScaleZoom
+            }, Consts.ScaleSpeed);
+            tweenContainer.tweens.push(t1);
+            var t2 = TweenUtil.to(view, {
+                scaleX: 0.1,
+                scaleY: Consts.FlipZoom
+            }, Consts.FlipSpeed / 2, null, null, Consts.ScaleSpeed, false);
+            tweenContainer.tweens.push(t2);
+            return tweenContainer;
+        }
+        static turnAnimationEnd(tweenContainer, view) {
+            if (!tweenContainer)
+                tweenContainer = new TweenContainer();
+            var t1 = TweenUtil.to(view, {
+                scaleX: Consts.ScaleZoom,
+                scaleY: Consts.ScaleZoom
+            }, Consts.FlipSpeed / 2);
+            tweenContainer.tweens.push(t1);
+            var t2 = TweenUtil.to(view, {
+                scaleX: 1,
+                scaleY: 1
+            }, Consts.FlipSpeed);
+            tweenContainer.tweens.push(t2);
+            return tweenContainer;
+        }
+        static scaleIn(tweenContainer, view, o = true) {
+            if (!tweenContainer)
+                tweenContainer = new TweenContainer();
+            view.enabled = false;
+            var t1 = TweenUtil.to(view, {
+                scaleX: 0,
+                scaleY: 0
+            }, .25 * Consts.ShowTime, null, Laya.Handler.create(this, () => {
+                view.setScale(1, 1);
+                view.visible = false;
+                view.enabled = true;
+            }));
+            tweenContainer.tweens.push(t1);
+            return tweenContainer;
+        }
+        static scaleOut(tweenContainer, view, scale = 1) {
+            view.setScale(0, 0);
+            view.visible = true;
+            view.enabled = true;
+            if (!tweenContainer)
+                tweenContainer = new TweenContainer();
+            var t1 = TweenUtil.to(view, {
+                scaleX: scale,
+                scaleY: scale
+            }, .25 * Consts.ShowTime);
+            tweenContainer.tweens.push(t1);
+            return tweenContainer;
+        }
+    }
+
     class CardViewFrontHero extends CardViewFrontHeroStruct {
         SetConfig(cardConfig) {
             this.cardConfig = cardConfig;
@@ -163,6 +449,12 @@
             this.cardView = null;
             this.cardConfig = null;
             this.card = null;
+        }
+        setArmorHide() {
+            TweenHelper.spriteHide(this.m_shield);
+        }
+        setArmorShowOrChange() {
+            TweenHelper.spriteShow(this.m_shield);
         }
     }
 
@@ -570,6 +862,7 @@
             this.offClick(this, this.OnClickHandler);
         }
         SetConfig(cardConfig) {
+            this.RecoverFront();
             this.cardConfig = cardConfig;
             if (cardConfig) {
                 var cardScoreConfig = this.cardScoreConfig = cardConfig.cardScoreConfig;
@@ -581,7 +874,6 @@
             }
             else {
                 this.cardScoreConfig = null;
-                this.RecoverFront();
                 this.SetBg(CardBackgroundType.Default);
             }
         }
@@ -610,6 +902,40 @@
         }
         setPowerUpText() {
             this.front.m_life.title = this.card.powerUpAmount.toString();
+        }
+        setArmor() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                var heroView = this.front;
+                if (hero.armor > 0) {
+                    heroView.setArmorShowOrChange();
+                }
+                else {
+                    heroView.setArmorHide();
+                }
+                heroView.m_shield.title = hero.armor.toString();
+            }
+        }
+        tweenLife() {
+            var view = this.front.m_life;
+            var tweenContainer = this.card.getScaleTween(view);
+            tweenContainer.onComplete.addOnce(this.setHealthText, this);
+            return tweenContainer;
+        }
+        tweenPowerUp() {
+            var view = this.front.m_life;
+            var tweenContainer = this.card.getScaleTween(view);
+            tweenContainer.onComplete.addOnce(this.setHealthText, this);
+            return tweenContainer;
+        }
+        useLuck() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                var heroView = this.front;
+                heroView.m_shopBar.useLuck();
+            }
+        }
+        increaseLifeByOneTween() {
         }
         setOpen() {
             if (this.card.isTrap) {
@@ -3678,24 +4004,32 @@
                 cardScoreType == CardScoreType.Skull;
         }
         static getRandomFromChest() {
-            return ArrayUtils.getRandomItem(this.itemsFromChest);
+            return ArrayUtils.getRandomItem(CardScoreTypeHelper.itemsFromChest);
         }
         static getRandomPowerUpFromBarrel() {
-            return ArrayUtils.getRandomItem(this.itemsFromBarrel);
+            return ArrayUtils.getRandomItem(CardScoreTypeHelper.itemsFromBarrel);
         }
         static getRandomPowerUp() {
-            return ArrayUtils.getRandomItem(this.powerUps);
+            return ArrayUtils.getRandomItem(CardScoreTypeHelper.powerUps);
         }
     }
     CardScoreTypeHelper.itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.Multiplier, CardScoreType.Skull];
     CardScoreTypeHelper.itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
-    CardScoreTypeHelper.powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
+    CardScoreTypeHelper.powerUps = [CardScoreType.Bomb, CardScoreType.Barrel, CardScoreType.Skull];
 
     class GameStatus {
         static init() {
             if (this.currentHero == HeroType.Key) {
                 this.isKey = true;
             }
+            this.isHeroAlive = true;
+            this.gameLevel = 1;
+            this.levelStep = 10;
+            this.turnsToBoss = this.levelStep;
+            this.goldPerGame = 0;
+            this.movesAfterLastSpecialCard = 0;
+            this.cardCounter = 0;
+            this.isNeedCreateBoss = false;
         }
         static load() {
             if (Game.localStorage.hasItem(this.DATE_KEY, false)) {
@@ -3901,194 +4235,7 @@
     GameStatus.isGameEnd = false;
     GameStatus.isNeedCreateChestOnNextStep = false;
     GameStatus.movesAfterLastSpecialCard = 0;
-
-    class Consts {
-    }
-    Consts.Width = 640;
-    Consts.Height = 960;
-    Consts.HeroStartRow = 2;
-    Consts.HeroStartColumn = 2;
-    Consts.CardWidth = 198;
-    Consts.CardHeight = 226;
-    Consts.CardSpaceBetweenWidth = 10;
-    Consts.CardSpaceBetweenHeight = 10;
-    Consts.AnimationTime = 185;
-    Consts.AnimationMultiplier = .5;
-    Consts.ScaleZoom = 1.2;
-    Consts.ScaleSpeed = 50;
-    Consts.FlipSpeed = 200;
-    Consts.FlipZoom = 1.3;
-    Consts.SmashDelay = 200;
-    Consts.HeroCurrentLife1 = "HeroCurrentLife1";
-    Consts.HeroCurrentLife2 = "HeroCurrentLife2";
-    Consts.HeroTotalLife1 = "HeroTotalLife1";
-    Consts.HeroTotalLife2 = "HeroTotalLife2";
-    Consts.CardLife = "CardLife";
-    Consts.CardLife1 = "CardLife1";
-    Consts.CardLife2 = "CardLife2";
-    Consts.PowerUpCircle = "PowerUpCircle";
-    Consts.PowerUp = "PowerUp";
-    Consts.CardManAnimation = "CardManAnimation";
-    Consts.WaveSize = 7;
-    Consts.ScaleSize = 30;
-    Consts.textFontWeight = 22;
-    Consts.numbersFontWeight = 28;
-    Consts.resultNumbersFontWeight = 35;
-    Consts.creditsColor = "#ffffff";
-    Consts.creditsFontWeight = 24;
-    Consts.BackgroundImageName = "BackgroundImageName";
-    Consts.BackgroundName = "BackgroundName";
-    Consts.LightningDuration = 50;
-    Consts.ShakeIntensity = .02;
-    Consts.ContainerName = "container";
-    Consts.CoinMaxValue = 5;
-    Consts.Shadow = "shadow";
-    Consts.Hero = "hero";
-    Consts.CardWithArm = "cardWithArm";
-    Consts.CardWithMovingArm = "cardWithMovingArm";
-    Consts.ShowTime = 300;
-    Consts.StorageName = "pirated-cards-adventure";
-    Consts.IsDev = false;
-    Consts.IsAndroid = !1;
-    Consts.HighResolutionScale = !1;
-    Consts.MaxPixelRatio = 3;
-    Consts.WarriorAnimationDuration = 500;
-
-    var Tween$1 = Laya.Tween;
-    class TweenUtil {
-        static to(target, props, duration, ease = null, complete = null, delay = 0, coverBefore = false, autoRecover = true) {
-            return Pool.getItemByClass("tween", Tween$1)._create(target, props, duration, ease, complete, delay, coverBefore, true, autoRecover, false);
-        }
-        static from(target, props, duration, ease = null, complete = null, delay = 0, coverBefore = false, autoRecover = true) {
-            return Pool.getItemByClass("tween", Tween$1)._create(target, props, duration, ease, complete, delay, coverBefore, false, autoRecover, false);
-        }
-    }
-
-    class TweenContainer {
-        constructor() {
-            this.onStart = new Signal();
-            this.onComplete = new Signal();
-            this.tweens = [];
-            this.duration = null;
-        }
-        static PoolGet() {
-            return Pool.createByClass(TweenContainer);
-        }
-        recover() {
-            while (this.tweens.length > 0) {
-                var tween = this.tweens.shift();
-                if (tween) {
-                    tween.recover();
-                }
-            }
-            this.tweens.length = 0;
-            this.onStart.removeAll();
-            this.onComplete.removeAll();
-            this.duration = null;
-            Pool.recoverByClass(this);
-        }
-        get animationDuration() {
-            if (this.duration === null) {
-                var time = 0;
-                for (var i = 0, len = this.tweens.length; i < len; i++) {
-                    var tween = this.tweens[i];
-                    if (tween) {
-                        if (tween instanceof TweenContainer) {
-                            time = Math.max(tween.animationDuration, time);
-                        }
-                        else {
-                            var t = tween._duration + tween._delay;
-                            time = Math.max(t, time);
-                        }
-                    }
-                }
-                this.duration = time;
-            }
-            return this.duration;
-        }
-        set animationDuration(val) {
-            this.duration = val;
-        }
-        setAnimationDuration(duration) {
-            this.duration = duration;
-            return this;
-        }
-        restart() {
-            setTimeout(this.onEnd.bind(this), this.animationDuration);
-            this.onStart.dispatch();
-            while (this.tweens.length > 0) {
-                var tween = this.tweens.shift();
-                if (tween) {
-                    tween.restart();
-                }
-            }
-        }
-        onEnd() {
-            this.onComplete.dispatch();
-            this.recover();
-        }
-    }
-
-    class TweenHelper {
-        static turnAnimationStart(tweenContainer, view) {
-            if (!tweenContainer)
-                tweenContainer = new TweenContainer();
-            var t1 = TweenUtil.to(view, {
-                scaleX: Consts.ScaleZoom,
-                scaleY: Consts.ScaleZoom
-            }, Consts.ScaleSpeed);
-            tweenContainer.tweens.push(t1);
-            var t2 = TweenUtil.to(view, {
-                scaleX: 0.1,
-                scaleY: Consts.FlipZoom
-            }, Consts.FlipSpeed / 2, null, null, Consts.ScaleSpeed, false);
-            tweenContainer.tweens.push(t2);
-            return tweenContainer;
-        }
-        static turnAnimationEnd(tweenContainer, view) {
-            if (!tweenContainer)
-                tweenContainer = new TweenContainer();
-            var t1 = TweenUtil.to(view, {
-                scaleX: Consts.ScaleZoom,
-                scaleY: Consts.ScaleZoom
-            }, Consts.FlipSpeed / 2);
-            tweenContainer.tweens.push(t1);
-            var t2 = TweenUtil.to(view, {
-                scaleX: 1,
-                scaleY: 1
-            }, Consts.FlipSpeed);
-            tweenContainer.tweens.push(t2);
-            return tweenContainer;
-        }
-        static scaleIn(tweenContainer, view, o = true) {
-            if (!tweenContainer)
-                tweenContainer = new TweenContainer();
-            view.enabled = false;
-            var t1 = TweenUtil.to(view, {
-                scaleX: 0,
-                scaleY: 0
-            }, .25 * Consts.ShowTime, null, Laya.Handler.create(this, () => {
-                view.setScale(1, 1);
-                view.visible = false;
-                view.enabled = true;
-            }));
-            tweenContainer.tweens.push(t1);
-            return tweenContainer;
-        }
-        static scaleOut(tweenContainer, view, scale = 1) {
-            view.setScale(0, 0);
-            view.visible = true;
-            view.enabled = true;
-            if (!tweenContainer)
-                tweenContainer = new TweenContainer();
-            var t1 = TweenUtil.to(view, {
-                scaleX: scale,
-                scaleY: scale
-            }, .25 * Consts.ShowTime);
-            tweenContainer.tweens.push(t1);
-            return tweenContainer;
-        }
-    }
+    window['GameStatus'] = GameStatus;
 
     class SoundController {
         static get instance() {
@@ -4098,6 +4245,8 @@
             return this._instance;
         }
         playSound(key) {
+            var path = `res/sounds/mp3/${key}.mp3`;
+            Laya.SoundManager.playSound(path, 1);
         }
     }
 
@@ -4137,6 +4286,131 @@
     SoundConsts.Move02 = "move02";
     SoundConsts.Trap = "trap";
 
+    class FxShootLightningBigStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxShootLightningBig"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_fx = (this.getChild("fx"));
+        }
+    }
+    FxShootLightningBigStruct.URL = "ui://moe42ygrsqzyai";
+    FxShootLightningBigStruct.DependPackages = ["GameHome"];
+
+    class FxShootLightningSmallStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxShootLightningSmall"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_fx = (this.getChild("fx"));
+        }
+    }
+    FxShootLightningSmallStruct.URL = "ui://moe42ygrsqzyal";
+    FxShootLightningSmallStruct.DependPackages = ["GameHome"];
+
+    class FxShootLightningSmall extends FxShootLightningSmallStruct {
+        static PoolGet() {
+            var item = Pool.getItem(this.URL);
+            if (!item) {
+                item = FxShootLightningSmall.createInstance();
+            }
+            return item;
+        }
+        PoolRecover() {
+            Laya.timer.clearAll(this);
+            Laya.Tween.clearAll(this.m_fx);
+            this.removeFromParent();
+            this.m_fx.playing = false;
+            Pool.recover(FxShootLightningSmall.URL, this);
+        }
+        Play() {
+            this.m_fx.frame = 0;
+            this.m_fx.playing = true;
+            this.alpha = 0;
+            var tweenContainer = TweenContainer.PoolGet();
+            var tween = TweenUtil.to(this.m_fx, { alpha: 1 }, 1);
+            tweenContainer.tweens.push(tween);
+            var tween = TweenUtil.to(this, { alpha: 0 }, 1, null, null, 102);
+            tweenContainer.tweens.push(tween);
+            Laya.timer.once(103, this, this.PoolRecover);
+            tweenContainer.restart();
+            return tweenContainer;
+        }
+    }
+
+    class RandomHelper {
+        static getRandomIntInclusive(min, max) {
+            return min = Math.ceil(min),
+                max = Math.floor(max),
+                Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        static getRandomBool() {
+            return Math.random() > 0.5;
+        }
+        static shuffle(list) {
+            for (var e, i, o = list.length; 0 !== o;)
+                i = Math.floor(Math.random() * o),
+                    e = list[o -= 1],
+                    list[o] = list[i],
+                    list[i] = e;
+            return list;
+        }
+    }
+
+    class FxShootLightningBig extends FxShootLightningBigStruct {
+        static PoolGet() {
+            var item = Pool.getItem(this.URL);
+            if (!item) {
+                item = FxShootLightningBig.createInstance();
+            }
+            return item;
+        }
+        PoolRecover() {
+            Laya.timer.clearAll(this);
+            Laya.Tween.clearAll(this.m_fx);
+            this.removeFromParent();
+            this.m_fx.playing = false;
+            Pool.recover(FxShootLightningBig.URL, this);
+        }
+        Play() {
+            this.m_fx.frame = 0;
+            this.m_fx.playing = true;
+            this.m_fx.alpha = 0;
+            this.m_fx.y = 20;
+            var tweenContainer = TweenContainer.PoolGet();
+            var tween = TweenUtil.to(this.m_fx, { alpha: 1 }, 50);
+            tweenContainer.tweens.push(tween);
+            var tween = TweenUtil.to(this.m_fx, { y: -20 }, 200, null, null, 50);
+            tweenContainer.tweens.push(tween);
+            var tween = TweenUtil.to(this.m_fx, { alpha: 0 }, 50, null, null, 50 + 200);
+            tweenContainer.tweens.push(tween);
+            tweenContainer.onStart.addOnce(this.onStart, this);
+            Laya.timer.once(50 + 200 + 50, this, this.PoolRecover);
+            return tweenContainer;
+        }
+        onStart() {
+            if (this.parent) {
+                var fx = FxShootLightningSmall.PoolGet();
+                var x = Consts.CardWidth / 2 - 20;
+                var y = Consts.CardHeight / 2 - 20;
+                RandomHelper.getRandomBool() && (x = -x);
+                RandomHelper.getRandomBool() && (y = -y);
+                this.parent.addChild(fx);
+                fx.setXY(this.x, this.y);
+                fx.m_fx.setXY(x, y);
+                fx.Play();
+            }
+        }
+    }
+
     class Card {
         constructor() {
             this.type = CardScoreType.None;
@@ -4146,9 +4420,12 @@
             this.initialLife = 0;
             this.currentLife = 0;
             this.isOpen = false;
+            this.canLightningStrike = false;
             this.view = CardView.PoolGet();
+            this.reset();
         }
         static GetDefault(game) {
+            console.log("Card 创建空牌");
             var card = Pool.createByClass(Card);
             card.game = game;
             card.type = CardScoreType.None;
@@ -4156,7 +4433,11 @@
             return card;
         }
         static GetNew(game, cardScoreType, level, score) {
+            console.log("Card 创建", cardScoreType);
             var config = Game.config.card.getTypeLevelConfig(cardScoreType, level);
+            if (config == null) {
+                console.error("没有找到卡牌配置", cardScoreType, level, score);
+            }
             var card = Pool.createByClass(Card);
             card.game = game;
             card.type = cardScoreType;
@@ -4165,6 +4446,21 @@
                 GameStatus.updateCardCounter(cardScoreType),
                 GameStatus.updateMovesAfterSpecialCard(cardScoreType);
             return card;
+        }
+        poolRecover() {
+            this.reset();
+            Pool.recoverByClass(this);
+        }
+        reset() {
+            this.view.setXY(-100, -400);
+            this.view.setScale(1, 1);
+            this.isOnClickInitiated = false;
+            this.powerUpAmount = 0;
+            this.lifeAmount = 0;
+            this.initialLife = 0;
+            this.currentLife = 0;
+            this.isOpen = false;
+            this.canLightningStrike = false;
         }
         SetEmpty() {
             this.SetConfig(null);
@@ -4192,10 +4488,11 @@
         }
         stepUpdate() {
             if (this.isTrap) {
-                this.changeStatus();
+                var isOpened = this.changeStatus();
                 var isGrun = GameStatus.currentHero == HeroType.Gun;
-                this.lifeAmount = o ? 0 : i ? this.powerUpAmount : 0,
-                    this.setHealthText();
+                this.lifeAmount = isGrun ? 0 : isOpened ? this.powerUpAmount : 0;
+                this.currentLife = this.lifeAmount;
+                this.setHealthText();
             }
             this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
                 this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
@@ -4210,6 +4507,7 @@
                 this.view.setClose();
                 this.isOpen = true;
             }
+            return this.isOpen;
         }
         getScore() {
             return this.type == CardScoreType.Trap ? this.lifeAmount : this.lifeAmount + this.powerUpAmount;
@@ -4220,36 +4518,68 @@
         getPowerUp() {
             return this.powerUpAmount;
         }
-        multiplyScore(t) {
-            return this.lifeAmount > 0 ? this.getScaleTween(this.getCardLifeText(), this.increaseLife, t) : this.powerUpAmount > 0 ? this.getScaleTween(this.getPowerUpText(), this.increasePowerUp, t) : null;
+        multiplyScore(mul) {
+            if (this.lifeAmount > 0) {
+                this.increaseLife(this.lifeAmount * mul);
+                var tween = this.view.tweenLife();
+                tween.onComplete.addOnce(() => {
+                    this.increaseLife(mul);
+                }, this);
+                return tween;
+            }
+            else if (this.powerUpAmount > 0) {
+                var tween = this.view.tweenLife();
+                tween.onComplete.addOnce(() => {
+                    this.increasePowerUp(mul);
+                }, this);
+                return tween;
+            }
+            else {
+                return null;
+            }
         }
-        increaseLife(e, i, o) {
-            this.setLife(this.lifeAmount * o),
-                this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * o);
+        increaseLife(mul) {
+            this.setLife(this.lifeAmount * mul);
+            this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * mul);
         }
-        increasePowerUp(t, e, i) {
-            this.setPowerUp(this.powerUpAmount * i);
+        increasePowerUp(mul) {
+            this.setPowerUp(this.powerUpAmount * mul);
         }
-        reduceScoreInNSeconds(t, e) {
-            this.powerUpAmount > 0 && (this.powerUpAmount = this.powerUpAmount - t, setTimeout(this.setPowerUpText.bind(this), e)),
-                this.lifeAmount > 0 && (this.lifeAmount = this.lifeAmount - t, setTimeout(this.setHealthText.bind(this), e));
+        reduceScoreInNSeconds(score, delay) {
+            if (this.powerUpAmount > 0) {
+                this.powerUpAmount = this.powerUpAmount - score;
+                setTimeout(this.setPowerUpText.bind(this), delay);
+            }
+            if (this.lifeAmount > 0) {
+                this.lifeAmount = this.lifeAmount - score;
+                setTimeout(this.setHealthText.bind(this), delay);
+            }
         }
-        increaseScoreInNSeconds(t, e) {
-            this.powerUpAmount > 0 && (this.powerUpAmount = this.powerUpAmount + t, setTimeout(this.increasePowerUpTween.bind(this), e)),
-                this.lifeAmount > 0 && (this.lifeAmount = this.lifeAmount + t, setTimeout(this.increaseLifeTween.bind(this), e));
+        increaseScoreInNSeconds(score, delay) {
+            if (this.powerUpAmount > 0) {
+                this.powerUpAmount = this.powerUpAmount + score;
+                setTimeout(this.increasePowerUpTween.bind(this), delay);
+            }
+            if (this.lifeAmount > 0) {
+                this.lifeAmount = this.lifeAmount + score;
+                setTimeout(this.increaseLifeTween.bind(this), delay);
+            }
         }
         increasePowerUpTween() {
-            this.getScaleTween(this.getPowerUpText(), this.setPowerUpText, this.powerUpAmount).start();
+            var tweenContainer = this.view.tweenPowerUp();
+            tweenContainer.restart();
         }
         increaseLifeTween() {
-            this.getScaleTween(this.getCardLifeText(), this.setHealthText, this.lifeAmount).start();
+            var tweenContainer = this.view.tweenLife();
+            tweenContainer.restart();
         }
         setScore(score) {
             switch (this.type) {
                 case CardScoreType.Boss:
                 case CardScoreType.Enemy:
-                    this.initialLife = score,
-                        this.setLife(score);
+                    this.initialLife = score;
+                    this.currentLife = score;
+                    this.setLife(score);
                     break;
                 case CardScoreType.Gold:
                 case CardScoreType.Health:
@@ -4330,7 +4660,6 @@
             this.view.setScale(0, Consts.FlipZoom);
         }
         startTurnAnimation(endCallback, endCaller) {
-            var i = this.removeShapeFromStage;
             var tweenContainer = TweenHelper.turnAnimationStart(null, this.view);
             tweenContainer.onStart.add(this.playCardSoundInSeconds, this);
             tweenContainer.onComplete.add(this.removeShapeFromStage, this);
@@ -4350,22 +4679,47 @@
             this.view.scaleX = 0.1;
             TweenHelper.turnAnimationEnd(null, this.view).restart();
         }
-        removeShapeFromStage() {
-            this.view.removeFromParent();
+        getScaleTween(view, tweenContainer) {
+            if (!tweenContainer) {
+                tweenContainer = TweenContainer.PoolGet();
+            }
+            var tween = TweenUtil.to(view, { scaleX: 2.5, scaleY: 2.5 }, 200);
+            tweenContainer.tweens.push(tween);
+            tween = TweenUtil.to(view, { scaleX: 1, scaleY: 1 }, 200, null, null, 200);
+            tweenContainer.tweens.push(tween);
+            return tweenContainer;
         }
-        getScaleTween(view, e) {
-            for (var i = [], o = 2; o < arguments.length; o++)
-                i[o - 2] = arguments[o];
-            var n, s = this.game.add.tween(view.scale).to({
-                x: 2.5,
-                y: 2.5
-            }, 200), a = this.game.add.tween(view.scale).to({
-                x: 1,
-                y: 1
-            }, 200);
-            return (n = s.onComplete).add.apply(n, [e, this, null].concat(i)),
-                s.chain(a),
-                s;
+        removeChild() {
+            var tweenContainer = TweenContainer.PoolGet();
+            var tween = TweenUtil.to(this.view, { scaleX: 1.1, scaleY: 1.1 }, 50);
+            tweenContainer.tweens.push(tween);
+            tween = TweenUtil.to(this.view, { scaleX: 1, scaleY: 1 }, 50, null, null, 50);
+            tweenContainer.tweens.push(tween);
+            tween = TweenUtil.to(this.view, { scaleX: 1.1, scaleY: 1.1 }, 50, null, null, 50 + 50);
+            tweenContainer.tweens.push(tween);
+            tween = TweenUtil.to(this.view, { scaleX: 0, scaleY: 0 }, 80, null, Laya.Handler.create(this, this.removeShapeFromStage), 50 + 50 + 50);
+            tweenContainer.tweens.push(tween);
+            return tweenContainer;
+        }
+        removeShapeFromStage() {
+            console.log("Card 移除", this);
+            this.view.removeFromParent();
+            this.delayPoolRecover();
+        }
+        delayPoolRecover() {
+            Laya.timer.frameOnce(1, this, this.poolRecover);
+        }
+        getCenterX() {
+            return this.view.x;
+        }
+        getCenterY() {
+            return this.view.y;
+        }
+        runLightning() {
+            var fx = FxShootLightningBig.PoolGet();
+            fx.setXY(this.getCenterX(), this.getCenterY());
+            this.game.container.addChild(fx);
+            return fx.Play();
         }
     }
 
@@ -4537,31 +4891,12 @@
         }
     }
 
-    class RandomHelper {
-        static getRandomIntInclusive(min, max) {
-            return min = Math.ceil(min),
-                max = Math.floor(max),
-                Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-        static getRandomBool() {
-            return Math.random() > 0.5;
-        }
-        static shuffle(list) {
-            for (var e, i, o = list.length; 0 !== o;)
-                i = Math.floor(Math.random() * o),
-                    e = list[o -= 1],
-                    list[o] = list[i],
-                    list[i] = e;
-            return list;
-        }
-    }
-
     var CardGenerationType;
     (function (CardGenerationType) {
         CardGenerationType[CardGenerationType["Random"] = 1] = "Random";
-        CardGenerationType[CardGenerationType["AfterChest"] = 1] = "AfterChest";
-        CardGenerationType[CardGenerationType["AfterBarrel"] = 2] = "AfterBarrel";
-        CardGenerationType[CardGenerationType["Positive"] = 3] = "Positive";
+        CardGenerationType[CardGenerationType["AfterChest"] = 2] = "AfterChest";
+        CardGenerationType[CardGenerationType["AfterBarrel"] = 3] = "AfterBarrel";
+        CardGenerationType[CardGenerationType["Positive"] = 4] = "Positive";
     })(CardGenerationType || (CardGenerationType = {}));
 
     var CardPositionType;
@@ -4827,34 +5162,32 @@
         getScore() {
             return this.currentLife + this.armor;
         }
-        reduceScoreInNSeconds(t, e) {
-            if (t <= this.armor)
-                this.armor -= t;
+        reduceScoreInNSeconds(score, delay) {
+            if (score <= this.armor) {
+                this.armor -= score;
+            }
             else {
-                var i = t - this.armor;
+                var i = score - this.armor;
                 this.armor = 0,
                     this.currentLife -= i;
             }
-            setTimeout(this.setStatus.bind(this), e);
+            setTimeout(this.setStatus.bind(this), delay);
         }
-        increaseScoreInNSeconds(t, e) {
-            this.totalLife - this.currentLife > t ? this.currentLife = this.totalLife : this.currentLife += t,
-                setTimeout(this.setStatus.bind(this), e);
+        increaseScoreInNSeconds(score, delay) {
+            if (this.totalLife - this.currentLife > score) {
+                this.currentLife = this.totalLife;
+            }
+            else {
+                this.currentLife += score;
+            }
+            setTimeout(this.setStatus.bind(this), delay);
         }
         setShopItemsStatus() {
-            var e = 1;
-            this.destroySpriteByName(ArtConsts.SmallHeart),
-                this.destroySpriteByName(ArtConsts.SmallHorseshoe),
-                this.destroySpriteByName(ArtConsts.SmallLuck),
-                this.destroySpriteByName(ArtConsts.SmallKey),
-                GameStatus.isHeart && this.addSpriteByName(ArtConsts.SmallHeart, e++, 0, 1),
-                GameStatus.isLuck && this.addSpriteByName(ArtConsts.SmallLuck, e++, 30),
-                GameStatus.isKey && this.addSpriteByName(ArtConsts.SmallKey, e, 30);
         }
         addSpriteByName(e, i, o, n) {
             void 0 === o && (o = 0),
                 void 0 === n && (n = 1);
-            var s = 38 * i - .5 * t.Consts.CardWidth, a = t.ShapeFactoryHelper.getShape(this.game, s, 80, ArtConsts.Items1, e, 0);
+            var s = 38 * i - .5 * Consts.CardWidth, a = t.ShapeFactoryHelper.getShape(this.game, s, 80, ArtConsts.Items1, e, 0);
             a.name = e,
                 a.angle = o,
                 a.scale.set(n),
@@ -4865,44 +5198,10 @@
             e && e.destroy();
         }
         setArmor() {
-            var e = this.view.getByName(t.Consts.PowerUpCircle);
-            e.visible && 0 == this.armor ? this.hideSprite(e) : e.visible = !0;
-            var i = this.view.getByName(t.Consts.PowerUp);
-            i.setText(this.armor.toString()),
-                0 == this.armor && i.setText("");
+            this.view.setArmor();
         }
-        hideSprite(t) {
-            this.game.add.tween(t).to({
-                width: 0,
-                height: 0,
-                angle: 360,
-                alpha: 0
-            }, 700, null, !0).onComplete.add(function () {
-                t.visible = !1,
-                    t.rotation = 0,
-                    t.alpha = 1;
-            });
-        }
-        setArmorFrame(e) {
-            var i = e.shape.getByName(t.Consts.CardManAnimation), o = this.view.getByName(t.Consts.PowerUpCircle);
-            o.frameName = i.frameName;
-            var n = this.game.add.tween(o.scale).to({
-                x: 0,
-                y: 0
-            }, 100).to({
-                x: 1.5,
-                y: 1.5
-            }, 250).to({
-                x: 1,
-                y: 1
-            }, 100), s = this.view.getByName(t.Consts.PowerUp);
-            s.scale.set(0);
-            var a = this.game.add.tween(s.scale).to({
-                x: 1,
-                y: 1
-            }, 100);
-            n.chain(a),
-                n.start();
+        setArmorFrame(card) {
+            this.view.setArmor();
         }
         fightWithEnemy(e) {
             if (e.getScore() >= this.armor + this.currentLife)
@@ -4935,9 +5234,10 @@
                 this.currentLife = this.totalLife;
         }
         increaseLifeByOneTween() {
-            var t = this.getScaleTween(this.getCardLifeText(), this.increaseLifeByOne);
-            return t.onStart.add(this.playHorseshoe, this),
-                t;
+            var tweenContainer = this.view.tweenLife();
+            tweenContainer.onStart.addOnce(this.playHorseshoe, this);
+            tweenContainer.onComplete.addOnce(this.increaseLifeByOne, this);
+            return tweenContainer;
         }
         playHorseshoe() {
             SoundController.instance.playSound(SoundConsts.Horseshoe);
@@ -4949,19 +5249,212 @@
         }
         useLuck() {
             GameStatus.isLuck = false;
-            var e = this.view.getByName(ArtConsts.SmallLuck), i = this.game.add.tween(e).to({
-                width: 1.5 * e.width,
-                height: 1.5 * e.height
-            }, 250).to({
-                width: 0,
-                height: 0,
-                alpha: 0
-            }, 150);
-            i.onComplete.add(this.setShopItemsStatus, this),
-                i.start();
+            this.view.useLuck();
         }
         getGoldValue() {
             return 0;
+        }
+    }
+
+    class FxShootCannonStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxShootCannon"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_core = (this.getChild("core"));
+        }
+    }
+    FxShootCannonStruct.URL = "ui://moe42ygrsqzyaf";
+    FxShootCannonStruct.DependPackages = ["GameHome"];
+
+    class FxShootSmokeStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxShootSmoke"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_smoke = (this.getChild("smoke"));
+        }
+    }
+    FxShootSmokeStruct.URL = "ui://moe42ygrsqzyag";
+    FxShootSmokeStruct.DependPackages = ["GameHome"];
+
+    class FxShootSmoke extends FxShootSmokeStruct {
+        static PoolGet() {
+            var item = Pool.getItem(this.URL);
+            if (!item) {
+                item = FxShootSmoke.createInstance();
+            }
+            return item;
+        }
+        PoolRecover() {
+            Laya.timer.clearAll(this);
+            this.removeFromParent();
+            this.m_smoke.playing = false;
+            Pool.recover(FxShootSmoke.URL, this);
+        }
+        Play() {
+            this.m_smoke.frame = 0;
+            this.m_smoke.playing = true;
+            var delay = Math.floor(10 * 1000 / 24);
+            Laya.timer.once(delay, this, this.PoolRecover);
+        }
+    }
+
+    class FxShootBoomStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxShootBoom"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_boom = (this.getChild("boom"));
+        }
+    }
+    FxShootBoomStruct.URL = "ui://moe42ygrsqzyah";
+    FxShootBoomStruct.DependPackages = ["GameHome"];
+
+    class FxShootBoom extends FxShootBoomStruct {
+        static PoolGet() {
+            var item = Pool.getItem(this.URL);
+            if (!item) {
+                item = FxShootBoom.createInstance();
+            }
+            return item;
+        }
+        PoolRecover() {
+            Laya.timer.clearAll(this);
+            this.removeFromParent();
+            this.m_boom.playing = false;
+            Pool.recover(FxShootBoom.URL, this);
+        }
+        Play() {
+            this.m_boom.frame = 0;
+            this.m_boom.playing = true;
+            var delay = Math.floor(18 * 1000 / 24);
+            Laya.timer.once(delay, this, this.PoolRecover);
+        }
+    }
+
+    class FxShootCannon extends FxShootCannonStruct {
+        constructor() {
+            super(...arguments);
+            this._tweenProgress = 0;
+        }
+        static PoolGet() {
+            var item = Pool.getItem(this.URL);
+            if (!item) {
+                item = FxShootCannon.createInstance();
+            }
+            return item;
+        }
+        PoolRecover() {
+            Laya.timer.clearAll(this);
+            Laya.Tween.clearAll(this);
+            this.removeFromParent();
+            Pool.recover(FxShootCannon.URL, this);
+        }
+        moveTo(fromX, fromY, toX, toY, duration) {
+            this.setXY(fromX, fromY);
+            this.tweenProgress = 0;
+            var tweenContainer = TweenContainer.PoolGet();
+            var tween = TweenUtil.to(this, { x: toX, y: toY, tweenProgress: 100 }, duration, null, Laya.Handler.create(this, this.onMoveEnd));
+            tweenContainer.tweens.push(tween);
+            return tweenContainer;
+        }
+        get tweenProgress() {
+            return this._tweenProgress;
+        }
+        set tweenProgress(val) {
+            this._tweenProgress = val;
+            if (Math.floor(val) % 10 && this.parent) {
+                var fx = FxShootSmoke.PoolGet();
+                this.parent.addChild(fx);
+                fx.setXY(this.x, this.y);
+                fx.Play();
+            }
+        }
+        onMoveEnd() {
+            if (this.parent) {
+                var fx = FxShootBoom.PoolGet();
+                this.parent.addChild(fx);
+                fx.setXY(this.x, this.y);
+                fx.Play();
+            }
+            Laya.timer.frameOnce(2, this, this.PoolRecover);
+        }
+    }
+
+    class FxSkullStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxSkull"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_fx = (this.getChild("fx"));
+        }
+    }
+    FxSkullStruct.URL = "ui://moe42ygrsqzyam";
+    FxSkullStruct.DependPackages = ["GameHome"];
+
+    class FxSkull extends FxSkullStruct {
+        constructor() {
+            super(...arguments);
+            this._tweenProgress = 0;
+        }
+        static PoolGet() {
+            var item = Pool.getItem(this.URL);
+            if (!item) {
+                item = FxSkull.createInstance();
+            }
+            return item;
+        }
+        PoolRecover() {
+            Laya.timer.clearAll(this);
+            Laya.Tween.clearAll(this);
+            this.removeFromParent();
+            Pool.recover(FxSkull.URL, this);
+        }
+        moveTo(fromX, fromY, toX, toY, duration) {
+            this.setXY(fromX, fromY);
+            this.tweenProgress = 0;
+            var tweenContainer = TweenContainer.PoolGet();
+            var tween = TweenUtil.to(this, { x: toX, y: toY, tweenProgress: 100 }, duration, null, Laya.Handler.create(this, this.onMoveEnd));
+            tweenContainer.tweens.push(tween);
+            return tweenContainer;
+        }
+        get tweenProgress() {
+            return this._tweenProgress;
+        }
+        set tweenProgress(val) {
+            this._tweenProgress = val;
+            if (Math.floor(val) % 10 && this.parent) {
+                var fx = FxShootSmoke.PoolGet();
+                this.parent.addChild(fx);
+                fx.setXY(this.x, this.y);
+                fx.Play();
+            }
+        }
+        onMoveEnd() {
+            if (this.parent) {
+                var fx = FxShootBoom.PoolGet();
+                this.parent.addChild(fx);
+                fx.setXY(this.x, this.y);
+                fx.Play();
+            }
+            Laya.timer.frameOnce(2, this, this.PoolRecover);
         }
     }
 
@@ -4980,8 +5473,8 @@
                     var card = undefined, isHeroStartRow = row === Consts.HeroStartRow - 1, isHeroStartColumn = column === Consts.HeroStartColumn - 1;
                     if (isHeroStartRow && isHeroStartColumn) {
                         card = this.cardFactory.getHero();
-                        GameStatus.isHeroAlive = false,
-                            GameStatus.isGameEnd = false;
+                        GameStatus.isHeroAlive = true;
+                        GameStatus.isGameEnd = false;
                     }
                     else {
                         {
@@ -5070,16 +5563,13 @@
             }
             return null;
         }
-        replaceCard(moveTyp, cardGenerationType, score = 0) {
+        replaceCard(moveType, cardGenerationType, score = 0) {
             var position = this.field.getPosition(function (e) {
                 return e instanceof Hero;
             });
             var list = Array();
             var card = this.getCardFromFactory(cardGenerationType, score);
             list.push(this.replaceCardByPosition(position.getNewPosition(moveType), card));
-            if (!GameStatus.isTutorialSeen) {
-                card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
-            }
             return list;
         }
         tutorialStep1() {
@@ -5122,9 +5612,11 @@
             }
         }
         move(moveType) {
-            var list = Array(), heroPosition = this.getHeroPosition(), fieldPosition = heroPosition.getNewPosition(moveType);
+            var list = [];
+            var heroPosition = this.getHeroPosition();
+            var fieldPosition = heroPosition.getNewPosition(moveType);
             var card = this.field.get(fieldPosition);
-            if (card instanceof NullCard)
+            if (card.isEmpty)
                 return list;
             this.isPlayMove(card) && setTimeout(this.playMoveSound.bind(this), 115);
             var tweens;
@@ -5137,7 +5629,7 @@
                 card.isBoss && GameStatus.gameLevel++;
                 var cardPositionType = this.getCardPositionType(moveType, heroPosition);
                 var replaceCard = this.getCardToReplace(card);
-                var tweenContainer = new TweenContainer;
+                var tweenContainer = TweenContainer.PoolGet();
                 tweens = tweenContainer.tweens;
                 tweens.push(card.removeChild());
                 list.push(tweenContainer);
@@ -5146,42 +5638,61 @@
                         list.push(this.moveAndSetWithAnimation(heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime));
                         switch (moveType) {
                             case MoveType.Left:
-                                0 === heroPosition.row
-                                    ? list.push(this.moveAllLine(MoveType.Down, MoveType.Up, heroPosition.getNewPosition(MoveType.Down), replaceCard))
-                                    : list.push(this.moveAllLine(MoveType.Up, MoveType.Down, heroPosition.getNewPosition(MoveType.Up), replaceCard));
+                                if (0 === heroPosition.row) {
+                                    var moveToPosition = heroPosition.getNewPosition(MoveType.Down);
+                                    var tween = this.moveAllLine(MoveType.Down, MoveType.Up, moveToPosition, replaceCard);
+                                    list.push(tween);
+                                }
+                                else {
+                                    var moveToPosition = heroPosition.getNewPosition(MoveType.Up);
+                                    var tween = this.moveAllLine(MoveType.Up, MoveType.Down, moveToPosition, replaceCard);
+                                    list.push(tween);
+                                }
                                 break;
                             case MoveType.Right:
-                                heroPosition.row === this.field.getRowCount() - 1 ? list.push.apply(list, this.moveAllLine(MoveType.Up, MoveType.Down, heroPosition.getNewPosition(MoveType.Up), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Down, MoveType.Up, heroPosition.getNewPosition(MoveType.Down), replaceCard));
+                                if (heroPosition.row === this.field.getRowCount() - 1) {
+                                    var moveToPosition = heroPosition.getNewPosition(MoveType.Up);
+                                    var tween = this.moveAllLine(MoveType.Up, MoveType.Down, moveToPosition, replaceCard);
+                                    list.push(tween);
+                                }
+                                else {
+                                    var moveToPosition = heroPosition.getNewPosition(MoveType.Down);
+                                    var tween = this.moveAllLine(MoveType.Down, MoveType.Up, moveToPosition, replaceCard);
+                                    list.push(tween);
+                                }
                                 break;
                             case MoveType.Up:
-                                heroPosition.column === this.field.getColumnCount() - 1 ? list.push.apply(list, this.moveAllLine(MoveType.Left, MoveType.Right, heroPosition.getNewPosition(MoveType.Left), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Right, MoveType.Left, heroPosition.getNewPosition(MoveType.Right), replaceCard));
+                                if (heroPosition.column === this.field.getColumnCount() - 1) {
+                                    var moveToPosition = heroPosition.getNewPosition(MoveType.Left);
+                                    var tween = this.moveAllLine(MoveType.Left, MoveType.Right, moveToPosition, replaceCard);
+                                    list.push(tween);
+                                }
+                                else {
+                                    var moveToPosition = heroPosition.getNewPosition(MoveType.Right);
+                                    var tween = this.moveAllLine(MoveType.Right, MoveType.Left, moveToPosition, replaceCard);
+                                    list.push(tween);
+                                }
                                 break;
                             case MoveType.Down:
-                                0 === heroPosition.column ? list.push.apply(list, this.moveAllLine(MoveType.Right, MoveType.Left, heroPosition.getNewPosition(MoveType.Right), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Left, MoveType.Right, heroPosition.getNewPosition(MoveType.Left), replaceCard));
+                                if (0 === heroPosition.column) {
+                                    var moveToPosition = heroPosition.getNewPosition(MoveType.Right);
+                                    var tween = this.moveAllLine(MoveType.Right, MoveType.Left, moveToPosition, replaceCard);
+                                    list.push(tween);
+                                }
+                                else {
+                                    var moveToPosition = heroPosition.getNewPosition(MoveType.Left);
+                                    var tween = this.moveAllLine(MoveType.Left, MoveType.Right, moveToPosition, replaceCard);
+                                    list.push(tween);
+                                }
+                                break;
                         }
                         break;
                     case CardPositionType.End:
-                        list.push.apply(list, this.moveAllLine(this.getOppositeMoveType(moveType), moveType, heroPosition, replaceCard));
+                        list.push(this.moveAllLine(this.getOppositeMoveType(moveType), moveType, heroPosition, replaceCard));
+                        break;
                 }
             }
             if (!GameStatus.isTutorialSeen) {
-                var u, p = this.cardFactory.container.getByName(Consts.Shadow);
-                if (p && this.cardFactory.container.bringToTop(p), this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.Hero)), this.cardFactory.container.bringToTop(card.view), 1 === this.step)
-                    (u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function () {
-                        this.tutorialStep1();
-                    }.bind(this));
-                if (2 === this.step)
-                    (u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function () {
-                        this.tutorialStep2(fieldPosition);
-                    }.bind(this));
-                if (3 === this.step)
-                    (u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function () {
-                        this.tutorialStep3(fieldPosition);
-                    }.bind(this));
-                if (4 === this.step)
-                    (u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function () {
-                        this.tutorialStep4();
-                    }.bind(this));
                 this.step++;
             }
             return list;
@@ -5242,7 +5753,7 @@
                         return CardPositionType.Center;
                     }
                     else {
-                        CardPositionType.End;
+                        return CardPositionType.End;
                     }
                 case MoveType.Down:
                     if (fieldPosition.row == this.field.getRowCount() - 1) {
@@ -5252,7 +5763,7 @@
                         return CardPositionType.Center;
                     }
                     else {
-                        CardPositionType.End;
+                        return CardPositionType.End;
                     }
                 case MoveType.Left:
                     if (0 == fieldPosition.column) {
@@ -5262,7 +5773,7 @@
                         return CardPositionType.Center;
                     }
                     else {
-                        CardPositionType.End;
+                        return CardPositionType.End;
                     }
                 case MoveType.Up:
                     if (0 == fieldPosition.row) {
@@ -5272,7 +5783,7 @@
                         return CardPositionType.Center;
                     }
                     else {
-                        CardPositionType.End;
+                        return CardPositionType.End;
                     }
             }
         }
@@ -5281,7 +5792,7 @@
             SoundController.instance.playSound(SoundConsts.HeroDies);
             for (var cardList = this.field.getAll(), i = 0, s = cardList = RandomHelper.shuffle(cardList); i < s.length; i++) {
                 var card = cardList[i];
-                var tweenContainer = new TweenContainer();
+                var tweenContainer = TweenContainer.PoolGet();
                 tweenContainer.animationDuration = RandomHelper.getRandomIntInclusive(50, 150);
                 tweenContainer.tweens.push(card.removeChild());
                 list.push(tweenContainer);
@@ -5293,14 +5804,14 @@
                 return card.isBoss;
             });
         }
-        moveAllLine(moveTypeA, moveTypeB, fieldPosition, card) {
+        moveAllLine(moveTo, moveTypeB, fieldPosition, card) {
             var animationList = [];
             for (var time = Consts.AnimationTime * Consts.AnimationMultiplier; this.field.isPositionValid(fieldPosition);) {
                 animationList.push(this.moveAndSetWithAnimation(fieldPosition.getNewPosition(moveTypeB), this.field.get(fieldPosition), Consts.AnimationTime).setAnimationDuration(time)),
-                    fieldPosition = fieldPosition.getNewPosition(moveTypeA);
+                    fieldPosition = fieldPosition.getNewPosition(moveTo);
             }
-            var card = this.cardFactory.getDefault(), cardFieldPosition = fieldPosition.getNewPosition(moveTypeB);
-            animationList.push(this.moveAndSetWithAnimation(cardFieldPosition, card, Consts.AnimationTime)),
+            var defaultCard = this.cardFactory.getDefault(), cardFieldPosition = fieldPosition.getNewPosition(moveTypeB);
+            animationList.push(this.moveAndSetWithAnimation(cardFieldPosition, defaultCard, Consts.AnimationTime)),
                 animationList.push(this.replaceCardByPosition(cardFieldPosition, card).setAnimationDuration(1));
             return animationList;
         }
@@ -5312,52 +5823,46 @@
         }
         shootCannon() {
             SoundController.instance.playSound(SoundConsts.Cannon);
-            var e = this.getHeroPosition(), i = this.field.get(e), o = [];
-            return o.push.apply(o, this.shootCannonInDirection(MoveType.Right, i, e)),
-                o.push.apply(o, this.shootCannonInDirection(MoveType.Left, i, e)),
-                o.push.apply(o, this.shootCannonInDirection(MoveType.Up, i, e)),
-                o.push.apply(o, this.shootCannonInDirection(MoveType.Down, i, e)),
-                o;
+            var heroPosition = this.getHeroPosition();
+            var heroCard = this.field.get(heroPosition);
+            var list = [];
+            list.push(this.shootCannonInDirection(MoveType.Right, heroCard, heroPosition));
+            list.push(this.shootCannonInDirection(MoveType.Left, heroCard, heroPosition));
+            list.push(this.shootCannonInDirection(MoveType.Up, heroCard, heroPosition));
+            list.push(this.shootCannonInDirection(MoveType.Down, heroCard, heroPosition));
+            return list;
         }
-        shootCannonInDirection(e, i, o) {
-            var n = [], s = o.getNewPosition(e);
-            if (!this.field.isPositionValid(s))
-                return n;
-            var a = this.field.get(s);
-            if (t.Field.canShootCard(a)) {
-                if (n.push(this.shootCard(i.getCenterX(), i.getCenterY(), a.getCenterX(), a.getCenterY(), 200)), a.type === CardScoreType.Cannon)
-                    a.increaseScoreInNSeconds(i.shootScore, 400);
-                else if (i.shootScore >= a.getScore()) {
-                    var r = this.getCardToReplaceAfterSmash(a), h = this.replaceCardByPosition(s, r, !0).setAnimationDuration(1);
-                    h.tweens[0].delay(400),
-                        n.push(h);
-                }
-                else
-                    a.reduceScoreInNSeconds(i.shootScore, 400);
+        shootCannonInDirection(moveType, heroCard, heroPosition) {
+            var list = [];
+            var position = heroPosition.getNewPosition(moveType);
+            if (!this.field.isPositionValid(position)) {
+                return list;
             }
-            return n;
+            var itemCard = this.field.get(position);
+            if (Field.canShootCard(itemCard)) {
+                var tween = this.shootCard(heroCard.getCenterX(), heroCard.getCenterY(), itemCard.getCenterX(), itemCard.getCenterY(), 200);
+                list.push(tween);
+                if (itemCard.type === CardScoreType.Cannon) {
+                    itemCard.increaseScoreInNSeconds(heroCard.shootScore, 400);
+                }
+                else if (heroCard.shootScore >= itemCard.getScore()) {
+                    var replaceCard = this.getCardToReplaceAfterSmash(itemCard);
+                    var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                    tweenContainer.setFirstDelay(400);
+                    list.push(tweenContainer);
+                }
+                else {
+                    itemCard.reduceScoreInNSeconds(heroCard.shootScore, 400);
+                }
+            }
+            return list;
         }
-        shootCard(e, i, o, n, s) {
-            var a = t.ShapeFactoryHelper.getShape(this.game, e, i, t.ArtConsts.Items1, t.ArtConsts.Core);
-            this.cardFactory.container.add(a);
-            var r = this.game.add.tween(a).to({
-                x: o,
-                y: n
-            }, s);
-            r.onUpdateCallback(this.onCoreFlyingUpdate, this),
-                r.onComplete.add(this.onCoreFlyingComplete, this);
-            var h = new TweenContainer;
-            return h.animationDuration = 1,
-                h.tweens.push(r),
-                h;
-        }
-        onCoreFlyingUpdate(e) {
-            var i = new t.CannonFlyingSmoke(this.game, e.target.x, e.target.y);
-            this.cardFactory.container.add(i);
-        }
-        onCoreFlyingComplete(t) {
-            this.addBombExplosionAnimation(t.x, t.y, 0),
-                t.kill();
+        shootCard(fromX, fromY, toX, toY, duration) {
+            var fx = FxShootCannon.PoolGet();
+            this.game.container.addChild(fx);
+            var tweenContainer = fx.moveTo(fromX, fromY, toY, toY, duration);
+            tweenContainer.animationDuration = 1;
+            return tweenContainer;
         }
         static canShootCard(card) {
             if (card.isEmpty)
@@ -5376,66 +5881,81 @@
             }
         }
         smashBomb() {
-            for (var e = [], i = 0, o = this.field.getPositions(function (e) {
-                var i = e;
-                return i && i.type === CardScoreType.Bomb && i.getPowerUp() <= 0;
-            }); i < o.length; i++) {
-                var n = o[i];
+            var bombPositionList = this.field.getPositions(function (card) {
+                return card.type === CardScoreType.Bomb && card.getPowerUp() <= 0;
+            });
+            var list = [];
+            for (var i = 0; i < bombPositionList.length; i++) {
+                var position = bombPositionList[i];
                 SoundController.instance.playSound(SoundConsts.Bomb);
-                var s = this.field.get(n);
-                this.addBombExplosionAnimation(s.view.x, s.view.y, 100);
-                var a = this.getCardToReplaceAfterSmash(this.field.get(n)), r = this.replaceCardByPosition(n, a, !0);
-                e.push(r);
-                for (var h = s.getLife(), d = 0, c = [MoveType.Up, MoveType.Down, MoveType.Left, MoveType.Right]; d < c.length; d++) {
-                    var u = c[d];
-                    if (e.push.apply(e, this.smashBombInDirection(u, n, h)), !GameStatus.isHeroAlive)
-                        return e;
+                var card = this.field.get(position);
+                this.addBombExplosionAnimation(card.view.x, card.view.y, 100);
+                var replaceCard = this.getCardToReplaceAfterSmash(this.field.get(position));
+                var tweenContainer = this.replaceCardByPosition(position, replaceCard, !0);
+                list.push(tweenContainer);
+                var life = card.getLife();
+                var moveTypeList = [MoveType.Up, MoveType.Down, MoveType.Left, MoveType.Right];
+                for (var d = 0; d < moveTypeList.length; d++) {
+                    var moveType = moveTypeList[d];
+                    list.push(this.smashBombInDirection(moveType, position, life));
+                    if (!GameStatus.isHeroAlive) {
+                        return list;
+                    }
                 }
             }
-            return e;
+            return list;
         }
-        smashBombInDirection(e, i, o) {
-            var n = [], s = Consts.SmashDelay;
-            for (i = i.getNewPosition(e); this.field.isPositionValid(i);) {
-                if (n.push.apply(n, this.smashBombInPosition(i, s, o)), !GameStatus.isHeroAlive)
-                    return n;
-                s += Consts.SmashDelay,
-                    i = i.getNewPosition(e);
+        smashBombInDirection(moveType, position, life) {
+            var list = [];
+            var smashDelay = Consts.SmashDelay;
+            for (position = position.getNewPosition(moveType); this.field.isPositionValid(position);) {
+                list.push(this.smashBombInPosition(position, smashDelay, life));
+                if (!GameStatus.isHeroAlive)
+                    return list;
+                smashDelay += Consts.SmashDelay,
+                    position = position.getNewPosition(moveType);
             }
-            return n;
+            return list;
         }
-        smashBombInPosition(e, i, o) {
-            var n = this.field.get(e), s = 4 == GameStatus.RowCount ? 1e3 : 500;
-            if (this.game.camera.shake(Consts.ShakeIntensity, s), this.addBombExplosionAnimation(n.view.x, n.view.y, i), n.type == CardScoreType.Chest)
+        smashBombInPosition(position, smashDelay, life) {
+            var card = this.field.get(position);
+            var shakeTime = 4 == GameStatus.RowCount ? 1e3 : 500;
+            this.game.shake(Consts.ShakeIntensity, shakeTime);
+            this.addBombExplosionAnimation(card.view.x, card.view.y, smashDelay);
+            if (card.type == CardScoreType.Chest)
                 return [];
-            if (n instanceof t.Hero && GameStatus.currentHero == t.HeroType.Bomb)
+            if (card.isHero && GameStatus.currentHero == HeroType.Bomb)
                 return [];
-            if (o >= n.getScore()) {
-                if (!(n instanceof t.Hero)) {
-                    var a = this.getCardToReplaceAfterSmash(n);
-                    return [this.replaceCardByPosition(e, a, !0).setAnimationDuration(1)];
+            if (life >= card.getScore()) {
+                if (!card.isHero) {
+                    var replaceCard = this.getCardToReplaceAfterSmash(card);
+                    return [this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1)];
                 }
-                if (!GameStatus.isHeart)
-                    return GameStatus.isHeroAlive = !1,
-                        this.removeAllChild();
-                GameStatus.isHeart = !1,
-                    this.keyboardManager.reset(),
-                    n.useHeart();
+                if (!GameStatus.isHeart) {
+                    GameStatus.isHeroAlive = false;
+                    return this.removeAllChild();
+                }
+                var hero = card;
+                GameStatus.isHeart = false;
+                this.keyboardManager.reset();
+                hero.useHeart();
             }
-            else
-                n.reduceScoreInNSeconds(o, 1.2 * i);
+            else {
+                card.reduceScoreInNSeconds(life, 1.2 * smashDelay);
+            }
             return [];
         }
-        addBombExplosionAnimation(t, e, i) {
-            setTimeout(this.playBombExplosionAnimation.bind(this, t, e), i);
+        addBombExplosionAnimation(x, y, delay) {
+            setTimeout(this.playBombExplosionAnimation.bind(this, x, y), delay);
         }
-        playBombExplosionAnimation(e, i) {
-            var o = new t.Boom(this.game, e, i);
-            o.play(t.AnimationConsts.Action, 60, !1, !0),
-                this.cardFactory.container.add(o);
+        playBombExplosionAnimation(x, y) {
+            var fx = FxShootBoom.PoolGet();
+            fx.setXY(x, y);
+            this.game.container.addChild(fx);
+            fx.Play();
         }
         replaceCardByPosition(fieldPosition, card, isChangeState = false) {
-            var tweenContainer = new TweenContainer();
+            var tweenContainer = TweenContainer.PoolGet();
             var tweens = tweenContainer.tweens;
             var oldCard = this.field.get(fieldPosition);
             if (isChangeState) {
@@ -5476,49 +5996,59 @@
             }
         }
         shootLightning() {
-            var e = this.getHeroPosition(), i = this.field.get(e), o = [];
-            return o.push.apply(o, this.shootLightningInAllDirections(i.lightningScore, e, Consts.LightningDuration)),
-                this.clearLightning(),
-                o.length > 0 && SoundController.instance.playSound(SoundConsts.Lighting),
-                o;
+            var heroPosition = this.getHeroPosition();
+            var heroCard = this.field.get(heroPosition);
+            var list = [];
+            var tween = this.shootLightningInAllDirections(heroCard.lightningScore, heroPosition, Consts.LightningDuration);
+            list.push(tween);
+            this.clearLightning();
+            list.length > 0 && SoundController.instance.playSound(SoundConsts.Lighting);
+            return list;
         }
         clearLightning() {
-            this.field.getAll().forEach(function (t) {
-                t.canLightningStrike = !1;
+            this.field.getAll().forEach(function (card) {
+                card.canLightningStrike = false;
             });
         }
-        shootLightningInAllDirections(e, i, o) {
-            var n = [];
-            return n.push.apply(n, this.shootLightningInDirection(MoveType.Right, e, i, o)),
-                n.push.apply(n, this.shootLightningInDirection(MoveType.Left, e, i, o)),
-                n.push.apply(n, this.shootLightningInDirection(MoveType.Up, e, i, o)),
-                n.push.apply(n, this.shootLightningInDirection(MoveType.Down, e, i, o)),
-                n;
+        shootLightningInAllDirections(lightningScore, heroPosition, lightningDuration) {
+            var list = [];
+            list.push(this.shootLightningInDirection(MoveType.Right, lightningScore, heroPosition, lightningDuration));
+            list.push(this.shootLightningInDirection(MoveType.Left, lightningScore, heroPosition, lightningDuration));
+            list.push(this.shootLightningInDirection(MoveType.Up, lightningScore, heroPosition, lightningDuration));
+            list.push(this.shootLightningInDirection(MoveType.Down, lightningScore, heroPosition, lightningDuration));
+            return list;
         }
-        shootLightningInDirection(i, o, n, s) {
-            var a = [], r = n.getNewPosition(i);
-            if (!this.field.isPositionValid(r))
-                return a;
-            var h, d = this.field.get(r);
-            if (d instanceof t.Hero)
-                return a;
-            if (d.canLightningStrike)
-                return a;
-            if (e.canShootLightning(d)) {
-                var c = s + Consts.LightningDuration, u = new TweenContainer;
-                if ((h = u.tweens).push.apply(h, d.runLightning()), u.setAnimationDuration(Consts.LightningDuration), a.push(u), o >= d.getScore()) {
-                    var p = this.getCardToReplaceAfterSmash(d);
-                    p.canLightningStrike = !0;
-                    var l = this.replaceCardByPosition(r, p, !0).setAnimationDuration(1);
-                    l.tweens[0].delay(2 * c),
-                        a.push(l);
-                }
-                else
-                    d.reduceScoreInNSeconds(o, 2 * c);
-                d.canLightningStrike = !0,
-                    a.push.apply(a, this.shootLightningInAllDirections(o, r, c));
+        shootLightningInDirection(moveType, lightningScore, heroPosition, lightningDuration) {
+            var list = [];
+            var position = heroPosition.getNewPosition(moveType);
+            if (!this.field.isPositionValid(position)) {
+                return list;
             }
-            return a;
+            var card = this.field.get(position);
+            if (card.isHero)
+                return list;
+            if (card.canLightningStrike)
+                return list;
+            if (Field.canShootLightning(card)) {
+                var duration = lightningDuration + Consts.LightningDuration;
+                var tweenContainer = TweenContainer.PoolGet();
+                tweenContainer.tweens.push(card.runLightning());
+                tweenContainer.setAnimationDuration(Consts.LightningDuration);
+                list.push(tweenContainer);
+                if (lightningScore >= card.getScore()) {
+                    var replaceCard = this.getCardToReplaceAfterSmash(card);
+                    replaceCard.canLightningStrike = true;
+                    var replaceTweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                    replaceTweenContainer.setFirstDelay(2 * duration);
+                    list.push(replaceTweenContainer);
+                }
+                else {
+                    card.reduceScoreInNSeconds(lightningScore, 2 * duration);
+                }
+                card.canLightningStrike = false;
+                list.push(this.shootLightningInAllDirections(lightningScore, position, duration));
+            }
+            return list;
         }
         static canShootLightning(card) {
             switch (card.type) {
@@ -5532,66 +6062,54 @@
         }
         shootMultiplier() {
             SoundController.instance.playSound(SoundConsts.Idol);
-            var e = this.getHeroPosition(), i = this.field.get(e), o = [];
-            return o.push.apply(o, this.shootMultiplierInDirection(MoveType.Right, i.multiplierScore, e)),
-                o.push.apply(o, this.shootMultiplierInDirection(MoveType.Left, i.multiplierScore, e)),
-                o.push.apply(o, this.shootMultiplierInDirection(MoveType.Up, i.multiplierScore, e)),
-                o.push.apply(o, this.shootMultiplierInDirection(MoveType.Down, i.multiplierScore, e)),
-                o;
+            var heroPosition = this.getHeroPosition();
+            var heroCard = this.field.get(heroPosition);
+            var list = [];
+            list.push(this.shootMultiplierInDirection(MoveType.Right, heroCard.multiplierScore, heroPosition));
+            list.push(this.shootMultiplierInDirection(MoveType.Left, heroCard.multiplierScore, heroPosition));
+            list.push(this.shootMultiplierInDirection(MoveType.Up, heroCard.multiplierScore, heroPosition));
+            list.push(this.shootMultiplierInDirection(MoveType.Down, heroCard.multiplierScore, heroPosition));
+            return list;
         }
         shootSkull() {
             SoundController.instance.playSound(SoundConsts.Skull);
-            for (var e = this.getHeroPosition().getPoint(), i = [], o = 0, n = this.field.getPositions(function (e) {
-                return !(e instanceof t.Hero);
-            }); o < n.length; o++) {
-                var s = n[o], a = s.getPoint();
-                i.push(this.shootSkullInCoordinate(e.x, e.y, a.x, a.y, 300));
-                var r = this.getCardToReplaceAfterSmash(this.field.get(s)), h = this.replaceCardByPosition(s, r, !0).setAnimationDuration(1);
-                h.tweens[0].delay(350),
-                    i.push(h);
+            var point = this.getHeroPosition().getPoint();
+            var positionList = this.field.getPositions(function (card) {
+                return !card.isHero;
+            });
+            var list = [];
+            for (var i = 0; i < positionList.length; i++) {
+                var position = positionList[i];
+                var pos = position.getPoint();
+                list.push(this.shootSkullInCoordinate(point.x, point.y, pos.x, pos.y, 300));
+                var replaceCard = this.getCardToReplaceAfterSmash(this.field.get(position));
+                var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                tweenContainer.setFirstDelay(350);
+                list.push(tweenContainer);
             }
-            return i;
+            return list;
         }
-        shootSkullInCoordinate(e, i, o, n, s) {
-            var a = new t.Skull(this.game, e, i);
-            a.animations.play(t.AnimationConsts.Action),
-                a.anchor.set(0, 0),
-                a.rotation = Phaser.Point.angle(new Phaser.Point(o, n), new Phaser.Point(e, i)),
-                this.cardFactory.container.add(a);
-            var r = this.game.add.tween(a).to({
-                x: o,
-                y: n
-            }, s);
-            r.onUpdateCallback(this.onSkullFlyingUpdate, this),
-                r.onComplete.add(this.onSkullFlyingComplete, this);
-            var h = new TweenContainer;
-            return h.animationDuration = 1,
-                h.tweens.push(r),
-                h;
+        shootSkullInCoordinate(heroX, heroY, posX, posY, time) {
+            var fx = FxSkull.PoolGet();
+            var tweenContainer = fx.moveTo(heroX, heroY, posX, posY, time);
+            this.game.container.addChild(fx);
+            tweenContainer.animationDuration = 1;
+            return tweenContainer;
         }
-        onSkullFlyingUpdate(e) {
-            var i = new t.SkullLight(this.game, e.target.x, e.target.y);
-            this.cardFactory.container.addChild(i),
-                e.target.bringToTop();
-        }
-        onSkullFlyingComplete(t) {
-            this.addBombExplosionAnimation(t.x, t.y, 0),
-                t.kill();
-        }
-        shootMultiplierInDirection(i, o, n) {
-            var s = [], a = n.getNewPosition(i);
-            if (!this.field.isPositionValid(a))
-                return s;
-            var r = this.field.get(a);
-            if (e.canMultiply(r.type, r.getScore())) {
-                var h = r.multiplyScore(o);
-                if (!h)
-                    return s;
-                var d = (new TweenContainer).setAnimationDuration(1);
-                return d.tweens.push(h),
-                    s.push(d),
-                    s;
+        shootMultiplierInDirection(moveType, multiplierScore, heroPosition) {
+            var list = [];
+            var position = heroPosition.getNewPosition(moveType);
+            if (!this.field.isPositionValid(position))
+                return list;
+            var card = this.field.get(position);
+            if (Field.canMultiply(card.type, card.getScore())) {
+                var tweenContainer = card.multiplyScore(multiplierScore);
+                if (!tweenContainer)
+                    return list;
+                tweenContainer.setAnimationDuration(1);
+                list.push(tweenContainer);
             }
+            return list;
         }
         static canMultiply(cardScoreType, score) {
             switch (cardScoreType) {
@@ -5646,9 +6164,9 @@
             }
             return e;
         }
-        smashHero(t) {
-            var e = this.getHero();
-            this.addBombExplosionAnimation(e.shape.x, e.shape.y, t);
+        smashHero(delay) {
+            var hero = this.getHero();
+            this.addBombExplosionAnimation(hero.getCenterX(), hero.getCenterY(), delay);
         }
     }
 
@@ -5777,7 +6295,7 @@
         fillBasket(start, len) {
             for (var i = start; i <= len; i++) {
                 var val = 3 - (i - 1) * this.step;
-                if (this.initialStatus.ContainsKey(i.toString())) {
+                if (!this.initialStatus.ContainsKey(i.toString())) {
                     this.initialStatus.Add(i.toString(), val);
                     this.status.Add(i.toString(), val);
                 }
@@ -5875,15 +6393,22 @@
             var cardConfig = Game.config.card.getTypeLevelConfig(CardScoreType.Hero, GameStatus.currentHero);
             var hero = new Hero();
             hero.game = this.game;
+            hero.type = CardScoreType.Hero;
             hero.SetConfig(cardConfig);
-            hero.totalLife = 10,
-                hero.currentLife = 10,
-                hero.armor = 0,
-                GameStatus.isHorseshoe && (hero.totalLife += 1, hero.currentLife += 1),
+            hero.setShopItemsStatus();
+            hero.totalLife = 10;
+            hero.currentLife = 10;
+            hero.armor = 0;
+            if (GameStatus.isHorseshoe) {
+                hero.totalLife += 1;
+                hero.currentLife += 1;
+            }
+            hero.setStatus(),
                 this.movesAfterLastSpecialCard++;
             return hero;
         }
         getCard(cardGenerationType = CardGenerationType.Random, score, cardTypeList) {
+            console.log("随机生成卡牌", "cardGenerationType=", cardGenerationType, "score=", score, "cardTypeList=", cardTypeList);
             if (GameStatus.isNeedCreateBoss && cardGenerationType == CardGenerationType.Random) {
                 GameStatus.isNeedCreateBoss = false;
                 return this.getBoss();
@@ -5934,7 +6459,7 @@
                 return CardBackgroundType.PowerUp;
             }
             else {
-                CardBackgroundType.Warrior;
+                return CardBackgroundType.Warrior;
             }
         }
         static isShouldBePositiveCard(cardTypeList) {
@@ -6059,10 +6584,10 @@
                 return this.generatePowerUpTypeFromChest();
             }
             else if (cardGenerationTyp == CardGenerationType.AfterBarrel) {
-                CardFactory.generatePowerUpTypeFromBarrel(cardTypeList);
+                return CardFactory.generatePowerUpTypeFromBarrel(cardTypeList);
             }
             else {
-                CardFactory.generatePowerUpCardScoreType(cardTypeList);
+                return CardFactory.generatePowerUpCardScoreType(cardTypeList);
             }
         }
         generatePowerUpTypeFromChest() {
@@ -6286,8 +6811,47 @@
         }
     }
 
+    class Shake {
+        constructor() {
+            this._isShaking = false;
+            this._startTime = 0;
+            this._offsetPos = [0, 0];
+            this.shank_I = 0;
+            this._orgX = 0;
+            this._orgY = 0;
+        }
+        exe(target, intensity = 30, duration = 300, radius = 6) {
+            if (this._isShaking) {
+                return;
+            }
+            this._isShaking = true;
+            this._startTime = Laya.timer.currTimer;
+            this._offsetPos = [0, 0];
+            this.shank_I = 0;
+            this._target = target;
+            this._orgX = target.x;
+            this._orgY = target.y;
+            Laya.timer.loop(intensity, this, this._pos, [duration, radius]);
+        }
+        _pos(duration, radius) {
+            this._offsetPos[this.shank_I % 2] = (this._offsetPos[this.shank_I % 2] > 0) ? -radius : radius;
+            this.shank_I++;
+            this._target.x += this._offsetPos[0];
+            this._target.y += this._offsetPos[1];
+            if (Laya.timer.currTimer - this._startTime >= duration) {
+                Laya.timer.clear(this, this._pos);
+                this.shank_I = 0;
+                this._isShaking = false;
+                this._target.x = this._orgX;
+                this._target.y = this._orgY;
+                this._target = null;
+            }
+        }
+    }
+
     class WarGame {
         constructor() {
+            this.shakeHandler = new Shake();
             this.animationQueue = [];
             this.keyboardManager = new keyboardManager();
             this.isAnimationing = false;
@@ -6295,6 +6859,7 @@
             this.isChest = false;
         }
         init(windowUI) {
+            window['game'] = this;
             this.windowUI = windowUI;
             this.container = windowUI.m_container;
             this.stageClickFx = new StageClickFx();
@@ -6338,14 +6903,23 @@
                 if (this.animationQueue.length > 0) {
                     this.runAnimationFromQueue();
                 }
+                else {
+                    this.fillQueue();
+                }
             }
         }
         runAnimationFromQueue() {
             var animation = this.animationQueue.shift();
-            var animationDuration = animation.animationDuration;
-            this.isAnimationing = true;
-            animation.restart();
-            setTimeout(this.onAnimationComplete.bind(this), animationDuration);
+            if (animation instanceof TweenContainer) {
+                var animationDuration = animation.animationDuration;
+                this.isAnimationing = true;
+                animation.restart();
+                setTimeout(this.onAnimationComplete.bind(this), animationDuration);
+            }
+            else {
+                console.error(animation);
+                this.onAnimationComplete();
+            }
         }
         onAnimationComplete() {
             this.isAnimationing = false;
@@ -6353,19 +6927,61 @@
         }
         fillQueue() {
             if (GameStatus.isHeroAlive) {
+                var hero = this.field.getHero();
+                if (hero.needShoot) {
+                    this.addToAnimationQueue(this.field.shootCannon());
+                    hero.needShoot = false;
+                    return;
+                }
+                if (hero.needRunLightning) {
+                    this.addToAnimationQueue(this.field.shootLightning());
+                    hero.needRunLightning = false;
+                    return;
+                }
+                if (hero.needShootMultiplier) {
+                    this.addToAnimationQueue(this.field.shootMultiplier());
+                    hero.needShootMultiplier = false;
+                    return;
+                }
+                if (hero.needShootSkull) {
+                    this.addToAnimationQueue(this.field.shootSkull());
+                    hero.needShootSkull = false;
+                    return;
+                }
+                this.addToAnimationQueue(this.field.smashBomb());
                 this.checkKeyHandler();
             }
             else {
                 GameStatus.isGameEnd = true;
             }
         }
+        addToAnimationQueue(tweenList) {
+            if (tweenList == null)
+                return;
+            if (tweenList instanceof Array) {
+                for (var item of tweenList) {
+                    if (item == null)
+                        continue;
+                    if (item instanceof Array) {
+                        this.addToAnimationQueue(item);
+                    }
+                    else {
+                        this.animationQueue.push(item);
+                    }
+                }
+            }
+            else {
+                this.animationQueue.push(tweenList);
+            }
+        }
         checkKeyHandler() {
             var moveType = this.keyboardManager.getMoveType();
             if (moveType) {
+                console.log(moveType);
                 var tweenList = this.move(moveType);
                 if (tweenList && tweenList.length > 0) {
                     this.field.stepUpdate();
-                    this.animationQueue.push(...tweenList);
+                    this.addToAnimationQueue(tweenList);
                 }
                 else {
                     this.keyboardManager.reset();
@@ -6408,7 +7024,7 @@
             var tweenList = [];
             GameStatus.stepUpdate();
             if (fightResult.isNeedIncreaseLifeByOne) {
-                tweenContainer = new TweenContainer();
+                tweenContainer = TweenContainer.PoolGet();
                 tweenContainer.tweens.push(this.field.getHero().increaseLifeByOneTween());
                 tweenList.push(tweenContainer);
             }
@@ -6416,8 +7032,10 @@
                 tweenList.push(this.field.move(moveType));
             }
             else {
-                this.field.replaceCard(moveType, CardGenerationType.AfterBarrel, fightCard.getScore());
-                tweenContainer = new TweenContainer();
+                console.log("替换卡牌, 木桶替换");
+                tweenContainer = TweenContainer.PoolGet();
+                var tween = this.field.replaceCard(moveType, CardGenerationType.AfterBarrel, fightCard.getScore());
+                tweenContainer.tweens.push(tween);
                 tweenContainer.tweens.push(this.field.getHero().increaseLifeByOneTween());
                 tweenList.push(tweenContainer);
             }
@@ -6428,6 +7046,9 @@
         }
         isChangeTurnsToBoss() {
             return !GameStatus.isNeedCreateBoss && !this.field.isBossInTheField();
+        }
+        shake(intensity, time) {
+            this.shakeHandler.exe(this.windowUI, intensity, time);
         }
     }
 
@@ -6449,6 +7070,7 @@
         }
     }
     War.isInited = false;
+    window['War'] = War;
 
     class WindowWarUI extends WindowWarUIStruct {
         onWindowInited() {
@@ -14109,6 +14731,15 @@
     CardShopBarStruct.DependPackages = ["GameHome"];
 
     class CardShopBar extends CardShopBarStruct {
+        useLuck() {
+            this.m_shopHeart.visible = false;
+            this.m_fxHeart.visible = true;
+            this.m_fxHeart.frame = 1;
+            this.m_fxHeart.playing = true;
+            Laya.timer.once(1000, this, this.refresh);
+        }
+        refresh() {
+        }
     }
 
     class CardViewBackStruct extends fgui.GComponent {
@@ -14221,6 +14852,12 @@
             bind(CardViewFrontPowerUpChest.URL, CardViewFrontPowerUpChest);
             bind(CardViewFrontPowerUpBomb.URL, CardViewFrontPowerUpBomb);
             bind(CardViewFrontPowerUpSkull.URL, CardViewFrontPowerUpSkull);
+            bind(FxShootCannon.URL, FxShootCannon);
+            bind(FxShootSmoke.URL, FxShootSmoke);
+            bind(FxShootBoom.URL, FxShootBoom);
+            bind(FxShootLightningBig.URL, FxShootLightningBig);
+            bind(FxShootLightningSmall.URL, FxShootLightningSmall);
+            bind(FxSkull.URL, FxSkull);
         }
     }
 

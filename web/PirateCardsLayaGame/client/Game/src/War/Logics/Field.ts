@@ -17,6 +17,11 @@ import { CardPositionType } from "../Enums/CardPositionType";
 import TweenUtil from "../Utils/TweenUtil";
 import TweenContainer from "../Utils/TweenContainer";
 import Hero from "./Hero";
+import ArtConsts from "../Enums/ArtConsts";
+import FxShootCannon from "../../FGUI/Extends/GameHome/FxShootCannon";
+import FxShootBoom from "../../FGUI/Extends/GameHome/FxShootBoom";
+import { HeroType } from "../Enums/HeroType";
+import FxSkull from "../../FGUI/Extends/GameHome/FxSkull";
 
 export default class Field
 {
@@ -59,8 +64,7 @@ export default class Field
                 if (isHeroStartRow && isHeroStartColumn)
                 {
                     card = this.cardFactory.getHero();
-                    // card.shape.name = Consts.Hero,
-                    GameStatus.isHeroAlive = false,
+                    GameStatus.isHeroAlive = true;
                     GameStatus.isGameEnd = false;
                 }
                 // else if (GameStatus.isTutorialSeen)
@@ -234,7 +238,7 @@ export default class Field
 
 
     // 替换卡牌
-    replaceCard (moveTyp: MoveType, cardGenerationType: CardGenerationType, score: number = 0) 
+    replaceCard (moveType: MoveType, cardGenerationType: CardGenerationType, score: number = 0) 
     {
         var position = this.field.getPosition(function(e) 
         {
@@ -246,10 +250,6 @@ export default class Field
 
         list.push(this.replaceCardByPosition(position.getNewPosition(moveType), card));
 
-        if(!GameStatus.isTutorialSeen)
-        {
-            card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
-        }
         return list
     }
 
@@ -296,11 +296,11 @@ export default class Field
     }
     move (moveType: MoveType) 
     {
-        var list = Array(),
-        heroPosition = this.getHeroPosition(),
-        fieldPosition = heroPosition.getNewPosition(moveType);
+        var list = [];
+        var heroPosition = this.getHeroPosition();
+        var fieldPosition = heroPosition.getNewPosition(moveType);
         var card:Card = <any>this.field.get(fieldPosition);
-        if (card instanceof NullCard)
+        if (card.isEmpty)
              return list;
              
         //  卡牌是否播放声音
@@ -320,9 +320,9 @@ export default class Field
             // 如果是Boss，游戏关卡等级加1
             card.isBoss && GameStatus.gameLevel++;
 
-            var cardPositionType = this.getCardPositionType(moveType, heroPosition);
+            var cardPositionType:CardPositionType = this.getCardPositionType(moveType, heroPosition);
             var replaceCard = this.getCardToReplace(card);
-            var tweenContainer = new TweenContainer;
+            var tweenContainer = TweenContainer.PoolGet();
             tweens = tweenContainer.tweens;
             // 移除卡牌
             tweens.push(card.removeChild());
@@ -330,47 +330,108 @@ export default class Field
 
             switch (cardPositionType) 
             {
-            // 英雄往中间移动
-            case CardPositionType.Center:
-                // 移动英雄卡牌
-                list.push(this.moveAndSetWithAnimation(  heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime) );
-                
-                switch (moveType) 
-                {
-                case MoveType.Left:
-                    // 如果是在第1行 
-                    0 === heroPosition.row 
-                        ? list.push(this.moveAllLine(MoveType.Down, MoveType.Up, heroPosition.getNewPosition(MoveType.Down), replaceCard)) 
-                        : list.push(this.moveAllLine(MoveType.Up, MoveType.Down, heroPosition.getNewPosition(MoveType.Up), replaceCard));
+                // 英雄往中间移动
+                case CardPositionType.Center:
+                    // 移动英雄卡牌
+                    list.push(this.moveAndSetWithAnimation(  heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime) );
+                    
+                    switch (moveType) 
+                    {
+                        case MoveType.Left:
+                            // 如果是在第1行 
+                            if(0 === heroPosition.row )
+                            {
+                                // 该行卡牌向下移动
+                                var moveToPosition = heroPosition.getNewPosition(MoveType.Down);
+                                var tween = this.moveAllLine(MoveType.Down, MoveType.Up, moveToPosition, replaceCard);
+                                list.push(tween);
+                            }
+                            else
+                            {
+                                // 该行卡牌向上移动
+                                var moveToPosition = heroPosition.getNewPosition(MoveType.Up);
+                                var tween = this.moveAllLine(MoveType.Up, MoveType.Down, moveToPosition, replaceCard);
+                                list.push(tween);
+                            }
+                            break;
+                        case MoveType.Right:
+                            // 如果在最后1行
+                            if(heroPosition.row === this.field.getRowCount() - 1 )
+                            {
+                                // 该行卡牌向上移动
+                                var moveToPosition = heroPosition.getNewPosition(MoveType.Up);
+                                var tween = this.moveAllLine(MoveType.Up, MoveType.Down, moveToPosition, replaceCard);
+                                list.push(tween);
+                            }
+                            else
+                            {
+                                // 该行卡牌向下移动
+                                var moveToPosition = heroPosition.getNewPosition(MoveType.Down);
+                                var tween = this.moveAllLine(MoveType.Down, MoveType.Up, moveToPosition, replaceCard);
+                                list.push(tween);
+                            }
+                            break;
+                        case MoveType.Up:
+                            // 如果在最后1列
+                            if(heroPosition.column === this.field.getColumnCount() - 1)
+                            {
+                                // 该行卡牌向左移动
+                                var moveToPosition = heroPosition.getNewPosition(MoveType.Left);
+                                var tween = this.moveAllLine(MoveType.Left, MoveType.Right, moveToPosition, replaceCard);
+                                list.push(tween);
+                            }
+                            else
+                            {
+                                // 该行卡牌向右移动
+                                var moveToPosition = heroPosition.getNewPosition(MoveType.Right);
+                                var tween = this.moveAllLine(MoveType.Right, MoveType.Left, moveToPosition, replaceCard);
+                                list.push(tween);
+                            }
+                            break;
+                        case MoveType.Down:
+                            // 如果在第1列
+                            if(0 === heroPosition.column)
+                            {
+                                // 该行卡牌向右移动
+                                var moveToPosition = heroPosition.getNewPosition(MoveType.Right);
+                                var tween = this.moveAllLine(MoveType.Right, MoveType.Left, moveToPosition, replaceCard);
+                                list.push(tween);
+                            }
+                            else
+                            {
+                                // 该行卡牌向左移动
+                                var moveToPosition = heroPosition.getNewPosition(MoveType.Left);
+                                var tween = this.moveAllLine(MoveType.Left, MoveType.Right, moveToPosition, replaceCard);
+                                list.push(tween);
+                            }
+                            break;
+
+                    }
                     break;
-                case MoveType.Right:
-                    heroPosition.row === this.field.getRowCount() - 1 ? list.push.apply(list, this.moveAllLine(MoveType.Up, MoveType.Down, heroPosition.getNewPosition(MoveType.Up), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Down, MoveType.Up, heroPosition.getNewPosition(MoveType.Down), replaceCard));
+                case CardPositionType.End:
+                    list.push(this.moveAllLine(this.getOppositeMoveType(moveType), moveType, heroPosition, replaceCard))
                     break;
-                case MoveType.Up:
-                    heroPosition.column === this.field.getColumnCount() - 1 ? list.push.apply(list, this.moveAllLine(MoveType.Left, MoveType.Right, heroPosition.getNewPosition(MoveType.Left), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Right, MoveType.Left, heroPosition.getNewPosition(MoveType.Right), replaceCard));
-                    break;
-                case MoveType.Down:
-                    0 === heroPosition.column ? list.push.apply(list, this.moveAllLine(MoveType.Right, MoveType.Left, heroPosition.getNewPosition(MoveType.Right), replaceCard)) : list.push.apply(list, this.moveAllLine(MoveType.Left, MoveType.Right, heroPosition.getNewPosition(MoveType.Left), replaceCard))
-                }
-                break;
-            case CardPositionType.End:
-                list.push.apply(list, this.moveAllLine(this.getOppositeMoveType(moveType), moveType, heroPosition, replaceCard))
             }
         }
-        if (!GameStatus.isTutorialSeen) {
-            var u, p = this.cardFactory.container.getByName(Consts.Shadow);
-            if (p && this.cardFactory.container.bringToTop(p), this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.Hero)), this.cardFactory.container.bringToTop(card.view), 1 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
-                this.tutorialStep1()
-            }.bind(this));
-            if (2 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
-                this.tutorialStep2(fieldPosition)
-            }.bind(this));
-            if (3 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
-                this.tutorialStep3(fieldPosition)
-            }.bind(this));
-            if (4 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
-                this.tutorialStep4()
-            }.bind(this));
+
+        if (!GameStatus.isTutorialSeen) 
+        {
+            // var u;
+            // var p = this.cardFactory.container.getByName(Consts.Shadow);
+
+            // if (p && this.cardFactory.container.bringToTop(p), this.cardFactory.container.bringToTop(this.cardFactory.container.getByName(Consts.Hero)), this.cardFactory.container.bringToTop(card.view), 1 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
+            //     this.tutorialStep1()
+            // }.bind(this));
+            // if (2 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
+            //     this.tutorialStep2(fieldPosition)
+            // }.bind(this));
+            // if (3 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
+            //     this.tutorialStep3(fieldPosition)
+            // }.bind(this));
+            // if (4 === this.step)(u = list[list.length - 1]).tweens[u.tweens.length - 1].onComplete.add(function() {
+            //     this.tutorialStep4()
+            // }.bind(this));
+
             this.step++
         }
         return list
@@ -421,7 +482,7 @@ export default class Field
     }
 
     // 打碎后，获取替换的卡牌
-    getCardToReplaceAfterSmash (card:Card) 
+    getCardToReplaceAfterSmash (card:Card) : Card
     {
         if(card.isBoss)
         {
@@ -457,7 +518,7 @@ export default class Field
             }
             else
             {
-                CardPositionType.End;
+                return CardPositionType.End;
             }
         case MoveType.Down:
             
@@ -471,7 +532,7 @@ export default class Field
             }
             else
             {
-                CardPositionType.End;
+                return CardPositionType.End;
             }
 
         case MoveType.Left:
@@ -485,7 +546,7 @@ export default class Field
             }
             else
             {
-                CardPositionType.End;
+                return CardPositionType.End;
             }
 
         case MoveType.Up:
@@ -499,7 +560,7 @@ export default class Field
             }
             else
             {
-                CardPositionType.End;
+                return CardPositionType.End;
             }
         }
     }
@@ -512,7 +573,7 @@ export default class Field
         for (var cardList = this.field.getAll(), i = 0, s = cardList = RandomHelper.shuffle(cardList); i < s.length; i++) 
         {
             var card:Card = cardList[i];
-            var tweenContainer = new TweenContainer();
+            var tweenContainer = TweenContainer.PoolGet();
             tweenContainer.animationDuration = RandomHelper.getRandomIntInclusive(50, 150);
             tweenContainer.tweens.push(card.removeChild());
             list.push(tweenContainer)
@@ -530,19 +591,19 @@ export default class Field
     }
 
     // 移动卡牌，和这条线方向上的其他卡牌，在最后一个空位生成新的卡牌
-    moveAllLine (moveTypeA:MoveType, moveTypeB: MoveType, fieldPosition:FieldPosition, card:Card) 
+    moveAllLine (moveTo:MoveType, moveTypeB: MoveType, fieldPosition:FieldPosition, card:Card) 
     {
         var animationList = [];
 
         for (var time = Consts.AnimationTime * Consts.AnimationMultiplier; this.field.isPositionValid(fieldPosition);) 
         {
             animationList.push(this.moveAndSetWithAnimation(fieldPosition.getNewPosition(moveTypeB), this.field.get(fieldPosition), Consts.AnimationTime).setAnimationDuration(time)),
-            fieldPosition = fieldPosition.getNewPosition(moveTypeA);
+            fieldPosition = fieldPosition.getNewPosition(moveTo);
         }
 
-        var card = this.cardFactory.getDefault(),
+        var defaultCard = this.cardFactory.getDefault(),
         cardFieldPosition = fieldPosition.getNewPosition(moveTypeB);
-        animationList.push(this.moveAndSetWithAnimation(cardFieldPosition, card, Consts.AnimationTime)),
+        animationList.push(this.moveAndSetWithAnimation(cardFieldPosition, defaultCard, Consts.AnimationTime)),
         animationList.push(this.replaceCardByPosition(cardFieldPosition, card).setAnimationDuration(1));
         return animationList;
     }
@@ -555,55 +616,69 @@ export default class Field
             card.stepUpdate()
         }
     }
-    shootCannon () {
+
+    // 执行加农炮
+    shootCannon () : TweenContainer[]
+    {
         SoundController.instance.playSound(SoundConsts.Cannon);
-        var e = this.getHeroPosition(),
-        i = this.field.get(e),
-        o = [];
-        return o.push.apply(o, this.shootCannonInDirection(MoveType.Right, i, e)),
-        o.push.apply(o, this.shootCannonInDirection(MoveType.Left, i, e)),
-        o.push.apply(o, this.shootCannonInDirection(MoveType.Up, i, e)),
-        o.push.apply(o, this.shootCannonInDirection(MoveType.Down, i, e)),
-        o
+        var heroPosition = this.getHeroPosition();
+        var heroCard = this.field.get(heroPosition);
+        var list = [];
+        list.push(this.shootCannonInDirection(MoveType.Right, heroCard, heroPosition));
+        list.push(this.shootCannonInDirection(MoveType.Left, heroCard, heroPosition));
+        list.push(this.shootCannonInDirection(MoveType.Up, heroCard, heroPosition));
+        list.push(this.shootCannonInDirection(MoveType.Down, heroCard, heroPosition));
+        return list;
     }
-    shootCannonInDirection (e, i, o) {
-        var n = [],
-        s = o.getNewPosition(e);
-        if (!this.field.isPositionValid(s)) return n;
-        var a = this.field.get(s);
-        if (t.Field.canShootCard(a)) {
-            if (n.push(this.shootCard(i.getCenterX(), i.getCenterY(), a.getCenterX(), a.getCenterY(), 200)), a.type === CardScoreType.Cannon) a.increaseScoreInNSeconds(i.shootScore, 400);
-            else if (i.shootScore >= a.getScore()) {
-                var r = this.getCardToReplaceAfterSmash(a),
-                h = this.replaceCardByPosition(s, r, !0).setAnimationDuration(1);
-                h.tweens[0].delay(400),
-                n.push(h)
-            } else a.reduceScoreInNSeconds(i.shootScore, 400)
+
+    // 执行加农炮攻击具体位置
+    shootCannonInDirection (moveType:MoveType, heroCard:Hero, heroPosition: FieldPosition) 
+    {
+        var list = [];
+        var position = heroPosition.getNewPosition(moveType);
+        // 无效位置
+        if (!this.field.isPositionValid(position))
+        {
+            return list;
+        } 
+
+        var itemCard = this.field.get(position);
+        // 该卡牌是否可以被攻击
+        if (Field.canShootCard(itemCard)) 
+        {
+            // 发射炮弹子弹攻击
+            var tween = this.shootCard(heroCard.getCenterX(), heroCard.getCenterY(), itemCard.getCenterX(), itemCard.getCenterY(), 200);
+            list.push(tween);
+
+            if (itemCard.type === CardScoreType.Cannon)
+            {
+                itemCard.increaseScoreInNSeconds(heroCard.shootScore, 400);
+            }
+            // 替换卡牌
+            else if (heroCard.shootScore >= itemCard.getScore()) 
+            {
+                var replaceCard = this.getCardToReplaceAfterSmash(itemCard);
+                var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                tweenContainer.setFirstDelay(400);
+                list.push(tweenContainer);
+            } 
+            else 
+            {
+                itemCard.reduceScoreInNSeconds(heroCard.shootScore, 400)
+            }
         }
-        return n
+        return list
     }
-    shootCard (e, i, o, n, s) {
-        var a = t.ShapeFactoryHelper.getShape(this.game, e, i, t.ArtConsts.Items1, t.ArtConsts.Core);
-        this.cardFactory.container.add(a);
-        var r = this.game.add.tween(a).to({
-            x: o,
-            y: n
-        },
-        s);
-        r.onUpdateCallback(this.onCoreFlyingUpdate, this),
-        r.onComplete.add(this.onCoreFlyingComplete, this);
-        var h = new TweenContainer;
-        return h.animationDuration = 1,
-        h.tweens.push(r),
-        h
-    }
-    onCoreFlyingUpdate (e) {
-        var i = new t.CannonFlyingSmoke(this.game, e.target.x, e.target.y);
-        this.cardFactory.container.add(i)
-    }
-    onCoreFlyingComplete (t) {
-        this.addBombExplosionAnimation(t.x, t.y, 0),
-        t.kill()
+
+    // 发送炮弹
+    shootCard (fromX: number, fromY: number, toX: number, toY: number, duration: number) 
+    {
+        var fx = FxShootCannon.PoolGet();
+        this.game.container.addChild(fx);
+        var tweenContainer =  fx.moveTo(fromX, fromY, toY, toY, duration);
+        tweenContainer.animationDuration = 1;
+        return tweenContainer;
+
     }
 
     // 炮管，是否可以攻击该卡牌
@@ -625,65 +700,126 @@ export default class Field
                 return false
         }
     }
-    smashBomb () {
-        for (var e = [], i = 0, o = this.field.getPositions(function(e) {
-            var i = e;
-            return i && i.type === CardScoreType.Bomb && i.getPowerUp() <= 0
-        }); i < o.length; i++) {
-            var n = o[i];
+
+    // 检查炸弹，能量小于等于0的，就引爆
+    smashBomb () 
+    {
+        var bombPositionList = this.field.getPositions(function(card:Card) 
+        {
+            return card.type === CardScoreType.Bomb && card.getPowerUp() <= 0
+        });
+
+        var list = [];
+        for (var i = 0 ; i < bombPositionList.length; i++) 
+        {
+            var position = bombPositionList[i];
             SoundController.instance.playSound(SoundConsts.Bomb);
-            var s = this.field.get(n);
-            this.addBombExplosionAnimation(s.view.x, s.view.y, 100);
-            var a = this.getCardToReplaceAfterSmash(this.field.get(n)),
-            r = this.replaceCardByPosition(n, a, !0);
-            e.push(r);
-            for (var h = s.getLife(), d = 0, c = [MoveType.Up, MoveType.Down, MoveType.Left, MoveType.Right]; d < c.length; d++) {
-                var u = c[d];
-                if (e.push.apply(e, this.smashBombInDirection(u, n, h)), !GameStatus.isHeroAlive) return e
+            var card = this.field.get(position);
+            this.addBombExplosionAnimation(card.view.x, card.view.y, 100);
+            var replaceCard = this.getCardToReplaceAfterSmash(this.field.get(position));
+            var tweenContainer = this.replaceCardByPosition(position, replaceCard, !0);
+            list.push(tweenContainer);
+
+
+            var life = card.getLife();
+            var moveTypeList = [MoveType.Up, MoveType.Down, MoveType.Left, MoveType.Right];
+            for (var d = 0 ; d < moveTypeList.length; d++) 
+            {
+                var moveType = moveTypeList[d];
+                list.push( this.smashBombInDirection(moveType, position, life));
+
+                if (!GameStatus.isHeroAlive) 
+                {
+                    return list
+                }
             }
         }
-        return e
+        return list
     }
-    smashBombInDirection (e, i, o) {
-        var n = [],
-        s = Consts.SmashDelay;
-        for (i = i.getNewPosition(e); this.field.isPositionValid(i);) {
-            if (n.push.apply(n, this.smashBombInPosition(i, s, o)), !GameStatus.isHeroAlive) return n;
-            s += Consts.SmashDelay,
-            i = i.getNewPosition(e)
+
+    // 炸弹 附近一个位置 检查
+    smashBombInDirection (moveType: MoveType, position: FieldPosition, life: number) 
+    {
+        var list = [];
+        var smashDelay = Consts.SmashDelay;
+        // 遍历该方向上有效位置
+        for (position = position.getNewPosition(moveType); this.field.isPositionValid(position);) 
+        {
+            list.push(this.smashBombInPosition(position, smashDelay, life));
+
+            // 如果英雄死了就返回
+            if (!GameStatus.isHeroAlive) return list;
+
+            smashDelay += Consts.SmashDelay,
+            position = position.getNewPosition(moveType);
         }
-        return n
+        return list
     }
-    smashBombInPosition (e, i, o) {
-        var n = this.field.get(e),
-        s = 4 == GameStatus.RowCount ? 1e3: 500;
-        if (this.game.camera.shake(Consts.ShakeIntensity, s), this.addBombExplosionAnimation(n.view.x, n.view.y, i), n.type == CardScoreType.Chest) return [];
-        if (n instanceof t.Hero && GameStatus.currentHero == t.HeroType.Bomb) return [];
-        if (o >= n.getScore()) {
-            if (! (n instanceof t.Hero)) {
-                var a = this.getCardToReplaceAfterSmash(n);
-                return [this.replaceCardByPosition(e, a, !0).setAnimationDuration(1)]
+    // 炸弹 检查具体一个位置
+    smashBombInPosition (position: FieldPosition, smashDelay: number, life: number) 
+    {
+        var card = this.field.get(position);
+        var shakeTime = 4 == GameStatus.RowCount ? 1e3: 500;
+        this.game.shake(Consts.ShakeIntensity, shakeTime);
+        this.addBombExplosionAnimation(card.view.x, card.view.y, smashDelay);
+
+        // 如果是宝箱
+        if (card.type == CardScoreType.Chest) return [];
+
+        // 如果当前卡牌是英雄，并且是炸弹英雄
+        if (card.isHero && GameStatus.currentHero == HeroType.Bomb) return [];
+
+
+        // 如果该卡牌被炸得没有血量
+        if (life >= card.getScore()) 
+        {
+            // 非英雄, 生成新的卡牌替换
+            if (!card.isHero) 
+            {
+                var replaceCard = this.getCardToReplaceAfterSmash(card);
+                return [this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1)]
             }
-            if (!GameStatus.isHeart) return GameStatus.isHeroAlive = !1,
-            this.removeAllChild();
-            GameStatus.isHeart = !1,
-            this.keyboardManager.reset(),
-            n.useHeart()
-        } else n.reduceScoreInNSeconds(o, 1.2 * i);
+
+            // 如果没有生命道具，就结束游戏
+            if (!GameStatus.isHeart)
+            {
+                GameStatus.isHeroAlive = false;
+                return this.removeAllChild();
+            } 
+
+            // 英雄使用生命道具
+            var hero =<Hero> card;
+            GameStatus.isHeart = false;
+            this.keyboardManager.reset();
+            hero.useHeart();
+        } 
+        else 
+        {
+            // 减少血量, 延迟
+            card.reduceScoreInNSeconds(life, 1.2 * smashDelay);
+        }
         return []
     }
-    addBombExplosionAnimation (t, e, i) {
-        setTimeout(this.playBombExplosionAnimation.bind(this, t, e), i)
-    }
-    playBombExplosionAnimation (e, i) {
-        var o = new t.Boom(this.game, e, i);
-        o.play(t.AnimationConsts.Action, 60, !1, !0),
-        this.cardFactory.container.add(o)
-    }
-    // 替换卡牌
-    replaceCardByPosition (fieldPosition, card: Card, isChangeState = false) 
+
+    // 延迟播放炸弹爆炸动画
+    addBombExplosionAnimation (x: number, y: number, delay) 
     {
-        var tweenContainer = new TweenContainer();
+        setTimeout(this.playBombExplosionAnimation.bind(this, x, y), delay)
+    }
+
+    // 播放炸弹爆炸动画
+    playBombExplosionAnimation (x: number, y: number) 
+    {
+        var fx = FxShootBoom.PoolGet();
+        fx.setXY(x, y);
+        this.game.container.addChild(fx);
+        fx.Play();
+    }
+
+    // 替换卡牌
+    replaceCardByPosition (fieldPosition, card: Card, isChangeState = false) : TweenContainer
+    {
+        var tweenContainer = TweenContainer.PoolGet();
         var tweens = tweenContainer.tweens;
         var oldCard = this.field.get(fieldPosition);
         if(isChangeState)
@@ -739,49 +875,84 @@ export default class Field
             return MoveType.Left
         }
     }
-    shootLightning () {
-        var e = this.getHeroPosition(),
-        i = this.field.get(e),
-        o = [];
-        return o.push.apply(o, this.shootLightningInAllDirections(i.lightningScore, e, Consts.LightningDuration)),
-        this.clearLightning(),
-        o.length > 0 && SoundController.instance.playSound(SoundConsts.Lighting),
-        o
+
+    // 执行闪电效果
+    shootLightning () 
+    {
+        var heroPosition = this.getHeroPosition();
+        var heroCard = <Hero> this.field.get(heroPosition);
+        var list = [];
+
+        var tween = this.shootLightningInAllDirections(heroCard.lightningScore, heroPosition, Consts.LightningDuration);
+        list.push(tween);
+        this.clearLightning();
+        // 如果有受击的就播放闪电声音
+        list.length > 0 && SoundController.instance.playSound(SoundConsts.Lighting);
+        return list;
     }
-    clearLightning () {
-        this.field.getAll().forEach(function(t) {
-            t.canLightningStrike = !1
+    //  清楚闪电状态
+    clearLightning () 
+    {
+        this.field.getAll().forEach(function(card:Card) 
+        {
+            card.canLightningStrike = false;
         })
     }
-    shootLightningInAllDirections (e, i, o) {
-        var n = [];
-        return n.push.apply(n, this.shootLightningInDirection(MoveType.Right, e, i, o)),
-        n.push.apply(n, this.shootLightningInDirection(MoveType.Left, e, i, o)),
-        n.push.apply(n, this.shootLightningInDirection(MoveType.Up, e, i, o)),
-        n.push.apply(n, this.shootLightningInDirection(MoveType.Down, e, i, o)),
-        n
+
+    // 执行闪电效果各个方向
+    shootLightningInAllDirections (lightningScore: number, heroPosition: FieldPosition, lightningDuration: number) 
+    {
+        var list = [];
+        list.push(this.shootLightningInDirection(MoveType.Right, lightningScore, heroPosition, lightningDuration));
+        list.push(this.shootLightningInDirection(MoveType.Left, lightningScore, heroPosition, lightningDuration));
+        list.push(this.shootLightningInDirection(MoveType.Up, lightningScore, heroPosition, lightningDuration));
+        list.push(this.shootLightningInDirection(MoveType.Down, lightningScore, heroPosition, lightningDuration));
+        return list;
     }
-    shootLightningInDirection (i, o, n, s) {
-        var a = [],
-        r = n.getNewPosition(i);
-        if (!this.field.isPositionValid(r)) return a;
-        var h, d = this.field.get(r);
-        if (d instanceof t.Hero) return a;
-        if (d.canLightningStrike) return a;
-        if (e.canShootLightning(d)) {
-            var c = s + Consts.LightningDuration,
-            u = new TweenContainer;
-            if ((h = u.tweens).push.apply(h, d.runLightning()), u.setAnimationDuration(Consts.LightningDuration), a.push(u), o >= d.getScore()) {
-                var p = this.getCardToReplaceAfterSmash(d);
-                p.canLightningStrike = !0;
-                var l = this.replaceCardByPosition(r, p, !0).setAnimationDuration(1);
-                l.tweens[0].delay(2 * c),
-                a.push(l)
-            } else d.reduceScoreInNSeconds(o, 2 * c);
-            d.canLightningStrike = !0,
-            a.push.apply(a, this.shootLightningInAllDirections(o, r, c))
+    // 执行闪电效果 道具体卡牌
+    shootLightningInDirection (moveType: MoveType, lightningScore: number, heroPosition: FieldPosition, lightningDuration: number) 
+    {
+        var list = [];
+        var position = heroPosition.getNewPosition(moveType);
+        // 无效位置
+        if (!this.field.isPositionValid(position)) 
+        {
+            return list;
         }
-        return a
+
+        var tweens;
+        var card = this.field.get(position);
+        // 如果是英雄
+        if (card.isHero) return list;
+        // 如果该卡牌已经在闪电忙碌状态
+        if (card.canLightningStrike) return list;
+
+        // 判断该卡牌是否可以受闪电攻击
+        if (Field.canShootLightning(card)) 
+        {
+            var duration = lightningDuration + Consts.LightningDuration;
+            var tweenContainer =TweenContainer.PoolGet();
+            tweenContainer.tweens.push(card.runLightning());
+            tweenContainer.setAnimationDuration(Consts.LightningDuration);
+            list.push(tweenContainer);
+
+
+            if (lightningScore >= card.getScore()) 
+            {
+                var replaceCard = this.getCardToReplaceAfterSmash(card);
+                replaceCard.canLightningStrike = true;
+                var replaceTweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                replaceTweenContainer.setFirstDelay(2 * duration);
+                list.push(replaceTweenContainer)
+            } 
+            else
+            {
+                card.reduceScoreInNSeconds(lightningScore, 2 * duration);
+            } 
+            card.canLightningStrike = false;
+            list.push(this.shootLightningInAllDirections(lightningScore, position, duration));
+        }
+        return list
     }
 
     // 闪电，是否可以攻击该卡牌
@@ -797,72 +968,76 @@ export default class Field
                 return false;
         }
     }
-    shootMultiplier () {
+
+    // 执行倍数
+    shootMultiplier () 
+    {
         SoundController.instance.playSound(SoundConsts.Idol);
-        var e = this.getHeroPosition(),
-        i = this.field.get(e),
-        o = [];
-        return o.push.apply(o, this.shootMultiplierInDirection(MoveType.Right, i.multiplierScore, e)),
-        o.push.apply(o, this.shootMultiplierInDirection(MoveType.Left, i.multiplierScore, e)),
-        o.push.apply(o, this.shootMultiplierInDirection(MoveType.Up, i.multiplierScore, e)),
-        o.push.apply(o, this.shootMultiplierInDirection(MoveType.Down, i.multiplierScore, e)),
-        o
+        var heroPosition = this.getHeroPosition();
+        var heroCard = <Hero> this.field.get(heroPosition);
+        var list = [];
+
+        list.push(this.shootMultiplierInDirection(MoveType.Right, heroCard.multiplierScore, heroPosition));
+        list.push(this.shootMultiplierInDirection(MoveType.Left, heroCard.multiplierScore, heroPosition));
+        list.push(this.shootMultiplierInDirection(MoveType.Up, heroCard.multiplierScore, heroPosition));
+        list.push(this.shootMultiplierInDirection(MoveType.Down, heroCard.multiplierScore, heroPosition));
+        return list;
     }
-    shootSkull () {
+
+    // 执行骷髅清屏，除英雄位置外
+    shootSkull () 
+    {
         SoundController.instance.playSound(SoundConsts.Skull);
-        for (var e = this.getHeroPosition().getPoint(), i = [], o = 0, n = this.field.getPositions(function(e) {
-            return ! (e instanceof t.Hero)
-        }); o < n.length; o++) {
-            var s = n[o],
-            a = s.getPoint();
-            i.push(this.shootSkullInCoordinate(e.x, e.y, a.x, a.y, 300));
-            var r = this.getCardToReplaceAfterSmash(this.field.get(s)),
-            h = this.replaceCardByPosition(s, r, !0).setAnimationDuration(1);
-            h.tweens[0].delay(350),
-            i.push(h)
+        var point = this.getHeroPosition().getPoint();
+        // 不是英雄的位置
+        var positionList = this.field.getPositions(function(card:Card) {
+            return !card.isHero;
+        });
+
+        var  list = [];
+        for (var  i = 0; i < positionList.length; i++) 
+        {
+            var position = positionList[i];
+            var pos = position.getPoint();
+            list.push(this.shootSkullInCoordinate(point.x, point.y, pos.x, pos.y, 300));
+            // 替换卡牌
+            var replaceCard = this.getCardToReplaceAfterSmash(this.field.get(position));
+            var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+            tweenContainer.setFirstDelay(350);
+            list.push(tweenContainer);
         }
-        return i
+        return list
     }
-    shootSkullInCoordinate (e, i, o, n, s) {
-        var a = new t.Skull(this.game, e, i);
-        a.animations.play(t.AnimationConsts.Action),
-        a.anchor.set(0, 0),
-        a.rotation = Phaser.Point.angle(new Phaser.Point(o, n), new Phaser.Point(e, i)),
-        this.cardFactory.container.add(a);
-        var r = this.game.add.tween(a).to({
-            x: o,
-            y: n
-        },
-        s);
-        r.onUpdateCallback(this.onSkullFlyingUpdate, this),
-        r.onComplete.add(this.onSkullFlyingComplete, this);
-        var h = new TweenContainer;
-        return h.animationDuration = 1,
-        h.tweens.push(r),
-        h
+    
+    // 播放骷髅头轰炸动画
+    shootSkullInCoordinate (heroX, heroY, posX, posY, time) 
+    {
+        var fx = FxSkull.PoolGet();
+        var tweenContainer = fx.moveTo(heroX, heroY, posX, posY, time);
+        this.game.container.addChild(fx);
+        tweenContainer.animationDuration = 1;
+        return tweenContainer;
     }
-    onSkullFlyingUpdate (e) {
-        var i = new t.SkullLight(this.game, e.target.x, e.target.y);
-        this.cardFactory.container.addChild(i),
-        e.target.bringToTop()
-    }
-    onSkullFlyingComplete (t) {
-        this.addBombExplosionAnimation(t.x, t.y, 0),
-        t.kill()
-    }
-    shootMultiplierInDirection (i, o, n) {
-        var s = [],
-        a = n.getNewPosition(i);
-        if (!this.field.isPositionValid(a)) return s;
-        var r = this.field.get(a);
-        if (e.canMultiply(r.type, r.getScore())) {
-            var h = r.multiplyScore(o);
-            if (!h) return s;
-            var d = (new TweenContainer).setAnimationDuration(1);
-            return d.tweens.push(h),
-            s.push(d),
-            s
+
+
+    // 执行倍数，具体卡牌
+    shootMultiplierInDirection (moveType:MoveType, multiplierScore: number, heroPosition: FieldPosition) 
+    {
+        var list = [];
+        var position = heroPosition.getNewPosition(moveType);
+        // 验证位置是否有效
+        if (!this.field.isPositionValid(position)) return list;
+
+        var card = this.field.get(position);
+        // 判断 倍速，是否可以应用该卡牌类型
+        if (Field.canMultiply(card.type, card.getScore())) 
+        {
+            var tweenContainer = card.multiplyScore(multiplierScore);
+            if (!tweenContainer) return list;
+            tweenContainer.setAnimationDuration(1);
+            list.push(tweenContainer);
         }
+        return list;
     }
     // 倍速，是否可以应用该卡牌类型
     static canMultiply (cardScoreType: CardScoreType, score: number) 
@@ -923,9 +1098,11 @@ export default class Field
         }
         return e
     }
-    smashHero (t) {
-        var e = this.getHero();
-        this.addBombExplosionAnimation(e.shape.x, e.shape.y, t)
+    // 英雄位置播放爆炸特效
+    smashHero (delay: number) 
+    {
+        var hero = this.getHero();
+        this.addBombExplosionAnimation(hero.getCenterX(), hero.getCenterY(), delay);
     }
 
     

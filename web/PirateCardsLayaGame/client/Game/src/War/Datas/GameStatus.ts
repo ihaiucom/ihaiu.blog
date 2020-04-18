@@ -81,6 +81,15 @@ export default class GameStatus
         {
             this.isKey = true;
         }
+        this.isHeroAlive = true;
+        this.gameLevel = 1;
+        this.levelStep = 10;
+        this.turnsToBoss = this.levelStep;
+        this.goldPerGame = 0;
+        this.movesAfterLastSpecialCard = 0;
+        this.cardCounter = 0;
+        this.isNeedCreateBoss = false;
+        
     }
 
 
@@ -382,3 +391,5 @@ export default class GameStatus
     }
 
 }
+
+window['GameStatus'] = GameStatus;

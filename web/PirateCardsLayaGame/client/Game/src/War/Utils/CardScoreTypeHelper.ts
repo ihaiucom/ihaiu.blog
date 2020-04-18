@@ -8,7 +8,8 @@ export default class CardScoreTypeHelper
     // 开木桶的牌
     static itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
     // 好的牌
-    static powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
+    // static powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
+    static powerUps = [CardScoreType.Bomb, CardScoreType.Barrel, CardScoreType.Skull];
 
     // 是否是减分的卡牌
     static isCardScoreTypeNegative(cardScoreType:CardScoreType)
@@ -34,20 +35,21 @@ export default class CardScoreTypeHelper
     // 随机宝箱里的卡牌
     static getRandomFromChest()
     {
-        return ArrayUtils.getRandomItem(this.itemsFromChest)
+        return ArrayUtils.getRandomItem(CardScoreTypeHelper.itemsFromChest)
     }
 
     
     // 随机木桶里的卡牌
     static getRandomPowerUpFromBarrel()
     {
-        return ArrayUtils.getRandomItem(this.itemsFromBarrel)
+        return ArrayUtils.getRandomItem(CardScoreTypeHelper.itemsFromBarrel)
     }
 
     // 随机好的牌
     static getRandomPowerUp()
     {
-        return ArrayUtils.getRandomItem(this.powerUps)
+        return ArrayUtils.getRandomItem(CardScoreTypeHelper.powerUps)
     }
+
 }
 

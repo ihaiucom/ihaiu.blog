@@ -24,7 +24,7 @@ export default class Basket
         for (var i = start; i <= len; i++) 
         {
             var val = 3 - (i - 1) * this.step;
-            if(  this.initialStatus.ContainsKey(i.toString()) )
+            if( ! this.initialStatus.ContainsKey(i.toString()) )
             {
                 this.initialStatus.Add(i.toString(), val);
                 this.status.Add(i.toString(), val);

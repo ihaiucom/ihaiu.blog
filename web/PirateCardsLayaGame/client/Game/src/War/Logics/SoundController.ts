@@ -12,6 +12,7 @@ export default class SoundController
 
     playSound(key: string)
     {
-        
+        var path = `res/sounds/mp3/${key}.mp3`;
+        Laya.SoundManager.playSound(path, 1);
     }
 }

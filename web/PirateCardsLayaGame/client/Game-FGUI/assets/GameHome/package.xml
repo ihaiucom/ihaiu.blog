@@ -342,7 +342,7 @@
     <movieclip id="sqzy9m" name="MVCoin.jta" path="/Fx/"/>
     <movieclip id="sqzy9n" name="MVMouseClick.jta" path="/Fx/" exported="true"/>
     <movieclip id="sqzy9o" name="MVSkull.jta" path="/Fx/"/>
-    <movieclip id="sqzy9p" name="MVSmoke.jta" path="/Fx/"/>
+    <movieclip id="sqzy9p" name="MVSmoke.jta" path="/Fx/" exported="true"/>
     <movieclip id="sqzy9q" name="MVBombFlame.jta" path="/Fx/"/>
     <movieclip id="sqzy9r" name="MVEnemy_9_vane0000.jta" path="/Fx/"/>
     <component id="sqzy9s" name="CardView.xml" path="/Card/" exported="true"/>
@@ -368,6 +368,14 @@
     <component id="sqzyac" name="CardViewFrontPowerUpChest.xml" path="/Card/" exported="true"/>
     <component id="sqzyad" name="CardViewFrontPowerUpBomb.xml" path="/Card/" exported="true"/>
     <component id="sqzyae" name="CardViewFrontPowerUpSkull.xml" path="/Card/" exported="true"/>
+    <component id="sqzyaf" name="FxShootCannon.xml" path="/Fx/" exported="true"/>
+    <component id="sqzyag" name="FxShootSmoke.xml" path="/Fx/" exported="true"/>
+    <component id="sqzyah" name="FxShootBoom.xml" path="/Fx/" exported="true"/>
+    <component id="sqzyai" name="FxShootLightningBig.xml" path="/Fx/" exported="true"/>
+    <movieclip id="sqzyaj" name="MVBigLighting.jta" path="/Fx/"/>
+    <movieclip id="sqzyak" name="MVSmallLighting.jta" path="/Fx/"/>
+    <component id="sqzyal" name="FxShootLightningSmall.xml" path="/Fx/" exported="true"/>
+    <component id="sqzyam" name="FxSkull.xml" path="/Fx/" exported="true"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

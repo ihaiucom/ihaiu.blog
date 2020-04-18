@@ -8,6 +8,9 @@ import ArtConsts from "../Enums/ArtConsts";
 import SoundController from "./SoundController";
 import { HeroType } from "../Enums/HeroType";
 import Consts from "../Enums/Consts";
+import TweenContainer from "../Utils/TweenContainer";
+import TweenUtil from "../Utils/TweenUtil";
+import CardViewFrontHero from "../../FGUI/Extends/GameHome/CardViewFrontHero";
 
 export default class Hero extends Card
 {
@@ -16,6 +19,7 @@ export default class Hero extends Card
     armor: number = 0;
     totalLife: number = 0;
 
+    // CardScoreType.Lightning
     needRunLightning: boolean = false;
     lightningScore: number = 0;
 
@@ -160,30 +164,50 @@ export default class Hero extends Card
     getScore() {
         return this.currentLife + this.armor
     }
-    reduceScoreInNSeconds(t, e) {
-        if (t <= this.armor) this.armor -= t;
-        else {
-            var i = t - this.armor;
+    
+
+    // 减少血量, 延迟
+    reduceScoreInNSeconds(score, delay) 
+    {
+        if (score <= this.armor) 
+        {
+            this.armor -= score;
+        }
+        else 
+        {
+            var i = score - this.armor;
             this.armor = 0,
             this.currentLife -= i
         }
-        setTimeout(this.setStatus.bind(this), e)
+        setTimeout(this.setStatus.bind(this), delay)
     }
-    increaseScoreInNSeconds(t, e) {
-        this.totalLife - this.currentLife > t ? this.currentLife = this.totalLife: this.currentLife += t,
-        setTimeout(this.setStatus.bind(this), e)
+
+
+    // 添加血量, 延迟
+    increaseScoreInNSeconds(score, delay) 
+    {
+        if(this.totalLife - this.currentLife > score)
+        {
+            this.currentLife = this.totalLife;
+        }
+        else
+        {
+            this.currentLife += score;
+        }
+        setTimeout(this.setStatus.bind(this), delay)
     }
+
     setShopItemsStatus() 
     {
-        var e = 1;
-        this.destroySpriteByName(ArtConsts.SmallHeart),
-        this.destroySpriteByName(ArtConsts.SmallHorseshoe),
-        this.destroySpriteByName(ArtConsts.SmallLuck),
-        this.destroySpriteByName(ArtConsts.SmallKey),
-        GameStatus.isHeart && this.addSpriteByName(ArtConsts.SmallHeart, e++, 0, 1),
-        GameStatus.isHorseshoe,
-        GameStatus.isLuck && this.addSpriteByName(ArtConsts.SmallLuck, e++, 30),
-        GameStatus.isKey && this.addSpriteByName(ArtConsts.SmallKey, e, 30)
+        // var e = 1;
+        // this.destroySpriteByName(ArtConsts.SmallHeart),
+        // this.destroySpriteByName(ArtConsts.SmallHorseshoe),
+        // this.destroySpriteByName(ArtConsts.SmallLuck),
+        // this.destroySpriteByName(ArtConsts.SmallKey),
+        // GameStatus.isHeart && this.addSpriteByName(ArtConsts.SmallHeart, e++, 0, 1),
+        // GameStatus.isHorseshoe,
+        // GameStatus.isLuck && this.addSpriteByName(ArtConsts.SmallLuck, e++, 30),
+        // GameStatus.isKey && this.addSpriteByName(ArtConsts.SmallKey, e, 30)
     }
     addSpriteByName(e, i, o, n) {
         void 0 === o && (o = 0),
@@ -221,7 +245,9 @@ export default class Hero extends Card
         return GameStatus.addGold(e.getScore()),
         !0
     }
-    useHeart() {
+    
+    useHeart() 
+    {
         var e = this.view.getByName(ArtConsts.SmallHeart);
         this.view.bringToTop(e);
         SoundController.instance.playSound(SoundConsts.Revive),
@@ -242,9 +268,10 @@ export default class Hero extends Card
     /** 添加最大血量 */
     increaseLifeByOneTween() 
     {
-        var t = this.getScaleTween(this.getCardLifeText(), this.increaseLifeByOne);
-        return t.onStart.add(this.playHorseshoe, this),
-        t
+        var tweenContainer = this.view.tweenLife();
+        tweenContainer.onStart.addOnce(this.playHorseshoe, this);
+        tweenContainer.onComplete.addOnce(this.increaseLifeByOne, this);
+        return tweenContainer;
     }
     
     playHorseshoe() {

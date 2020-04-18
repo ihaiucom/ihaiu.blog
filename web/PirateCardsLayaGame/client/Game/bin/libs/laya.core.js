@@ -10439,8 +10439,8 @@ window.Laya= (function (exports) {
             window.requestAnimationFrame(loop);
             function loop(stamp) {
                 // TODO ZF
-                try 
-                {
+                // try 
+                // {
                     if(window['GameStat'])
                     {
                         // GameStat.OnFrameBegin();
@@ -10448,11 +10448,11 @@ window.Laya= (function (exports) {
                     } 
                     ILaya.stage._loop();
                     if(window['GameStat']) GameStat.timeEnd(GameStatKey.loop);
-                } 
-                catch (error) 
-                {
-                    console.error(error);
-                }
+                // } 
+                // catch (error) 
+                // {
+                //     console.error(error);
+                // }
                 window.requestAnimationFrame(loop);
             }
             ILaya.stage.on("visibilitychange", this, this._onVisibilitychange);

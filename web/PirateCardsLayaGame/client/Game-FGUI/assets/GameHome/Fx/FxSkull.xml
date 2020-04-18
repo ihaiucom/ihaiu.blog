@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="77,78" pivot="0.5,0.5" anchor="true">
+  <displayList>
+    <movieclip id="n0_sqzy" name="fx" src="sqzy9o" fileName="Fx/MVSkull.jta" xy="38,39" pivot="0.5,0.5" anchor="true" playing="false"/>
+  </displayList>
+</component>

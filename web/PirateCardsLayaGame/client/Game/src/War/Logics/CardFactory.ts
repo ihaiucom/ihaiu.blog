@@ -72,6 +72,7 @@ export default class CardFactory
     // 随机生成卡牌
     getCard(cardGenerationType: CardGenerationType = CardGenerationType.Random, score: number, cardTypeList: CardScoreType[]) : Card
     {
+        console.log("随机生成卡牌", "cardGenerationType=", cardGenerationType, "score=", score, "cardTypeList=", cardTypeList);
         // 是否需要创建Boss
         if(GameStatus.isNeedCreateBoss && cardGenerationType == CardGenerationType.Random)
         {
@@ -157,7 +158,7 @@ export default class CardFactory
         }
         else
         {
-            CardBackgroundType.Warrior;
+            return CardBackgroundType.Warrior;
         }
 
     }
@@ -359,12 +360,12 @@ export default class CardFactory
         else if(cardGenerationTyp == CardGenerationType.AfterBarrel)
         {
             // 开木桶里的牌, 根据当前牌类型不同数量
-            CardFactory.generatePowerUpTypeFromBarrel(cardTypeList) 
+            return CardFactory.generatePowerUpTypeFromBarrel(cardTypeList) 
         }
         else
         {
             // 好的牌, 根据当前牌类型不同数量
-            CardFactory.generatePowerUpCardScoreType(cardTypeList)
+            return CardFactory.generatePowerUpCardScoreType(cardTypeList)
         }
     }
 

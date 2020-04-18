@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="70,69" pivot="0.5,0.5" anchor="true">
+  <displayList>
+    <movieclip id="n5_sqzy" name="fx" src="sqzyaj" fileName="Fx/MVBigLighting.jta" xy="35,35" pivot="0.5,0.5" anchor="true" playing="false"/>
+  </displayList>
+</component>

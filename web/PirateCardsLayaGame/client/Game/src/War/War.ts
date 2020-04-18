@@ -32,3 +32,5 @@ export default class War
     }
 
 }
+
+window['War'] = War;

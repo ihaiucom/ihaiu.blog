@@ -38,7 +38,7 @@ export default class Consts
     static BackgroundImageName = "BackgroundImageName";
     static BackgroundName = "BackgroundName";
     static LightningDuration = 50;
-    static ShakeIntensity = .02;
+    static ShakeIntensity =  20;
     static ContainerName = "container";
     static CoinMaxValue = 5;
     static Shadow = "shadow";

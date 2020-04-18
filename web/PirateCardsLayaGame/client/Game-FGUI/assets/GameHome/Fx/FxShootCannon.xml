@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="70,69" pivot="0.5,0.5" anchor="true">
+  <displayList>
+    <image id="n0_sqzy" name="core" src="sqzy3h" fileName="sprite/game1/core0000.png" xy="35,34" pivot="0.5,0.5" anchor="true"/>
+  </displayList>
+</component>

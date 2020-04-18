@@ -12,6 +12,7 @@ import FightResult from "./Datas/FightResult";
 import { HeroType } from "./Enums/HeroType";
 import { MoveType } from "./Enums/MoveType";
 import { CardGenerationType } from "./Enums/CardGenerationType";
+import { Shake } from "./Utils/Shake";
 
 export default class WarGame
 {
@@ -24,6 +25,8 @@ export default class WarGame
     container: fgui.GComponent;
     /** 场景点击特效 */
     stageClickFx: StageClickFx;
+    /** 震屏处理器 */
+    shakeHandler: Shake = new Shake();
 
     //=================================
     // logic
@@ -41,8 +44,11 @@ export default class WarGame
 
     moveType: MoveType;
 
+
+
     init(windowUI: WindowWarUI)
     {
+        window['game'] = this;
         this.windowUI = windowUI;
         this.container = windowUI.m_container;
         this.stageClickFx = new StageClickFx();
@@ -101,9 +107,15 @@ export default class WarGame
 
         if(!this.isAnimationing)
         {
+            // 执行动画
             if(  this.animationQueue.length > 0  )
             {
                 this.runAnimationFromQueue();
+            }
+            // 执行操作
+            else
+            {
+                this.fillQueue();
             }
 
         }
@@ -113,11 +125,19 @@ export default class WarGame
     runAnimationFromQueue()
     {
         var animation = this.animationQueue.shift();
-        var animationDuration = animation.animationDuration;
-        this.isAnimationing = true;
-
-        animation.restart();
-        setTimeout(this.onAnimationComplete.bind(this), animationDuration);
+        if(animation instanceof TweenContainer)
+        {
+            var animationDuration = animation.animationDuration;
+            this.isAnimationing = true;
+    
+            animation.restart();
+            setTimeout(this.onAnimationComplete.bind(this), animationDuration);
+        }
+        else
+        {
+            console.error(animation);
+            this.onAnimationComplete();
+        }
 
     }
 
@@ -133,6 +153,42 @@ export default class WarGame
     {
         if (GameStatus.isHeroAlive) 
         {
+            var hero = this.field.getHero();
+            // CardScoreType.Cannon， 加农炮
+            if (hero.needShoot)
+            {
+                this.addToAnimationQueue(this.field.shootCannon());
+                hero.needShoot = false;
+                return;
+            }
+
+            // CardScoreType.Lightning, 闪电
+            if (hero.needRunLightning) 
+            {
+                this.addToAnimationQueue(this.field.shootLightning());
+                hero.needRunLightning = false;
+                return;
+            }
+            
+            // CardScoreType.Multiplier 倍数
+            if (hero.needShootMultiplier)
+            {
+                this.addToAnimationQueue(this.field.shootMultiplier());
+                hero.needShootMultiplier = false;
+                return;
+            }
+
+            // CardScoreType.Skull 骷髅清屏
+            if (hero.needShootSkull)
+            {
+                this.addToAnimationQueue(this.field.shootSkull());
+                hero.needShootSkull = false;
+                return;
+            }
+
+            // CardScoreType.Bomb 炸弹
+            this.addToAnimationQueue(this.field.smashBomb());
+            
             this.checkKeyHandler();
         }
         else
@@ -141,18 +197,45 @@ export default class WarGame
         }
     }
 
-    
+
+    addToAnimationQueue(tweenList: TweenContainer[] | TweenContainer)
+    {
+        if(tweenList == null) return;
+        if(tweenList instanceof Array)
+        {
+            for(var item of tweenList)
+            {
+                if(item == null) continue;
+                
+                if(item instanceof Array)
+                {
+                    this.addToAnimationQueue(item);
+                }
+                else
+                {
+                    this.animationQueue.push(item);
+                }
+            }
+
+        }
+        else
+        {
+            this.animationQueue.push(tweenList);
+        }
+    }
 
     checkKeyHandler() 
     {
         var moveType = this.keyboardManager.getMoveType();
         if (moveType) 
         {
+            console.log(moveType);
             var tweenList = this.move(moveType);
             if(tweenList && tweenList.length > 0)
             {
                 this.field.stepUpdate();
-                this.animationQueue.push(...tweenList);
+                this.addToAnimationQueue(tweenList);
+                
             }
             else
             {
@@ -220,7 +303,7 @@ export default class WarGame
         // 战斗结果是否需要增加生命
         if(fightResult.isNeedIncreaseLifeByOne)
         {
-            tweenContainer = new TweenContainer();
+            tweenContainer = TweenContainer.PoolGet();
             tweenContainer.tweens.push(this.field.getHero().increaseLifeByOneTween());
             tweenList.push(tweenContainer);
         }
@@ -232,9 +315,11 @@ export default class WarGame
         }
         else
         {
+            console.log("替换卡牌, 木桶替换");
+            tweenContainer = TweenContainer.PoolGet();
             // 替换卡牌, 木桶替换
-            this.field.replaceCard(moveType, CardGenerationType.AfterBarrel, fightCard.getScore() );
-            tweenContainer = new TweenContainer();
+            var tween = this.field.replaceCard(moveType, CardGenerationType.AfterBarrel, fightCard.getScore() );
+            tweenContainer.tweens.push(tween);
             tweenContainer.tweens.push(this.field.getHero().increaseLifeByOneTween());
             tweenList.push(tweenContainer);
         }
@@ -249,6 +334,12 @@ export default class WarGame
     isChangeTurnsToBoss() 
     {
         return ! GameStatus.isNeedCreateBoss && !this.field.isBossInTheField()
+    }
+
+    // 震屏
+    shake(intensity: number, time: number)
+    {
+        this.shakeHandler.exe(this.windowUI, intensity, time);
     }
 
     
