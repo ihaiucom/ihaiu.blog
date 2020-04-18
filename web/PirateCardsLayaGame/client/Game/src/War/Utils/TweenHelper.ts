@@ -4,6 +4,62 @@ import TweenUtil from "./TweenUtil";
 
 export default class TweenHelper
 {
+    static spriteHide(view: fgui.GComponent)
+    {
+        Laya.Tween.clearAll(view);
+        Laya.Tween.to(view, 
+            {
+                scaleX: 0,
+                scaleY: 0,
+                rotation: 360,
+                alpha: 0
+            }, 
+            700, 
+            null,
+            Laya.Handler.create(this, ()=>
+            {
+                view.visible = false;
+                view.rotation = 0;
+                view.alpha = 0;
+            }));
+    }
+
+    
+    static spriteShow(view: fgui.GComponent)
+    {
+        
+        view.visible = true;
+        Laya.Tween.clearAll(view);
+        Laya.Tween.to(view, 
+            {
+                scaleX: 0,
+                scaleY: 0
+            }, 
+            100
+            );
+
+        Laya.Tween.to(view, 
+            {
+                scaleX: 1.5,
+                scaleY: 1.5
+            }, 
+            250, 
+            null,
+            null,
+            100);
+            
+
+        Laya.Tween.to(view, 
+            {
+                scaleX: 1,
+                scaleY: 1
+            }, 
+            100, 
+            null,
+            null,
+            100 + 250);
+    }
+
     static turnAnimationStart(tweenContainer: TweenContainer, view: fgui.GComponent) 
     {
         if(!tweenContainer)  tweenContainer = new TweenContainer();

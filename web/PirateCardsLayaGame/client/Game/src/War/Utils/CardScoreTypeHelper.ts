@@ -14,7 +14,8 @@ export default class CardScoreTypeHelper
     static isCardScoreTypeNegative(cardScoreType:CardScoreType)
     {
         return cardScoreType == CardScoreType.Trap || 
-        cardScoreType == CardScoreType.Warrior || 
+        cardScoreType == CardScoreType.Boss || 
+        cardScoreType == CardScoreType.Enemy || 
         cardScoreType == CardScoreType.Poison;
     }
     

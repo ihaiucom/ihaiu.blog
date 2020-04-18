@@ -11,7 +11,7 @@ export enum CardScoreType
     // 小怪
     Boss = 4,
     // 小怪, Boss
-    Warrior = 3,
+    Warrior = 18,
     // 血瓶
     Health = 5,
     // 金币

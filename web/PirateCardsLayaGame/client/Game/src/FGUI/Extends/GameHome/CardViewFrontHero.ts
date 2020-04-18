@@ -7,6 +7,7 @@ import CardViewFrontHeroStruct from "../../Generates/GameHome/CardViewFrontHeroS
 import CardConfig from "../../../Config/ConfigExtends/CardConfig";
 import Card from "../../../War/Logics/Card";
 import CardView from "./CardView";
+import TweenHelper from "../../../War/Utils/TweenHelper";
 
 export default class CardViewFrontHero extends CardViewFrontHeroStruct
 {
@@ -30,5 +31,17 @@ export default class CardViewFrontHero extends CardViewFrontHeroStruct
         this.cardView = null;
         this.cardConfig = null;
         this.card = null;
+    }
+
+    setArmorHide()
+    {
+        TweenHelper.spriteHide(this.m_shield);
+    }
+
+    
+    setArmorShowOrChange()
+    {
+        TweenHelper.spriteShow(this.m_shield);
+
     }
 }

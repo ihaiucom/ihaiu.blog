@@ -161,7 +161,6 @@ export default class Field
     getChestCardFromFactory()
     {
         var card = this.cardFactory.getChestCard();
-        card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
         return card;
     }
 
@@ -180,7 +179,6 @@ export default class Field
     getEnemyCardFromFactory(t)
     {
         var card = this.cardFactory.getEnemy(t);
-        card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
         return card;
     }
 
@@ -203,36 +201,9 @@ export default class Field
     getCoinCardFromFactory(score)
     {
         var card = this.cardFactory.getCoinCard(score);
-        card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
         return card
     }
 
-    // 鼠标按下卡牌
-    onCardDown(t, e, i, o)
-    {
-        this.downPointer = e;
-    }
-
-    // 鼠标松开卡牌
-    onCardUp(e, i, o, card)
-    {
-        if (!this.onAnimation) 
-        {
-            var point = new Phaser.Point(this.downPointer.x, this.downPointer.y),
-            point2 = new Phaser.Point(i.x, i.y);
-            if (point.distance(point2) > 5) return;
-            var field = this.field.getPosition(function(t) {
-                return t === card
-            });
-            if (!field) return;
-
-            if (this.field.isPositionValid(field.getNewPosition(MoveType.Down)) && this.field.get(field.getNewPosition(MoveType.Down)) instanceof Hero) return void(this.keyboardManager.isUp = true);
-            if (this.field.isPositionValid(field.getNewPosition(MoveType.Up)) && this.field.get(field.getNewPosition(MoveType.Up)) instanceof Hero) return void(this.keyboardManager.isDown = true);
-            if (this.field.isPositionValid(field.getNewPosition(MoveType.Left)) && this.field.get(field.getNewPosition(MoveType.Left)) instanceof Hero) return void(this.keyboardManager.isRight = true);
-            if (this.field.isPositionValid(field.getNewPosition(MoveType.Right)) && this.field.get(field.getNewPosition(MoveType.Right)) instanceof Hero) return void(this.keyboardManager.isLeft = true);
-            card.playNoAccess()
-        }
-    }
 
     // 获取英雄Card
     getHero(): Hero
@@ -410,10 +381,11 @@ export default class Field
     {
         switch (card.type) 
         {
-        case CardScoreType.Warrior:
+        case CardScoreType.Boss:
+        case CardScoreType.Enemy:
             return false;
         case CardScoreType.Trap:
-            return ! card.view.getByName(Consts.CardManAnimation).isOpen;
+            return !card.isOpen;
         case CardScoreType.Health:
         case CardScoreType.Gold:
         case CardScoreType.Armor:
@@ -429,20 +401,44 @@ export default class Field
             return true
         }
     }
-    playMoveSound () {
+
+    playMoveSound () 
+    {
         SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Move01, SoundConsts.Move02]))
     }
+
     // 获取替换的卡牌
     getCardToReplace (card:Card) : Card
     {
-        return card.view.getByName(Consts.CardManAnimation) instanceof Boss 
-            ? this.getChestCardFromFactory() 
-            : this.getCardFromFactory()
+        if(card.isBoss)
+        {
+            return this.getChestCardFromFactory();
+        }
+        else
+        {
+            return this.getCardFromFactory();
+        }
     }
-    getCardToReplaceAfterSmash (e) {
-        e.shape.getByName(Consts.CardManAnimation) instanceof Boss && (GameStatus.isNeedCreateChestOnNextStep = !0);
-        var score = e.getGoldValue() > 0 ? e.getGoldValue() : e.getScore();
-        return this.getCoinCardFromFactory(score)
+
+    // 打碎后，获取替换的卡牌
+    getCardToReplaceAfterSmash (card:Card) 
+    {
+        if(card.isBoss)
+        {
+            GameStatus.isNeedCreateChestOnNextStep = true;
+        }
+
+        var score: number;
+        if(card.getGoldValue() > 0)
+        {
+            score = card.getGoldValue();
+        }
+        else
+        {
+            score = card.getScore();
+        }
+
+        return this.getCoinCardFromFactory(score);
     }
 
     // 移动后的卡牌位置类型
@@ -507,18 +503,24 @@ export default class Field
             }
         }
     }
-    removeAllChild () {
-        var e = [];
+
+    // 移除所有
+    removeAllChild () 
+    {
+        var list = [];
         SoundController.instance.playSound(SoundConsts.HeroDies);
-        for (var i, o = this.field.getAll(), n = 0, s = o = t.RandomHelper.shuffle(o); n < s.length; n++) {
-            var a = s[n],
-            r = new TweenContainer;
-            r.animationDuration = t.RandomHelper.getRandomIntInclusive(50, 150),
-            (i = r.tweens).push.apply(i, a.removeChild()),
-            e.push(r)
+        for (var cardList = this.field.getAll(), i = 0, s = cardList = RandomHelper.shuffle(cardList); i < s.length; i++) 
+        {
+            var card:Card = cardList[i];
+            var tweenContainer = new TweenContainer();
+            tweenContainer.animationDuration = RandomHelper.getRandomIntInclusive(50, 150);
+            tweenContainer.tweens.push(card.removeChild());
+            list.push(tweenContainer)
         }
-        return e
+        return list
     }
+
+    // 是否有Boss存在
     isBossInTheField () 
     {
         return this.field.any(function(card:Card) 
@@ -603,19 +605,24 @@ export default class Field
         this.addBombExplosionAnimation(t.x, t.y, 0),
         t.kill()
     }
-    static canShootCard (e) {
-        if (e instanceof NullCard) return ! 1;
-        if (! (e instanceof t.Card)) return ! 0;
-        switch (e.type) {
-        case CardScoreType.Warrior:
-        case CardScoreType.Trap:
-        case CardScoreType.Armor:
-        case CardScoreType.Health:
-        case CardScoreType.Poison:
-        case CardScoreType.Cannon:
-            return true;
-        default:
-            return false
+
+    // 炮管，是否可以攻击该卡牌
+    static canShootCard (card: Card) 
+    {
+        if(card.isEmpty) return false;
+        
+        switch (card.type) 
+        {
+            case CardScoreType.Boss:
+            case CardScoreType.Enemy:
+            case CardScoreType.Trap:
+            case CardScoreType.Armor:
+            case CardScoreType.Health:
+            case CardScoreType.Poison:
+            case CardScoreType.Cannon:
+                return true;
+            default:
+                return false
         }
     }
     smashBomb () {
@@ -776,15 +783,18 @@ export default class Field
         }
         return a
     }
-    static canShootLightning (e) {
-        if (e instanceof NullCard) return ! 1;
-        if (! (e instanceof t.Card)) return ! 0;
-        switch (e.type) {
-        case CardScoreType.Warrior:
-        case CardScoreType.Trap:
-            return ! 0;
-        default:
-            return ! 1
+
+    // 闪电，是否可以攻击该卡牌
+    static canShootLightning (card:Card) 
+    {
+        switch (card.type) 
+        {
+            case CardScoreType.Boss:
+            case CardScoreType.Enemy:
+            case CardScoreType.Trap:
+                return true;
+            default:
+                return false;
         }
     }
     shootMultiplier () {
@@ -854,25 +864,29 @@ export default class Field
             s
         }
     }
-    static canMultiply (e, i) {
-        switch (e) {
-        case CardScoreType.Armor:
-        case CardScoreType.Bomb:
-        case CardScoreType.Cannon:
-        case CardScoreType.Gold:
-        case CardScoreType.Health:
-        case CardScoreType.Lightning:
-        case CardScoreType.Poison:
-        case CardScoreType.Warrior:
-        case CardScoreType.Barrel:
-            return ! 0;
-        case CardScoreType.Trap:
-            return i > 0;
-        case CardScoreType.Multiplier:
-        case CardScoreType.Horseshoe:
-        case CardScoreType.Chest:
-        case CardScoreType.Skull:
-            return ! 1
+    // 倍速，是否可以应用该卡牌类型
+    static canMultiply (cardScoreType: CardScoreType, score: number) 
+    {
+        switch (cardScoreType) 
+        {
+            case CardScoreType.Armor:
+            case CardScoreType.Bomb:
+            case CardScoreType.Cannon:
+            case CardScoreType.Gold:
+            case CardScoreType.Health:
+            case CardScoreType.Lightning:
+            case CardScoreType.Poison:
+            case CardScoreType.Boss:
+            case CardScoreType.Enemy:
+            case CardScoreType.Barrel:
+                return true;
+            case CardScoreType.Trap:
+                return score > 0;
+            case CardScoreType.Multiplier:
+            case CardScoreType.Horseshoe:
+            case CardScoreType.Chest:
+            case CardScoreType.Skull:
+                return false;
         }
     }
     stopAllAnimations () {

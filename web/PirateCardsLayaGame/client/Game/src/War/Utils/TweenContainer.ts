@@ -58,6 +58,11 @@ export default class TweenContainer
         return this.duration;
     }
 
+    set animationDuration(val: number)
+    {
+        this.duration = val;
+    }
+
 
 
     setAnimationDuration(duration: number)

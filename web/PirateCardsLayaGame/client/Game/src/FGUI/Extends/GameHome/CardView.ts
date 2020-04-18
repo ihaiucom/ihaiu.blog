@@ -220,6 +220,7 @@ export default class CardView extends CardViewStruct
         }
     }
 
+    // 设置生命值
     setHealthText()
     {
         if(this.card.isHero)
@@ -229,8 +230,50 @@ export default class CardView extends CardViewStruct
         }
         else
         {
-            (<CardViewFrontHero>this.front).m_life.title = hero.currentLife.toString();
+            (<CardViewFrontHero>this.front).m_life.title = this.card.currentLife.toString();
         }
+
+    }
+
+    //  设置能力
+    setPowerUpText()
+    {
+        (<CardViewFrontHero>this.front).m_life.title = this.card.powerUpAmount.toString();
+    }
+
+    // 设置护甲
+    setArmor()
+    {
+        if(this.card.isHero)
+        {
+            var hero = <Hero> this.card;
+            var heroView = <CardViewFrontHero>this.front;
+            if(hero.armor > 0)
+            {
+                heroView.setArmorShowOrChange();
+            }
+            else
+            {
+                heroView.setArmorHide();
+            }
+            heroView.m_shield.title = hero.armor.toString();
+        }
+    }
+
+    // 使用道具， 生命
+    useLuck()
+    {
+        if(this.card.isHero)
+        {
+            var hero = <Hero> this.card;
+            var heroView = <CardViewFrontHero>this.front;
+            heroView.m_shopBar.useLuck();
+        }
+    }
+
+    // 
+    increaseLifeByOneTween()
+    {
 
     }
 

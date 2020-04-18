@@ -53,13 +53,18 @@ export default class CardFactory
         var cardConfig = Game.config.card.getTypeLevelConfig(CardScoreType.Hero, GameStatus.currentHero);
         var hero = new Hero();
         hero.game = this.game;
+        hero.type = CardScoreType.Hero;
         hero.SetConfig(cardConfig);
-        // hero.setShopItemsStatus(),
-        hero.totalLife = 10,
-        hero.currentLife = 10,
-        hero.armor = 0,
-        GameStatus.isHorseshoe && (hero.totalLife += 1, hero.currentLife += 1),
-        // hero.setStatus(),
+        hero.setShopItemsStatus();
+        hero.totalLife = 10;
+        hero.currentLife = 10;
+        hero.armor = 0;
+        if(GameStatus.isHorseshoe)
+        {
+            hero.totalLife += 1;
+            hero.currentLife += 1;
+        }
+        hero.setStatus(),
         this.movesAfterLastSpecialCard++;
         return hero;
     }

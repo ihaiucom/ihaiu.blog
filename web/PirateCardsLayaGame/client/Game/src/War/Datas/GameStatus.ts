@@ -71,6 +71,9 @@ export default class GameStatus
     // 游戏是否结束
     static isGameEnd: boolean =  false;
 
+    // 是否需要创建宝箱，下一个步骤
+    static isNeedCreateChestOnNextStep: boolean = false;
+
 
     static init()
     {

@@ -125,6 +125,14 @@
     class CardViewFrontBg extends CardViewFrontBgStruct {
     }
 
+    var CardBackgroundType;
+    (function (CardBackgroundType) {
+        CardBackgroundType[CardBackgroundType["Default"] = 0] = "Default";
+        CardBackgroundType[CardBackgroundType["Warrior"] = 1] = "Warrior";
+        CardBackgroundType[CardBackgroundType["Hero"] = 2] = "Hero";
+        CardBackgroundType[CardBackgroundType["PowerUp"] = 3] = "PowerUp";
+    })(CardBackgroundType || (CardBackgroundType = {}));
+
     class CardViewFrontHeroStruct extends fgui.GComponent {
         constructor() {
             super();
@@ -514,16 +522,7 @@
             return item;
         }
         PoolRecover() {
-            if (this.front) {
-                this.front.removeFromParent();
-                var fun = this.front['OnRecover'];
-                if (fun) {
-                    fun.call(this.front);
-                }
-                var signal = this.front.constructor.URL;
-                Pool.recover(signal, this.front);
-                this.front = null;
-            }
+            this.RecoverFront();
             this.cardConfig = null;
             this.cardScoreConfig = null;
             Pool.recover(CardView.URL, this);
@@ -555,15 +554,36 @@
             if (fun) {
                 fun.call(this.front, this.cardConfig);
             }
+            this.onClick(this, this.OnClickHandler);
+        }
+        RecoverFront() {
+            if (this.front) {
+                this.front.removeFromParent();
+                var fun = this.front['OnRecover'];
+                if (fun) {
+                    fun.call(this.front);
+                }
+                var signal = this.front.constructor.URL;
+                Pool.recover(signal, this.front);
+                this.front = null;
+            }
+            this.offClick(this, this.OnClickHandler);
         }
         SetConfig(cardConfig) {
             this.cardConfig = cardConfig;
-            var cardScoreConfig = this.cardScoreConfig = cardConfig.cardScoreConfig;
-            if (!cardScoreConfig || cardScoreConfig.backgroundType == undefined) {
-                console.error("!cardScoreConfig || cardScoreConfig.backgroundType == undefined", cardScoreConfig, cardConfig);
+            if (cardConfig) {
+                var cardScoreConfig = this.cardScoreConfig = cardConfig.cardScoreConfig;
+                if (!cardScoreConfig || cardScoreConfig.backgroundType == undefined) {
+                    console.error("!cardScoreConfig || cardScoreConfig.backgroundType == undefined", cardScoreConfig, cardConfig);
+                }
+                this.SetBg(cardScoreConfig.backgroundType);
+                this.SetFront(cardScoreConfig.frontView);
             }
-            this.SetBg(cardScoreConfig.backgroundType);
-            this.SetFront(cardScoreConfig.frontView);
+            else {
+                this.cardScoreConfig = null;
+                this.RecoverFront();
+                this.SetBg(CardBackgroundType.Default);
+            }
         }
         SetCard(card) {
             this.card = card;
@@ -572,6 +592,33 @@
                 if (fun) {
                     fun.call(this.front, this.card);
                 }
+            }
+        }
+        OnClickHandler() {
+            if (this.card) {
+                this.game.keyboardManager.OnClickCard(this.card);
+            }
+        }
+        setHealthText() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                this.front.m_life.title = hero.currentLife + "/" + hero.totalLife;
+            }
+            else {
+                this.front.m_life.title = this.card.currentLife.toString();
+            }
+        }
+        setPowerUpText() {
+            this.front.m_life.title = this.card.powerUpAmount.toString();
+        }
+        setOpen() {
+            if (this.card.isTrap) {
+                this.front.m_DoOpen.play();
+            }
+        }
+        setClose() {
+            if (this.card.isTrap) {
+                this.front.m_DoClose.play();
             }
         }
     }
@@ -3212,7 +3259,7 @@
         CardScoreType[CardScoreType["Trap"] = 2] = "Trap";
         CardScoreType[CardScoreType["Enemy"] = 3] = "Enemy";
         CardScoreType[CardScoreType["Boss"] = 4] = "Boss";
-        CardScoreType[CardScoreType["Warrior"] = 3] = "Warrior";
+        CardScoreType[CardScoreType["Warrior"] = 18] = "Warrior";
         CardScoreType[CardScoreType["Health"] = 5] = "Health";
         CardScoreType[CardScoreType["Gold"] = 6] = "Gold";
         CardScoreType[CardScoreType["Armor"] = 7] = "Armor";
@@ -3618,7 +3665,8 @@
     class CardScoreTypeHelper {
         static isCardScoreTypeNegative(cardScoreType) {
             return cardScoreType == CardScoreType.Trap ||
-                cardScoreType == CardScoreType.Warrior ||
+                cardScoreType == CardScoreType.Boss ||
+                cardScoreType == CardScoreType.Enemy ||
                 cardScoreType == CardScoreType.Poison;
         }
         static isCardScoreTypePositive(cardScoreType) {
@@ -3851,6 +3899,7 @@
     GameStatus.ColumnCount = 3;
     GameStatus.isHeroAlive = false;
     GameStatus.isGameEnd = false;
+    GameStatus.isNeedCreateChestOnNextStep = false;
     GameStatus.movesAfterLastSpecialCard = 0;
 
     class Consts {
@@ -3956,6 +4005,9 @@
                 this.duration = time;
             }
             return this.duration;
+        }
+        set animationDuration(val) {
+            this.duration = val;
         }
         setAnimationDuration(duration) {
             this.duration = duration;
@@ -4085,14 +4137,6 @@
     SoundConsts.Move02 = "move02";
     SoundConsts.Trap = "trap";
 
-    var CardBackgroundType;
-    (function (CardBackgroundType) {
-        CardBackgroundType[CardBackgroundType["Default"] = 0] = "Default";
-        CardBackgroundType[CardBackgroundType["Warrior"] = 1] = "Warrior";
-        CardBackgroundType[CardBackgroundType["Hero"] = 2] = "Hero";
-        CardBackgroundType[CardBackgroundType["PowerUp"] = 3] = "PowerUp";
-    })(CardBackgroundType || (CardBackgroundType = {}));
-
     class Card {
         constructor() {
             this.type = CardScoreType.None;
@@ -4100,6 +4144,8 @@
             this.powerUpAmount = 0;
             this.lifeAmount = 0;
             this.initialLife = 0;
+            this.currentLife = 0;
+            this.isOpen = false;
             this.view = CardView.PoolGet();
         }
         static GetDefault(game) {
@@ -4115,13 +4161,13 @@
             card.game = game;
             card.type = cardScoreType;
             card.SetConfig(config);
-            GameStatus.updateCardCounter(cardScoreType),
+            card.setScore(score),
+                GameStatus.updateCardCounter(cardScoreType),
                 GameStatus.updateMovesAfterSpecialCard(cardScoreType);
             return card;
         }
         SetEmpty() {
-            this.config = null;
-            this.view.SetBg(CardBackgroundType.Default);
+            this.SetConfig(null);
         }
         SetConfig(config) {
             this.config = config;
@@ -4129,22 +4175,41 @@
             this.view.SetConfig(config);
             this.view.SetCard(this);
         }
+        get isEmpty() {
+            return this.type == CardScoreType.None;
+        }
         get isHero() {
             return this.type == CardScoreType.Hero;
         }
         get isBoss() {
             return this.type == CardScoreType.Boss;
         }
+        get isTrap() {
+            return this.type == CardScoreType.Trap;
+        }
+        get level() {
+            return this.config.level;
+        }
         stepUpdate() {
-            var e = this.view.getByName(Consts.CardManAnimation);
-            if (e instanceof Trap) {
-                var i = e.changeStatus(), o = GameStatus.currentHero == HeroType.Gun;
+            if (this.isTrap) {
+                this.changeStatus();
+                var isGrun = GameStatus.currentHero == HeroType.Gun;
                 this.lifeAmount = o ? 0 : i ? this.powerUpAmount : 0,
                     this.setHealthText();
             }
             this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
                 this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
                 this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1);
+        }
+        changeStatus() {
+            if (this.isOpen) {
+                this.view.setClose();
+                this.isOpen = false;
+            }
+            else {
+                this.view.setClose();
+                this.isOpen = true;
+            }
         }
         getScore() {
             return this.type == CardScoreType.Trap ? this.lifeAmount : this.lifeAmount + this.powerUpAmount;
@@ -4179,11 +4244,12 @@
         increaseLifeTween() {
             this.getScaleTween(this.getCardLifeText(), this.setHealthText, this.lifeAmount).start();
         }
-        setScore(e) {
+        setScore(score) {
             switch (this.type) {
-                case CardScoreType.Warrior:
-                    this.initialLife = e,
-                        this.setLife(e);
+                case CardScoreType.Boss:
+                case CardScoreType.Enemy:
+                    this.initialLife = score,
+                        this.setLife(score);
                     break;
                 case CardScoreType.Gold:
                 case CardScoreType.Health:
@@ -4194,15 +4260,15 @@
                 case CardScoreType.Multiplier:
                 case CardScoreType.Skull:
                 case CardScoreType.Barrel:
-                    this.setPowerUp(e);
+                    this.setPowerUp(score);
                     break;
                 case CardScoreType.Bomb:
-                    this.setLife(e),
+                    this.setLife(score),
                         this.setPowerUp(10);
                     break;
                 case CardScoreType.Trap:
-                    this.setPowerUp(e),
-                        this.setLife(e);
+                    this.setPowerUp(score),
+                        this.setLife(score);
                     break;
                 case CardScoreType.Chest:
                     break;
@@ -4214,35 +4280,24 @@
             this.powerUpAmount = t,
                 this.setPowerUpText();
         }
-        setLife(t) {
-            this.lifeAmount = t,
-                this.setHealthText();
+        setLife(val) {
+            if (val != undefined) {
+                this.lifeAmount = val;
+            }
+            this.setHealthText();
         }
         setHealthText() {
-            var t = this.getCardLifeText();
-            t && t && t.setText(this.lifeAmount.toString());
+            this.view.setHealthText();
         }
         setPowerUpText() {
-            var t = this.getPowerUpText();
-            t && t && t.setText(this.powerUpAmount.toString());
-        }
-        getPowerUpText() {
-            return this.view.getByName(Consts.PowerUp);
-        }
-        setOnClickEvent(onCardDown, onCardUp, listener) {
-            if (!this.isOnClickInitiated)
-                for (var n = 0; n < this.view.children.length; n++) {
-                    var s = this.view.children[n];
-                    s.name == Consts.BackgroundName && (s.inputEnabled = !0, s.events.onInputDown.add(onCardDown, listener, 1, this), s.events.onInputUp.add(onCardUp, listener, 1, this), this.isOnClickInitiated = !0);
-                }
+            this.view.setPowerUpText();
         }
         isNegative() {
             switch (this.type) {
                 case CardScoreType.Trap:
-                case CardScoreType.Warrior:
                 case CardScoreType.Bomb:
                 case CardScoreType.Poison:
-                    return !0;
+                    return true;
                 case CardScoreType.Health:
                 case CardScoreType.Gold:
                 case CardScoreType.Armor:
@@ -4253,7 +4308,8 @@
                 case CardScoreType.Lightning:
                 case CardScoreType.Multiplier:
                 case CardScoreType.Skull:
-                    return !1;
+                case CardScoreType.Hero:
+                    return false;
             }
         }
         getGoldValue() {
@@ -4296,6 +4352,20 @@
         }
         removeShapeFromStage() {
             this.view.removeFromParent();
+        }
+        getScaleTween(view, e) {
+            for (var i = [], o = 2; o < arguments.length; o++)
+                i[o - 2] = arguments[o];
+            var n, s = this.game.add.tween(view.scale).to({
+                x: 2.5,
+                y: 2.5
+            }, 200), a = this.game.add.tween(view.scale).to({
+                x: 1,
+                y: 1
+            }, 200);
+            return (n = s.onComplete).add.apply(n, [e, this, null].concat(i)),
+                s.chain(a),
+                s;
         }
     }
 
@@ -4385,6 +4455,43 @@
             }
             return list;
         }
+        findHeroCard() {
+            var item;
+            for (var y = 0; y < this.rowCount; y++) {
+                for (var x = 0; x < this.columnCount; x++) {
+                    item = this.items[x][y];
+                    if (item.isHero) {
+                        return item;
+                    }
+                }
+            }
+            return null;
+        }
+        findHeroPosition() {
+            var item;
+            for (var y = 0; y < this.rowCount; y++) {
+                for (var x = 0; x < this.columnCount; x++) {
+                    item = this.items[x][y];
+                    if (item.isHero) {
+                        return new FieldPosition(x, y);
+                    }
+                }
+            }
+            return null;
+        }
+        findPosition(card) {
+            var item;
+            for (var y = 0; y < this.rowCount; y++) {
+                for (var x = 0; x < this.columnCount; x++) {
+                    item = this.items[x][y];
+                    if (item == card) {
+                        var filedPosition = new FieldPosition(x, y);
+                        return filedPosition;
+                    }
+                }
+            }
+            return null;
+        }
         getPosition(filterFun) {
             for (var y = 0; y < this.rowCount; y++) {
                 for (var x = 0; x < this.columnCount; x++) {
@@ -4464,6 +4571,400 @@
         CardPositionType[CardPositionType["End"] = 3] = "End";
     })(CardPositionType || (CardPositionType = {}));
 
+    class FightResult {
+        constructor(isHeroAlive, isChest, isMove) {
+            this.isHeroAlive = isHeroAlive,
+                this.isChest = isChest,
+                this.isMove = isMove;
+        }
+    }
+
+    class ArtConsts {
+    }
+    ArtConsts.Items1 = "Items1";
+    ArtConsts.Items2 = "Items2";
+    ArtConsts.Barrel = "Barrel";
+    ArtConsts.Background = "background";
+    ArtConsts.BackgroundMenu = "backgroundMenu";
+    ArtConsts.BackgroundPause = "backgroundPause";
+    ArtConsts.FamobiLogo = "famobiLogo";
+    ArtConsts.PauseLogo = "PauseLogo";
+    ArtConsts.Skull = "skull";
+    ArtConsts.SkullLight = "skull_light";
+    ArtConsts.MenuStar = "menuStar";
+    ArtConsts.MenuLogo = "menuLogo";
+    ArtConsts.Loading = "loading";
+    ArtConsts.ChoiceBackground = "choiceBackground";
+    ArtConsts.Lock = "lock";
+    ArtConsts.CoinPanel = "coinPanel";
+    ArtConsts.ThreeXThree = "ThreeXThree";
+    ArtConsts.FourXFour = "FourXFour";
+    ArtConsts.CardBackground = "cardBackrounds";
+    ArtConsts.NoAccess = "noAccess";
+    ArtConsts.Boss = "boss";
+    ArtConsts.Enemy = "enemy";
+    ArtConsts.Shield = "shields";
+    ArtConsts.CardLifeCircle = "cardLifeCircle";
+    ArtConsts.CardPowerUpCircle = "cardPowerUpCircle";
+    ArtConsts.SmallRing = "smallRing";
+    ArtConsts.BigRing = "bigRing";
+    ArtConsts.Hero = "hero";
+    ArtConsts.HeroBomb = "heroBomb";
+    ArtConsts.HeroKey = "heroKey";
+    ArtConsts.HeroGun = "heroGun";
+    ArtConsts.Health = "health";
+    ArtConsts.Coin = "coin";
+    ArtConsts.CoinBag = "coinBag";
+    ArtConsts.Cannon = "cannon";
+    ArtConsts.BombFlame = "bomb_flame";
+    ArtConsts.GameStatusPanel = "menuPanel";
+    ArtConsts.SmallBtnBackground = "smallBtnBackground";
+    ArtConsts.BigBtnBackground = "bigBtnBackground";
+    ArtConsts.SoundBtn = "soundBtn";
+    ArtConsts.PauseBtn = "pauseBtn";
+    ArtConsts.HomeBtn = "homeBtn";
+    ArtConsts.HomeSmallBtn = "homeBtnSmall";
+    ArtConsts.GroupBtn = "groupBtn";
+    ArtConsts.NextBtn = "nextBtn";
+    ArtConsts.PrevBtn = "prevBtn";
+    ArtConsts.PlayBtn = "playBtn";
+    ArtConsts.PlusBtn = "plusBtn";
+    ArtConsts.ResumeBtn = "resumeBtn";
+    ArtConsts.SettingsBtn = "settingsBtn";
+    ArtConsts.ControlBtn = "controlBtn";
+    ArtConsts.AdvPlayBtn = "advPlayBtn";
+    ArtConsts.IBtn = "iBtn";
+    ArtConsts.Shadow = "shadow";
+    ArtConsts.ShopItemBackground = "shopItemBackground";
+    ArtConsts.BigHeart = "heartBig";
+    ArtConsts.BigHorseshoe = "horseshoeBig";
+    ArtConsts.BigLuck = "luckBig";
+    ArtConsts.Key2 = "key2";
+    ArtConsts.Key3 = "key3";
+    ArtConsts.Key4 = "key4";
+    ArtConsts.SmallHeart = "heartSmall";
+    ArtConsts.SmallHorseshoe = "horseshoeSmall";
+    ArtConsts.SmallLuck = "luckSmall";
+    ArtConsts.SmallKey = "key_small";
+    ArtConsts.Medal = "medal";
+    ArtConsts.Trap = "trap";
+    ArtConsts.Chest = "chest";
+    ArtConsts.LockBody = "lockBody";
+    ArtConsts.LockBridge = "lockBridge";
+    ArtConsts.LockSwitch = "lockSwitch";
+    ArtConsts.LockArrow = "lockArrow";
+    ArtConsts.LockRod = "lockRod";
+    ArtConsts.LockDoubleRod = "lockDoubleRod";
+    ArtConsts.LockBomb = "lockBomb";
+    ArtConsts.LockBombLamp = "lockBombLamp";
+    ArtConsts.LockFixedRod = "lockFixedRod";
+    ArtConsts.LockDoubleFixedRod = "lockDoubleFixedRod";
+    ArtConsts.MouseClick = "mouse_click";
+    ArtConsts.Core = "core";
+    ArtConsts.Smoke1 = "smoke_1";
+    ArtConsts.Smoke2 = "smoke_2";
+    ArtConsts.Smoke3 = "smoke_3";
+    ArtConsts.Smoke4 = "smoke_4";
+    ArtConsts.Smoke5 = "smoke_5";
+    ArtConsts.Bomb = "bomb";
+    ArtConsts.Poison = "poison";
+    ArtConsts.Boom = "boom";
+    ArtConsts.Lightning = "lightning";
+    ArtConsts.BigLightning = "lightning_1";
+    ArtConsts.SmallLightning = "lightning_2";
+    ArtConsts.Multiplier2 = "multiplier2";
+    ArtConsts.Multiplier3 = "multiplier3";
+    ArtConsts.Dust = "dust";
+    ArtConsts.BarrelIronDot = "barrelIronDot";
+    ArtConsts.BarrelIron = "barrelIron";
+    ArtConsts.BarrelCircleDark = "barrelCircleDark";
+    ArtConsts.BarrelCircleLight = "barrelCircleLight";
+    ArtConsts.BarrelBoardRight1 = "barrelBoardRight1";
+    ArtConsts.BarrelBoardRight2 = "barrelBoardRight2";
+    ArtConsts.BarrelBoard1 = "barrelBoard1";
+    ArtConsts.BarrelBoard2 = "barrelBoard2";
+    ArtConsts.BarrelBoard3 = "barrelBoard3";
+    ArtConsts.BarrelBoard4 = "barrelBoard4";
+    ArtConsts.BarrelBoard5 = "barrelBoard5";
+    ArtConsts.BarrelBoard6 = "barrelBoard6";
+    ArtConsts.BarrelBoard7 = "barrelBoard7";
+    ArtConsts.BarrelBoard8 = "barrelBoard8";
+    ArtConsts.BarrelBoard9 = "barrelBoard9";
+    ArtConsts.BarrelBoard10 = "barrelBoard10";
+    ArtConsts.BarrelBoardStraight1 = "barrelBoardStraight1";
+    ArtConsts.BarrelBoardStraight2 = "barrelBoardStraight2";
+    ArtConsts.Enemy9Vane = "enemy_9_vane";
+    ArtConsts.Enemy9Pipe = "enemy_9_pipe";
+    ArtConsts.TurnsToBoss = "turnsToBoss";
+    ArtConsts.CheckMark = "check";
+    ArtConsts.Arm = "arm";
+    ArtConsts.MoreGames = "more_games";
+    ArtConsts.BigPlayBtn = "bigPlayBtn";
+    ArtConsts.AdvPanel = "advPanel";
+    ArtConsts.Smile = "smile";
+    ArtConsts.NoIcon = "noIcon";
+
+    class Hero extends Card {
+        constructor() {
+            super(...arguments);
+            this.armor = 0;
+            this.totalLife = 0;
+            this.needRunLightning = false;
+            this.lightningScore = 0;
+            this.needShoot = false;
+            this.shootScore = 0;
+            this.needShootMultiplier = false;
+            this.multiplierScore = 0;
+            this.needShootSkull = false;
+        }
+        fight(card) {
+            var fightResult = new FightResult(true, false, true);
+            switch (card.type) {
+                case CardScoreType.Trap:
+                    if (card.getLife() > 0 && GameStatus.currentHero != HeroType.Gun) {
+                        SoundController.instance.playSound(SoundConsts.Trap);
+                        if (this.currentLife > card.getScore()) {
+                            this.currentLife -= card.getScore();
+                            GameStatus.addGold(card.getScore());
+                            fightResult.isHeroAlive = true;
+                        }
+                        else {
+                            fightResult.isHeroAlive = false;
+                        }
+                    }
+                    break;
+                case CardScoreType.Boss:
+                case CardScoreType.Enemy:
+                    SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Hit1, SoundConsts.Hit2]));
+                    fightResult.isHeroAlive = this.fightWithEnemy(card);
+                    if (fightResult.isHeroAlive && card.isBoss) {
+                        fightResult.isNeedIncreaseLifeByOneAfterBoss = true;
+                    }
+                    break;
+                case CardScoreType.Armor:
+                    card.getScore(),
+                        SoundController.instance.playSound(SoundConsts.ShieldWood);
+                    if (GameStatus.currentHero == HeroType.Gun) {
+                        this.needSmashLightning(card.getScore());
+                    }
+                    else {
+                        if (this.armor < card.getScore()) {
+                            this.armor = card.getScore();
+                            this.setArmorFrame(card);
+                        }
+                        else if (GameStatus.currentHero == HeroType.Base) {
+                            this.armor++;
+                        }
+                    }
+                    break;
+                case CardScoreType.Gold:
+                    if (card.level == 1) {
+                        SoundController.instance.playSound(SoundConsts.Coin);
+                    }
+                    else {
+                        SoundController.instance.playSound(SoundConsts.CoinsBag);
+                    }
+                    GameStatus.addGold(card.getScore());
+                    break;
+                case CardScoreType.Health:
+                    SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Health1, SoundConsts.Health2]));
+                    this.currentLife += card.getScore();
+                    if (this.currentLife > this.totalLife) {
+                        this.currentLife = this.totalLife;
+                    }
+                    break;
+                case CardScoreType.Cannon:
+                    this.needShoot = true,
+                        this.shootScore = card.getScore();
+                    break;
+                case CardScoreType.Chest:
+                    fightResult.isChest = true;
+                    break;
+                case CardScoreType.Poison:
+                    SoundController.instance.playSound(SoundConsts.Poison);
+                    if (GameStatus.isLuck) {
+                        fightResult.isHeroAlive = true;
+                        this.useLuck();
+                        return fightResult;
+                    }
+                    if (card.getScore() >= this.currentLife) {
+                        fightResult.isHeroAlive = false;
+                        return fightResult;
+                    }
+                    this.currentLife -= card.getScore();
+                    break;
+                case CardScoreType.Horseshoe:
+                    fightResult.isNeedIncreaseLifeByOne = true;
+                    break;
+                case CardScoreType.Bomb:
+                    break;
+                case CardScoreType.Lightning:
+                    this.needSmashLightning(card.getScore());
+                    break;
+                case CardScoreType.Multiplier:
+                    this.needShootMultiplier = true,
+                        this.multiplierScore = card.getScore();
+                    break;
+                case CardScoreType.Skull:
+                    this.needShootSkull = true;
+                    break;
+                case CardScoreType.Barrel:
+                    SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Barrel1, SoundConsts.Barrel2]));
+                    fightResult.isMove = false;
+            }
+            this.setStatus();
+            return fightResult;
+        }
+        needSmashLightning(score) {
+            this.needRunLightning = true,
+                this.lightningScore = score;
+        }
+        setStatus() {
+            this.setLife(),
+                this.setArmor();
+        }
+        stepUpdate() { }
+        getScore() {
+            return this.currentLife + this.armor;
+        }
+        reduceScoreInNSeconds(t, e) {
+            if (t <= this.armor)
+                this.armor -= t;
+            else {
+                var i = t - this.armor;
+                this.armor = 0,
+                    this.currentLife -= i;
+            }
+            setTimeout(this.setStatus.bind(this), e);
+        }
+        increaseScoreInNSeconds(t, e) {
+            this.totalLife - this.currentLife > t ? this.currentLife = this.totalLife : this.currentLife += t,
+                setTimeout(this.setStatus.bind(this), e);
+        }
+        setShopItemsStatus() {
+            var e = 1;
+            this.destroySpriteByName(ArtConsts.SmallHeart),
+                this.destroySpriteByName(ArtConsts.SmallHorseshoe),
+                this.destroySpriteByName(ArtConsts.SmallLuck),
+                this.destroySpriteByName(ArtConsts.SmallKey),
+                GameStatus.isHeart && this.addSpriteByName(ArtConsts.SmallHeart, e++, 0, 1),
+                GameStatus.isLuck && this.addSpriteByName(ArtConsts.SmallLuck, e++, 30),
+                GameStatus.isKey && this.addSpriteByName(ArtConsts.SmallKey, e, 30);
+        }
+        addSpriteByName(e, i, o, n) {
+            void 0 === o && (o = 0),
+                void 0 === n && (n = 1);
+            var s = 38 * i - .5 * t.Consts.CardWidth, a = t.ShapeFactoryHelper.getShape(this.game, s, 80, ArtConsts.Items1, e, 0);
+            a.name = e,
+                a.angle = o,
+                a.scale.set(n),
+                this.view.add(a);
+        }
+        destroySpriteByName(t) {
+            var e = this.view.getByName(t);
+            e && e.destroy();
+        }
+        setArmor() {
+            var e = this.view.getByName(t.Consts.PowerUpCircle);
+            e.visible && 0 == this.armor ? this.hideSprite(e) : e.visible = !0;
+            var i = this.view.getByName(t.Consts.PowerUp);
+            i.setText(this.armor.toString()),
+                0 == this.armor && i.setText("");
+        }
+        hideSprite(t) {
+            this.game.add.tween(t).to({
+                width: 0,
+                height: 0,
+                angle: 360,
+                alpha: 0
+            }, 700, null, !0).onComplete.add(function () {
+                t.visible = !1,
+                    t.rotation = 0,
+                    t.alpha = 1;
+            });
+        }
+        setArmorFrame(e) {
+            var i = e.shape.getByName(t.Consts.CardManAnimation), o = this.view.getByName(t.Consts.PowerUpCircle);
+            o.frameName = i.frameName;
+            var n = this.game.add.tween(o.scale).to({
+                x: 0,
+                y: 0
+            }, 100).to({
+                x: 1.5,
+                y: 1.5
+            }, 250).to({
+                x: 1,
+                y: 1
+            }, 100), s = this.view.getByName(t.Consts.PowerUp);
+            s.scale.set(0);
+            var a = this.game.add.tween(s.scale).to({
+                x: 1,
+                y: 1
+            }, 100);
+            n.chain(a),
+                n.start();
+        }
+        fightWithEnemy(e) {
+            if (e.getScore() >= this.armor + this.currentLife)
+                return !1;
+            if (e.getScore() <= this.armor)
+                e.getScore() < this.armor && GameStatus.currentHero == HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
+            else if (this.armor > 0) {
+                var i = e.getScore() - this.armor;
+                this.armor = 0,
+                    this.currentLife -= i;
+            }
+            else
+                this.currentLife -= e.getScore();
+            return GameStatus.addGold(e.getScore()),
+                !0;
+        }
+        useHeart() {
+            var e = this.view.getByName(ArtConsts.SmallHeart);
+            this.view.bringToTop(e);
+            SoundController.instance.playSound(SoundConsts.Revive),
+                e.animations.add("explode", Phaser.Animation.generateFrameNames(ArtConsts.SmallHeart, 0, 16, "", 4), 30, !1, !1),
+                this.game.add.tween(e.scale).to({
+                    x: 1,
+                    y: 1
+                }, 100, null, !0).onComplete.add(function () {
+                    var t = e.animations.play("explode", 60, !1, !1);
+                    t.onComplete.add(this.setStatus, this),
+                        t.onComplete.add(this.setShopItemsStatus, this);
+                }, this),
+                this.currentLife = this.totalLife;
+        }
+        increaseLifeByOneTween() {
+            var t = this.getScaleTween(this.getCardLifeText(), this.increaseLifeByOne);
+            return t.onStart.add(this.playHorseshoe, this),
+                t;
+        }
+        playHorseshoe() {
+            SoundController.instance.playSound(SoundConsts.Horseshoe);
+        }
+        increaseLifeByOne() {
+            this.currentLife++,
+                this.totalLife++,
+                this.setLife();
+        }
+        useLuck() {
+            GameStatus.isLuck = false;
+            var e = this.view.getByName(ArtConsts.SmallLuck), i = this.game.add.tween(e).to({
+                width: 1.5 * e.width,
+                height: 1.5 * e.height
+            }, 250).to({
+                width: 0,
+                height: 0,
+                alpha: 0
+            }, 150);
+            i.onComplete.add(this.setShopItemsStatus, this),
+                i.start();
+        }
+        getGoldValue() {
+            return 0;
+        }
+    }
+
     class Field {
         constructor(game) {
             this.step = 1;
@@ -4531,7 +5032,6 @@
         }
         getChestCardFromFactory() {
             var card = this.cardFactory.getChestCard();
-            card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
             return card;
         }
         getCardFromFactory(generationType = CardGenerationType.Random, score = 0) {
@@ -4540,7 +5040,6 @@
         }
         getEnemyCardFromFactory(t) {
             var card = this.cardFactory.getEnemy(t);
-            card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
             return card;
         }
         getHealsCardFromFactory(t) {
@@ -4553,45 +5052,16 @@
         }
         getCoinCardFromFactory(score) {
             var card = this.cardFactory.getCoinCard(score);
-            card.setOnClickEvent(this.onCardDown, this.onCardUp, this);
             return card;
-        }
-        onCardDown(t, e, i, o) {
-            this.downPointer = e;
-        }
-        onCardUp(e, i, o, card) {
-            if (!this.onAnimation) {
-                var point = new Phaser.Point(this.downPointer.x, this.downPointer.y), point2 = new Phaser.Point(i.x, i.y);
-                if (point.distance(point2) > 5)
-                    return;
-                var field = this.field.getPosition(function (t) {
-                    return t === card;
-                });
-                if (!field)
-                    return;
-                if (this.field.isPositionValid(field.getNewPosition(MoveType.Down)) && this.field.get(field.getNewPosition(MoveType.Down)) instanceof Hero)
-                    return void (this.keyboardManager.isUp = true);
-                if (this.field.isPositionValid(field.getNewPosition(MoveType.Up)) && this.field.get(field.getNewPosition(MoveType.Up)) instanceof Hero)
-                    return void (this.keyboardManager.isDown = true);
-                if (this.field.isPositionValid(field.getNewPosition(MoveType.Left)) && this.field.get(field.getNewPosition(MoveType.Left)) instanceof Hero)
-                    return void (this.keyboardManager.isRight = true);
-                if (this.field.isPositionValid(field.getNewPosition(MoveType.Right)) && this.field.get(field.getNewPosition(MoveType.Right)) instanceof Hero)
-                    return void (this.keyboardManager.isLeft = true);
-                card.playNoAccess();
-            }
         }
         getHero() {
             return this.field.get(this.getHeroPosition());
         }
         getHeroPosition() {
-            return this.field.getPosition(function (card) {
-                return card instanceof Hero;
-            });
+            return this.field.findHeroPosition();
         }
-        getCardToFight(moveTyp) {
-            var position = this.field.getPosition(function (e) {
-                return e instanceof Hero;
-            });
+        getCardToFight(moveType) {
+            var position = this.field.findHeroPosition();
             if (null != position) {
                 var position2 = position.getNewPosition(moveType);
                 if (this.field.isPositionValid(position2)) {
@@ -4718,10 +5188,11 @@
         }
         isPlayMove(card) {
             switch (card.type) {
-                case CardScoreType.Warrior:
+                case CardScoreType.Boss:
+                case CardScoreType.Enemy:
                     return false;
                 case CardScoreType.Trap:
-                    return !card.view.getByName(Consts.CardManAnimation).isOpen;
+                    return !card.isOpen;
                 case CardScoreType.Health:
                 case CardScoreType.Gold:
                 case CardScoreType.Armor:
@@ -4741,13 +5212,24 @@
             SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Move01, SoundConsts.Move02]));
         }
         getCardToReplace(card) {
-            return card.view.getByName(Consts.CardManAnimation) instanceof Boss
-                ? this.getChestCardFromFactory()
-                : this.getCardFromFactory();
+            if (card.isBoss) {
+                return this.getChestCardFromFactory();
+            }
+            else {
+                return this.getCardFromFactory();
+            }
         }
-        getCardToReplaceAfterSmash(e) {
-            e.shape.getByName(Consts.CardManAnimation) instanceof Boss && (GameStatus.isNeedCreateChestOnNextStep = !0);
-            var score = e.getGoldValue() > 0 ? e.getGoldValue() : e.getScore();
+        getCardToReplaceAfterSmash(card) {
+            if (card.isBoss) {
+                GameStatus.isNeedCreateChestOnNextStep = true;
+            }
+            var score;
+            if (card.getGoldValue() > 0) {
+                score = card.getGoldValue();
+            }
+            else {
+                score = card.getScore();
+            }
             return this.getCoinCardFromFactory(score);
         }
         getCardPositionType(moveType, fieldPosition) {
@@ -4795,19 +5277,20 @@
             }
         }
         removeAllChild() {
-            var e = [];
+            var list = [];
             SoundController.instance.playSound(SoundConsts.HeroDies);
-            for (var i, o = this.field.getAll(), n = 0, s = o = t.RandomHelper.shuffle(o); n < s.length; n++) {
-                var a = s[n], r = new TweenContainer;
-                r.animationDuration = t.RandomHelper.getRandomIntInclusive(50, 150),
-                    (i = r.tweens).push.apply(i, a.removeChild()),
-                    e.push(r);
+            for (var cardList = this.field.getAll(), i = 0, s = cardList = RandomHelper.shuffle(cardList); i < s.length; i++) {
+                var card = cardList[i];
+                var tweenContainer = new TweenContainer();
+                tweenContainer.animationDuration = RandomHelper.getRandomIntInclusive(50, 150);
+                tweenContainer.tweens.push(card.removeChild());
+                list.push(tweenContainer);
             }
-            return e;
+            return list;
         }
         isBossInTheField() {
-            return this.field.any(function (e) {
-                return !(e instanceof NullCard) && e.view.getByName(Consts.CardManAnimation) instanceof Boss;
+            return this.field.any(function (card) {
+                return card.isBoss;
             });
         }
         moveAllLine(moveTypeA, moveTypeB, fieldPosition, card) {
@@ -4822,10 +5305,9 @@
             return animationList;
         }
         stepUpdate() {
-            for (var e = 0, cardList = this.field.getAll(); e < cardList.length; e++) {
-                var card = cardList[e];
-                card.view.getByName(Consts.CardManAnimation) instanceof Boss && this.cardFactory.container.bringToTop(card.view),
-                    card.stepUpdate();
+            for (var i = 0, cardList = this.field.getAll(); i < cardList.length; i++) {
+                var card = cardList[i];
+                card.stepUpdate();
             }
         }
         shootCannon() {
@@ -4877,13 +5359,12 @@
             this.addBombExplosionAnimation(t.x, t.y, 0),
                 t.kill();
         }
-        static canShootCard(e) {
-            if (e instanceof NullCard)
-                return !1;
-            if (!(e instanceof t.Card))
-                return !0;
-            switch (e.type) {
-                case CardScoreType.Warrior:
+        static canShootCard(card) {
+            if (card.isEmpty)
+                return false;
+            switch (card.type) {
+                case CardScoreType.Boss:
+                case CardScoreType.Enemy:
                 case CardScoreType.Trap:
                 case CardScoreType.Armor:
                 case CardScoreType.Health:
@@ -5039,17 +5520,14 @@
             }
             return a;
         }
-        static canShootLightning(e) {
-            if (e instanceof NullCard)
-                return !1;
-            if (!(e instanceof t.Card))
-                return !0;
-            switch (e.type) {
-                case CardScoreType.Warrior:
+        static canShootLightning(card) {
+            switch (card.type) {
+                case CardScoreType.Boss:
+                case CardScoreType.Enemy:
                 case CardScoreType.Trap:
-                    return !0;
+                    return true;
                 default:
-                    return !1;
+                    return false;
             }
         }
         shootMultiplier() {
@@ -5115,8 +5593,8 @@
                     s;
             }
         }
-        static canMultiply(e, i) {
-            switch (e) {
+        static canMultiply(cardScoreType, score) {
+            switch (cardScoreType) {
                 case CardScoreType.Armor:
                 case CardScoreType.Bomb:
                 case CardScoreType.Cannon:
@@ -5124,16 +5602,17 @@
                 case CardScoreType.Health:
                 case CardScoreType.Lightning:
                 case CardScoreType.Poison:
-                case CardScoreType.Warrior:
+                case CardScoreType.Boss:
+                case CardScoreType.Enemy:
                 case CardScoreType.Barrel:
-                    return !0;
+                    return true;
                 case CardScoreType.Trap:
-                    return i > 0;
+                    return score > 0;
                 case CardScoreType.Multiplier:
                 case CardScoreType.Horseshoe:
                 case CardScoreType.Chest:
                 case CardScoreType.Skull:
-                    return !1;
+                    return false;
             }
         }
         stopAllAnimations() {
@@ -5377,368 +5856,6 @@
     LogInfo.ChanceOfNegativeFromBox = 0;
     LogInfo.ChanceOfPositiveFromBox = 0;
 
-    class FightResult {
-        constructor(isHeroAlive, isChest, isMove) {
-            this.isHeroAlive = isHeroAlive,
-                this.isChest = isChest,
-                this.isMove = isMove;
-        }
-    }
-
-    class ArtConsts {
-    }
-    ArtConsts.Items1 = "Items1";
-    ArtConsts.Items2 = "Items2";
-    ArtConsts.Barrel = "Barrel";
-    ArtConsts.Background = "background";
-    ArtConsts.BackgroundMenu = "backgroundMenu";
-    ArtConsts.BackgroundPause = "backgroundPause";
-    ArtConsts.FamobiLogo = "famobiLogo";
-    ArtConsts.PauseLogo = "PauseLogo";
-    ArtConsts.Skull = "skull";
-    ArtConsts.SkullLight = "skull_light";
-    ArtConsts.MenuStar = "menuStar";
-    ArtConsts.MenuLogo = "menuLogo";
-    ArtConsts.Loading = "loading";
-    ArtConsts.ChoiceBackground = "choiceBackground";
-    ArtConsts.Lock = "lock";
-    ArtConsts.CoinPanel = "coinPanel";
-    ArtConsts.ThreeXThree = "ThreeXThree";
-    ArtConsts.FourXFour = "FourXFour";
-    ArtConsts.CardBackground = "cardBackrounds";
-    ArtConsts.NoAccess = "noAccess";
-    ArtConsts.Boss = "boss";
-    ArtConsts.Enemy = "enemy";
-    ArtConsts.Shield = "shields";
-    ArtConsts.CardLifeCircle = "cardLifeCircle";
-    ArtConsts.CardPowerUpCircle = "cardPowerUpCircle";
-    ArtConsts.SmallRing = "smallRing";
-    ArtConsts.BigRing = "bigRing";
-    ArtConsts.Hero = "hero";
-    ArtConsts.HeroBomb = "heroBomb";
-    ArtConsts.HeroKey = "heroKey";
-    ArtConsts.HeroGun = "heroGun";
-    ArtConsts.Health = "health";
-    ArtConsts.Coin = "coin";
-    ArtConsts.CoinBag = "coinBag";
-    ArtConsts.Cannon = "cannon";
-    ArtConsts.BombFlame = "bomb_flame";
-    ArtConsts.GameStatusPanel = "menuPanel";
-    ArtConsts.SmallBtnBackground = "smallBtnBackground";
-    ArtConsts.BigBtnBackground = "bigBtnBackground";
-    ArtConsts.SoundBtn = "soundBtn";
-    ArtConsts.PauseBtn = "pauseBtn";
-    ArtConsts.HomeBtn = "homeBtn";
-    ArtConsts.HomeSmallBtn = "homeBtnSmall";
-    ArtConsts.GroupBtn = "groupBtn";
-    ArtConsts.NextBtn = "nextBtn";
-    ArtConsts.PrevBtn = "prevBtn";
-    ArtConsts.PlayBtn = "playBtn";
-    ArtConsts.PlusBtn = "plusBtn";
-    ArtConsts.ResumeBtn = "resumeBtn";
-    ArtConsts.SettingsBtn = "settingsBtn";
-    ArtConsts.ControlBtn = "controlBtn";
-    ArtConsts.AdvPlayBtn = "advPlayBtn";
-    ArtConsts.IBtn = "iBtn";
-    ArtConsts.Shadow = "shadow";
-    ArtConsts.ShopItemBackground = "shopItemBackground";
-    ArtConsts.BigHeart = "heartBig";
-    ArtConsts.BigHorseshoe = "horseshoeBig";
-    ArtConsts.BigLuck = "luckBig";
-    ArtConsts.Key2 = "key2";
-    ArtConsts.Key3 = "key3";
-    ArtConsts.Key4 = "key4";
-    ArtConsts.SmallHeart = "heartSmall";
-    ArtConsts.SmallHorseshoe = "horseshoeSmall";
-    ArtConsts.SmallLuck = "luckSmall";
-    ArtConsts.SmallKey = "key_small";
-    ArtConsts.Medal = "medal";
-    ArtConsts.Trap = "trap";
-    ArtConsts.Chest = "chest";
-    ArtConsts.LockBody = "lockBody";
-    ArtConsts.LockBridge = "lockBridge";
-    ArtConsts.LockSwitch = "lockSwitch";
-    ArtConsts.LockArrow = "lockArrow";
-    ArtConsts.LockRod = "lockRod";
-    ArtConsts.LockDoubleRod = "lockDoubleRod";
-    ArtConsts.LockBomb = "lockBomb";
-    ArtConsts.LockBombLamp = "lockBombLamp";
-    ArtConsts.LockFixedRod = "lockFixedRod";
-    ArtConsts.LockDoubleFixedRod = "lockDoubleFixedRod";
-    ArtConsts.MouseClick = "mouse_click";
-    ArtConsts.Core = "core";
-    ArtConsts.Smoke1 = "smoke_1";
-    ArtConsts.Smoke2 = "smoke_2";
-    ArtConsts.Smoke3 = "smoke_3";
-    ArtConsts.Smoke4 = "smoke_4";
-    ArtConsts.Smoke5 = "smoke_5";
-    ArtConsts.Bomb = "bomb";
-    ArtConsts.Poison = "poison";
-    ArtConsts.Boom = "boom";
-    ArtConsts.Lightning = "lightning";
-    ArtConsts.BigLightning = "lightning_1";
-    ArtConsts.SmallLightning = "lightning_2";
-    ArtConsts.Multiplier2 = "multiplier2";
-    ArtConsts.Multiplier3 = "multiplier3";
-    ArtConsts.Dust = "dust";
-    ArtConsts.BarrelIronDot = "barrelIronDot";
-    ArtConsts.BarrelIron = "barrelIron";
-    ArtConsts.BarrelCircleDark = "barrelCircleDark";
-    ArtConsts.BarrelCircleLight = "barrelCircleLight";
-    ArtConsts.BarrelBoardRight1 = "barrelBoardRight1";
-    ArtConsts.BarrelBoardRight2 = "barrelBoardRight2";
-    ArtConsts.BarrelBoard1 = "barrelBoard1";
-    ArtConsts.BarrelBoard2 = "barrelBoard2";
-    ArtConsts.BarrelBoard3 = "barrelBoard3";
-    ArtConsts.BarrelBoard4 = "barrelBoard4";
-    ArtConsts.BarrelBoard5 = "barrelBoard5";
-    ArtConsts.BarrelBoard6 = "barrelBoard6";
-    ArtConsts.BarrelBoard7 = "barrelBoard7";
-    ArtConsts.BarrelBoard8 = "barrelBoard8";
-    ArtConsts.BarrelBoard9 = "barrelBoard9";
-    ArtConsts.BarrelBoard10 = "barrelBoard10";
-    ArtConsts.BarrelBoardStraight1 = "barrelBoardStraight1";
-    ArtConsts.BarrelBoardStraight2 = "barrelBoardStraight2";
-    ArtConsts.Enemy9Vane = "enemy_9_vane";
-    ArtConsts.Enemy9Pipe = "enemy_9_pipe";
-    ArtConsts.TurnsToBoss = "turnsToBoss";
-    ArtConsts.CheckMark = "check";
-    ArtConsts.Arm = "arm";
-    ArtConsts.MoreGames = "more_games";
-    ArtConsts.BigPlayBtn = "bigPlayBtn";
-    ArtConsts.AdvPanel = "advPanel";
-    ArtConsts.Smile = "smile";
-    ArtConsts.NoIcon = "noIcon";
-
-    class Hero$1 extends Card {
-        constructor() {
-            super(...arguments);
-            this.currentLife = 0;
-            this.armor = 0;
-            this.totalLife = 0;
-            this.needRunLightning = false;
-            this.lightningScore = 0;
-        }
-        fight(card) {
-            var fightResult = new FightResult(true, false, true);
-            switch (card.type) {
-                case CardScoreType.Trap:
-                    card.getLife() > 0 && GameStatus.currentHero != t.HeroType.Gun && (SoundController.instance.playSound(SoundConsts.Trap), this.currentLife > card.getScore() ? (this.currentLife -= card.getScore(), GameStatus.addGold(card.getScore()), fightResult.isHeroAlive = !0) : fightResult.isHeroAlive = !1);
-                    break;
-                case CardScoreType.Warrior:
-                    SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Hit1, SoundConsts.Hit2])),
-                        fightResult.isHeroAlive = this.fightWithEnemy(card),
-                        fightResult.isHeroAlive && card.isBoss && (fightResult.isNeedIncreaseLifeByOneAfterBoss = !0);
-                    break;
-                case CardScoreType.Armor:
-                    card.getScore(),
-                        SoundController.instance.playSound(SoundConsts.ShieldWood),
-                        GameStatus.currentHero == t.HeroType.Gun ? this.needSmashLightning(card.getScore()) : this.armor < card.getScore() ? (this.armor = card.getScore(), this.setArmorFrame(card)) : GameStatus.currentHero == t.HeroType.Base && this.armor++;
-                    break;
-                case CardScoreType.Gold:
-                    card.view.getByName(t.Consts.CardManAnimation) instanceof t.Coin ? SoundController.instance.playSound(SoundConsts.Coin) : SoundController.instance.playSound(SoundConsts.CoinsBag),
-                        GameStatus.addGold(card.getScore());
-                    break;
-                case CardScoreType.Health:
-                    SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Health1, SoundConsts.Health2])),
-                        this.currentLife += card.getScore(),
-                        this.currentLife > this.totalLife && (this.currentLife = this.totalLife);
-                    break;
-                case CardScoreType.Cannon:
-                    this.needShoot = !0,
-                        this.shootScore = card.getScore();
-                    break;
-                case CardScoreType.Chest:
-                    fightResult.isChest = !0;
-                    break;
-                case CardScoreType.Poison:
-                    if (SoundController.instance.playSound(SoundConsts.Poison), GameStatus.isLuck)
-                        return fightResult.isHeroAlive = !0,
-                            this.useLuck(),
-                            fightResult;
-                    if (card.getScore() >= this.currentLife)
-                        return fightResult.isHeroAlive = !1,
-                            fightResult;
-                    this.currentLife -= card.getScore();
-                    break;
-                case CardScoreType.Horseshoe:
-                    fightResult.isNeedIncreaseLifeByOne = !0;
-                    break;
-                case CardScoreType.Bomb:
-                    break;
-                case CardScoreType.Lightning:
-                    this.needSmashLightning(card.getScore());
-                    break;
-                case CardScoreType.Multiplier:
-                    this.needShootMultiplier = !0,
-                        this.multiplierScore = card.getScore();
-                    break;
-                case CardScoreType.Skull:
-                    this.needShootSkull = !0;
-                    break;
-                case CardScoreType.Barrel:
-                    SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Barrel1, SoundConsts.Barrel2])),
-                        fightResult.isMove = !1;
-            }
-            return this.setStatus(),
-                fightResult;
-        }
-        needSmashLightning(score) {
-            this.needRunLightning = true,
-                this.lightningScore = score;
-        }
-        setStatus() {
-            this.setLife(),
-                this.setArmor();
-        }
-        stepUpdate() { }
-        getScore() {
-            return this.currentLife + this.armor;
-        }
-        reduceScoreInNSeconds(t, e) {
-            if (t <= this.armor)
-                this.armor -= t;
-            else {
-                var i = t - this.armor;
-                this.armor = 0,
-                    this.currentLife -= i;
-            }
-            setTimeout(this.setStatus.bind(this), e);
-        }
-        increaseScoreInNSeconds(t, e) {
-            this.totalLife - this.currentLife > t ? this.currentLife = this.totalLife : this.currentLife += t,
-                setTimeout(this.setStatus.bind(this), e);
-        }
-        setShopItemsStatus() {
-            var e = 1;
-            this.destroySpriteByName(ArtConsts.SmallHeart),
-                this.destroySpriteByName(ArtConsts.SmallHorseshoe),
-                this.destroySpriteByName(ArtConsts.SmallLuck),
-                this.destroySpriteByName(ArtConsts.SmallKey),
-                GameStatus.isHeart && this.addSpriteByName(ArtConsts.SmallHeart, e++, 0, 1),
-                GameStatus.isLuck && this.addSpriteByName(ArtConsts.SmallLuck, e++, 30),
-                GameStatus.isKey && this.addSpriteByName(ArtConsts.SmallKey, e, 30);
-        }
-        addSpriteByName(e, i, o, n) {
-            void 0 === o && (o = 0),
-                void 0 === n && (n = 1);
-            var s = 38 * i - .5 * t.Consts.CardWidth, a = t.ShapeFactoryHelper.getShape(this.game, s, 80, ArtConsts.Items1, e, 0);
-            a.name = e,
-                a.angle = o,
-                a.scale.set(n),
-                this.view.add(a);
-        }
-        destroySpriteByName(t) {
-            var e = this.view.getByName(t);
-            e && e.destroy();
-        }
-        setLife() {
-            this.getCardLifeText().setText(this.currentLife + "/" + this.totalLife);
-        }
-        setArmor() {
-            var e = this.view.getByName(t.Consts.PowerUpCircle);
-            e.visible && 0 == this.armor ? this.hideSprite(e) : e.visible = !0;
-            var i = this.view.getByName(t.Consts.PowerUp);
-            i.setText(this.armor.toString()),
-                0 == this.armor && i.setText("");
-        }
-        hideSprite(t) {
-            this.game.add.tween(t).to({
-                width: 0,
-                height: 0,
-                angle: 360,
-                alpha: 0
-            }, 700, null, !0).onComplete.add(function () {
-                t.visible = !1,
-                    t.rotation = 0,
-                    t.alpha = 1;
-            });
-        }
-        setArmorFrame(e) {
-            var i = e.shape.getByName(t.Consts.CardManAnimation), o = this.view.getByName(t.Consts.PowerUpCircle);
-            o.frameName = i.frameName;
-            var n = this.game.add.tween(o.scale).to({
-                x: 0,
-                y: 0
-            }, 100).to({
-                x: 1.5,
-                y: 1.5
-            }, 250).to({
-                x: 1,
-                y: 1
-            }, 100), s = this.view.getByName(t.Consts.PowerUp);
-            s.scale.set(0);
-            var a = this.game.add.tween(s.scale).to({
-                x: 1,
-                y: 1
-            }, 100);
-            n.chain(a),
-                n.start();
-        }
-        fightWithEnemy(e) {
-            if (e.getScore() >= this.armor + this.currentLife)
-                return !1;
-            if (e.getScore() <= this.armor)
-                e.getScore() < this.armor && GameStatus.currentHero == t.HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
-            else if (this.armor > 0) {
-                var i = e.getScore() - this.armor;
-                this.armor = 0,
-                    this.currentLife -= i;
-            }
-            else
-                this.currentLife -= e.getScore();
-            return GameStatus.addGold(e.getScore()),
-                !0;
-        }
-        useHeart() {
-            var e = this.view.getByName(ArtConsts.SmallHeart);
-            this.view.bringToTop(e);
-            SoundController.instance.playSound(SoundConsts.Revive),
-                e.animations.add("explode", Phaser.Animation.generateFrameNames(ArtConsts.SmallHeart, 0, 16, "", 4), 30, !1, !1),
-                this.game.add.tween(e.scale).to({
-                    x: 1,
-                    y: 1
-                }, 100, null, !0).onComplete.add(function () {
-                    var t = e.animations.play("explode", 60, !1, !1);
-                    t.onComplete.add(this.setStatus, this),
-                        t.onComplete.add(this.setShopItemsStatus, this);
-                }, this),
-                this.currentLife = this.totalLife;
-        }
-        isNegative() {
-            return !1;
-        }
-        increaseLifeByOneTween() {
-            var t = this.getScaleTween(this.getCardLifeText(), this.increaseLifeByOne);
-            return t.onStart.add(this.playHorseshoe, this),
-                t;
-        }
-        playHorseshoe() {
-            SoundController.instance.playSound(SoundConsts.Horseshoe);
-        }
-        increaseLifeByOne() {
-            this.currentLife++,
-                this.totalLife++,
-                this.setLife();
-        }
-        useLuck() {
-            GameStatus.isLuck = !1;
-            var e = this.view.getByName(ArtConsts.SmallLuck), i = this.game.add.tween(e).to({
-                width: 1.5 * e.width,
-                height: 1.5 * e.height
-            }, 250).to({
-                width: 0,
-                height: 0,
-                alpha: 0
-            }, 150);
-            i.onComplete.add(this.setShopItemsStatus, this),
-                i.start();
-        }
-        getGoldValue() {
-            return 0;
-        }
-    }
-
     class CardFactory {
         constructor(game) {
             this.movesAfterLastSpecialCard = 0;
@@ -5756,7 +5873,7 @@
         }
         getHero() {
             var cardConfig = Game.config.card.getTypeLevelConfig(CardScoreType.Hero, GameStatus.currentHero);
-            var hero = new Hero$1();
+            var hero = new Hero();
             hero.game = this.game;
             hero.SetConfig(cardConfig);
             hero.totalLife = 10,
@@ -6084,6 +6201,9 @@
             this.isRight = false;
             this.isSpace = false;
         }
+        init(game) {
+            this.game = game;
+        }
         reset() {
             this.isUp = false;
             this.isDown = false;
@@ -6115,7 +6235,54 @@
             Laya.stage.off(Laya.Event.KEY_UP, this, this.OnKeyboard);
         }
         OnKeyboard(e) {
-            console.log(e);
+            switch (e.keyCode) {
+                case Laya.Keyboard.LEFT:
+                case Laya.Keyboard.A:
+                    this.reset();
+                    this.isLeft = true;
+                    break;
+                case Laya.Keyboard.RIGHT:
+                case Laya.Keyboard.D:
+                    this.reset();
+                    this.isRight = true;
+                    break;
+                case Laya.Keyboard.UP:
+                case Laya.Keyboard.W:
+                    this.reset();
+                    this.isUp = true;
+                    break;
+                case Laya.Keyboard.DOWN:
+                case Laya.Keyboard.S:
+                    this.reset();
+                    this.isDown = true;
+                    break;
+            }
+        }
+        OnClickCard(card) {
+            var heroPosition = this.game.field.field.findHeroPosition();
+            var position = this.game.field.field.findPosition(card);
+            if (heroPosition.row == position.row) {
+                var sub = position.column - heroPosition.column;
+                if (sub == 1) {
+                    this.reset();
+                    this.isRight = true;
+                }
+                else if (sub == -1) {
+                    this.reset();
+                    this.isLeft = true;
+                }
+            }
+            else if (heroPosition.column == position.column) {
+                var sub = position.row - heroPosition.row;
+                if (sub == 1) {
+                    this.reset();
+                    this.isDown = true;
+                }
+                else if (sub == -1) {
+                    this.reset();
+                    this.isUp = true;
+                }
+            }
         }
     }
 
@@ -6131,6 +6298,7 @@
             this.windowUI = windowUI;
             this.container = windowUI.m_container;
             this.stageClickFx = new StageClickFx();
+            this.keyboardManager.init(this);
             this.rnd = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
             this.cardFactory = new CardFactory(this);
             this.field = new Field(this);
@@ -6184,6 +6352,82 @@
             this.keyboardManager.reset();
         }
         fillQueue() {
+            if (GameStatus.isHeroAlive) {
+                this.checkKeyHandler();
+            }
+            else {
+                GameStatus.isGameEnd = true;
+            }
+        }
+        checkKeyHandler() {
+            var moveType = this.keyboardManager.getMoveType();
+            if (moveType) {
+                var tweenList = this.move(moveType);
+                if (tweenList && tweenList.length > 0) {
+                    this.field.stepUpdate();
+                    this.animationQueue.push(...tweenList);
+                }
+                else {
+                    this.keyboardManager.reset();
+                }
+            }
+        }
+        move(moveType) {
+            var fightCard = this.field.getCardToFight(moveType);
+            if (null == fightCard)
+                return [];
+            var heroCard = this.field.getHero();
+            var fightResult = heroCard.fight(fightCard);
+            if (!fightResult.isHeroAlive) {
+                if (GameStatus.isHeart) {
+                    GameStatus.isHeart = false;
+                    this.keyboardManager.reset();
+                    heroCard.useHeart();
+                    return this.field.move(moveType);
+                }
+                else {
+                    GameStatus.isHeroAlive = false;
+                    return this.field.removeAllChild();
+                }
+            }
+            if (fightResult.isChest) {
+                this.moveType = moveType;
+                if (GameStatus.currentHero == HeroType.Key) {
+                    this.chestOpened();
+                }
+                else if (GameStatus.isKey) {
+                    this.field.getHero().setShopItemsStatus();
+                    this.chestOpened();
+                }
+                else {
+                    this.openChestPopUp();
+                }
+                return [];
+            }
+            var tweenContainer;
+            var tweenList = [];
+            GameStatus.stepUpdate();
+            if (fightResult.isNeedIncreaseLifeByOne) {
+                tweenContainer = new TweenContainer();
+                tweenContainer.tweens.push(this.field.getHero().increaseLifeByOneTween());
+                tweenList.push(tweenContainer);
+            }
+            if (fightResult.isMove) {
+                tweenList.push(this.field.move(moveType));
+            }
+            else {
+                this.field.replaceCard(moveType, CardGenerationType.AfterBarrel, fightCard.getScore());
+                tweenContainer = new TweenContainer();
+                tweenContainer.tweens.push(this.field.getHero().increaseLifeByOneTween());
+                tweenList.push(tweenContainer);
+            }
+            if (this.isChangeTurnsToBoss()) {
+                GameStatus.decreaseTurnsToBoss();
+            }
+            return tweenList;
+        }
+        isChangeTurnsToBoss() {
+            return !GameStatus.isNeedCreateBoss && !this.field.isBossInTheField();
         }
     }
 

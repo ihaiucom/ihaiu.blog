@@ -7,11 +7,12 @@ import ArrayUtils from "../Utils/ArrayUtils";
 import ArtConsts from "../Enums/ArtConsts";
 import SoundController from "./SoundController";
 import { HeroType } from "../Enums/HeroType";
+import Consts from "../Enums/Consts";
 
 export default class Hero extends Card
 {
     
-    currentLife: number = 0;
+    // currentLife: number = 0;
     armor: number = 0;
     totalLife: number = 0;
 
@@ -51,7 +52,6 @@ export default class Hero extends Card
                 }
             }
             break;
-        case CardScoreType.Warrior:
         case CardScoreType.Boss:
         case CardScoreType.Enemy:
             SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Hit1, SoundConsts.Hit2]));
@@ -173,7 +173,8 @@ export default class Hero extends Card
         this.totalLife - this.currentLife > t ? this.currentLife = this.totalLife: this.currentLife += t,
         setTimeout(this.setStatus.bind(this), e)
     }
-    setShopItemsStatus() {
+    setShopItemsStatus() 
+    {
         var e = 1;
         this.destroySpriteByName(ArtConsts.SmallHeart),
         this.destroySpriteByName(ArtConsts.SmallHorseshoe),
@@ -187,7 +188,7 @@ export default class Hero extends Card
     addSpriteByName(e, i, o, n) {
         void 0 === o && (o = 0),
         void 0 === n && (n = 1);
-        var s = 38 * i - .5 * t.Consts.CardWidth,
+        var s = 38 * i - .5 * Consts.CardWidth,
         a = t.ShapeFactoryHelper.getShape(this.game, s, 80, ArtConsts.Items1, e, 0);
         a.name = e,
         a.angle = o,
@@ -199,53 +200,16 @@ export default class Hero extends Card
         e && e.destroy()
     }
     
-    setArmor() {
-        var e = this.view.getByName(t.Consts.PowerUpCircle);
-        e.visible && 0 == this.armor ? this.hideSprite(e) : e.visible = !0;
-        var i = this.view.getByName(t.Consts.PowerUp);
-        i.setText(this.armor.toString()),
-        0 == this.armor && i.setText("")
+    setArmor() 
+    {
+        this.view.setArmor();
     }
-    hideSprite(t) {
-        this.game.add.tween(t).to({
-            width: 0,
-            height: 0,
-            angle: 360,
-            alpha: 0
-        },
-        700, null, !0).onComplete.add(function() {
-            t.visible = !1,
-            t.rotation = 0,
-            t.alpha = 1
-        })
-}
-    setArmorFrame(e) {
-        var i = e.shape.getByName(t.Consts.CardManAnimation),
-        o = this.view.getByName(t.Consts.PowerUpCircle);
-        o.frameName = i.frameName;
-        var n = this.game.add.tween(o.scale).to({
-            x: 0,
-            y: 0
-        },
-        100).to({
-            x: 1.5,
-            y: 1.5
-        },
-        250).to({
-            x: 1,
-            y: 1
-        },
-        100),
-        s = this.view.getByName(t.Consts.PowerUp);
-        s.scale.set(0);
-        var a = this.game.add.tween(s.scale).to({
-            x: 1,
-            y: 1
-        },
-        100);
-        n.chain(a),
-        n.start()
+
+    setArmorFrame(card: Card) 
+    {
+        this.view.setArmor();
     }
+
     fightWithEnemy(e) {
         if (e.getScore() >= this.armor + this.currentLife) return ! 1;
         if (e.getScore() <= this.armor) e.getScore() < this.armor && GameStatus.currentHero == HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
@@ -274,39 +238,32 @@ export default class Hero extends Card
         this),
         this.currentLife = this.totalLife
     }
-    isNegative() {
-        return ! 1
-    }
-    increaseLifeByOneTween() {
+
+    /** 添加最大血量 */
+    increaseLifeByOneTween() 
+    {
         var t = this.getScaleTween(this.getCardLifeText(), this.increaseLifeByOne);
         return t.onStart.add(this.playHorseshoe, this),
         t
     }
+    
     playHorseshoe() {
         SoundController.instance.playSound(SoundConsts.Horseshoe)
     }
+
     increaseLifeByOne() {
         this.currentLife++,
         this.totalLife++,
         this.setLife()
     }
+
+    /** 使用道具， 生命 */
     useLuck() 
     {
         GameStatus.isLuck = false;
-        var e = this.view.getByName(ArtConsts.SmallLuck),
-        i = this.game.add.tween(e).to({
-            width: 1.5 * e.width,
-            height: 1.5 * e.height
-        },
-        250).to({
-            width: 0,
-            height: 0,
-            alpha: 0
-        },
-        150);
-        i.onComplete.add(this.setShopItemsStatus, this),
-        i.start()
+        this.view.useLuck();
     }
+
     getGoldValue() {
         return 0
     }

@@ -416,6 +416,8 @@ export default class Field
         switch (card.type) 
         {
         case CardScoreType.Warrior:
+        case CardScoreType.Boss:
+        case CardScoreType.Enemy:
             return false;
         case CardScoreType.Trap:
             return ! card.shape.getByName(Consts.CardManAnimation).isOpen;
@@ -606,11 +608,15 @@ export default class Field
         this.addBombExplosionAnimation(t.x, t.y, 0),
         t.kill()
     }
-    static canShootCard (e) {
-        if (e instanceof NullCard) return ! 1;
-        if (! (e instanceof t.Card)) return ! 0;
-        switch (e.type) {
+    static canShootCard (card:Card) 
+    {
+        if(card.isem)
+        if (card instanceof NullCard) return ! 1;
+        if (! (card instanceof t.Card)) return ! 0;
+        switch (card.type) {
         case CardScoreType.Warrior:
+        case CardScoreType.Boss:
+        case CardScoreType.Enemy:
         case CardScoreType.Trap:
         case CardScoreType.Armor:
         case CardScoreType.Health:

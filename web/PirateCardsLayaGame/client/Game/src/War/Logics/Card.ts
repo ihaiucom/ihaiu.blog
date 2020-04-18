@@ -19,6 +19,7 @@ import Game from "../../Game";
 export default class Card
 {
     
+    
     static GetDefault(game) 
     {
         var card = <Card> Pool.createByClass(Card);
@@ -35,7 +36,7 @@ export default class Card
         card.game = game;
         card.type = cardScoreType;
         card.SetConfig(config);
-        // card.setScore(score),
+        card.setScore(score),
         GameStatus.updateCardCounter(cardScoreType),
         GameStatus.updateMovesAfterSpecialCard(cardScoreType);
         return card;
@@ -50,8 +51,13 @@ export default class Card
     
     isOnClickInitiated = false;
     powerUpAmount = 0;
+
     lifeAmount = 0;
+    // 初始血量
     initialLife: number = 0;
+
+    // 当前血量
+    currentLife: number = 0;
 
     // 是否是打开状态
     isOpen: boolean = false;
@@ -130,9 +136,11 @@ export default class Card
         }
     }
 
+    
     getScore() {
         return this.type == CardScoreType.Trap ? this.lifeAmount: this.lifeAmount + this.powerUpAmount
     }
+    // 血量
     getLife() {
         return this.lifeAmount
     }
@@ -164,11 +172,14 @@ export default class Card
     increaseLifeTween() {
         this.getScaleTween(this.getCardLifeText(), this.setHealthText, this.lifeAmount).start()
     }
-    setScore(e) {
-        switch (this.type) {
-        case CardScoreType.Warrior:
-            this.initialLife = e,
-            this.setLife(e);
+    setScore(score: number) 
+    {
+        switch (this.type) 
+        {
+        case CardScoreType.Boss:
+        case CardScoreType.Enemy:
+            this.initialLife = score,
+            this.setLife(score);
             break;
         case CardScoreType.Gold:
         case CardScoreType.Health:
@@ -179,15 +190,15 @@ export default class Card
         case CardScoreType.Multiplier:
         case CardScoreType.Skull:
         case CardScoreType.Barrel:
-            this.setPowerUp(e);
+            this.setPowerUp(score);
             break;
         case CardScoreType.Bomb:
-            this.setLife(e),
+            this.setLife(score),
             this.setPowerUp(10);
             break;
         case CardScoreType.Trap:
-            this.setPowerUp(e),
-            this.setLife(e);
+            this.setPowerUp(score),
+            this.setLife(score);
             break;
         case CardScoreType.Chest:
             break;
@@ -199,52 +210,51 @@ export default class Card
         this.powerUpAmount = t,
         this.setPowerUpText()
     }
-    setLife(val?: number) {
+
+    setLife(val?: number) 
+    {
         if(val != undefined)
         {
             this.lifeAmount = val;
         }
         this.setHealthText()
     }
+
     setHealthText() 
     {
         this.view.setHealthText();
     }
-    setPowerUpText() {
-        var t = this.getPowerUpText();
-        t && t && t.setText(this.powerUpAmount.toString())
+
+    setPowerUpText() 
+    {
+        this.view.setPowerUpText();
     }
-    getPowerUpText() {
-        return this.view.getByName(Consts.PowerUp)
-    }
-    setOnClickEvent(onCardDown, onCardUp, listener) {
-        if (!this.isOnClickInitiated) for (var n = 0; n < this.view.children.length; n++) {
-            var s = this.view.children[n];
-            s.name == Consts.BackgroundName && (s.inputEnabled = !0, s.events.onInputDown.add(onCardDown, listener, 1, this), s.events.onInputUp.add(onCardUp, listener, 1, this), this.isOnClickInitiated = !0)
-        }
-    }
-    isNegative() {
-        switch (this.type) {
-        case CardScoreType.Trap:
-        case CardScoreType.Warrior:
-        case CardScoreType.Bomb:
-        case CardScoreType.Poison:
-            return ! 0;
-        case CardScoreType.Health:
-        case CardScoreType.Gold:
-        case CardScoreType.Armor:
-        case CardScoreType.Cannon:
-        case CardScoreType.Chest:
-        case CardScoreType.Barrel:
-        case CardScoreType.Horseshoe:
-        case CardScoreType.Lightning:
-        case CardScoreType.Multiplier:
-        case CardScoreType.Skull:
-            return ! 1
+
+    isNegative() 
+    {
+        switch (this.type) 
+        {
+            case CardScoreType.Trap:
+            case CardScoreType.Bomb:
+            case CardScoreType.Poison:
+                return true;
+            case CardScoreType.Health:
+            case CardScoreType.Gold:
+            case CardScoreType.Armor:
+            case CardScoreType.Cannon:
+            case CardScoreType.Chest:
+            case CardScoreType.Barrel:
+            case CardScoreType.Horseshoe:
+            case CardScoreType.Lightning:
+            case CardScoreType.Multiplier:
+            case CardScoreType.Skull:
+            case CardScoreType.Hero:
+                return false;
         }
     }
 
-    getGoldValue() {
+    getGoldValue() 
+    {
         return this.initialLife
     }
 
