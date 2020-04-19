@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="0,0">
+  <controller name="state" exported="true" pages="0,close,1,open" selected="1"/>
+  <displayList>
+    <image id="n248_jak7" name="n248" src="sqzy5o" fileName="sprite/game1/lockDoubleRod0000.png" xy="120,0" pivot="0.5,0.5" anchor="true" rotation="-100">
+      <gearXY controller="state" pages="1" values="120,0" default="94,0"/>
+    </image>
+  </displayList>
+</component>

@@ -42,6 +42,18 @@ import FxShootBoom from "../../Extends/GameHome/FxShootBoom";
 import FxShootLightningBig from "../../Extends/GameHome/FxShootLightningBig";
 import FxShootLightningSmall from "../../Extends/GameHome/FxShootLightningSmall";
 import FxSkull from "../../Extends/GameHome/FxSkull";
+import PanelPopupChest from "../../Extends/GameHome/PanelPopupChest";
+import CPLockLamp from "../../Extends/GameHome/CPLockLamp";
+import CPLockBridge from "../../Extends/GameHome/CPLockBridge";
+import CPLockSwitch from "../../Extends/GameHome/CPLockSwitch";
+import CPLockArrow from "../../Extends/GameHome/CPLockArrow";
+import CPLockLampGroup from "../../Extends/GameHome/CPLockLampGroup";
+import CPLockDialLoadBig from "../../Extends/GameHome/CPLockDialLoadBig";
+import CPLockDialLoadSmall from "../../Extends/GameHome/CPLockDialLoadSmall";
+import CPLockDialFixedSmall from "../../Extends/GameHome/CPLockDialFixedSmall";
+import CPLockDialFixedBig from "../../Extends/GameHome/CPLockDialFixedBig";
+import CPLockDial from "../../Extends/GameHome/CPLockDial";
+import CPLock from "../../Extends/GameHome/CPLock";
 
 export default class GameHomeBinder
 {
@@ -86,5 +98,17 @@ export default class GameHomeBinder
 		bind(FxShootLightningBig.URL, FxShootLightningBig);
 		bind(FxShootLightningSmall.URL, FxShootLightningSmall);
 		bind(FxSkull.URL, FxSkull);
+		bind(PanelPopupChest.URL, PanelPopupChest);
+		bind(CPLockLamp.URL, CPLockLamp);
+		bind(CPLockBridge.URL, CPLockBridge);
+		bind(CPLockSwitch.URL, CPLockSwitch);
+		bind(CPLockArrow.URL, CPLockArrow);
+		bind(CPLockLampGroup.URL, CPLockLampGroup);
+		bind(CPLockDialLoadBig.URL, CPLockDialLoadBig);
+		bind(CPLockDialLoadSmall.URL, CPLockDialLoadSmall);
+		bind(CPLockDialFixedSmall.URL, CPLockDialFixedSmall);
+		bind(CPLockDialFixedBig.URL, CPLockDialFixedBig);
+		bind(CPLockDial.URL, CPLockDial);
+		bind(CPLock.URL, CPLock);
 	}
 }

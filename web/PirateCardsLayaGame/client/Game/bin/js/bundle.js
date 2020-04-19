@@ -28,7 +28,7 @@
     GameConfig.startScene = "test/TestScene.scene";
     GameConfig.sceneRoot = "";
     GameConfig.debug = false;
-    GameConfig.stat = true;
+    GameConfig.stat = false;
     GameConfig.physicsDebug = false;
     GameConfig.exportSceneToJson = true;
     GameConfig.isAntialias = true;
@@ -3573,6 +3573,7 @@
             this.m_bg = (this.getChild("bg"));
             this.m_menuTopPanel = (this.getChild("menuTopPanel"));
             this.m_container = (this.getChild("container"));
+            this.m_chectPopupPanel = (this.getChild("chectPopupPanel"));
         }
     }
     WindowWarUIStruct.URL = "ui://moe42ygrsqzy9c";
@@ -4015,7 +4016,7 @@
     }
     CardScoreTypeHelper.itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.Multiplier, CardScoreType.Skull];
     CardScoreTypeHelper.itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
-    CardScoreTypeHelper.powerUps = [CardScoreType.Bomb, CardScoreType.Barrel, CardScoreType.Skull];
+    CardScoreTypeHelper.powerUps = [CardScoreType.Bomb, CardScoreType.Barrel, CardScoreType.Chest];
 
     class GameStatus {
         static init() {
@@ -5337,6 +5338,12 @@
             this.m_boom.playing = false;
             Pool.recover(FxShootBoom.URL, this);
         }
+        DelayPalay(delay, parent) {
+            Laya.timer.once(delay, this, () => {
+                parent.addChild(this);
+                this.Play();
+            });
+        }
         Play() {
             this.m_boom.frame = 0;
             this.m_boom.playing = true;
@@ -6134,22 +6141,8 @@
             }
         }
         stopAllAnimations() {
-            for (var e = 0, i = this.field.getAll(); e < i.length; e++) {
-                i[e].view.children.filter(function (e) {
-                    return e instanceof t.SpriteAnimationBase;
-                }).forEach(function (t) {
-                    t.stopAnimation();
-                });
-            }
         }
         playAllAnimations() {
-            for (var e = 0, i = this.field.getAll(); e < i.length; e++) {
-                i[e].view.children.filter(function (e) {
-                    return e instanceof t.SpriteAnimationBase;
-                }).forEach(function (t) {
-                    t.playAnimation();
-                });
-            }
         }
         replaceAllNegativeCards() {
             for (var e = [], i = 0, o = this.field.getPositions(function (e) {
@@ -7050,6 +7043,61 @@
         shake(intensity, time) {
             this.shakeHandler.exe(this.windowUI, intensity, time);
         }
+        openChestPopUp() {
+            if (!this.isPause && !this.isChest) {
+                this.isChest = true;
+                this.windowUI.m_chectPopupPanel.sResult.addOnce((isSuccess) => {
+                    if (isSuccess) {
+                        this.chestOpened();
+                    }
+                    else {
+                        this.chestClosed();
+                    }
+                }, this);
+                this.windowUI.m_chectPopupPanel.Open();
+            }
+        }
+        chestOpened() {
+            SoundController.instance.playSound(SoundConsts.ChestOpening);
+            this.isChest = false,
+                this.field.playAllAnimations();
+            this.chestOpenedAction();
+        }
+        chestOpenedAction() {
+            this.destroyChestDelayed();
+            this.addToAnimationQueue(this.field.replaceCard(this.moveType, CardGenerationType.AfterChest));
+            GameStatus.stepUpdate();
+            this.isChangeTurnsToBoss();
+            GameStatus.decreaseTurnsToBoss();
+        }
+        destroyChestDelayed(delay = 1) {
+            setTimeout(this.destroyChest.bind(this), delay);
+        }
+        destroyChest() {
+        }
+        chestClosed() {
+            this.isChest = false;
+            var shakeTime = 4 == GameStatus.RowCount ? 1e3 : 500;
+            this.shake(Consts.ShakeIntensity, shakeTime),
+                this.field.smashHero(600);
+            this.field.playAllAnimations();
+            this.destroyChestDelayed(500);
+            var heroCard = this.field.getHero();
+            if (GameStatus.currentHero != HeroType.Bomb) {
+                heroCard.reduceScoreInNSeconds(1, 1);
+            }
+            if (0 == heroCard.getScore()) {
+                this.addToAnimationQueue(this.field.removeAllChild());
+                GameStatus.isHeroAlive = false;
+            }
+            else {
+                this.addToAnimationQueue(this.field.move(this.moveType));
+            }
+            GameStatus.stepUpdate();
+            if (this.isChangeTurnsToBoss()) {
+                GameStatus.decreaseTurnsToBoss();
+            }
+        }
     }
 
     class War {
@@ -7145,8 +7193,7 @@
         get menuLoaderId() {
             switch (this.menuId) {
                 case MenuId.War:
-                case MenuId.BattleResultWindow:
-                    return LoaderId.None;
+                    return LoaderId.Launch;
             }
             return this.loaderId;
         }
@@ -8865,6 +8912,7 @@
             config.resAtlas.push("GameHome_atlas0.png");
             config.resAtlas.push("GameHome_atlas_sqzy0.jpg");
             config.resAtlas.push("GameHome_atlas_sqzy1.jpg");
+            config.resAtlas.push("GameHome_atlas_sqzy15.png");
             config.sounds.push("GameHome_sqzy7p.mp3");
             this.addconfig(config);
             config = new GuiResPackageConfig();
@@ -14454,6 +14502,557 @@
     class Container extends ContainerStruct {
     }
 
+    class PanelPopupChestStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PanelPopupChest"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_lock = (this.getChild("lock"));
+        }
+    }
+    PanelPopupChestStruct.URL = "ui://moe42ygrjak7ao";
+    PanelPopupChestStruct.DependPackages = ["GameHome", "GameLaunch"];
+
+    var ChestLockItemType;
+    (function (ChestLockItemType) {
+        ChestLockItemType[ChestLockItemType["LoadBig"] = 0] = "LoadBig";
+        ChestLockItemType[ChestLockItemType["LoadSmall"] = 1] = "LoadSmall";
+        ChestLockItemType[ChestLockItemType["FixedBig"] = 2] = "FixedBig";
+        ChestLockItemType[ChestLockItemType["FiexedSmall"] = 3] = "FiexedSmall";
+    })(ChestLockItemType || (ChestLockItemType = {}));
+    class ChestLockData {
+        constructor() {
+            this.configs = [
+                { type: ChestLockItemType.LoadBig, angle: 40, count: 1 },
+                { type: ChestLockItemType.LoadSmall, angle: 20, count: 3 },
+                { type: ChestLockItemType.FixedBig, angle: 50, count: 2 },
+                { type: ChestLockItemType.FiexedSmall, angle: 24, count: 4 }
+            ];
+            this.beginAngle = -60;
+            this.endAngle = 360 - 60 * 2;
+            this.items = [];
+            this.loadItems = [];
+            this.clickMaxCount = 10;
+            this.leftClickCount = 10;
+            this.isEnd = false;
+            this.initItems = [];
+            var item;
+            var id = 2;
+            var angle = -70 + 25;
+            for (var config of this.configs) {
+                for (var i = 0; i < config.count; i++) {
+                    item = { id: id, index: id, groundIndex: i, config: config, angle: angle, isOpen: false };
+                    angle += config.angle;
+                    this.initItems.push(item);
+                    id++;
+                }
+            }
+        }
+        init() {
+            this.isEnd = false;
+            this.leftClickCount = this.clickMaxCount;
+            this.items.length = 0;
+            this.loadItems.length = 0;
+            this.initItems = RandomHelper.shuffle(this.initItems);
+            var angle = this.beginAngle;
+            for (var i = 0, len = this.initItems.length; i < len; i++) {
+                var item = this.initItems[i];
+                angle += item.config.angle * 0.5;
+                item.angle = this.angle360(angle);
+                item.isOpen = false;
+                angle += item.config.angle * 0.5;
+                this.items.push(item);
+                switch (item.config.type) {
+                    case ChestLockItemType.LoadBig:
+                    case ChestLockItemType.LoadSmall:
+                        this.loadItems.push(item);
+                        break;
+                }
+            }
+        }
+        getItemByAngle(angle) {
+            angle = this.angle360(angle);
+            for (var itemData of this.items) {
+                var min = itemData.angle - itemData.config.angle * 0.5;
+                var max = itemData.angle + itemData.config.angle * 0.5;
+                min = this.angle360(min);
+                max = this.angle360(max);
+                console.log("angle=", angle, "min=", min, "max=", max);
+                if (angle >= min && angle <= max) {
+                    return itemData;
+                }
+            }
+        }
+        isOpendAll() {
+            for (var itemData of this.loadItems) {
+                if (!itemData.isOpen) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        angle360(angle) {
+            if (angle == 360) {
+                return angle;
+            }
+            angle = angle % 360;
+            if (angle < 0) {
+                angle += 360;
+            }
+            return angle;
+        }
+        static Angle360(angle) {
+            if (angle == 360) {
+                return angle;
+            }
+            angle = angle % 360;
+            if (angle < 0) {
+                angle += 360;
+            }
+            return angle;
+        }
+        static AngleSub360(angleA, angleB) {
+            angleA = this.Angle360(angleA);
+            angleB = this.Angle360(angleB);
+            return Math.abs(angleA - angleB);
+        }
+    }
+
+    class PanelPopupChest extends PanelPopupChestStruct {
+        constructor() {
+            super(...arguments);
+            this.lockData = new ChestLockData();
+            this.sResult = new TypedSignal();
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.Open();
+            window['panelPopupChest'] = this;
+        }
+        Open() {
+            this.lockData.init();
+            this.m_lock.Init(this);
+            this.visible = true;
+            this.alpha = 0;
+            Laya.Tween.to(this, { alpha: 1 }, 200);
+        }
+        Close() {
+            Laya.Tween.to(this, { alpha: 0 }, 200, null, Laya.Handler.create(this, () => {
+                this.visible = false;
+            }));
+        }
+    }
+
+    class CPLockLampStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockLamp"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_state = this.getController("state");
+            this.m_bg = (this.getChild("bg"));
+            this.m_lighting = (this.getChild("lighting"));
+        }
+    }
+    CPLockLampStruct.URL = "ui://moe42ygrjak7ar";
+    CPLockLampStruct.DependPackages = ["GameHome"];
+
+    class CPLockLamp extends CPLockLampStruct {
+    }
+
+    class CPLockBridgeStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockBridge"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_state = this.getController("state");
+        }
+    }
+    CPLockBridgeStruct.URL = "ui://moe42ygrjak7as";
+    CPLockBridgeStruct.DependPackages = ["GameHome"];
+
+    class CPLockBridge extends CPLockBridgeStruct {
+    }
+
+    class CPLockSwitchStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockSwitch"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_button = this.getController("button");
+            this.m_arrow = (this.getChild("arrow"));
+        }
+    }
+    CPLockSwitchStruct.URL = "ui://moe42ygrjak7at";
+    CPLockSwitchStruct.DependPackages = ["GameHome"];
+
+    class CPLockSwitch extends CPLockSwitchStruct {
+        constructor() {
+            super(...arguments);
+            this.speed = 0.05;
+            this.elasticList = [Laya.Ease.linearInOut];
+            this.isRuning = false;
+        }
+        Init(lockData) {
+            this.lockData = lockData;
+            this.m_arrow.rotation = lockData.beginAngle;
+        }
+        Run() {
+            if (this.isRuning) {
+                return;
+            }
+            this.isRuning = true;
+            Laya.Tween.clearAll(this.m_arrow);
+            this.ArrowTweenToMax();
+        }
+        Stop() {
+            console.log("Stop");
+            this.isRuning = false;
+            Laya.Tween.clearAll(this.m_arrow);
+        }
+        ArrowTweenToMax() {
+            console.log("ArrowTweenToMax", this.lockData.endAngle);
+            Laya.Tween.clearAll(this.m_arrow);
+            var duration = this.getDuration(this.lockData.endAngle);
+            console.log(ChestLockData.AngleSub360(this.m_arrow.rotation, this.lockData.endAngle), duration);
+            var tween = Laya.Tween.to(this.m_arrow, { rotation: this.lockData.endAngle }, duration, Laya.Ease.linearInOut, Laya.Handler.create(this, this.ArrowTweenToMin), 0, true, true);
+        }
+        ArrowTweenToMin() {
+            console.log("ArrowTweenToMin", this.lockData.beginAngle);
+            Laya.Tween.clearAll(this.m_arrow);
+            var duration = this.getDuration(this.lockData.beginAngle);
+            console.log(ChestLockData.AngleSub360(this.m_arrow.rotation, this.lockData.beginAngle), duration);
+            var tween = Laya.Tween.to(this.m_arrow, { rotation: this.lockData.beginAngle }, duration, Laya.Ease.linearInOut, Laya.Handler.create(this, this.ArrowTweenToMax), 0, true, true);
+        }
+        getDuration(endAngle) {
+            var duration = Math.ceil(ChestLockData.AngleSub360(this.m_arrow.rotation, endAngle) / this.speed);
+            if (!duration) {
+                duration = 200;
+            }
+            else if (duration > 3000) {
+                duration = 3000;
+            }
+            return duration;
+        }
+    }
+
+    class CPLockArrowStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockArrow"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_clickSuccess = this.getTransition("clickSuccess");
+            this.m_clickFail = this.getTransition("clickFail");
+        }
+    }
+    CPLockArrowStruct.URL = "ui://moe42ygrjak7au";
+    CPLockArrowStruct.DependPackages = ["GameHome"];
+
+    class CPLockArrow extends CPLockArrowStruct {
+    }
+
+    class CPLockLampGroupStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockLampGroup"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_lamp_1 = (this.getChild("lamp_1"));
+            this.m_lamp_2 = (this.getChild("lamp_2"));
+            this.m_lamp_3 = (this.getChild("lamp_3"));
+            this.m_lamp_4 = (this.getChild("lamp_4"));
+        }
+    }
+    CPLockLampGroupStruct.URL = "ui://moe42ygrjak7av";
+    CPLockLampGroupStruct.DependPackages = ["GameHome"];
+
+    class CPLockLampGroup extends CPLockLampGroupStruct {
+        Init(lockData) {
+            this.lockData = lockData;
+            var itemDataList = lockData.loadItems;
+            for (var i = 0, len = itemDataList.length; i < len; i++) {
+                var itemData = itemDataList[i];
+                var itemView = this[`m_lamp_${(i + 1)}`];
+                itemData.itemViewLighting = itemView;
+                if (itemView) {
+                    itemView.m_state.setSelectedIndex(itemData.isOpen ? 1 : 0);
+                }
+            }
+        }
+        setItemState(itemData) {
+            if (itemData.itemViewLighting) {
+                itemData.itemViewLighting.m_state.setSelectedIndex(itemData.isOpen ? 1 : 0);
+            }
+        }
+    }
+
+    class CPLockDialLoadBigStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockDialLoadBig"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_state = this.getController("state");
+        }
+    }
+    CPLockDialLoadBigStruct.URL = "ui://moe42ygrjak7aw";
+    CPLockDialLoadBigStruct.DependPackages = ["GameHome"];
+
+    class CPLockDialLoadBig extends CPLockDialLoadBigStruct {
+    }
+
+    class CPLockDialLoadSmallStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockDialLoadSmall"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_state = this.getController("state");
+        }
+    }
+    CPLockDialLoadSmallStruct.URL = "ui://moe42ygrjak7ax";
+    CPLockDialLoadSmallStruct.DependPackages = ["GameHome"];
+
+    class CPLockDialLoadSmall extends CPLockDialLoadSmallStruct {
+    }
+
+    class CPLockDialFixedSmallStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockDialFixedSmall"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+        }
+    }
+    CPLockDialFixedSmallStruct.URL = "ui://moe42ygrjak7ay";
+    CPLockDialFixedSmallStruct.DependPackages = ["GameHome"];
+
+    class CPLockDialFixedSmall extends CPLockDialFixedSmallStruct {
+    }
+
+    class CPLockDialFixedBigStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockDialFixedBig"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+        }
+    }
+    CPLockDialFixedBigStruct.URL = "ui://moe42ygrjak7az";
+    CPLockDialFixedBigStruct.DependPackages = ["GameHome"];
+
+    class CPLockDialFixedBig extends CPLockDialFixedBigStruct {
+    }
+
+    class CPLockDialStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLockDial"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_fixedBig0 = (this.getChild("fixedBig0"));
+            this.m_fixedBig1 = (this.getChild("fixedBig1"));
+            this.m_fixedSmall0 = (this.getChild("fixedSmall0"));
+            this.m_fixedSmall1 = (this.getChild("fixedSmall1"));
+            this.m_fixedSmall2 = (this.getChild("fixedSmall2"));
+            this.m_fixedSmall3 = (this.getChild("fixedSmall3"));
+            this.m_loadBig0 = (this.getChild("loadBig0"));
+            this.m_loadSmall0 = (this.getChild("loadSmall0"));
+            this.m_loadSmall1 = (this.getChild("loadSmall1"));
+            this.m_loadSmall2 = (this.getChild("loadSmall2"));
+        }
+    }
+    CPLockDialStruct.URL = "ui://moe42ygrjak7b0";
+    CPLockDialStruct.DependPackages = ["GameHome"];
+
+    class CPLockDial extends CPLockDialStruct {
+        Init(lockData) {
+            this.lockData = lockData;
+            var itemDataList = lockData.items;
+            for (var itemData of itemDataList) {
+                var itemView = this.getItemView(itemData);
+                if (itemView) {
+                    itemView.rotation = itemData.angle;
+                    itemView['itemData'] = itemData;
+                    itemData.itemView = itemView;
+                    switch (itemData.config.type) {
+                        case ChestLockItemType.LoadBig:
+                        case ChestLockItemType.LoadSmall:
+                            itemView.m_state.setSelectedIndex(itemData.isOpen ? 1 : 0);
+                            break;
+                    }
+                }
+                else {
+                    console.error("CPLockDial Init itemView = null", itemData);
+                }
+            }
+        }
+        getItemView(itemData) {
+            switch (itemData.config.type) {
+                case ChestLockItemType.LoadBig:
+                    return this[`m_loadBig${itemData.groundIndex}`];
+                case ChestLockItemType.LoadSmall:
+                    return this[`m_loadSmall${itemData.groundIndex}`];
+                case ChestLockItemType.FixedBig:
+                    return this[`m_fixedBig${itemData.groundIndex}`];
+                case ChestLockItemType.FiexedSmall:
+                    return this[`m_fixedSmall${itemData.groundIndex}`];
+            }
+        }
+        setItemState(itemData) {
+            if (itemData.itemView) {
+                switch (itemData.config.type) {
+                    case ChestLockItemType.LoadBig:
+                    case ChestLockItemType.LoadSmall:
+                        itemData.itemView.m_state.setSelectedIndex(itemData.isOpen ? 1 : 0);
+                        break;
+                }
+            }
+        }
+    }
+
+    class CPLockStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CPLock"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_dial = (this.getChild("dial"));
+            this.m_switch = (this.getChild("switch"));
+            this.m_bridge = (this.getChild("bridge"));
+            this.m_lampGroup = (this.getChild("lampGroup"));
+        }
+    }
+    CPLockStruct.URL = "ui://moe42ygrjak7b1";
+    CPLockStruct.DependPackages = ["GameHome"];
+
+    class CPLock extends CPLockStruct {
+        Init(panel) {
+            this.panel = panel;
+            var lockData = this.lockData = panel.lockData;
+            this.m_dial.Init(lockData);
+            this.m_switch.Init(lockData);
+            this.m_lampGroup.Init(lockData);
+            this.m_bridge.m_state.setSelectedIndex(0);
+            this.Run();
+        }
+        Run() {
+            this.panel.on(Laya.Event.MOUSE_DOWN, this, this.onClickHandler);
+            this.m_switch.Run();
+        }
+        onClickHandler() {
+            this.panel.off(Laya.Event.MOUSE_DOWN, this, this.onClickHandler);
+            this.m_switch.Stop();
+            var angle = this.m_switch.m_arrow.rotation;
+            var itemData = this.lockData.getItemByAngle(angle);
+            console.log(angle, itemData);
+            if (itemData) {
+                if (!itemData.isOpen && !this.lockData.isEnd) {
+                    switch (itemData.config.type) {
+                        case ChestLockItemType.LoadBig:
+                        case ChestLockItemType.LoadSmall:
+                            itemData.isOpen = true;
+                            this.m_dial.setItemState(itemData);
+                            this.m_lampGroup.setItemState(itemData);
+                            this.m_switch.m_arrow.m_clickSuccess.play();
+                            break;
+                        default:
+                            this.lockData.leftClickCount--;
+                            this.m_switch.m_arrow.m_clickFail.play();
+                            break;
+                    }
+                }
+                else {
+                    this.lockData.leftClickCount--;
+                    this.m_switch.m_arrow.m_clickFail.play();
+                }
+            }
+            else {
+                this.lockData.leftClickCount--;
+                this.m_switch.m_arrow.m_clickSuccess.play();
+            }
+            SoundController.instance.playSound(SoundConsts.PickLockNeutral);
+            if (!this.lockData.isEnd) {
+                var isOpenAll = this.lockData.isOpendAll();
+                if (isOpenAll) {
+                    this.lockData.isEnd = true;
+                    this.OnSuccess();
+                }
+                else {
+                    if (this.lockData.leftClickCount <= 0) {
+                        this.lockData.isEnd = true;
+                        this.OnFail();
+                    }
+                }
+            }
+            Laya.timer.once(500, this, this.Run);
+        }
+        OnSuccess() {
+            this.m_bridge.m_state.setSelectedIndex(1);
+            SoundController.instance.playSound(SoundConsts.PickLockSuccess);
+            Laya.timer.once(500, this, this.SetResult, [true]);
+        }
+        OnFail() {
+            SoundController.instance.playSound(SoundConsts.PickLockFail);
+            for (var i = 0; i < 4; i++) {
+                var fx = FxShootBoom.PoolGet();
+                fx.setXY(RandomHelper.getRandomIntInclusive(-120, 120), RandomHelper.getRandomIntInclusive(-280, 120));
+                fx.DelayPalay(RandomHelper.getRandomIntInclusive(0, 200), this);
+            }
+            Laya.timer.once(500, this, this.SetResult, [true]);
+        }
+        SetResult(isSuccess = true) {
+            this.panel.sResult.dispatch(isSuccess);
+            this.panel.Close();
+        }
+        OnClose() {
+            Laya.timer.clearAll(this);
+            this.m_switch.Stop();
+        }
+    }
+
     class GameHomeBinder {
         static bindAll() {
             let bind = fgui.UIObjectFactory.setPackageItemExtension;
@@ -14495,6 +15094,18 @@
             bind(FxShootLightningBig.URL, FxShootLightningBig);
             bind(FxShootLightningSmall.URL, FxShootLightningSmall);
             bind(FxSkull.URL, FxSkull);
+            bind(PanelPopupChest.URL, PanelPopupChest);
+            bind(CPLockLamp.URL, CPLockLamp);
+            bind(CPLockBridge.URL, CPLockBridge);
+            bind(CPLockSwitch.URL, CPLockSwitch);
+            bind(CPLockArrow.URL, CPLockArrow);
+            bind(CPLockLampGroup.URL, CPLockLampGroup);
+            bind(CPLockDialLoadBig.URL, CPLockDialLoadBig);
+            bind(CPLockDialLoadSmall.URL, CPLockDialLoadSmall);
+            bind(CPLockDialFixedSmall.URL, CPLockDialFixedSmall);
+            bind(CPLockDialFixedBig.URL, CPLockDialFixedBig);
+            bind(CPLockDial.URL, CPLockDial);
+            bind(CPLock.URL, CPLock);
         }
     }
 

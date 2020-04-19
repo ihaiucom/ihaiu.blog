@@ -1,0 +1,50 @@
+{
+  "enableoverwrites": [
+    {
+      "src":"../../Game/release/wxgame/js/bundle.js", 
+      "dst":"../wxgame-YuJunJun/game/js/bundle.js"
+    },
+    {
+      "src":"../../Game/release/wxgame/libs/pbconfig", 
+      "dst":"../wxgame-YuJunJun/game/libs/pbconfig"
+    },
+    {
+      "src":"../../Game/release/wxgame/libs/AntFrame", 
+      "dst":"../wxgame-YuJunJun/game/libs/AntFrame"
+    },
+    {
+      "src":"../../Game/release/wxgame/libs/fairygui/fairygui.js", 
+      "dst":"../wxgame-YuJunJun/libs/fairygui/fairygui.js"
+    },
+    {
+      "src":"../../Game/release/wxgame/libs/fairygui/rawinflate.min.js", 
+      "dst":"../wxgame-YuJunJun/libs/fairygui/rawinflate.min.js"
+    },
+    {
+      "src":"../../Game/release/wxgame/libs/game", 
+      "dst":"../wxgame-YuJunJun/libs/game"
+    },
+    {
+      "src":"../../Game/bin/res/config/gm", 
+      "dst":"../wxgame-YuJunJun/res/config/gm"
+    },
+    {
+      "src":"../../Game/bin/ServerList.json", 
+      "dst":"../wxgame-YuJunJun/ServerList.json"
+    },
+    {
+      "src":"../../Game/bin/res/fgui/GameLaunch.bin", 
+      "dst":"../wxgame-YuJunJun/res/fgui/GameLaunch.bin"
+    },
+    {
+      "src":"../../Game/bin/res/fgui/GameLaunch_atlas0.png", 
+      "dst":"../wxgame-YuJunJun/res/fgui/GameLaunch_atlas0.png"
+    },
+    {
+      "src":"../../Game/bin/res/fgui/GameLaunch_atlas_upoiw2g.jpg", 
+      "dst":"../wxgame-YuJunJun/res/fgui/GameLaunch_atlas_upoiw2g.jpg"
+    },
+  ],
+  "disableoverwrites": [
+  ]
+}

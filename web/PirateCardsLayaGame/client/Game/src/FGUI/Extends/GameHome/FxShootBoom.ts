@@ -25,6 +25,15 @@ export default class FxShootBoom extends FxShootBoomStruct
         Pool.recover(FxShootBoom.URL, this);
     }
 
+    DelayPalay(delay: number, parent: fgui.GComponent)
+    {
+        Laya.timer.once(delay, this, ()=>
+        {
+            parent.addChild(this);
+            this.Play();
+        });
+    }
+
     Play()
     {
         this.m_boom.frame = 0;

@@ -1065,24 +1065,27 @@ export default class Field
         }
     }
     stopAllAnimations () {
-        for (var e = 0,
-        i = this.field.getAll(); e < i.length; e++) {
-            i[e].view.children.filter(function(e) {
-                return e instanceof t.SpriteAnimationBase
-            }).forEach(function(t) {
-                t.stopAnimation()
-            })
-        }
+        // for (var e = 0,
+        // i = this.field.getAll(); e < i.length; e++) {
+        //     i[e].view.children.filter(function(e) {
+        //         return e instanceof t.SpriteAnimationBase
+        //     }).forEach(function(t) {
+        //         t.stopAnimation()
+        //     })
+        // }
     }
     playAllAnimations () {
-        for (var e = 0,
-        i = this.field.getAll(); e < i.length; e++) {
-            i[e].view.children.filter(function(e) {
-                return e instanceof t.SpriteAnimationBase
-            }).forEach(function(t) {
-                t.playAnimation()
-            })
-        }
+        // var cardList = this.field.getAll();
+        // for (var i = 0; i < cardList.length; i++)
+        // {
+        //     cardList[i].filter(function(e) 
+        //     {
+        //         return e instanceof t.SpriteAnimationBase
+        //     }).forEach(function(t) 
+        //     {
+        //         t.playAnimation()
+        //     })
+        // }
     }
     replaceAllNegativeCards () {
         for (var e = [], i = 0, o = this.field.getPositions(function(e) {

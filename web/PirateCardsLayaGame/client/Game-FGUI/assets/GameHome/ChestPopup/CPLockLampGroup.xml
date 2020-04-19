@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="373,217" pivot="0.5,0.5" anchor="true">
+  <displayList>
+    <component id="n244_jak7" name="lamp_1" src="jak7ar" fileName="ChestPopup/CPLockLamp.xml" xy="325,1" rotation="90" controller="state,0"/>
+    <component id="n254_jak7" name="lamp_2" src="jak7ar" fileName="ChestPopup/CPLockLamp.xml" xy="324,169" rotation="114.8" controller="state,0"/>
+    <component id="n255_jak7" name="lamp_3" src="jak7ar" fileName="ChestPopup/CPLockLamp.xml" xy="2,166" rotation="-112.8" controller="state,0"/>
+    <component id="n256_jak7" name="lamp_4" src="jak7ar" fileName="ChestPopup/CPLockLamp.xml" xy="0,0" rotation="-90" controller="state,0"/>
+  </displayList>
+</component>

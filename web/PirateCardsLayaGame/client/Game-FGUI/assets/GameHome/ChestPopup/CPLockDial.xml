@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="0,0">
+  <displayList>
+    <component id="n252_jak7" name="fixedBig0" src="jak7az" fileName="ChestPopup/CPLockDialFixedBig.xml" xy="0,0" rotation="-45.9"/>
+    <component id="n264_jak7" name="fixedBig1" src="jak7az" fileName="ChestPopup/CPLockDialFixedBig.xml" xy="0,7" rotation="-121.6"/>
+    <component id="n253_jak7" name="fixedSmall0" src="jak7ay" fileName="ChestPopup/CPLockDialFixedSmall.xml" xy="0,0" rotation="13"/>
+    <component id="n256_jak7" name="fixedSmall1" src="jak7ay" fileName="ChestPopup/CPLockDialFixedSmall.xml" xy="0,0" rotation="39"/>
+    <component id="n260_jak7" name="fixedSmall2" src="jak7ay" fileName="ChestPopup/CPLockDialFixedSmall.xml" xy="0,0" rotation="65"/>
+    <component id="n261_jak7" name="fixedSmall3" src="jak7ay" fileName="ChestPopup/CPLockDialFixedSmall.xml" xy="0,7" rotation="136.5"/>
+    <component id="n254_jak7" name="loadBig0" src="jak7aw" fileName="ChestPopup/CPLockDialLoadBig.xml" xy="0,0" rotation="-67.9" controller="state,0"/>
+    <component id="n255_jak7" name="loadSmall0" src="jak7ax" fileName="ChestPopup/CPLockDialLoadSmall.xml" xy="0,0" rotation="-162.1" controller="state,0"/>
+    <component id="n257_jak7" name="loadSmall1" src="jak7ax" fileName="ChestPopup/CPLockDialLoadSmall.xml" xy="0,0" rotation="-352.7" controller="state,0"/>
+    <component id="n259_jak7" name="loadSmall2" src="jak7ax" fileName="ChestPopup/CPLockDialLoadSmall.xml" xy="0,0" rotation="-267.7" controller="state,0"/>
+  </displayList>
+</component>

@@ -32,7 +32,8 @@ var VersionConfig =
     EnableGPUSkin: true,
     
     // 网络资源路径
-    UrlBasePath : "https://h5-jjsg-cdn.123u.com/testlaya/web/",
+    // UrlBasePath : "https://h5-jjsg-cdn.123u.com/testlaya/web/",
+    UrlBasePath: "https://ihaiu.gitee.io/gameweb/PirateCardsLayaGame/",
     // 海外CDN
     // UrlBasePath: 'http://h5-hwjjsg-cdn.123u.com/testlaya/web/',
     // 网络资源路径 是否使用多个CDN

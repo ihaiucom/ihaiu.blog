@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="48,48" pivot="0.5,0.5" anchor="true">
+  <controller name="state" exported="true" pages="0,close,1,open" selected="1"/>
+  <displayList>
+    <image id="n244_jak7" name="bg" src="sqzy51" fileName="sprite/game1/lockBomb0000.png" xy="0,-21"/>
+    <movieclip id="n253_jak7" name="lighting" src="sqzy9k" fileName="Fx/MVLockBombLamp.jta" xy="24,24" pivot="0.5,0.5" anchor="true">
+      <gearDisplay controller="state" pages="1"/>
+    </movieclip>
+  </displayList>
+</component>

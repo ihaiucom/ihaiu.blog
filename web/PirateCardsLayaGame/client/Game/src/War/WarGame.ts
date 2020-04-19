@@ -13,6 +13,10 @@ import { HeroType } from "./Enums/HeroType";
 import { MoveType } from "./Enums/MoveType";
 import { CardGenerationType } from "./Enums/CardGenerationType";
 import { Shake } from "./Utils/Shake";
+import SoundController from "./Logics/SoundController";
+import SoundConsts from "./Enums/SoundConsts";
+import Consts from "./Enums/Consts";
+import Hero from "./Logics/Hero";
 
 export default class WarGame
 {
@@ -341,6 +345,99 @@ export default class WarGame
     {
         this.shakeHandler.exe(this.windowUI, intensity, time);
     }
+
+
+    // 打开宝箱弹窗
+    openChestPopUp() 
+    {
+        if (!this.isPause && !this.isChest) 
+        {
+            this.isChest = true;
+            this.windowUI.m_chectPopupPanel.sResult.addOnce((isSuccess: boolean)=>{
+
+                if(isSuccess)
+                {
+                    this.chestOpened();
+                }
+                else
+                {
+                    this.chestClosed();
+                }
+            }, this);
+            this.windowUI.m_chectPopupPanel.Open();
+        }
+    }
+
+    // 打开宝箱
+    chestOpened() 
+    {
+        SoundController.instance.playSound(SoundConsts.ChestOpening);
+        this.isChest = false,
+        this.field.playAllAnimations();
+        this.chestOpenedAction();
+    }
+
+    // 宝箱打开动作
+    chestOpenedAction() 
+    {
+        this.destroyChestDelayed();
+        this.addToAnimationQueue(this.field.replaceCard(this.moveType, CardGenerationType.AfterChest));
+        GameStatus.stepUpdate();
+        this.isChangeTurnsToBoss();
+        GameStatus.decreaseTurnsToBoss();
+    }
+
+    // 延迟消耗宝箱弹窗
+    destroyChestDelayed (delay: number = 1) 
+    {
+        setTimeout(this.destroyChest.bind(this), delay);
+    }
+
+    // 消耗宝箱弹窗
+    destroyChest() 
+    {
+        // this.popup && this.fadeOut(this.popup,
+        // function() {
+        //     this.chestUnlock && this.chestUnlock.destroy(),
+        //     this.popup.removeAll(!0),
+        //     this.popup.destroy(!0)
+        // }.bind(this))
+    }
+
+    // 宝箱关闭
+    chestClosed() 
+    {
+        this.isChest = false;
+        var shakeTime = 4 == GameStatus.RowCount ? 1e3: 500;
+        this.shake(Consts.ShakeIntensity, shakeTime),
+        this.field.smashHero(600);
+        this.field.playAllAnimations();
+        this.destroyChestDelayed(500);
+
+        var heroCard = <Hero> this.field.getHero();
+        if(GameStatus.currentHero != HeroType.Bomb)
+        {
+            heroCard.reduceScoreInNSeconds(1, 1);
+        }
+
+        if(0 == heroCard.getScore())
+        {
+            this.addToAnimationQueue(this.field.removeAllChild());
+            GameStatus.isHeroAlive = false;
+        }
+        else
+        {
+            this.addToAnimationQueue(this.field.move(this.moveType));
+        }
+        
+        GameStatus.stepUpdate();
+        if(this.isChangeTurnsToBoss())
+        {
+            GameStatus.decreaseTurnsToBoss();
+        }
+    }
+
+
 
     
 

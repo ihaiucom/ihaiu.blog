@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" restrictSize="0,0,1148,0">
+  <displayList>
+    <component id="n241_jak7" name="bg" src="f84s1" fileName="ScreenBG.xml" pkg="47qsdr42" xy="0,0" size="750,1334" locked="true" alpha="0.5">
+      <relation target="" sidePair="width-width,height-height"/>
+      <Label icon="ui://moe42ygrjak7aq"/>
+    </component>
+    <component id="n242_jak7" name="lock" src="jak7b1" fileName="ChestPopup/CPLock.xml" xy="375,668">
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </component>
+  </displayList>
+</component>

@@ -6,6 +6,7 @@
 import ScreenBG from "../../Extends/GameLaunch/ScreenBG";
 import MenuTopPanelWar from "../../Extends/GameHome/MenuTopPanelWar";
 import Container from "../../Extends/GameHome/Container";
+import PanelPopupChest from "../../Extends/GameHome/PanelPopupChest";
 import WindowWarUI from "../../Extends/GameHome/WindowWarUI";
 
 export default class WindowWarUIStruct extends fgui.GComponent
@@ -13,6 +14,7 @@ export default class WindowWarUIStruct extends fgui.GComponent
 	public m_bg : ScreenBG;
 	public m_menuTopPanel : MenuTopPanelWar;
 	public m_container : Container;
+	public m_chectPopupPanel : PanelPopupChest;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy9c";
@@ -40,6 +42,7 @@ export default class WindowWarUIStruct extends fgui.GComponent
 		this.m_bg = <ScreenBG><any>(this.getChild("bg"));
 		this.m_menuTopPanel = <MenuTopPanelWar><any>(this.getChild("menuTopPanel"));
 		this.m_container = <Container><any>(this.getChild("container"));
+		this.m_chectPopupPanel = <PanelPopupChest><any>(this.getChild("chectPopupPanel"));
 		
 		
 	}

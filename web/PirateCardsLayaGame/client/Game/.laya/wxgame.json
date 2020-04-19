@@ -2,7 +2,7 @@
     "copyFilesFilter": [
         "../bin/**/*.*"
     ],
-    "openDataZone": true,
+    "openDataZone": false,
     "compressJson": false,
     "compressJsonFilter": [
         "$basePath/**/*.{json,atlas}"
@@ -37,6 +37,13 @@
         "",
         ""
     ],
+    "exclude": false,
+    "excludeFilter": [
+        "!$basePath/res/**/*.*"
+    ],
+    "vexcludeNoteList": [
+        ""
+    ],
     "packfile": false,
     "packfileFilter": [
         ""
@@ -54,6 +61,22 @@
     ],
     "clearReleaseDir": true,
     "compile": false,
+    "forceCompile": false,
+    "onlyIndexJS": true,
     "projectType": "ts",
-    "pubTime": 1551353303678
+    "pubTime": 1587297573456,
+    "uesEnginePlugin": false,
+    "wxOptimize": {
+        "useOptimizeOpen": false,
+        "preloadRes": false,
+        "preloadResRootDomain": "",
+        "preloadResList": [
+            {
+                "path": "wxfile://usr/",
+                "url": ""
+            }
+        ],
+        "preloadSubpack": false,
+        "preloadSubpackList": []
+    }
 }

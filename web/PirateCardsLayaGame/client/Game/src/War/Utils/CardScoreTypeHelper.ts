@@ -9,7 +9,7 @@ export default class CardScoreTypeHelper
     static itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
     // 好的牌
     // static powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
-    static powerUps = [CardScoreType.Bomb, CardScoreType.Barrel, CardScoreType.Skull];
+    static powerUps = [CardScoreType.Bomb, CardScoreType.Barrel, CardScoreType.Chest];
 
     // 是否是减分的卡牌
     static isCardScoreTypeNegative(cardScoreType:CardScoreType)

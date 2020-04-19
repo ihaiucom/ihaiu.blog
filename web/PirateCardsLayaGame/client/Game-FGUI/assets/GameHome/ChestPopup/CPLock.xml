@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="0,0">
+  <displayList>
+    <image id="n242_jak7" name="bg" src="sqzy50" fileName="sprite/game1/lockBody0000.png" xy="-204,-242"/>
+    <component id="n257_jak7" name="dial" src="jak7b0" fileName="ChestPopup/CPLockDial.xml" xy="0,-9" pivot="0.5,0.5" anchor="true"/>
+    <component id="n243_jak7" name="switch" src="jak7at" fileName="ChestPopup/CPLockSwitch.xml" xy="0,-5" controller="button,0"/>
+    <component id="n245_jak7" name="bridge" src="jak7as" fileName="ChestPopup/CPLockBridge.xml" xy="0,-184" controller="state,0"/>
+    <component id="n244_jak7" name="lampGroup" src="jak7av" fileName="ChestPopup/CPLockLampGroup.xml" xy="21,-15"/>
+  </displayList>
+</component>
