@@ -375,6 +375,7 @@ export default class GameStatus
             this.isNeedCreateBoss = true;
             this.levelStep ++;
             this.turnsToBoss = this.levelStep + 1;
+            console.log("需要创建Bosss");
         }
     }
 
@@ -387,7 +388,7 @@ export default class GameStatus
     // 翻转Boss
     static decreaseTurnsToBoss()
     {
-        return this.turnsToBoss && this.turnsToBoss ++;
+        return this.turnsToBoss && this.turnsToBoss --;
     }
 
 }

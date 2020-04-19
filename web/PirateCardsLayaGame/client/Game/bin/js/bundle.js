@@ -4016,7 +4016,7 @@
     }
     CardScoreTypeHelper.itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.Multiplier, CardScoreType.Skull];
     CardScoreTypeHelper.itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
-    CardScoreTypeHelper.powerUps = [CardScoreType.Bomb, CardScoreType.Barrel, CardScoreType.Chest];
+    CardScoreTypeHelper.powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
 
     class GameStatus {
         static init() {
@@ -4193,13 +4193,14 @@
                 this.isNeedCreateBoss = true;
                 this.levelStep++;
                 this.turnsToBoss = this.levelStep + 1;
+                console.log("需要创建Bosss");
             }
         }
         static isBossShouldBeCreated() {
             return !this.isNeedCreateBoss && 1 == this.turnsToBoss;
         }
         static decreaseTurnsToBoss() {
-            return this.turnsToBoss && this.turnsToBoss++;
+            return this.turnsToBoss && this.turnsToBoss--;
         }
     }
     GameStatus.DATE_KEY = "GameStatus";
@@ -14631,7 +14632,6 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
-            this.Open();
             window['panelPopupChest'] = this;
         }
         Open() {

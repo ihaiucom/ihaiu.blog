@@ -16,7 +16,7 @@ export default class PanelPopupChest extends PanelPopupChestStruct
 	{
 		super.constructFromXML(xml);
         
-        this.Open();
+        // this.Open();
         window['panelPopupChest'] = this;
 		
 		
