@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <packageDescription id="moe42ygr" jpegQuality="80" compressPNG="true">
   <resources>
-    <image id="sqzy0" name="Background.jpg" path="/ui/"/>
-    <image id="sqzy1" name="BackgroundMenu.jpg" path="/ui/"/>
+    <image id="sqzy0" name="Background.jpg" path="/ui/" scale="" atlas="alone_npot"/>
+    <image id="sqzy1" name="BackgroundMenu.jpg" path="/ui/" scale="" atlas="alone_npot"/>
     <image id="sqzy3" name="FamobiLogo.png" path="/ui/"/>
     <image id="sqzy5" name="PauseLogo.png" path="/ui/"/>
     <image id="sqzy6" name="boss_10000.png" path="/sprite/game2/"/>
