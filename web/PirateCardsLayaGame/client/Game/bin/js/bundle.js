@@ -8,7 +8,7 @@
             return u.indexOf("Mobile") > -1;
         }
         static get scaleMode() {
-            return Laya.Stage.SCALE_SHOWALL;
+            return Laya.Stage.SCALE_FIXED_AUTO;
         }
         static get scaleX() {
             return Laya.stage.width / this.width;
@@ -2227,6 +2227,8 @@
             this.subwindowStack = [];
             this.tabDict = new Dictionary();
             this.tabHistorys = [];
+            this.tabCtrlViewsMap = new Map();
+            this.sOpenTab = new Typed2Signal();
         }
         static async AsyncEnableOpen() {
             return Promise.resolve(true);
@@ -2597,6 +2599,38 @@
             this.tabDict.add(tabIndex, list);
             return list;
         }
+        registerControllerTabViews(tabCtrl, contentPane = null) {
+            if (!contentPane)
+                contentPane = this.contentPane;
+            let count = contentPane.numChildren;
+            for (let i = 0; i < count; i++) {
+                let obj = contentPane.getChildAt(i);
+                if (obj._gears && obj._gears.length > 0) {
+                    for (let gear of obj._gears) {
+                        if (gear && gear.controller == tabCtrl) {
+                            if (gear instanceof fgui.GearDisplay) {
+                                if (gear.pages && gear.pages.length > 0) {
+                                    for (let pageIndexStr of gear.pages) {
+                                        let tabIndex = toInt(pageIndexStr);
+                                        this.registerTab(tabIndex, obj);
+                                        var list;
+                                        if (this.tabCtrlViewsMap.has(tabIndex)) {
+                                            list = this.tabCtrlViewsMap.get(tabIndex);
+                                        }
+                                        else {
+                                            list = [];
+                                            this.tabCtrlViewsMap.set(tabIndex, list);
+                                        }
+                                        console.log(tabIndex, obj.name);
+                                        list.push(obj);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
         registerControllerTab(tabCtrl, contentPane = null) {
             if (!contentPane)
                 contentPane = this.contentPane;
@@ -2624,7 +2658,13 @@
             list.push(displayObject);
         }
         setTabVisiable(tabIndex, visiable) {
-            let list = this.getTabDispyaObjects(tabIndex);
+            let list;
+            if (tabIndex instanceof Array) {
+                list = tabIndex;
+            }
+            else {
+                list = this.getTabDispyaObjects(tabIndex);
+            }
             for (let i = 0; i < list.length; i++) {
                 if (visiable) {
                     this.callChildOnTabShow(list[i]);
@@ -2643,12 +2683,22 @@
                     this.setTabVisiable(keys[i], false);
                 }
             }
+            this.tabCtrlViewsMap.forEach((viewList, tabKey) => {
+                if (tabKey != tabIndex) {
+                    this.setTabVisiable(viewList, false);
+                }
+            });
+            var viewList = this.tabCtrlViewsMap.get(tabIndex);
+            if (viewList) {
+                this.setTabVisiable(viewList, true);
+            }
             this.setTabVisiable(tabIndex, true);
             this.onOpenTab(tabIndex);
         }
         openTab(tabIndex) {
             this.tabHistorys.push(tabIndex);
             this.setOpenTab(tabIndex);
+            this.sOpenTab.dispatch(tabIndex, this);
             Game.event.dispatch(GameEventKey.GameFrame_OpenMenu, this.menuId, MenuOpenType.Tab, tabIndex);
         }
         onOpenTab(tabIndex) {
@@ -3546,6 +3596,7 @@
             this.m_shop = (this.getChild("shop"));
             this.m_chooseGameFormat = (this.getChild("chooseGameFormat"));
             this.m_result = (this.getChild("result"));
+            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
         }
     }
     WindowHomeUIStruct.URL = "ui://moe42ygrsqzy8a";
@@ -3554,6 +3605,14 @@
     class WindowHomeUI extends WindowHomeUIStruct {
     }
 
+    var HomeTabType;
+    (function (HomeTabType) {
+        HomeTabType[HomeTabType["MenuMenu"] = 0] = "MenuMenu";
+        HomeTabType[HomeTabType["ChooseHero"] = 1] = "ChooseHero";
+        HomeTabType[HomeTabType["Shop"] = 2] = "Shop";
+        HomeTabType[HomeTabType["ChooseGameFormat"] = 3] = "ChooseGameFormat";
+        HomeTabType[HomeTabType["Result"] = 4] = "Result";
+    })(HomeTabType || (HomeTabType = {}));
     class HomeWindow extends MWindow {
         constructor() {
             super();
@@ -3566,7 +3625,14 @@
             let windowUI = WindowHomeUI.createInstance();
             this.conent = windowUI;
             this.contentPane = windowUI;
+            this.registerControllerTabViews(this.conent.m_Tab);
             super.onMenuCreate();
+        }
+        openTab(tabIndex) {
+            if (this.conent) {
+                this.conent.m_Tab.setSelectedIndex(tabIndex);
+            }
+            super.openTab(tabIndex);
         }
         onShowComplete() {
             super.onShowComplete();
@@ -3589,6 +3655,7 @@
             this.m_menuTopPanel = (this.getChild("menuTopPanel"));
             this.m_container = (this.getChild("container"));
             this.m_chectPopupPanel = (this.getChild("chectPopupPanel"));
+            this.m_pausePanel = (this.getChild("pausePanel"));
         }
     }
     WindowWarUIStruct.URL = "ui://moe42ygrsqzy9c";
@@ -4061,6 +4128,7 @@
         static set gold(val) {
             this.data.gold = val;
             this.save();
+            this.sGold.dispatch();
         }
         static get bestGoldPerGame() {
             return this.data.bestGoldPerGame;
@@ -4218,6 +4286,7 @@
             return this.turnsToBoss && this.turnsToBoss--;
         }
     }
+    GameStatus.sGold = new Signal();
     GameStatus.DATE_KEY = "GameStatus";
     GameStatus.data = {
         gold: 0,
@@ -4261,7 +4330,16 @@
             }
             return this._instance;
         }
+        get soundBtnIndex() {
+            return Laya.SoundManager.soundMuted ? 0 : 1;
+        }
+        changeSoundState() {
+            Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = !Laya.SoundManager.soundMuted;
+        }
         playSound(key) {
+            if (Laya.SoundManager.soundMuted) {
+                return;
+            }
             var path = `res/sounds/mp3/${key}.mp3`;
             Laya.SoundManager.playSound(path, 1);
         }
@@ -4720,8 +4798,10 @@
         }
         removeShapeFromStage() {
             console.log("Card 移除", this);
-            this.view.removeFromParent();
-            this.delayPoolRecover();
+            if (this.view.parent) {
+                this.view.removeFromParent();
+                this.delayPoolRecover();
+            }
         }
         delayPoolRecover() {
             Laya.timer.frameOnce(10, this, this.poolRecover);
@@ -4793,9 +4873,23 @@
     }
 
     class FieldItems {
-        constructor(columnCount = 3, rowCount = 3, game) {
+        constructor() {
             this.columnCount = 3;
             this.rowCount = 3;
+        }
+        clear() {
+            if (!this.items || this.items.length == 0) {
+                return;
+            }
+            for (var y = 0; y < this.rowCount; y++) {
+                for (var x = 0; x < this.columnCount; x++) {
+                    var card = this.items[x][y];
+                    card.removeShapeFromStage();
+                }
+            }
+            this.items.length = 0;
+        }
+        init(columnCount = 3, rowCount = 3, game) {
             this.columnCount = columnCount;
             this.rowCount = rowCount;
             this.game = game;
@@ -5483,12 +5577,17 @@
     class Field {
         constructor(game) {
             this.step = 1;
+            this.field = new FieldItems();
             this.game = game;
             this.cardFactory = game.cardFactory;
         }
+        uninstall() {
+            this.field.clear();
+        }
         initField() {
             var list = [], columnCount = GameStatus.ColumnCount, rowCount = GameStatus.RowCount, animationTime = Consts.AnimationTime - (rowCount * columnCount == 9 ? 0 : 50);
-            this.field = new FieldItems(columnCount, rowCount, this.game);
+            this.field.clear();
+            this.field.init(columnCount, rowCount, this.game);
             var randomVal = RandomHelper.getRandomIntInclusive(1, 5);
             for (var row = 0; row < rowCount; row++) {
                 for (var column = 0; column < columnCount; column++) {
@@ -6898,10 +6997,22 @@
             this.animationQueue = this.field.initField();
             Laya.timer.frameLoop(1, this, this.update);
         }
-        stop() {
+        uninstall() {
             Laya.timer.clear(this, this.update);
             this.stageClickFx.uninstall();
             this.keyboardManager.StopListenKeyboard();
+            this.field.uninstall();
+            for (var i = this.container.numChildren - 1; i >= 0; i--) {
+                var child = this.container.getChildAt(i);
+                var fun = child['PoolRecover'];
+                if (fun) {
+                    fun.call(this);
+                }
+                if (child.parent) {
+                    child.removeFromParent();
+                }
+            }
+            this.container;
         }
         update() {
             if (this.isPause) {
@@ -6959,9 +7070,18 @@
                 this.addToAnimationQueue(this.field.smashBomb());
                 this.checkKeyHandler();
             }
-            else {
-                GameStatus.isGameEnd = true;
+            else if (!GameStatus.isGameEnd) {
+                this.setGameEnd();
             }
+        }
+        setGameOver() {
+            GameStatus.isHeroAlive = false;
+            this.addToAnimationQueue(this.field.removeAllChild());
+            this.isPause = false;
+        }
+        setGameEnd() {
+            GameStatus.isGameEnd = true;
+            War.exit();
         }
         addToAnimationQueue(tweenList) {
             if (tweenList == null)
@@ -7124,32 +7244,61 @@
             this.isInited = true;
         }
         static launch() {
+            this.uninstall();
             this.game.launch();
         }
-        static stop() {
-            this.game.stop();
+        static setGameOver() {
+            this.game.setGameOver();
         }
         static uninstall() {
+            this.game.uninstall();
+        }
+        static exit() {
+            GameStatus.gold += GameStatus.goldPerGame;
+            this.uninstall();
+            Game.menu.openTab(MenuId.Home, HomeTabType.Result);
         }
     }
     War.isInited = false;
     window['War'] = War;
 
     class WindowWarUI extends WindowWarUIStruct {
+        constructor() {
+            super(...arguments);
+            this.preGold = 0;
+        }
         onWindowInited() {
             War.init(this);
+            this.m_menuTopPanel.m_puaseBtn.onClick(this, this.OnClickPauseBtn);
         }
         onWindowDestory() {
             return false;
         }
         onWindowWillShow() {
+            this.m_pausePanel.Close();
         }
         onWindowWillHide() {
         }
         onWindowShow() {
+            this.preGold = 0;
+            this.m_menuTopPanel.SetCoinIconState();
             War.launch();
+            Laya.timer.frameLoop(1, this, this.OnUpdate);
         }
         onWindowHide() {
+            Laya.timer.clearAll(this);
+        }
+        OnClickPauseBtn() {
+            this.m_pausePanel.Open();
+        }
+        OnUpdate() {
+            this.m_menuTopPanel.m_coinText.text = GameStatus.goldPerGame + "";
+            this.m_menuTopPanel.m_countText.text = GameStatus.turnsToBoss + "";
+            this.m_menuTopPanel.m_levelTex.text = GameStatus.gameLevel + "";
+            if (this.preGold != GameStatus.goldPerGame) {
+                this.preGold = GameStatus.goldPerGame;
+                this.m_menuTopPanel.PlayFxCoin();
+            }
         }
     }
 
@@ -14186,6 +14335,72 @@
     PanelMainMenuStruct.DependPackages = ["GameHome"];
 
     class PanelMainMenu extends PanelMainMenuStruct {
+        onWindowInited() {
+            this.m_btnBar.m_bigPlayBtn.onClick(this, this.OnClickPlayBtn);
+            this.m_btnBar.m_soundBtn.onClick(this, this.OnClickSoundBtn);
+            this.m_btnBar.m_groupBtn.onClick(this, this.OnClickGroupBtn);
+        }
+        onWindowShow() {
+            this.m_btnBar.m_soundBtn.SetSoundBtnState();
+        }
+        onTabShow() {
+            console.log("PanelMainMenu onTabShow");
+        }
+        onTabHide() {
+            console.log("PanelMainMenu onTabHide");
+        }
+        OnClickPlayBtn() {
+            Game.menu.openTab(MenuId.Home, HomeTabType.ChooseHero);
+        }
+        OnClickSoundBtn() {
+            SoundController.instance.changeSoundState();
+            this.m_btnBar.m_soundBtn.SetSoundBtnState();
+        }
+        OnClickGroupBtn() {
+        }
+    }
+
+    class BigSoundBtnStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "BigSoundBtn"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_button = this.getController("button");
+            this.m_off = (this.getChild("off"));
+            this.m_on = (this.getChild("on"));
+        }
+    }
+    BigSoundBtnStruct.URL = "ui://moe42ygrsqzy87";
+    BigSoundBtnStruct.DependPackages = ["GameHome"];
+
+    class BigSoundBtn extends BigSoundBtnStruct {
+        SetSoundBtnState() {
+            this.m_button.setSelectedIndex(SoundController.instance.soundBtnIndex);
+        }
+    }
+
+    class MainMenuBtnBarStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "MainMenuBtnBar"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_groupBtn = (this.getChild("groupBtn"));
+            this.m_soundBtn = (this.getChild("soundBtn"));
+            this.m_bigPlayBtn = (this.getChild("bigPlayBtn"));
+        }
+    }
+    MainMenuBtnBarStruct.URL = "ui://moe42ygrsqzy88";
+    MainMenuBtnBarStruct.DependPackages = ["GameHome"];
+
+    class MainMenuBtnBar extends MainMenuBtnBarStruct {
     }
 
     class PanelChooseHeroStruct extends fgui.GComponent {
@@ -14199,7 +14414,6 @@
             super.constructFromXML(xml);
             this.m_btnGroup = (this.getChild("btnGroup"));
             this.m_heroGroup = (this.getChild("heroGroup"));
-            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
             this.m_playBtn = (this.getChild("playBtn"));
             this.m_plusBtn = (this.getChild("plusBtn"));
             this.m_nextHeroBtn = (this.getChild("nextHeroBtn"));
@@ -14211,6 +14425,102 @@
     PanelChooseHeroStruct.DependPackages = ["GameHome"];
 
     class PanelChooseHero extends PanelChooseHeroStruct {
+        onWindowInited() {
+            this.m_playBtn.onClick(this, this.OnClickPlayBtn);
+            this.m_plusBtn.onClick(this, this.OnClickPlusBtn);
+        }
+        onWindowShow() {
+            this.SetBtnState();
+        }
+        onTabShow() {
+            console.log("PanelChooseHero onTabShow");
+            this.SetBtnState();
+        }
+        onTabHide() {
+            console.log("PanelChooseHero onTabHide");
+        }
+        SetBtnState(isPlay = true) {
+            if (isPlay) {
+                this.m_plusBtn.visible = false;
+                this.m_playBtn.visible = true;
+            }
+            else {
+                this.m_plusBtn.visible = true;
+                this.m_playBtn.visible = false;
+            }
+        }
+        OnClickPlayBtn() {
+            Game.menu.openTab(MenuId.Home, HomeTabType.Shop);
+        }
+        OnClickPlusBtn() {
+        }
+    }
+
+    class MenuTopPanelStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "MenuTopPanel"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_coinText = (this.getChild("coinText"));
+            this.m_coinBar = (this.getChild("coinBar"));
+            this.m_prevBtn = (this.getChild("prevBtn"));
+            this.m_homeBtn = (this.getChild("homeBtn"));
+        }
+    }
+    MenuTopPanelStruct.URL = "ui://moe42ygrsqzy8b";
+    MenuTopPanelStruct.DependPackages = ["GameHome"];
+
+    class MenuTopPanel extends MenuTopPanelStruct {
+        get tabIndex() {
+            var openIndex = HomeTabType.MenuMenu;
+            if (this.moduleWindow && this.moduleWindow.menuParameter && this.moduleWindow.menuParameter.openIndex !== undefined) {
+                openIndex = this.moduleWindow.menuParameter.openIndex;
+            }
+            return openIndex;
+        }
+        onWindowInited() {
+            GameStatus.sGold.add(this.OnGoldChange, this);
+            this.m_homeBtn.onClick(this, this.OnClickHomeBtn);
+            this.m_prevBtn.onClick(this, this.OnClickPrevBtn);
+            this.moduleWindow.sOpenTab.add(this.OnOpenTab, this);
+            this.OnOpenTab(HomeTabType.MenuMenu);
+        }
+        onWindowDestory() {
+            GameStatus.sGold.remove(this.OnGoldChange, this);
+            return false;
+        }
+        onWindowShow() {
+            this.OnGoldChange();
+        }
+        onTabShow() {
+            this.OnGoldChange();
+            console.log("MenuTopPanel onTabShow");
+        }
+        OnOpenTab(openIndex) {
+            this.visible = openIndex > HomeTabType.MenuMenu;
+            this.m_prevBtn.visible = openIndex > HomeTabType.ChooseHero && openIndex < HomeTabType.Result;
+            this.m_homeBtn.visible = openIndex > HomeTabType.MenuMenu && openIndex < HomeTabType.Result;
+        }
+        OnGoldChange() {
+            this.m_coinText.text = GameStatus.gold + "";
+        }
+        OnClickHomeBtn() {
+            Game.menu.openTab(MenuId.Home, HomeTabType.MenuMenu);
+        }
+        OnClickPrevBtn() {
+            var openIndex = HomeTabType.MenuMenu;
+            if (this.moduleWindow && this.moduleWindow.menuParameter && this.moduleWindow.menuParameter.openIndex !== undefined) {
+                openIndex = this.moduleWindow.menuParameter.openIndex;
+            }
+            if (openIndex > 0) {
+                openIndex = openIndex - 1;
+            }
+            Game.menu.openTab(MenuId.Home, openIndex);
+        }
     }
 
     class HeroSpriteStruct extends fgui.GLabel {
@@ -14233,6 +14543,44 @@
     class HeroSprite extends HeroSpriteStruct {
     }
 
+    class FxSmallRingStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxSmallRing"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_shadow = (this.getChild("shadow"));
+            this.m_anim = this.getTransition("anim");
+        }
+    }
+    FxSmallRingStruct.URL = "ui://moe42ygrsqzy8w";
+    FxSmallRingStruct.DependPackages = ["GameHome"];
+
+    class FxSmallRing extends FxSmallRingStruct {
+    }
+
+    class ShopIconStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ShopIcon"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = (this.getChild("icon"));
+            this.m_anim = this.getTransition("anim");
+        }
+    }
+    ShopIconStruct.URL = "ui://moe42ygrsqzy8x";
+    ShopIconStruct.DependPackages = ["GameHome"];
+
+    class ShopIcon extends ShopIconStruct {
+    }
+
     class PanelShopStruct extends fgui.GComponent {
         constructor() {
             super();
@@ -14242,7 +14590,6 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
-            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
             this.m_playBtn = (this.getChild("playBtn"));
         }
     }
@@ -14250,6 +14597,20 @@
     PanelShopStruct.DependPackages = ["GameHome"];
 
     class PanelShop extends PanelShopStruct {
+        onWindowInited() {
+            this.m_playBtn.onClick(this, this.OnClickPlayBtn);
+        }
+        onWindowShow() {
+        }
+        onTabShow() {
+            console.log("PanelShop onTabShow");
+        }
+        onTabHide() {
+            console.log("PanelShop onTabHide");
+        }
+        OnClickPlayBtn() {
+            Game.menu.openTab(MenuId.Home, HomeTabType.ChooseGameFormat);
+        }
     }
 
     class PanelChooseGameFormatStruct extends fgui.GComponent {
@@ -14262,7 +14623,6 @@
         constructFromXML(xml) {
             super.constructFromXML(xml);
             this.m_formatGroup = (this.getChild("formatGroup"));
-            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
             this.m_format3x3 = (this.getChild("format3x3"));
             this.m_format4x4 = (this.getChild("format4x4"));
         }
@@ -14271,6 +14631,122 @@
     PanelChooseGameFormatStruct.DependPackages = ["GameHome"];
 
     class PanelChooseGameFormat extends PanelChooseGameFormatStruct {
+        onWindowInited() {
+        }
+        onWindowShow() {
+        }
+        onTabShow() {
+            console.log("PanelChooseGameFormat onTabShow");
+        }
+        onTabHide() {
+            console.log("PanelChooseGameFormat onTabHide");
+        }
+        OnClickPlayBtn() {
+            Game.menu.open(MenuId.War);
+        }
+    }
+
+    class GameFormatCardStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "GameFormatCard"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_format = this.getController("format");
+            this.m_bg = (this.getChild("bg"));
+            this.m_coinIcon = (this.getChild("coinIcon"));
+            this.m_coinText = (this.getChild("coinText"));
+            this.m_coinGroup = (this.getChild("coinGroup"));
+            this.m_lock = (this.getChild("lock"));
+            this.m_plusBtn = (this.getChild("plusBtn"));
+            this.m_playBtn = (this.getChild("playBtn"));
+            this.m_fxSmallRing = (this.getChild("fxSmallRing"));
+            this.m_icon = (this.getChild("icon"));
+        }
+    }
+    GameFormatCardStruct.URL = "ui://moe42ygrsqzy91";
+    GameFormatCardStruct.DependPackages = ["GameHome"];
+
+    class GameFormatCard extends GameFormatCardStruct {
+        onWindowInited() {
+            this.m_playBtn.onClick(this, this.OnClickPlayBtn);
+            this.m_plusBtn.onClick(this, this.OnClickPlusBtn);
+            this.SetBtnState(true);
+        }
+        onWindowShow() {
+        }
+        onTabShow() {
+            console.log("PanelMainMenu onTabShow");
+        }
+        onTabHide() {
+            console.log("PanelMainMenu onTabHide");
+        }
+        SetBtnState(isPlay = true) {
+            if (isPlay) {
+                this.m_plusBtn.visible = false;
+                this.m_playBtn.visible = true;
+            }
+            else {
+                this.m_plusBtn.visible = true;
+                this.m_playBtn.visible = false;
+            }
+        }
+        OnClickPlayBtn() {
+            Game.menu.open(MenuId.War);
+        }
+        OnClickPlusBtn() {
+        }
+    }
+
+    class PanelPauseStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PanelPause"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_btnGroup = (this.getChild("btnGroup"));
+            this.m_bg = (this.getChild("bg"));
+            this.m_logo = (this.getChild("logo"));
+            this.m_homeBtn = (this.getChild("homeBtn"));
+            this.m_soundBtn = (this.getChild("soundBtn"));
+            this.m_resumeBtn = (this.getChild("resumeBtn"));
+        }
+    }
+    PanelPauseStruct.URL = "ui://moe42ygrsqzy9a";
+    PanelPauseStruct.DependPackages = ["GameHome", "GameLaunch"];
+
+    class PanelPause extends PanelPauseStruct {
+        onWindowInited() {
+            this.m_homeBtn.onClick(this, this.OnClickHomeBtn);
+            this.m_soundBtn.onClick(this, this.OnClickSoundBtn);
+            this.m_resumeBtn.onClick(this, this.OnClickResumeBtn);
+        }
+        Open() {
+            this.visible = true;
+            War.game.isPause = true;
+            this.m_soundBtn.SetSoundBtnState();
+        }
+        Close() {
+            this.visible = false;
+            War.game.isPause = false;
+        }
+        OnClickHomeBtn() {
+            War.setGameOver();
+            this.Close();
+        }
+        OnClickSoundBtn() {
+            SoundController.instance.changeSoundState();
+            this.m_soundBtn.SetSoundBtnState();
+        }
+        OnClickResumeBtn() {
+            this.Close();
+        }
     }
 
     class PanelResultStruct extends fgui.GComponent {
@@ -14287,7 +14763,6 @@
             this.m_coinCurrent = (this.getChild("coinCurrent"));
             this.m_coinMax = (this.getChild("coinMax"));
             this.m_resultGroup = (this.getChild("resultGroup"));
-            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
             this.m_homeBtn = (this.getChild("homeBtn"));
             this.m_playBtn = (this.getChild("playBtn"));
         }
@@ -14296,6 +14771,27 @@
     PanelResultStruct.DependPackages = ["GameHome"];
 
     class PanelResult extends PanelResultStruct {
+        onWindowInited() {
+            this.m_homeBtn.onClick(this, this.OnClickHome);
+            this.m_playBtn.onClick(this, this.OnClickPlayBtn);
+        }
+        onTabShow() {
+            console.log("PanelResult onTabShow");
+            this.SetData();
+        }
+        onTabHide() {
+            console.log("PanelResult onTabHide");
+        }
+        SetData() {
+            this.m_coinCurrent.text = GameStatus.goldPerGame + "";
+            this.m_coinMax.text = GameStatus.bestGoldPerGame + "";
+        }
+        OnClickPlayBtn() {
+            Game.menu.openTab(MenuId.Home, HomeTabType.ChooseHero);
+        }
+        OnClickHome() {
+            Game.menu.openTab(MenuId.Home, HomeTabType.MenuMenu);
+        }
     }
 
     class MenuTopPanelWarStruct extends fgui.GComponent {
@@ -14307,10 +14803,12 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
+            this.m_iconCoin = (this.getChild("iconCoin"));
             this.m_coinText = (this.getChild("coinText"));
             this.m_countText = (this.getChild("countText"));
             this.m_levelTex = (this.getChild("levelTex"));
-            this.m_coinText = (this.getChild("coinText"));
+            this.m_levelKey = (this.getChild("levelKey"));
+            this.m_fxCoin = (this.getChild("fxCoin"));
             this.m_puaseBtn = (this.getChild("puaseBtn"));
         }
     }
@@ -14318,6 +14816,19 @@
     MenuTopPanelWarStruct.DependPackages = ["GameHome"];
 
     class MenuTopPanelWar extends MenuTopPanelWarStruct {
+        PlayFxCoin() {
+            Laya.timer.clear(this, this.SetCoinIconState);
+            this.m_iconCoin.visible = false;
+            this.m_fxCoin.visible = true;
+            this.m_fxCoin.frame = 0;
+            this.m_fxCoin.playing = true;
+            Laya.timer.frameOnce(Math.ceil(60 / 24 * 10), this, this.SetCoinIconState);
+        }
+        SetCoinIconState() {
+            this.m_iconCoin.visible = true;
+            this.m_fxCoin.visible = false;
+            this.m_fxCoin.playing = false;
+        }
     }
 
     class FxBarrelStruct extends fgui.GComponent {
@@ -14853,7 +15364,7 @@
             this.m_state = this.getController("state");
         }
     }
-    CPLockDialLoadSmallStruct.URL = "ui://moe42ygrjak7ax";
+    CPLockDialLoadSmallStruct.URL = "ui://moe42ygrjak7b2";
     CPLockDialLoadSmallStruct.DependPackages = ["GameHome"];
 
     class CPLockDialLoadSmall extends CPLockDialLoadSmallStruct {
@@ -15071,11 +15582,18 @@
         static bindAll() {
             let bind = fgui.UIObjectFactory.setPackageItemExtension;
             bind(PanelMainMenu.URL, PanelMainMenu);
+            bind(BigSoundBtn.URL, BigSoundBtn);
+            bind(MainMenuBtnBar.URL, MainMenuBtnBar);
             bind(PanelChooseHero.URL, PanelChooseHero);
             bind(WindowHomeUI.URL, WindowHomeUI);
+            bind(MenuTopPanel.URL, MenuTopPanel);
             bind(HeroSprite.URL, HeroSprite);
+            bind(FxSmallRing.URL, FxSmallRing);
+            bind(ShopIcon.URL, ShopIcon);
             bind(PanelShop.URL, PanelShop);
             bind(PanelChooseGameFormat.URL, PanelChooseGameFormat);
+            bind(GameFormatCard.URL, GameFormatCard);
+            bind(PanelPause.URL, PanelPause);
             bind(WindowWarUI.URL, WindowWarUI);
             bind(PanelResult.URL, PanelResult);
             bind(MenuTopPanelWar.URL, MenuTopPanelWar);
@@ -15120,6 +15638,7 @@
             bind(CPLockDialFixedBig.URL, CPLockDialFixedBig);
             bind(CPLockDial.URL, CPLockDial);
             bind(CPLock.URL, CPLock);
+            bind(CPLockDialLoadSmall.URL, CPLockDialLoadSmall);
         }
     }
 
@@ -15859,6 +16378,7 @@
                 window['launcherInitBG'].removeSelf();
             }
             Game.loader.closeAll();
+            GameStatus.load();
             if (callback) {
                 callback();
             }

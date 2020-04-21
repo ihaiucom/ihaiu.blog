@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="970,671">
   <displayList>
-    <image id="n19_sqzy" name="n19" src="sqzyz6g" fileName="Component~NCode/icon200.png" xy="485,335" pivot="0.5,0.5" anchor="true">
+    <image id="n19_sqzy" name="n19" src="sqzyz6g" fileName="_images_new/icon200.png" xy="485,335" pivot="0.5,0.5" anchor="true">
       <relation target="" sidePair="center-center,middle-middle"/>
     </image>
-    <image id="n22_sqzy" name="n22" src="sqzyz6i" fileName="Component~NCode/圆环.png" xy="484,335" pivot="0.5,0.5" anchor="true" size="304,297" alpha="0.36">
+    <image id="n22_sqzy" name="n22" src="sqzyz6i" fileName="_images_new/圆环.png" xy="485,334" pivot="0.5,0.5" anchor="true" size="304,297" alpha="0.36">
       <relation target="" sidePair="center-center,middle-middle"/>
     </image>
   </displayList>

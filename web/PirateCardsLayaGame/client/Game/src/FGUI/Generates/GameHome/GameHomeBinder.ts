@@ -5,11 +5,18 @@
 
 
 import PanelMainMenu from "../../Extends/GameHome/PanelMainMenu";
+import BigSoundBtn from "../../Extends/GameHome/BigSoundBtn";
+import MainMenuBtnBar from "../../Extends/GameHome/MainMenuBtnBar";
 import PanelChooseHero from "../../Extends/GameHome/PanelChooseHero";
 import WindowHomeUI from "../../Extends/GameHome/WindowHomeUI";
+import MenuTopPanel from "../../Extends/GameHome/MenuTopPanel";
 import HeroSprite from "../../Extends/GameHome/HeroSprite";
+import FxSmallRing from "../../Extends/GameHome/FxSmallRing";
+import ShopIcon from "../../Extends/GameHome/ShopIcon";
 import PanelShop from "../../Extends/GameHome/PanelShop";
 import PanelChooseGameFormat from "../../Extends/GameHome/PanelChooseGameFormat";
+import GameFormatCard from "../../Extends/GameHome/GameFormatCard";
+import PanelPause from "../../Extends/GameHome/PanelPause";
 import WindowWarUI from "../../Extends/GameHome/WindowWarUI";
 import PanelResult from "../../Extends/GameHome/PanelResult";
 import MenuTopPanelWar from "../../Extends/GameHome/MenuTopPanelWar";
@@ -61,11 +68,18 @@ export default class GameHomeBinder
 	{
 		let bind = fgui.UIObjectFactory.setPackageItemExtension;
 		bind(PanelMainMenu.URL, PanelMainMenu);
+		bind(BigSoundBtn.URL, BigSoundBtn);
+		bind(MainMenuBtnBar.URL, MainMenuBtnBar);
 		bind(PanelChooseHero.URL, PanelChooseHero);
 		bind(WindowHomeUI.URL, WindowHomeUI);
+		bind(MenuTopPanel.URL, MenuTopPanel);
 		bind(HeroSprite.URL, HeroSprite);
+		bind(FxSmallRing.URL, FxSmallRing);
+		bind(ShopIcon.URL, ShopIcon);
 		bind(PanelShop.URL, PanelShop);
 		bind(PanelChooseGameFormat.URL, PanelChooseGameFormat);
+		bind(GameFormatCard.URL, GameFormatCard);
+		bind(PanelPause.URL, PanelPause);
 		bind(WindowWarUI.URL, WindowWarUI);
 		bind(PanelResult.URL, PanelResult);
 		bind(MenuTopPanelWar.URL, MenuTopPanelWar);
@@ -110,5 +124,6 @@ export default class GameHomeBinder
 		bind(CPLockDialFixedBig.URL, CPLockDialFixedBig);
 		bind(CPLockDial.URL, CPLockDial);
 		bind(CPLock.URL, CPLock);
+		bind(CPLockDialLoadSmall.URL, CPLockDialLoadSmall);
 	}
 }

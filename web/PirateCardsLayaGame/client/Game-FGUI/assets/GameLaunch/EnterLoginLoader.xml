@@ -20,7 +20,7 @@
     <text id="n7_jbhb" name="txt_gamever" xy="411,1301" size="322,33" visible="false" fontSize="22" color="#9aa8bd" align="right" vAlign="middle" autoSize="none" text="GameVersion:1.0.18">
       <relation target="" sidePair="bottom-bottom,right-right"/>
     </text>
-    <component id="n13_rlfx" name="imgLogo" src="tnlhw2t" fileName="Component~NCode/LogoView.xml" xy="0,0" size="750,1334">
+    <component id="n13_rlfx" name="imgLogo" src="tnlhw2t" fileName="Component/LogoView.xml" xy="0,0" size="750,1334">
       <relation target="" sidePair="center-center,middle-middle"/>
     </component>
   </displayList>

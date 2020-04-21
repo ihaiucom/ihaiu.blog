@@ -3,12 +3,13 @@
 // http://blog.ihaiu.com
 /////////////////////////////////////
 
+import MainMenuBtnBar from "../../Extends/GameHome/MainMenuBtnBar";
 import PanelMainMenu from "../../Extends/GameHome/PanelMainMenu";
 
 export default class PanelMainMenuStruct extends fgui.GComponent
 {
 	public m_menuLogo : fgui.GComponent;
-	public m_btnBar : fgui.GComponent;
+	public m_btnBar : MainMenuBtnBar;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy7q";
@@ -34,7 +35,7 @@ export default class PanelMainMenuStruct extends fgui.GComponent
 
 		
 		this.m_menuLogo = <fgui.GComponent><any>(this.getChild("menuLogo"));
-		this.m_btnBar = <fgui.GComponent><any>(this.getChild("btnBar"));
+		this.m_btnBar = <MainMenuBtnBar><any>(this.getChild("btnBar"));
 		
 		
 	}

@@ -17,6 +17,7 @@ import SoundKey from "./FGUI/Generates/SoundKey";
 import { AssetItemType } from "./GameFrame/AssetManagers/AssetItemType";
 import Res from "./Config/Keys/Res";
 import { Mawait } from "./Libs/Mawait";
+import GameStatus from "./War/Datas/GameStatus";
 declare var net;
 export default class GameLaunch 
 {
@@ -125,6 +126,7 @@ export default class GameLaunch
 		}
 		
 		Game.loader.closeAll();
+		GameStatus.load();
 		if(callback)
 		{
 			callback();

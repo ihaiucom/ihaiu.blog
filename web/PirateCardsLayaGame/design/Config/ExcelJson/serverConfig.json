@@ -64,15 +64,15 @@
 		"4":{"id":4}
 	},
 	"Menu":{
-		"100":{"id":100,"zh_cn_name":"主界面","moduleName":"Home","layer":1,"topInformation":[700,701,702],"cacheTime":-1,"barType":1},
+		"100":{"id":100,"zh_cn_name":"主界面","moduleName":"Home","layer":1,"topInformation":[700,701,702],"closeOtherType":1,"cacheTime":-1,"barType":1},
 		"101":{"id":101,"zh_cn_name":"登录","moduleName":"Login","layer":4,"closeOtherType":3,"closeHomeWindow":true,"loaderId":2,"barType":1},
-		"201":{"id":201,"zh_cn_name":"英雄","moduleNameIcon":"201","layer":4,"topInformation":[700,701,702],"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":2,"barIndex":2},
-		"202":{"id":202,"zh_cn_name":"背包","moduleNameIcon":"202","moduleName":"Bag","layer":4,"topInformation":[700,701,702],"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":2,"barIndex":3},
-		"500":{"id":500,"zh_cn_name":"设置","moduleName":"SystemSetting","layer":4,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":5,"barIndex":1},
-		"501":{"id":501,"zh_cn_name":"邮件","moduleName":"Mail","layer":4,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":5,"barIndex":2},
-		"502":{"id":502,"zh_cn_name":"排行榜","moduleNameIcon":"502","moduleName":"Rank","layer":4,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":5,"barIndex":3},
-		"503":{"id":503,"zh_cn_name":"玩家","moduleNameIcon":"503","moduleName":"PlayerInfo","layer":4,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":5,"barIndex":4},
-		"601":{"id":601,"zh_cn_name":"战斗","moduleNameIcon":"601","moduleName":"War","layer":4,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":5,"barIndex":4},
+		"201":{"id":201,"zh_cn_name":"英雄","moduleNameIcon":"201","layer":4,"topInformation":[700,701,702],"closeOtherType":3,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":2,"barIndex":2},
+		"202":{"id":202,"zh_cn_name":"背包","moduleNameIcon":"202","moduleName":"Bag","layer":4,"topInformation":[700,701,702],"closeOtherType":3,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":2,"barIndex":3},
+		"500":{"id":500,"zh_cn_name":"设置","moduleName":"SystemSetting","layer":4,"closeOtherType":3,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":5,"barIndex":1},
+		"501":{"id":501,"zh_cn_name":"邮件","moduleName":"Mail","layer":4,"closeOtherType":3,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":5,"barIndex":2},
+		"502":{"id":502,"zh_cn_name":"排行榜","moduleNameIcon":"502","moduleName":"Rank","layer":4,"closeOtherType":3,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":5,"barIndex":3},
+		"503":{"id":503,"zh_cn_name":"玩家","moduleNameIcon":"503","moduleName":"PlayerInfo","layer":4,"closeOtherType":3,"closeHomeWindow":true,"isAutoOpenHomeWindow":true,"loaderId":4,"barType":5,"barIndex":4},
+		"601":{"id":601,"zh_cn_name":"战斗","moduleNameIcon":"601","moduleName":"War","layer":4,"closeOtherType":1,"isAutoOpenHomeWindow":true,"cacheTime":-1,"loaderId":4,"barType":5,"barIndex":4},
 		"1000000":{"id":1000000,"zh_cn_name":"子菜单组","layer":4,"cacheTime":-1}
 	},
 	"Msg":{

@@ -458,8 +458,11 @@ export default class Card
     removeShapeFromStage()
     {
         console.log("Card 移除", this);
-        this.view.removeFromParent();
-        this.delayPoolRecover();
+        if(this.view.parent)
+        {
+            this.view.removeFromParent();
+            this.delayPoolRecover();
+        }
     }
 
 

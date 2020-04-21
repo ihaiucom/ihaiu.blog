@@ -31,7 +31,7 @@ export default class Field
     game: WarGame;
     cardFactory: CardFactory;
     keyboardManager: keyboardManager;
-    field: FieldItems;
+    field: FieldItems = new FieldItems();
 
     constructor(game: WarGame)
     {
@@ -39,6 +39,10 @@ export default class Field
         this.cardFactory = game.cardFactory;
     }
 
+    uninstall()
+    {
+        this.field.clear();
+    }
     
     initField()
     {
@@ -47,7 +51,8 @@ export default class Field
         rowCount = GameStatus.RowCount,
         animationTime = Consts.AnimationTime - (rowCount * columnCount == 9 ? 0 : 50);
 
-        this.field = new FieldItems(columnCount, rowCount, this.game);
+        this.field.clear();
+        this.field.init(columnCount, rowCount, this.game);
         
         var randomVal = RandomHelper.getRandomIntInclusive(1, 5);
         

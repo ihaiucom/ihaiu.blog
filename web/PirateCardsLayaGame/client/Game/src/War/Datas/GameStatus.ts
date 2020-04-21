@@ -5,6 +5,7 @@ import CardScoreTypeHelper from "../Utils/CardScoreTypeHelper";
 
 export default class GameStatus
 {
+    static sGold = new Signal();
     private static DATE_KEY = "GameStatus";
     private static data = 
     {
@@ -115,6 +116,7 @@ export default class GameStatus
     {
         this.data.gold = val;
         this.save();
+        this.sGold.dispatch();
     }
 
     

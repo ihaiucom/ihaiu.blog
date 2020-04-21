@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="750,1334" restrictSize="0,0,937,0">
   <displayList>
-    <component id="n0_sqzy" name="menuTopPanel" src="sqzy8b" fileName="MenuTopPanel.xml" xy="125,92">
-      <relation target="" sidePair="center-center,top-top%"/>
-    </component>
     <component id="n225_sqzy" name="format3x3" src="sqzy91" fileName="GameFormatCard/GameFormatCard.xml" xy="41,459" group="n227_sqzy" controller="format,0"/>
     <component id="n226_sqzy" name="format4x4" src="sqzy91" fileName="GameFormatCard/GameFormatCard.xml" xy="396,460" group="n227_sqzy" controller="format,1"/>
     <group id="n227_sqzy" name="formatGroup" xy="41,459" size="655,368" advanced="true">

@@ -16,8 +16,8 @@ export default class GameConfig{
     static get scaleMode():string
     {
         // return this.isMobile ? Laya.Stage.SCALE_FIXED_AUTO :Laya.Stage.SCALE_FULL ;
-        // return Laya.Stage.SCALE_FIXED_AUTO ;
-        return Laya.Stage.SCALE_SHOWALL ;
+        return Laya.Stage.SCALE_FIXED_AUTO ;
+        // return Laya.Stage.SCALE_SHOWALL ;
     } 
 
     static screenMode:string="none";

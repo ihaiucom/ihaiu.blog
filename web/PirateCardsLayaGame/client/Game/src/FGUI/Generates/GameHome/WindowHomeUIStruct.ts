@@ -9,6 +9,7 @@ import PanelChooseHero from "../../Extends/GameHome/PanelChooseHero";
 import PanelShop from "../../Extends/GameHome/PanelShop";
 import PanelChooseGameFormat from "../../Extends/GameHome/PanelChooseGameFormat";
 import PanelResult from "../../Extends/GameHome/PanelResult";
+import MenuTopPanel from "../../Extends/GameHome/MenuTopPanel";
 import WindowHomeUI from "../../Extends/GameHome/WindowHomeUI";
 
 export default class WindowHomeUIStruct extends fgui.GComponent
@@ -20,6 +21,7 @@ export default class WindowHomeUIStruct extends fgui.GComponent
 	public m_shop : PanelShop;
 	public m_chooseGameFormat : PanelChooseGameFormat;
 	public m_result : PanelResult;
+	public m_menuTopPanel : MenuTopPanel;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy8a";
@@ -51,6 +53,7 @@ export default class WindowHomeUIStruct extends fgui.GComponent
 		this.m_shop = <PanelShop><any>(this.getChild("shop"));
 		this.m_chooseGameFormat = <PanelChooseGameFormat><any>(this.getChild("chooseGameFormat"));
 		this.m_result = <PanelResult><any>(this.getChild("result"));
+		this.m_menuTopPanel = <MenuTopPanel><any>(this.getChild("menuTopPanel"));
 		
 		
 	}

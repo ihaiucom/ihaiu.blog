@@ -724,6 +724,56 @@ export default abstract class MWindow extends FWindow
         return list;
     }
 
+    tabCtrlViewsMap = new Map<number, fgui.GComponent[]>();
+    
+    // 注册控制器Tab
+    registerControllerTabViews(tabCtrl: fgui.Controller, contentPane: fgui.GComponent = null)
+    {
+        if(!contentPane)
+            contentPane = this.contentPane;
+
+        let count = contentPane.numChildren;
+        for(let i = 0; i < count; i ++)
+        {
+            let obj:fgui.GObject = contentPane.getChildAt(i);
+            if(obj._gears && obj._gears.length > 0)
+            {
+                for(let gear of obj._gears)
+                {
+                    if(gear && gear.controller == tabCtrl)
+                    {
+                        if(gear instanceof fgui.GearDisplay)
+                        {
+                            if(gear.pages && gear.pages.length > 0)
+                            {
+                                for(let pageIndexStr of gear.pages)
+                                {
+                                    let tabIndex = toInt(pageIndexStr);
+                                    this.registerTab(tabIndex, obj);
+                                    var list:fgui.GComponent[];
+                                    if(this.tabCtrlViewsMap.has(tabIndex))
+                                    {
+                                        list = this.tabCtrlViewsMap.get(tabIndex);
+                                    }
+                                    else
+                                    {
+                                        list = [];
+                                        this.tabCtrlViewsMap.set(tabIndex, list);
+                                    }
+
+                                    console.log(tabIndex, obj.name);
+                                    list.push(<any>obj);
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     // 注册控制器Tab
     registerControllerTab(tabCtrl: fgui.Controller, contentPane: fgui.GComponent = null)
     {
@@ -766,9 +816,18 @@ export default abstract class MWindow extends FWindow
     }
 
     // 设置Tab，显示或者隐藏
-    private setTabVisiable(tabIndex: number | string, visiable: boolean)
+    private setTabVisiable(tabIndex: number | string | fgui.GObject[], visiable: boolean)
     {
-        let list = this.getTabDispyaObjects(tabIndex);
+        let list;
+        if(tabIndex instanceof Array)
+        {
+            list = tabIndex;
+        }
+        else
+        {
+            list = this.getTabDispyaObjects(tabIndex);
+        }
+
         for (let i = 0; i < list.length; i++)
         {
             if (visiable)
@@ -797,9 +856,25 @@ export default abstract class MWindow extends FWindow
             }
         }
 
+        this.tabCtrlViewsMap.forEach((viewList, tabKey)=>{
+            if(tabKey != tabIndex)
+            {
+                this.setTabVisiable(viewList, false);
+            }
+        })
+
+        var viewList = this.tabCtrlViewsMap.get(<number>tabIndex);
+        if(viewList)
+        {
+            this.setTabVisiable(viewList, true);
+        }
+
+
         this.setTabVisiable(tabIndex, true);
         this.onOpenTab(tabIndex);
     }
+
+    sOpenTab = new Typed2Signal<number| string, MWindow>();
 
     // 打开Tab
     openTab(tabIndex: number | string)
@@ -807,6 +882,7 @@ export default abstract class MWindow extends FWindow
         this.tabHistorys.push(tabIndex);
         this.setOpenTab(tabIndex);
 
+        this.sOpenTab.dispatch(tabIndex, this);
         Game.event.dispatch(GameEventKey.GameFrame_OpenMenu, this.menuId, MenuOpenType.Tab, tabIndex);
     }
 

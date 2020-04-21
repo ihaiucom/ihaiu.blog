@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="750,1334" restrictSize="0,0,1148,0">
   <displayList>
-    <component id="n0_sqzy" name="menuTopPanel" src="sqzy8b" fileName="MenuTopPanel.xml" xy="125,92">
-      <relation target="" sidePair="center-center,top-top%"/>
-    </component>
-    <component id="n226_sqzy" name="homeBtn" src="sqzy9b" fileName="Btn/BigHomeBtn.xml" xy="163,1053" size="167,166" group="n231_sqzy"/>
-    <component id="n238_sqzy" name="playBtn" src="sqzy7v" fileName="Btn/BigPlayBtn.xml" xy="420,1053" group="n231_sqzy"/>
+    <component id="n226_sqzy" name="homeBtn" src="sqzy9b" fileName="Btn~NCode/BigHomeBtn.xml" xy="163,1053" size="167,166" group="n231_sqzy"/>
+    <component id="n238_sqzy" name="playBtn" src="sqzy7v" fileName="Btn~NCode/BigPlayBtn.xml" xy="420,1053" group="n231_sqzy"/>
     <group id="n231_sqzy" name="btnGroup" xy="163,1053" size="424,166" advanced="true">
       <relation target="" sidePair="center-center,bottom-bottom%"/>
     </group>

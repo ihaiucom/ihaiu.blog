@@ -9,7 +9,26 @@ export default class FieldItems
     columnCount = 3;
     rowCount = 3;
 
-    constructor(columnCount = 3, rowCount = 3, game: WarGame)
+
+    clear()
+    {
+        if(!this.items || this.items.length == 0)
+        {
+            return;
+        }
+        
+        for (var y = 0; y < this.rowCount; y++) 
+        {
+            for (var x = 0; x < this.columnCount; x++) 
+            {
+                var card = this.items[x][y];
+                card.removeShapeFromStage();
+            }
+        }
+        this.items.length = 0;
+    }
+
+    init(columnCount = 3, rowCount = 3, game: WarGame)
     {
         this.columnCount = columnCount;
         this.rowCount = rowCount;

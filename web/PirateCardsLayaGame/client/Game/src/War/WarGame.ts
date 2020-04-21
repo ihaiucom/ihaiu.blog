@@ -17,6 +17,9 @@ import SoundController from "./Logics/SoundController";
 import SoundConsts from "./Enums/SoundConsts";
 import Consts from "./Enums/Consts";
 import Hero from "./Logics/Hero";
+import { MenuId } from "../GameModule/MenuId";
+import { HomeTabType } from "../GameModule/ViewWindows/HomeWindow";
+import War from "./War";
 
 export default class WarGame
 {
@@ -95,11 +98,28 @@ export default class WarGame
         Laya.timer.frameLoop(1, this, this.update);
     }
 
-    stop()
+    uninstall()
     {
         Laya.timer.clear(this, this.update);
         this.stageClickFx.uninstall();
         this.keyboardManager.StopListenKeyboard();
+        this.field.uninstall();
+
+        for(var i = this.container.numChildren - 1; i >= 0; i --)
+        {
+            var child = this.container.getChildAt(i);
+            var fun : Function= child['PoolRecover'];
+            if(fun)
+            {
+                fun.call(this);
+            }
+            
+            if(child.parent)
+            {
+                child.removeFromParent();
+            }
+        }
+        this.container;
     }
 
     update()
@@ -195,10 +215,23 @@ export default class WarGame
             
             this.checkKeyHandler();
         }
-        else
+        else if(!GameStatus.isGameEnd)
         {
-            GameStatus.isGameEnd = true;
+            this.setGameEnd();
         }
+    }
+
+    setGameOver()
+    {
+        GameStatus.isHeroAlive = false;
+        this.addToAnimationQueue(this.field.removeAllChild());
+        this.isPause = false;
+    }
+
+    setGameEnd()
+    {
+        GameStatus.isGameEnd = true;
+        War.exit();
     }
 
 

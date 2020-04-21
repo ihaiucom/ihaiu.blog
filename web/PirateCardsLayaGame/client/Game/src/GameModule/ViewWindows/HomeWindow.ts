@@ -1,6 +1,17 @@
 import MWindow from "../../GameFrame/Module/MWindow";
 import WindowHomeUI from "../../FGUI/Extends/GameHome/WindowHomeUI";
+import Game from "../../Game";
+import { MenuId } from "../MenuId";
+import MenuOpenParameter from "../../GameFrame/Menu/MenuOpenParameter";
 
+export enum HomeTabType
+{
+    MenuMenu = 0,
+    ChooseHero,
+    Shop,
+    ChooseGameFormat,
+    Result
+}
 
 //======================
 // 登录窗口
@@ -55,11 +66,21 @@ export default class HomeWindow extends MWindow
         this.conent = windowUI;
         this.contentPane = windowUI;
 
+        this.registerControllerTabViews(this.conent.m_Tab);
+
         super.onMenuCreate();
     }
 
 
-
+    // 打开Tab面板
+    openTab(tabIndex: number | string)
+    {
+        if(this.conent)
+        {
+            this.conent.m_Tab.setSelectedIndex(<number>tabIndex);
+        }
+        super.openTab(tabIndex);
+    }
 
 
 

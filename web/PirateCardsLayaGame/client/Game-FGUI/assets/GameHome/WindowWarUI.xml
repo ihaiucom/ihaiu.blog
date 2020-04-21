@@ -5,12 +5,15 @@
       <relation target="" sidePair="width-width,height-height"/>
       <Label icon="ui://moe42ygrsqzy0"/>
     </component>
-    <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="65,50" locked="true">
+    <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="65,160" locked="true">
       <relation target="" sidePair="center-center,top-top%"/>
     </component>
-    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="55,180" size="640,960" locked="true">
+    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="55,300" size="640,960" locked="true">
       <relation target="" sidePair="center-center,middle-middle"/>
     </component>
     <component id="n16_jak7" name="chectPopupPanel" src="jak7ao" fileName="PanelPopupChest.xml" xy="0,0" locked="true" hideByEditor="true" visible="false"/>
+    <component id="n17_jak7" name="pausePanel" src="sqzy9a" fileName="PanelPause.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
+      <relation target="" sidePair="width-width,height-height"/>
+    </component>
   </displayList>
 </component>

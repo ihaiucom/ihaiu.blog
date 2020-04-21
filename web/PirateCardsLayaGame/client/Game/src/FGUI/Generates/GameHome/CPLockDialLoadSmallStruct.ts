@@ -10,7 +10,7 @@ export default class CPLockDialLoadSmallStruct extends fgui.GComponent
 	public m_state : fgui.Controller;
 
 	
-	public static URL:string = "ui://moe42ygrjak7ax";
+	public static URL:string = "ui://moe42ygrjak7b2";
 	
 	public static DependPackages:string[] = ["GameHome"];
 

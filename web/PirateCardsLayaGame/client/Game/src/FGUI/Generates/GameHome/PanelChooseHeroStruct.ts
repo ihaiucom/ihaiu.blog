@@ -9,7 +9,6 @@ export default class PanelChooseHeroStruct extends fgui.GComponent
 {
 	public m_btnGroup : fgui.GGroup;
 	public m_heroGroup : fgui.GGroup;
-	public m_menuTopPanel : fgui.GComponent;
 	public m_playBtn : fgui.GButton;
 	public m_plusBtn : fgui.GButton;
 	public m_nextHeroBtn : fgui.GButton;
@@ -41,7 +40,6 @@ export default class PanelChooseHeroStruct extends fgui.GComponent
 		
 		this.m_btnGroup = <fgui.GGroup><any>(this.getChild("btnGroup"));
 		this.m_heroGroup = <fgui.GGroup><any>(this.getChild("heroGroup"));
-		this.m_menuTopPanel = <fgui.GComponent><any>(this.getChild("menuTopPanel"));
 		this.m_playBtn = <fgui.GButton><any>(this.getChild("playBtn"));
 		this.m_plusBtn = <fgui.GButton><any>(this.getChild("plusBtn"));
 		this.m_nextHeroBtn = <fgui.GButton><any>(this.getChild("nextHeroBtn"));
