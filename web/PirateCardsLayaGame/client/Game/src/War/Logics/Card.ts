@@ -88,7 +88,7 @@ export default class Card
     reset()
     {
         
-        this.view.setXY(-100, -400);
+        this.view.setXY(-300, -400);
         this.view.setScale(1, 1);
 
         this.isOnClickInitiated = false;
