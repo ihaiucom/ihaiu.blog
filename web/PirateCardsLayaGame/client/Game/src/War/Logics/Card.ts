@@ -453,6 +453,7 @@ export default class Card
         return tweenContainer;
     }
 
+    
 
     removeShapeFromStage()
     {
@@ -461,9 +462,11 @@ export default class Card
         this.delayPoolRecover();
     }
 
+
+
     delayPoolRecover()
     {
-        Laya.timer.frameOnce(1, this, this.poolRecover);
+        Laya.timer.frameOnce(10, this, this.poolRecover);
     }
 
     getCenterX()

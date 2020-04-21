@@ -358,15 +358,19 @@
             }, 700, null, Laya.Handler.create(this, () => {
                 view.visible = false;
                 view.rotation = 0;
-                view.alpha = 0;
+                view.alpha = 1;
+                view.scaleX = 1;
+                view.scaleY = 1;
             }));
         }
         static spriteShow(view) {
             view.visible = true;
+            view.alpha = 1;
             Laya.Tween.clearAll(view);
             Laya.Tween.to(view, {
                 scaleX: 0,
-                scaleY: 0
+                scaleY: 0,
+                alpha: 1
             }, 100);
             Laya.Tween.to(view, {
                 scaleX: 1.5,
@@ -438,6 +442,11 @@
     }
 
     class CardViewFrontHero extends CardViewFrontHeroStruct {
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_shield.alpha = 1;
+            this.m_shield.visible = false;
+        }
         SetConfig(cardConfig) {
             this.cardConfig = cardConfig;
             this.m_icon.m_sprite.setSelectedIndex(cardConfig.id % 100 - 1);
@@ -451,7 +460,9 @@
             this.card = null;
         }
         setArmorHide() {
-            TweenHelper.spriteHide(this.m_shield);
+            if (this.m_shield.visible) {
+                TweenHelper.spriteHide(this.m_shield);
+            }
         }
         setArmorShowOrChange() {
             TweenHelper.spriteShow(this.m_shield);
@@ -770,6 +781,10 @@
     }
 
     class CardView extends CardViewStruct {
+        constructor() {
+            super();
+            this.preArmor = -1;
+        }
         static get FrontClassMap() {
             if (!this._FrontClassMap) {
                 var map = new Map();
@@ -818,9 +833,6 @@
             this.cardConfig = null;
             this.cardScoreConfig = null;
             Pool.recover(CardView.URL, this);
-        }
-        constructor() {
-            super();
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
@@ -908,7 +920,10 @@
                 var hero = this.card;
                 var heroView = this.front;
                 if (hero.armor > 0) {
-                    heroView.setArmorShowOrChange();
+                    if (heroView.m_shield.visible == false || this.preArmor != hero.armor) {
+                        heroView.setArmorShowOrChange();
+                        this.preArmor = hero.armor;
+                    }
                 }
                 else {
                     heroView.setArmorHide();
@@ -4709,7 +4724,7 @@
             this.delayPoolRecover();
         }
         delayPoolRecover() {
-            Laya.timer.frameOnce(1, this, this.poolRecover);
+            Laya.timer.frameOnce(10, this, this.poolRecover);
         }
         getCenterX() {
             return this.view.x;
@@ -5079,8 +5094,7 @@
                     }
                     break;
                 case CardScoreType.Armor:
-                    card.getScore(),
-                        SoundController.instance.playSound(SoundConsts.ShieldWood);
+                    SoundController.instance.playSound(SoundConsts.ShieldWood);
                     if (GameStatus.currentHero == HeroType.Gun) {
                         this.needSmashLightning(card.getScore());
                     }

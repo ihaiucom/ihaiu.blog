@@ -8,12 +8,23 @@ import CardConfig from "../../../Config/ConfigExtends/CardConfig";
 import Card from "../../../War/Logics/Card";
 import CardView from "./CardView";
 import TweenHelper from "../../../War/Utils/TweenHelper";
+import Game from "../../../Game";
 
 export default class CardViewFrontHero extends CardViewFrontHeroStruct
 {
     cardView: CardView;
     cardConfig: CardConfig;
     card: Card;
+
+    
+	protected constructFromXML(xml: any): void 
+	{
+        super.constructFromXML(xml);
+        this.m_shield.alpha = 1;
+        this.m_shield.visible = false;
+		
+		
+	}
 
     SetConfig(cardConfig: CardConfig)
     {
@@ -35,13 +46,15 @@ export default class CardViewFrontHero extends CardViewFrontHeroStruct
 
     setArmorHide()
     {
-        TweenHelper.spriteHide(this.m_shield);
+        if(this.m_shield.visible)
+        {
+            TweenHelper.spriteHide(this.m_shield);
+        }
     }
 
     
     setArmorShowOrChange()
     {
         TweenHelper.spriteShow(this.m_shield);
-
     }
 }

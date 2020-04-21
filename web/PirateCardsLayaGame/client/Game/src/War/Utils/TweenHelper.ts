@@ -20,7 +20,9 @@ export default class TweenHelper
             {
                 view.visible = false;
                 view.rotation = 0;
-                view.alpha = 0;
+                view.alpha = 1;
+                view.scaleX = 1;
+                view.scaleY = 1;
             }));
     }
 
@@ -29,11 +31,13 @@ export default class TweenHelper
     {
         
         view.visible = true;
+        view.alpha = 1;
         Laya.Tween.clearAll(view);
         Laya.Tween.to(view, 
             {
                 scaleX: 0,
-                scaleY: 0
+                scaleY: 0,
+                alpha:1
             }, 
             100
             );

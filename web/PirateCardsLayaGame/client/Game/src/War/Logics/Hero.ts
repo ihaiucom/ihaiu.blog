@@ -11,6 +11,7 @@ import Consts from "../Enums/Consts";
 import TweenContainer from "../Utils/TweenContainer";
 import TweenUtil from "../Utils/TweenUtil";
 import CardViewFrontHero from "../../FGUI/Extends/GameHome/CardViewFrontHero";
+import Game from "../../Game";
 
 export default class Hero extends Card
 {
@@ -66,7 +67,6 @@ export default class Hero extends Card
             }
             break;
         case CardScoreType.Armor:
-            card.getScore(),
             SoundController.instance.playSound(SoundConsts.ShieldWood);
             if(GameStatus.currentHero == HeroType.Gun )
             {
@@ -82,6 +82,7 @@ export default class Hero extends Card
                 else if(GameStatus.currentHero == HeroType.Base)
                 {
                     this.armor++;
+                    
                 }
             }
             break;

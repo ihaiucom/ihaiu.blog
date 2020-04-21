@@ -22,6 +22,7 @@ import CardViewFrontWarriow from "./CardViewFrontWarriow";
 import Card from "../../../War/Logics/Card";
 import WarGame from "../../../War/WarGame";
 import Hero from "../../../War/Logics/Hero";
+import Game from "../../../Game";
 
 export default class CardView extends CardViewStruct
 {
@@ -241,6 +242,7 @@ export default class CardView extends CardViewStruct
         (<CardViewFrontHero>this.front).m_life.title = this.card.powerUpAmount.toString();
     }
 
+    private preArmor = -1;
     // 设置护甲
     setArmor()
     {
@@ -248,9 +250,14 @@ export default class CardView extends CardViewStruct
         {
             var hero = <Hero> this.card;
             var heroView = <CardViewFrontHero>this.front;
+            
             if(hero.armor > 0)
             {
-                heroView.setArmorShowOrChange();
+                if(heroView.m_shield.visible == false || this.preArmor != hero.armor)
+                {
+                    heroView.setArmorShowOrChange();
+                    this.preArmor = hero.armor;
+                }
             }
             else
             {
