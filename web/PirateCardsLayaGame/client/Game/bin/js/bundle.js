@@ -909,11 +909,13 @@
                 this.front.m_life.title = hero.currentLife + "/" + hero.totalLife;
             }
             else {
-                this.front.m_life.title = this.card.currentLife.toString();
+                var card = this.card;
+                this.front.m_life.title = card.lifeAmount.toString();
             }
         }
         setPowerUpText() {
-            this.front.m_life.title = this.card.powerUpAmount.toString();
+            var card = this.card;
+            this.front.m_life.title = card.powerUpAmount.toString();
         }
         setArmor() {
             if (this.card.isHero) {
@@ -4323,64 +4325,6 @@
     GameStatus.movesAfterLastSpecialCard = 0;
     window['GameStatus'] = GameStatus;
 
-    class SoundController {
-        static get instance() {
-            if (!this._instance) {
-                this._instance = new SoundController();
-            }
-            return this._instance;
-        }
-        get soundBtnIndex() {
-            return Laya.SoundManager.soundMuted ? 0 : 1;
-        }
-        changeSoundState() {
-            Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = !Laya.SoundManager.soundMuted;
-        }
-        playSound(key) {
-            if (Laya.SoundManager.soundMuted) {
-                return;
-            }
-            var path = `res/sounds/mp3/${key}.mp3`;
-            Laya.SoundManager.playSound(path, 1);
-        }
-    }
-
-    class SoundConsts {
-    }
-    SoundConsts.Click = "click";
-    SoundConsts.Barrel1 = "barrel1";
-    SoundConsts.Barrel2 = "barrel2";
-    SoundConsts.Bomb = "bomb";
-    SoundConsts.BossAppearance = "bossAppearance";
-    SoundConsts.Buy = "buy";
-    SoundConsts.Cannon = "cannon";
-    SoundConsts.Card = "card";
-    SoundConsts.ChestOpening = "chestOpening";
-    SoundConsts.Coin = "coin";
-    SoundConsts.CoinsBag = "coinsBag";
-    SoundConsts.CoinsCounting = "coinsCounting";
-    SoundConsts.Health1 = "health1";
-    SoundConsts.Health2 = "health2";
-    SoundConsts.HeroDies = "heroDies";
-    SoundConsts.Hit1 = "hit1";
-    SoundConsts.Hit2 = "hit2";
-    SoundConsts.Horseshoe = "horseshoe";
-    SoundConsts.Idol = "idol";
-    SoundConsts.IncorrectClick = "incorrectClick";
-    SoundConsts.Lighting = "lighting";
-    SoundConsts.Melody = "melody";
-    SoundConsts.PickLockFail = "picklockFail";
-    SoundConsts.PickLockNeutral = "picklockNeutral";
-    SoundConsts.PickLockSuccess = "picklockSuccess";
-    SoundConsts.Poison = "poison";
-    SoundConsts.Revive = "revive";
-    SoundConsts.ShieldMetal = "shieldMetal";
-    SoundConsts.ShieldWood = "shieldWood";
-    SoundConsts.Skull = "skull";
-    SoundConsts.Move01 = "move01";
-    SoundConsts.Move02 = "move02";
-    SoundConsts.Trap = "trap";
-
     class FxShootLightningBigStruct extends fgui.GComponent {
         constructor() {
             super();
@@ -4506,41 +4450,69 @@
         }
     }
 
-    class Card {
+    class SoundController {
+        static get instance() {
+            if (!this._instance) {
+                this._instance = new SoundController();
+            }
+            return this._instance;
+        }
+        get soundBtnIndex() {
+            return Laya.SoundManager.soundMuted ? 0 : 1;
+        }
+        changeSoundState() {
+            Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = !Laya.SoundManager.soundMuted;
+        }
+        playSound(key) {
+            if (Laya.SoundManager.soundMuted) {
+                return;
+            }
+            var path = `res/sounds/mp3/${key}.mp3`;
+            Laya.SoundManager.playSound(path, 1);
+        }
+    }
+
+    class SoundConsts {
+    }
+    SoundConsts.Click = "click";
+    SoundConsts.Barrel1 = "barrel1";
+    SoundConsts.Barrel2 = "barrel2";
+    SoundConsts.Bomb = "bomb";
+    SoundConsts.BossAppearance = "bossAppearance";
+    SoundConsts.Buy = "buy";
+    SoundConsts.Cannon = "cannon";
+    SoundConsts.Card = "card";
+    SoundConsts.ChestOpening = "chestOpening";
+    SoundConsts.Coin = "coin";
+    SoundConsts.CoinsBag = "coinsBag";
+    SoundConsts.CoinsCounting = "coinsCounting";
+    SoundConsts.Health1 = "health1";
+    SoundConsts.Health2 = "health2";
+    SoundConsts.HeroDies = "heroDies";
+    SoundConsts.Hit1 = "hit1";
+    SoundConsts.Hit2 = "hit2";
+    SoundConsts.Horseshoe = "horseshoe";
+    SoundConsts.Idol = "idol";
+    SoundConsts.IncorrectClick = "incorrectClick";
+    SoundConsts.Lighting = "lighting";
+    SoundConsts.Melody = "melody";
+    SoundConsts.PickLockFail = "picklockFail";
+    SoundConsts.PickLockNeutral = "picklockNeutral";
+    SoundConsts.PickLockSuccess = "picklockSuccess";
+    SoundConsts.Poison = "poison";
+    SoundConsts.Revive = "revive";
+    SoundConsts.ShieldMetal = "shieldMetal";
+    SoundConsts.ShieldWood = "shieldWood";
+    SoundConsts.Skull = "skull";
+    SoundConsts.Move01 = "move01";
+    SoundConsts.Move02 = "move02";
+    SoundConsts.Trap = "trap";
+
+    class AbstractCard {
         constructor() {
             this.type = CardScoreType.None;
-            this.isOnClickInitiated = false;
-            this.powerUpAmount = 0;
-            this.lifeAmount = 0;
-            this.initialLife = 0;
-            this.currentLife = 0;
-            this.isOpen = false;
-            this.canLightningStrike = false;
             this.view = CardView.PoolGet();
             this.reset();
-        }
-        static GetDefault(game) {
-            console.log("Card 创建空牌");
-            var card = Pool.createByClass(Card);
-            card.game = game;
-            card.type = CardScoreType.None;
-            card.SetEmpty();
-            return card;
-        }
-        static GetNew(game, cardScoreType, level, score) {
-            console.log("Card 创建", cardScoreType);
-            var config = Game.config.card.getTypeLevelConfig(cardScoreType, level);
-            if (config == null) {
-                console.error("没有找到卡牌配置", cardScoreType, level, score);
-            }
-            var card = Pool.createByClass(Card);
-            card.game = game;
-            card.type = cardScoreType;
-            card.SetConfig(config);
-            card.setScore(score),
-                GameStatus.updateCardCounter(cardScoreType),
-                GameStatus.updateMovesAfterSpecialCard(cardScoreType);
-            return card;
         }
         poolRecover() {
             this.reset();
@@ -4549,13 +4521,6 @@
         reset() {
             this.view.setXY(-300, -400);
             this.view.setScale(1, 1);
-            this.isOnClickInitiated = false;
-            this.powerUpAmount = 0;
-            this.lifeAmount = 0;
-            this.initialLife = 0;
-            this.currentLife = 0;
-            this.isOpen = false;
-            this.canLightningStrike = false;
         }
         SetEmpty() {
             this.SetConfig(null);
@@ -4581,17 +4546,140 @@
         get level() {
             return this.config.level;
         }
-        stepUpdate() {
-            if (this.isTrap) {
-                var isOpened = this.changeStatus();
-                var isGrun = GameStatus.currentHero == HeroType.Gun;
-                this.lifeAmount = isGrun ? 0 : isOpened ? this.powerUpAmount : 0;
-                this.currentLife = this.lifeAmount;
-                this.setHealthText();
+        setCoordinate(point) {
+            this.game.container.addChild(this.view);
+            this.view.setXY(point.x, point.y);
+        }
+        moveTo(point, time) {
+            this.game.container.addChild(this.view);
+            return TweenUtil.to(this.view, point, time);
+        }
+        getCenterX() {
+            return this.view.x;
+        }
+        getCenterY() {
+            return this.view.y;
+        }
+        endTurnAnimationStart() {
+            this.view.setScale(0, Consts.FlipZoom);
+        }
+        startTurnAnimation(endCallback, endCaller) {
+            var tweenContainer = TweenHelper.turnAnimationStart(null, this.view);
+            tweenContainer.onStart.add(this.playCardSoundInSeconds, this);
+            tweenContainer.onComplete.add(this.removeShapeFromStage, this);
+            tweenContainer.onComplete.add(endCallback, endCaller);
+            return tweenContainer;
+        }
+        endTurnAnimationEnd() {
+            if (this.isBoss) {
+                SoundController.instance.playSound(SoundConsts.BossAppearance);
             }
-            this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
-                this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
-                this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1);
+            this.view.scaleX = 0.1;
+            TweenHelper.turnAnimationEnd(null, this.view).restart();
+        }
+        playCardSoundInSeconds() {
+            setTimeout(this.playCardSound.bind(this), 50);
+        }
+        playCardSound() {
+            SoundController.instance.playSound(SoundConsts.Card);
+        }
+        removeChild() {
+            var tweenContainer = TweenContainer.PoolGet();
+            var tween = TweenUtil.to(this.view, { scaleX: 1.1, scaleY: 1.1 }, 50);
+            tweenContainer.tweens.push(tween);
+            tween = TweenUtil.to(this.view, { scaleX: 1, scaleY: 1 }, 50, null, null, 50);
+            tweenContainer.tweens.push(tween);
+            tween = TweenUtil.to(this.view, { scaleX: 1.1, scaleY: 1.1 }, 50, null, null, 50 + 50);
+            tweenContainer.tweens.push(tween);
+            tween = TweenUtil.to(this.view, { scaleX: 0, scaleY: 0 }, 80, null, Laya.Handler.create(this, this.removeShapeFromStage), 50 + 50 + 50);
+            tweenContainer.tweens.push(tween);
+            return tweenContainer;
+        }
+        removeShapeFromStage() {
+            console.log("Card 移除", this);
+            if (this.view.parent) {
+                this.view.removeFromParent();
+                this.delayPoolRecover();
+            }
+        }
+        delayPoolRecover() {
+            Laya.timer.frameOnce(10, this, this.poolRecover);
+        }
+        runLightning() {
+            var fx = FxShootLightningBig.PoolGet();
+            fx.setXY(this.getCenterX(), this.getCenterY());
+            this.game.container.addChild(fx);
+            return fx.Play();
+        }
+        getScaleTween(view, tweenContainer) {
+            if (!tweenContainer) {
+                tweenContainer = TweenContainer.PoolGet();
+            }
+            var tween = TweenUtil.to(view, { scaleX: 2.5, scaleY: 2.5 }, 200);
+            tweenContainer.tweens.push(tween);
+            tween = TweenUtil.to(view, { scaleX: 1, scaleY: 1 }, 200, null, null, 200);
+            tweenContainer.tweens.push(tween);
+            return tweenContainer;
+        }
+    }
+
+    class NullCard extends AbstractCard {
+        stepUpdate() {
+        }
+        isNegative() {
+            return false;
+        }
+        getScore() {
+            return 0;
+        }
+        getGoldValue() {
+            return 0;
+        }
+        reduceScoreInNSeconds(score, delay) {
+        }
+        increaseScoreInNSeconds(score, delay) {
+        }
+    }
+
+    class Card extends AbstractCard {
+        constructor() {
+            super(...arguments);
+            this.initialLife = 0;
+            this.lifeAmount = 0;
+            this.powerUpAmount = 0;
+            this.isOpen = false;
+            this.canLightningStrike = false;
+        }
+        static GetDefault(game) {
+            console.log("Card 创建空牌");
+            var card = Pool.createByClass(NullCard);
+            card.game = game;
+            card.type = CardScoreType.None;
+            card.SetEmpty();
+            return card;
+        }
+        static GetNew(game, cardScoreType, level, score) {
+            console.log("Card 创建", cardScoreType);
+            var config = Game.config.card.getTypeLevelConfig(cardScoreType, level);
+            if (config == null) {
+                console.error("没有找到卡牌配置", cardScoreType, level, score);
+            }
+            var card = Pool.createByClass(Card);
+            card.game = game;
+            card.type = cardScoreType;
+            card.SetConfig(config);
+            card.setScore(score),
+                GameStatus.updateCardCounter(cardScoreType),
+                GameStatus.updateMovesAfterSpecialCard(cardScoreType);
+            return card;
+        }
+        reset() {
+            super.reset();
+            this.initialLife = 0;
+            this.lifeAmount = 0;
+            this.powerUpAmount = 0;
+            this.isOpen = false;
+            this.canLightningStrike = false;
         }
         changeStatus() {
             if (this.isOpen) {
@@ -4603,9 +4691,6 @@
                 this.isOpen = true;
             }
             return this.isOpen;
-        }
-        getScore() {
-            return this.type == CardScoreType.Trap ? this.lifeAmount : this.lifeAmount + this.powerUpAmount;
         }
         getLife() {
             return this.lifeAmount;
@@ -4640,26 +4725,6 @@
         increasePowerUp(mul) {
             this.setPowerUp(this.powerUpAmount * mul);
         }
-        reduceScoreInNSeconds(score, delay) {
-            if (this.powerUpAmount > 0) {
-                this.powerUpAmount = this.powerUpAmount - score;
-                setTimeout(this.setPowerUpText.bind(this), delay);
-            }
-            if (this.lifeAmount > 0) {
-                this.lifeAmount = this.lifeAmount - score;
-                setTimeout(this.setHealthText.bind(this), delay);
-            }
-        }
-        increaseScoreInNSeconds(score, delay) {
-            if (this.powerUpAmount > 0) {
-                this.powerUpAmount = this.powerUpAmount + score;
-                setTimeout(this.increasePowerUpTween.bind(this), delay);
-            }
-            if (this.lifeAmount > 0) {
-                this.lifeAmount = this.lifeAmount + score;
-                setTimeout(this.increaseLifeTween.bind(this), delay);
-            }
-        }
         increasePowerUpTween() {
             var tweenContainer = this.view.tweenPowerUp();
             tweenContainer.restart();
@@ -4673,7 +4738,6 @@
                 case CardScoreType.Boss:
                 case CardScoreType.Enemy:
                     this.initialLife = score;
-                    this.currentLife = score;
                     this.setLife(score);
                     break;
                 case CardScoreType.Gold:
@@ -4701,8 +4765,8 @@
                     this.setPowerUp(1);
             }
         }
-        setPowerUp(t) {
-            this.powerUpAmount = t,
+        setPowerUp(val) {
+            this.powerUpAmount = val,
                 this.setPowerUpText();
         }
         setLife(val) {
@@ -4716,6 +4780,20 @@
         }
         setPowerUpText() {
             this.view.setPowerUpText();
+        }
+        open() {
+            return null;
+        }
+        stepUpdate() {
+            if (this.isTrap) {
+                var isOpened = this.changeStatus();
+                var isGrun = GameStatus.currentHero == HeroType.Gun;
+                this.lifeAmount = isGrun ? 0 : isOpened ? this.powerUpAmount : 0;
+                this.setHealthText();
+            }
+            this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
+                this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
+                this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1);
         }
         isNegative() {
             switch (this.type) {
@@ -4734,89 +4812,35 @@
                 case CardScoreType.Multiplier:
                 case CardScoreType.Skull:
                 case CardScoreType.Hero:
+                case CardScoreType.None:
                     return false;
             }
+        }
+        getScore() {
+            return this.type == CardScoreType.Trap ? this.lifeAmount : this.lifeAmount + this.powerUpAmount;
         }
         getGoldValue() {
             return this.initialLife;
         }
-        moveTo(point, time) {
-            this.game.container.addChild(this.view);
-            return TweenUtil.to(this.view, point, time);
-        }
-        setCoordinate(point) {
-            this.game.container.addChild(this.view);
-            this.view.setXY(point.x, point.y);
-        }
-        open() {
-            return null;
-        }
-        endTurnAnimationStart() {
-            this.view.setScale(0, Consts.FlipZoom);
-        }
-        startTurnAnimation(endCallback, endCaller) {
-            var tweenContainer = TweenHelper.turnAnimationStart(null, this.view);
-            tweenContainer.onStart.add(this.playCardSoundInSeconds, this);
-            tweenContainer.onComplete.add(this.removeShapeFromStage, this);
-            tweenContainer.onComplete.add(endCallback, endCaller);
-            return tweenContainer;
-        }
-        playCardSoundInSeconds() {
-            setTimeout(this.playCardSound.bind(this), 50);
-        }
-        playCardSound() {
-            SoundController.instance.playSound(SoundConsts.Card);
-        }
-        endTurnAnimationEnd() {
-            if (this.isBoss) {
-                SoundController.instance.playSound(SoundConsts.BossAppearance);
+        reduceScoreInNSeconds(score, delay) {
+            if (this.powerUpAmount > 0) {
+                this.powerUpAmount = this.powerUpAmount - score;
+                setTimeout(this.setPowerUpText.bind(this), delay);
             }
-            this.view.scaleX = 0.1;
-            TweenHelper.turnAnimationEnd(null, this.view).restart();
-        }
-        getScaleTween(view, tweenContainer) {
-            if (!tweenContainer) {
-                tweenContainer = TweenContainer.PoolGet();
-            }
-            var tween = TweenUtil.to(view, { scaleX: 2.5, scaleY: 2.5 }, 200);
-            tweenContainer.tweens.push(tween);
-            tween = TweenUtil.to(view, { scaleX: 1, scaleY: 1 }, 200, null, null, 200);
-            tweenContainer.tweens.push(tween);
-            return tweenContainer;
-        }
-        removeChild() {
-            var tweenContainer = TweenContainer.PoolGet();
-            var tween = TweenUtil.to(this.view, { scaleX: 1.1, scaleY: 1.1 }, 50);
-            tweenContainer.tweens.push(tween);
-            tween = TweenUtil.to(this.view, { scaleX: 1, scaleY: 1 }, 50, null, null, 50);
-            tweenContainer.tweens.push(tween);
-            tween = TweenUtil.to(this.view, { scaleX: 1.1, scaleY: 1.1 }, 50, null, null, 50 + 50);
-            tweenContainer.tweens.push(tween);
-            tween = TweenUtil.to(this.view, { scaleX: 0, scaleY: 0 }, 80, null, Laya.Handler.create(this, this.removeShapeFromStage), 50 + 50 + 50);
-            tweenContainer.tweens.push(tween);
-            return tweenContainer;
-        }
-        removeShapeFromStage() {
-            console.log("Card 移除", this);
-            if (this.view.parent) {
-                this.view.removeFromParent();
-                this.delayPoolRecover();
+            if (this.lifeAmount > 0) {
+                this.lifeAmount = this.lifeAmount - score;
+                setTimeout(this.setHealthText.bind(this), delay);
             }
         }
-        delayPoolRecover() {
-            Laya.timer.frameOnce(10, this, this.poolRecover);
-        }
-        getCenterX() {
-            return this.view.x;
-        }
-        getCenterY() {
-            return this.view.y;
-        }
-        runLightning() {
-            var fx = FxShootLightningBig.PoolGet();
-            fx.setXY(this.getCenterX(), this.getCenterY());
-            this.game.container.addChild(fx);
-            return fx.Play();
+        increaseScoreInNSeconds(score, delay) {
+            if (this.powerUpAmount > 0) {
+                this.powerUpAmount = this.powerUpAmount + score;
+                setTimeout(this.increasePowerUpTween.bind(this), delay);
+            }
+            if (this.lifeAmount > 0) {
+                this.lifeAmount = this.lifeAmount + score;
+                setTimeout(this.increaseLifeTween.bind(this), delay);
+            }
         }
     }
 
@@ -5150,11 +5174,25 @@
     ArtConsts.Smile = "smile";
     ArtConsts.NoIcon = "noIcon";
 
-    class Hero extends Card {
+    class Hero extends AbstractCard {
         constructor() {
             super(...arguments);
-            this.armor = 0;
+            this.currentLife = 0;
             this.totalLife = 0;
+            this.armor = 0;
+            this.needRunLightning = false;
+            this.lightningScore = 0;
+            this.needShoot = false;
+            this.shootScore = 0;
+            this.needShootMultiplier = false;
+            this.multiplierScore = 0;
+            this.needShootSkull = false;
+        }
+        reset() {
+            super.reset();
+            this.currentLife = 0;
+            this.totalLife = 0;
+            this.armor = 0;
             this.needRunLightning = false;
             this.lightningScore = 0;
             this.needShoot = false;
@@ -5264,34 +5302,6 @@
             this.needRunLightning = true,
                 this.lightningScore = score;
         }
-        setStatus() {
-            this.setLife(),
-                this.setArmor();
-        }
-        stepUpdate() { }
-        getScore() {
-            return this.currentLife + this.armor;
-        }
-        reduceScoreInNSeconds(score, delay) {
-            if (score <= this.armor) {
-                this.armor -= score;
-            }
-            else {
-                var i = score - this.armor;
-                this.armor = 0,
-                    this.currentLife -= i;
-            }
-            setTimeout(this.setStatus.bind(this), delay);
-        }
-        increaseScoreInNSeconds(score, delay) {
-            if (this.totalLife - this.currentLife > score) {
-                this.currentLife = this.totalLife;
-            }
-            else {
-                this.currentLife += score;
-            }
-            setTimeout(this.setStatus.bind(this), delay);
-        }
         setShopItemsStatus() {
         }
         addSpriteByName(e, i, o, n) {
@@ -5307,25 +5317,19 @@
             var e = this.view.getByName(t);
             e && e.destroy();
         }
-        setArmor() {
-            this.view.setArmor();
-        }
-        setArmorFrame(card) {
-            this.view.setArmor();
-        }
-        fightWithEnemy(e) {
-            if (e.getScore() >= this.armor + this.currentLife)
+        fightWithEnemy(card) {
+            if (card.getScore() >= this.armor + this.currentLife)
                 return !1;
-            if (e.getScore() <= this.armor)
-                e.getScore() < this.armor && GameStatus.currentHero == HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
+            if (card.getScore() <= this.armor)
+                card.getScore() < this.armor && GameStatus.currentHero == HeroType.Base ? this.armor -= 1 : this.armor -= card.getScore();
             else if (this.armor > 0) {
-                var i = e.getScore() - this.armor;
+                var i = card.getScore() - this.armor;
                 this.armor = 0,
                     this.currentLife -= i;
             }
             else
-                this.currentLife -= e.getScore();
-            return GameStatus.addGold(e.getScore()),
+                this.currentLife -= card.getScore();
+            return GameStatus.addGold(card.getScore()),
                 !0;
         }
         useHeart() {
@@ -5361,8 +5365,49 @@
             GameStatus.isLuck = false;
             this.view.useLuck();
         }
+        stepUpdate() {
+        }
+        isNegative() {
+            return false;
+        }
+        getScore() {
+            return this.currentLife + this.armor;
+        }
         getGoldValue() {
             return 0;
+        }
+        reduceScoreInNSeconds(score, delay) {
+            if (score <= this.armor) {
+                this.armor -= score;
+            }
+            else {
+                var i = score - this.armor;
+                this.armor = 0,
+                    this.currentLife -= i;
+            }
+            setTimeout(this.setStatus.bind(this), delay);
+        }
+        increaseScoreInNSeconds(score, delay) {
+            if (this.totalLife - this.currentLife > score) {
+                this.currentLife = this.totalLife;
+            }
+            else {
+                this.currentLife += score;
+            }
+            setTimeout(this.setStatus.bind(this), delay);
+        }
+        setStatus() {
+            this.setLife(),
+                this.setArmor();
+        }
+        setLife() {
+            this.view.setHealthText();
+        }
+        setArmor() {
+            this.view.setArmor();
+        }
+        setArmorFrame(card) {
+            this.view.setArmor();
         }
     }
 
@@ -5981,12 +6026,14 @@
         shootCard(fromX, fromY, toX, toY, duration) {
             var fx = FxShootCannon.PoolGet();
             this.game.container.addChild(fx);
-            var tweenContainer = fx.moveTo(fromX, fromY, toY, toY, duration);
+            var tweenContainer = fx.moveTo(fromX, fromY, toX, toY, duration);
             tweenContainer.animationDuration = 1;
             return tweenContainer;
         }
         static canShootCard(card) {
             if (card.isEmpty)
+                return false;
+            if (card.isHero)
                 return false;
             switch (card.type) {
                 case CardScoreType.Boss:
@@ -7027,6 +7074,11 @@
                 }
             }
         }
+        playAllAnimations() {
+            while (this.animationQueue.length > 0) {
+                this.runAnimationFromQueue();
+            }
+        }
         runAnimationFromQueue() {
             var animation = this.animationQueue.shift();
             if (animation instanceof TweenContainer) {
@@ -7195,7 +7247,7 @@
         chestOpened() {
             SoundController.instance.playSound(SoundConsts.ChestOpening);
             this.isChest = false,
-                this.field.playAllAnimations();
+                this.playAllAnimations();
             this.chestOpenedAction();
         }
         chestOpenedAction() {
@@ -7215,7 +7267,7 @@
             var shakeTime = 4 == GameStatus.RowCount ? 1e3 : 500;
             this.shake(Consts.ShakeIntensity, shakeTime),
                 this.field.smashHero(600);
-            this.field.playAllAnimations();
+            this.playAllAnimations();
             this.destroyChestDelayed(500);
             var heroCard = this.field.getHero();
             if (GameStatus.currentHero != HeroType.Bomb) {

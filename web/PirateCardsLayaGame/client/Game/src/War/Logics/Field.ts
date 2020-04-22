@@ -627,7 +627,7 @@ export default class Field
     {
         SoundController.instance.playSound(SoundConsts.Cannon);
         var heroPosition = this.getHeroPosition();
-        var heroCard = this.field.get(heroPosition);
+        var heroCard:Hero = <any> this.field.get(heroPosition);
         var list = [];
         list.push(this.shootCannonInDirection(MoveType.Right, heroCard, heroPosition));
         list.push(this.shootCannonInDirection(MoveType.Left, heroCard, heroPosition));
@@ -655,6 +655,7 @@ export default class Field
             var tween = this.shootCard(heroCard.getCenterX(), heroCard.getCenterY(), itemCard.getCenterX(), itemCard.getCenterY(), 200);
             list.push(tween);
 
+            // 如果卡牌是 加农炮， 设置积分添加
             if (itemCard.type === CardScoreType.Cannon)
             {
                 itemCard.increaseScoreInNSeconds(heroCard.shootScore, 400);
@@ -667,6 +668,7 @@ export default class Field
                 tweenContainer.setFirstDelay(400);
                 list.push(tweenContainer);
             } 
+            // 减少血量, 延迟
             else 
             {
                 itemCard.reduceScoreInNSeconds(heroCard.shootScore, 400)
@@ -680,7 +682,7 @@ export default class Field
     {
         var fx = FxShootCannon.PoolGet();
         this.game.container.addChild(fx);
-        var tweenContainer =  fx.moveTo(fromX, fromY, toY, toY, duration);
+        var tweenContainer =  fx.moveTo(fromX, fromY, toX, toY, duration);
         tweenContainer.animationDuration = 1;
         return tweenContainer;
 
@@ -690,6 +692,7 @@ export default class Field
     static canShootCard (card: Card) 
     {
         if(card.isEmpty) return false;
+        if(card.isHero) return false;
         
         switch (card.type) 
         {

@@ -8,17 +8,18 @@ import ArtConsts from "../Enums/ArtConsts";
 import SoundController from "./SoundController";
 import { HeroType } from "../Enums/HeroType";
 import Consts from "../Enums/Consts";
-import TweenContainer from "../Utils/TweenContainer";
-import TweenUtil from "../Utils/TweenUtil";
-import CardViewFrontHero from "../../FGUI/Extends/GameHome/CardViewFrontHero";
-import Game from "../../Game";
+import AbstractCard from "./AbstractCard";
 
-export default class Hero extends Card
+export default class Hero extends AbstractCard
 {
     
-    // currentLife: number = 0;
-    armor: number = 0;
+    
+    /** 生命--当前 */
+    currentLife: number = 0;
+    /** 生命--最大 */
     totalLife: number = 0;
+    /** 护甲 */
+    armor: number = 0;
 
     // CardScoreType.Lightning
     needRunLightning: boolean = false;
@@ -35,6 +36,34 @@ export default class Hero extends Card
 
     // CardScoreType.Skull
     needShootSkull: boolean = false;
+
+    /** 重置 */
+    reset()
+    {
+        super.reset();
+        this.currentLife = 0;
+        this.totalLife = 0;
+        this.armor = 0;
+
+        
+        // CardScoreType.Lightning
+        this.needRunLightning = false;
+        this.lightningScore = 0;
+        
+        //  CardScoreType.Cannon
+        this.needShoot = false;
+        this.shootScore = 0;
+
+        // CardScoreType.Multiplier
+        this.needShootMultiplier = false;
+        this.multiplierScore = 0;
+
+
+        // CardScoreType.Skull
+        this.needShootSkull = false;
+
+
+    }
     
     fight(card: Card) 
     {
@@ -155,48 +184,8 @@ export default class Hero extends Card
         this.needRunLightning =  true,
         this.lightningScore = score
     }
-    setStatus() 
-    {
-        this.setLife(),
-        this.setArmor()
-    }
-
-    stepUpdate() {}
-    getScore() {
-        return this.currentLife + this.armor
-    }
-    
-
-    // 减少血量, 延迟
-    reduceScoreInNSeconds(score, delay) 
-    {
-        if (score <= this.armor) 
-        {
-            this.armor -= score;
-        }
-        else 
-        {
-            var i = score - this.armor;
-            this.armor = 0,
-            this.currentLife -= i
-        }
-        setTimeout(this.setStatus.bind(this), delay)
-    }
 
 
-    // 添加血量, 延迟
-    increaseScoreInNSeconds(score, delay) 
-    {
-        if(this.totalLife - this.currentLife > score)
-        {
-            this.currentLife = this.totalLife;
-        }
-        else
-        {
-            this.currentLife += score;
-        }
-        setTimeout(this.setStatus.bind(this), delay)
-    }
 
     setShopItemsStatus() 
     {
@@ -225,25 +214,16 @@ export default class Hero extends Card
         e && e.destroy()
     }
     
-    setArmor() 
-    {
-        this.view.setArmor();
-    }
 
-    setArmorFrame(card: Card) 
-    {
-        this.view.setArmor();
-    }
-
-    fightWithEnemy(e) {
-        if (e.getScore() >= this.armor + this.currentLife) return ! 1;
-        if (e.getScore() <= this.armor) e.getScore() < this.armor && GameStatus.currentHero == HeroType.Base ? this.armor -= 1 : this.armor -= e.getScore();
+    fightWithEnemy(card) {
+        if (card.getScore() >= this.armor + this.currentLife) return ! 1;
+        if (card.getScore() <= this.armor) card.getScore() < this.armor && GameStatus.currentHero == HeroType.Base ? this.armor -= 1 : this.armor -= card.getScore();
         else if (this.armor > 0) {
-            var i = e.getScore() - this.armor;
+            var i = card.getScore() - this.armor;
             this.armor = 0,
             this.currentLife -= i
-        } else this.currentLife -= e.getScore();
-        return GameStatus.addGold(e.getScore()),
+        } else this.currentLife -= card.getScore();
+        return GameStatus.addGold(card.getScore()),
         !0
     }
     
@@ -292,8 +272,102 @@ export default class Hero extends Card
         this.view.useLuck();
     }
 
-    getGoldValue() {
+
+    
+
+
+    //=====================================
+    // 抽象方法
+    //-------------------------------------
+
+    /** 刷新步骤 */
+    stepUpdate() 
+    {
+
+    }
+
+    /** 是否是坏牌 */
+    isNegative(): boolean 
+    {
+        return false;
+    }
+
+    
+    /** 获取分数 */
+    getScore(): number
+    {
+        return this.currentLife + this.armor
+    }
+    
+
+    /** 获取金币数量 */
+    getGoldValue() 
+    {
         return 0
+    }
+
+    /** 减少血量, 延迟 */
+    reduceScoreInNSeconds(score: number, delay: number) 
+    {
+        if (score <= this.armor) 
+        {
+            this.armor -= score;
+        }
+        else 
+        {
+            var i = score - this.armor;
+            this.armor = 0,
+            this.currentLife -= i
+        }
+        setTimeout(this.setStatus.bind(this), delay)
+    }
+
+
+    /** 添加血量, 延迟 */
+    increaseScoreInNSeconds(score: number, delay: number) 
+    {
+        if(this.totalLife - this.currentLife > score)
+        {
+            this.currentLife = this.totalLife;
+        }
+        else
+        {
+            this.currentLife += score;
+        }
+        setTimeout(this.setStatus.bind(this), delay)
+    }
+
+    
+
+
+
+    //=====================================
+    // 刷新视图
+    //-------------------------------------
+    
+    /** 刷新视图 */
+    setStatus() 
+    {
+        this.setLife(),
+        this.setArmor()
+    }
+    
+    /** 刷新视图, 血量 */
+    setLife() 
+    {
+        this.view.setHealthText();
+    }
+
+    /** 刷新视图, 护甲 */
+    setArmor() 
+    {
+        this.view.setArmor();
+    }
+
+    /** 刷新视图, 动画 */
+    setArmorFrame(card: Card) 
+    {
+        this.view.setArmor();
     }
     
 }

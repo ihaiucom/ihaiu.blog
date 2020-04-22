@@ -23,6 +23,7 @@ import Card from "../../../War/Logics/Card";
 import WarGame from "../../../War/WarGame";
 import Hero from "../../../War/Logics/Hero";
 import Game from "../../../Game";
+import AbstractCard from "../../../War/Logics/AbstractCard";
 
 export default class CardView extends CardViewStruct
 {
@@ -102,7 +103,7 @@ export default class CardView extends CardViewStruct
     game: WarGame;
     cardConfig: CardConfig;
     cardScoreConfig: CardScoreTypeConfig;
-    card: Card;
+    card: AbstractCard;
 
     bg: CardViewFrontBg;
     front: fgui.GComponent;
@@ -200,7 +201,7 @@ export default class CardView extends CardViewStruct
     }
 
     /** 设置卡牌数据 */
-    SetCard(card: Card)
+    SetCard(card: AbstractCard)
     {
         this.card = card;
         if(this.front)
@@ -217,7 +218,7 @@ export default class CardView extends CardViewStruct
     {
         if(this.card)
         {
-            this.game.keyboardManager.OnClickCard(this.card);
+            this.game.keyboardManager.OnClickCard(<Card>this.card);
         }
     }
 
@@ -231,7 +232,8 @@ export default class CardView extends CardViewStruct
         }
         else
         {
-            (<CardViewFrontHero>this.front).m_life.title = this.card.currentLife.toString();
+            var card: Card = <Card> this.card;
+            (<CardViewFrontHero>this.front).m_life.title = card.lifeAmount.toString();
         }
 
     }
@@ -239,7 +241,8 @@ export default class CardView extends CardViewStruct
     //  设置能力
     setPowerUpText()
     {
-        (<CardViewFrontHero>this.front).m_life.title = this.card.powerUpAmount.toString();
+        var card: Card = <Card> this.card;
+        (<CardViewFrontHero>this.front).m_life.title = card.powerUpAmount.toString();
     }
 
     private preArmor = -1;

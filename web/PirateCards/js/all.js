@@ -32014,21 +32014,25 @@ function(t) {
             o.push.apply(o, this.shootCannonInDirection(t.MoveType.Down, i, e)),
             o
         },
-        e.prototype.shootCannonInDirection = function(e, i, o) {
-            var n = [],
-            s = o.getNewPosition(e);
-            if (!this.field.isPositionValid(s)) return n;
-            var a = this.field.get(s);
-            if (t.Field.canShootCard(a)) {
-                if (n.push(this.shootCard(i.getCenterX(), i.getCenterY(), a.getCenterX(), a.getCenterY(), 200)), a.type === t.CardScoreType.Cannon) a.increaseScoreInNSeconds(i.shootScore, 400);
-                else if (i.shootScore >= a.getScore()) {
-                    var r = this.getCardToReplaceAfterSmash(a),
-                    h = this.replaceCardByPosition(s, r, !0).setAnimationDuration(1);
+        e.prototype.shootCannonInDirection = function(moveType, heroCard, heroPosition) {
+            var list = [],
+            position = heroPosition.getNewPosition(moveType);
+            if (!this.field.isPositionValid(position)) return list;
+            var itemCard = this.field.get(position);
+            if (t.Field.canShootCard(itemCard)) 
+            {
+                if (
+                    list.push(this.shootCard(heroCard.getCenterX(), heroCard.getCenterY(), itemCard.getCenterX(), itemCard.getCenterY(), 200)), 
+                    itemCard.type === t.CardScoreType.Cannon) 
+                        itemCard.increaseScoreInNSeconds(heroCard.shootScore, 400);
+                else if (heroCard.shootScore >= itemCard.getScore()) {
+                    var r = this.getCardToReplaceAfterSmash(itemCard),
+                    h = this.replaceCardByPosition(position, r, !0).setAnimationDuration(1);
                     h.tweens[0].delay(400),
-                    n.push(h)
-                } else a.reduceScoreInNSeconds(i.shootScore, 400)
+                    list.push(h)
+                } else itemCard.reduceScoreInNSeconds(heroCard.shootScore, 400)
             }
-            return n
+            return list
         },
         e.prototype.shootCard = function(e, i, o, n, s) {
             var a = t.ShapeFactoryHelper.getShape(this.game, e, i, t.ArtConsts.Items1, t.ArtConsts.Core);

@@ -64,6 +64,7 @@ export default class TweenHelper
             100 + 250);
     }
 
+    /** 翻转卡牌， 翻转前半 */
     static turnAnimationStart(tweenContainer: TweenContainer, view: fgui.GComponent) 
     {
         if(!tweenContainer)  tweenContainer = new TweenContainer();
@@ -86,6 +87,8 @@ export default class TweenHelper
 
         return tweenContainer;
     }
+    
+    /** 翻转卡牌， 翻转后半 */
     static  turnAnimationEnd(tweenContainer: TweenContainer, view: fgui.GComponent) {
         
         if(!tweenContainer)  tweenContainer = new TweenContainer();

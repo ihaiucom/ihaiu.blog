@@ -145,6 +145,15 @@ export default class WarGame
         }
     }
 
+    // 播放所有动画
+    playAllAnimations()
+    {
+        while(this.animationQueue.length > 0)
+        {
+            this.runAnimationFromQueue();
+        }
+    }
+
     // 播放动画队列
     runAnimationFromQueue()
     {
@@ -406,7 +415,7 @@ export default class WarGame
     {
         SoundController.instance.playSound(SoundConsts.ChestOpening);
         this.isChest = false,
-        this.field.playAllAnimations();
+        this.playAllAnimations();
         this.chestOpenedAction();
     }
 
@@ -444,7 +453,7 @@ export default class WarGame
         var shakeTime = 4 == GameStatus.RowCount ? 1e3: 500;
         this.shake(Consts.ShakeIntensity, shakeTime),
         this.field.smashHero(600);
-        this.field.playAllAnimations();
+        this.playAllAnimations();
         this.destroyChestDelayed(500);
 
         var heroCard = <Hero> this.field.getHero();

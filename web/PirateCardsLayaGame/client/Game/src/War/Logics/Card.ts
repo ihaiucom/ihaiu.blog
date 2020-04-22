@@ -1,30 +1,25 @@
 import CardView from "../../FGUI/Extends/GameHome/CardView";
 import { CardScoreType } from "../Enums/CardScoreType";
 import GameStatus from "../Datas/GameStatus";
-import WarGame from "../WarGame";
 import Consts from "../Enums/Consts";
 import { HeroType } from "../Enums/HeroType";
-import Point from "../Datas/Point";
-import TweenUtil from "../Utils/TweenUtil";
 import TweenHelper from "../Utils/TweenHelper";
 import SoundController from "./SoundController";
 import SoundConsts from "../Enums/SoundConsts";
 import TweenContainer from "../Utils/TweenContainer";
-import CardViewFrontWarriowBoss from "../../FGUI/Extends/GameHome/CardViewFrontWarriowBoss";
-import CardViewBack from "../../FGUI/Extends/GameHome/CardViewBack";
 import CardConfig from "../../Config/ConfigExtends/CardConfig";
-import { CardBackgroundType } from "../Enums/CardBackgroundType";
 import Game from "../../Game";
-import FxShootLightningBig from "../../FGUI/Extends/GameHome/FxShootLightningBig";
+import AbstractCard from "./AbstractCard";
+import NullCard from "./NullCard";
 
-export default class Card
+export default class Card extends AbstractCard
 {
     
     
     static GetDefault(game) 
     {
         console.log("Card 创建空牌");
-        var card = <Card> Pool.createByClass(Card);
+        var card = <NullCard> Pool.createByClass(NullCard);
         card.game = game;
         card.type = CardScoreType.None;
         card.SetEmpty();
@@ -48,28 +43,21 @@ export default class Card
         return card;
     }
 
-    poolRecover()
-    {
-        this.reset();
-        Pool.recoverByClass(this);
-    }
 
 
 
-    game: WarGame;
-    config: CardConfig;
-    type: CardScoreType = CardScoreType.None;
-    view: CardView;
-    
-    isOnClickInitiated = false;
+    /** 生命--初始 */
+    initialLife = 0;
+    /** 生命--当前 */
+    lifeAmount = 0;
+    /** 能量--当前 */
     powerUpAmount = 0;
 
-    lifeAmount = 0;
-    // 初始血量
-    initialLife: number = 0;
+    
 
-    // 当前血量
-    currentLife: number = 0;
+
+
+
 
     // 是否是打开状态
     isOpen: boolean = false;
@@ -79,27 +67,19 @@ export default class Card
     
 
     
-    constructor()
-    {
-        this.view = CardView.PoolGet();
-        this.reset();
-    }
-
+    /** 重置 */
     reset()
     {
-        
-        this.view.setXY(-300, -400);
-        this.view.setScale(1, 1);
+        super.reset();
 
-        this.isOnClickInitiated = false;
+        // 生命--初始
+        this.initialLife = 0;
+        // 生命--当前
+        this.lifeAmount = 0;
+        // 能量--当前
         this.powerUpAmount = 0;
     
-        this.lifeAmount = 0;
-        // 初始血量
-        this.initialLife = 0;
     
-        // 当前血量
-        this.currentLife = 0;
     
         // 是否是打开状态
         this.isOpen = false;
@@ -109,59 +89,8 @@ export default class Card
         
     }
 
-    SetEmpty()
-    {
-        this.SetConfig(null);
-    }
-
-    SetConfig(config: CardConfig)
-    {
-        this.config = config;
-        this.view.game = this.game;
-        this.view.SetConfig(config);
-        this.view.SetCard(this);
-    }
-
-    get isEmpty()
-    {
-        return this.type == CardScoreType.None;
-    }
-
-    get isHero(): boolean
-    {
-        return this.type == CardScoreType.Hero;
-    }
-
-    get isBoss(): boolean
-    {
-        return this.type == CardScoreType.Boss;
-    }
-
-    get isTrap(): boolean
-    {
-        return this.type == CardScoreType.Trap;
-    }
-
-    get level(): number
-    {
-        return this.config.level;
-    }
 
 
-    stepUpdate() 
-    {
-        if (this.isTrap) 
-        {
-            var isOpened = this.changeStatus();
-            var isGrun = GameStatus.currentHero == HeroType.Gun;
-            this.lifeAmount = isGrun ? 0 : isOpened ? this.powerUpAmount: 0;
-            this.currentLife = this.lifeAmount;
-            this.setHealthText()
-        }
-        this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
-        this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
-        this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
-    }
 
     changeStatus()
     {
@@ -179,10 +108,6 @@ export default class Card
     }
 
     
-    getScore() 
-    {
-        return this.type == CardScoreType.Trap ? this.lifeAmount: this.lifeAmount + this.powerUpAmount
-    }
 
     // 血量
     getLife() {
@@ -233,38 +158,6 @@ export default class Card
         this.setPowerUp(this.powerUpAmount * mul)
     }
 
-    // 减少血量, 延迟
-    reduceScoreInNSeconds(score, delay) 
-    {
-        if(this.powerUpAmount > 0)
-        {
-            this.powerUpAmount = this.powerUpAmount - score;
-            setTimeout(this.setPowerUpText.bind(this), delay);
-        }
-
-        if(this.lifeAmount > 0)
-        {
-            this.lifeAmount = this.lifeAmount - score;
-            setTimeout(this.setHealthText.bind(this), delay);
-        }
-    }
-
-    // 添加血量, 延迟
-    increaseScoreInNSeconds(score, delay) 
-    {
-        if(this.powerUpAmount > 0)
-        {
-            this.powerUpAmount = this.powerUpAmount + score;
-            setTimeout(this.increasePowerUpTween.bind(this), delay);
-        }
-
-        if(this.lifeAmount > 0)
-        {
-            this.lifeAmount = this.lifeAmount + score;
-            setTimeout(this.increaseLifeTween.bind(this), delay);
-        }
-
-    }
 
     // tween更新视图 -- 能量
     increasePowerUpTween() 
@@ -287,7 +180,6 @@ export default class Card
         case CardScoreType.Boss:
         case CardScoreType.Enemy:
             this.initialLife = score;
-            this.currentLife =score;
             this.setLife(score);
             break;
         case CardScoreType.Gold:
@@ -315,8 +207,10 @@ export default class Card
             this.setPowerUp(1)
         }
     }
-    setPowerUp(t) {
-        this.powerUpAmount = t,
+
+    setPowerUp(val: number) 
+    {
+        this.powerUpAmount = val,
         this.setPowerUpText()
     }
 
@@ -339,7 +233,37 @@ export default class Card
         this.view.setPowerUpText();
     }
 
-    isNegative() 
+
+
+
+    open(): Laya.Tween
+    {
+        return null;
+    }
+
+    
+    //=====================================
+    // 抽象方法
+    //-------------------------------------
+
+
+    /** 刷新步骤 */
+    stepUpdate() 
+    {
+        if (this.isTrap) 
+        {
+            var isOpened = this.changeStatus();
+            var isGrun = GameStatus.currentHero == HeroType.Gun;
+            this.lifeAmount = isGrun ? 0 : isOpened ? this.powerUpAmount: 0;
+            this.setHealthText()
+        }
+        this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
+        this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
+        this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
+    }
+    
+    /** 是否是坏牌 */
+    isNegative(): boolean
     {
         switch (this.type) 
         {
@@ -358,138 +282,54 @@ export default class Card
             case CardScoreType.Multiplier:
             case CardScoreType.Skull:
             case CardScoreType.Hero:
+            case CardScoreType.None:
                 return false;
         }
     }
 
-    getGoldValue() 
+    /** 获取分数 */
+    getScore(): number 
     {
-        return this.initialLife
+        return this.type == CardScoreType.Trap ? this.lifeAmount: this.lifeAmount + this.powerUpAmount;
     }
 
-    moveTo(point: Point, time: number): Laya.Tween
+    /** 获取金币数量 */
+    getGoldValue(): number 
     {
-        this.game.container.addChild(this.view);
-        return TweenUtil.to(this.view, point, time);
+        return this.initialLife;
     }
 
-    setCoordinate(point: Point)
+    /** 减少血量, 延迟 */
+    reduceScoreInNSeconds(score: number, delay: number) 
     {
-        this.game.container.addChild(this.view);
-        this.view.setXY(point.x, point.y);
-    }
-
-    open(): Laya.Tween
-    {
-        return null;
-    }
-
-    endTurnAnimationStart()
-    {
-        this.view.setScale(0, Consts.FlipZoom);
-    }
-
-    startTurnAnimation(endCallback: () => void, endCaller:any): TweenContainer
-    { 
-        var tweenContainer = TweenHelper.turnAnimationStart(null, this.view);
-        tweenContainer.onStart.add(this.playCardSoundInSeconds, this);
-        tweenContainer.onComplete.add(this.removeShapeFromStage, this);
-        tweenContainer.onComplete.add(endCallback, endCaller);
-        return tweenContainer;
-    }
-
-    playCardSoundInSeconds()
-    {
-        setTimeout(this.playCardSound.bind(this), 50)
-    }
-
-    playCardSound()
-    {
-        SoundController.instance.playSound(SoundConsts.Card);
-    }
-
-    
-
-    endTurnAnimationEnd()
-    {
-        if(this.isBoss)
+        if(this.powerUpAmount > 0)
         {
-            SoundController.instance.playSound(SoundConsts.BossAppearance);
+            this.powerUpAmount = this.powerUpAmount - score;
+            setTimeout(this.setPowerUpText.bind(this), delay);
         }
-        this.view.scaleX = 0.1;
-        
-        TweenHelper.turnAnimationEnd(null, this.view).restart();
-    }
-    getScaleTween(view, tweenContainer?:TweenContainer ) 
-    {
-        if(!tweenContainer)
+
+        if(this.lifeAmount > 0)
         {
-            tweenContainer = TweenContainer.PoolGet();
-        }
-        var tween = TweenUtil.to(view, {scaleX: 2.5, scaleY: 2.5}, 200);
-        tweenContainer.tweens.push(tween)
-        
-        tween = TweenUtil.to(view, {scaleX: 1, scaleY:  1}, 200, null, null, 200);
-        tweenContainer.tweens.push(tween)
-        return tweenContainer;
-    }
-
-    removeChild(): TweenContainer
-    {
-        var tweenContainer = TweenContainer.PoolGet();
-        var tween = TweenUtil.to(this.view, {scaleX: 1.1, scaleY: 1.1}, 50);
-        tweenContainer.tweens.push(tween);
-
-        tween = TweenUtil.to(this.view, {scaleX: 1, scaleY: 1}, 50, null, null, 50);
-        tweenContainer.tweens.push(tween);
-
-        
-        tween = TweenUtil.to(this.view, {scaleX: 1.1, scaleY: 1.1}, 50, null, null, 50 + 50);
-        tweenContainer.tweens.push(tween);
-
-        tween = TweenUtil.to(this.view, {scaleX: 0, scaleY: 0}, 80, null, Laya.Handler.create(this, this.removeShapeFromStage), 50 + 50 + 50);
-        tweenContainer.tweens.push(tween);
-
-        return tweenContainer;
-    }
-
-    
-
-    removeShapeFromStage()
-    {
-        console.log("Card 移除", this);
-        if(this.view.parent)
-        {
-            this.view.removeFromParent();
-            this.delayPoolRecover();
+            this.lifeAmount = this.lifeAmount - score;
+            setTimeout(this.setHealthText.bind(this), delay);
         }
     }
 
-
-
-    delayPoolRecover()
-    {
-        Laya.timer.frameOnce(10, this, this.poolRecover);
-    }
-
-    getCenterX()
-    {
-        return this.view.x;
-    }
-
     
-    getCenterY()
+    /** 添加血量, 延迟 */
+    increaseScoreInNSeconds(score: number, delay: number) 
     {
-        return this.view.y;
-    }
+        if(this.powerUpAmount > 0)
+        {
+            this.powerUpAmount = this.powerUpAmount + score;
+            setTimeout(this.increasePowerUpTween.bind(this), delay);
+        }
 
-    // 播放被闪电攻击的特效
-    runLightning()
-    {
-        var fx = FxShootLightningBig.PoolGet();
-        fx.setXY(this.getCenterX(), this.getCenterY());
-        this.game.container.addChild(fx);
-        return fx.Play();
+        if(this.lifeAmount > 0)
+        {
+            this.lifeAmount = this.lifeAmount + score;
+            setTimeout(this.increaseLifeTween.bind(this), delay);
+        }
     }
 
 

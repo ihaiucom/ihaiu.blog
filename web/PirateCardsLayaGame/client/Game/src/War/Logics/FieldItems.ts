@@ -1,6 +1,7 @@
 import Card from "./Card";
 import FieldPosition from "../Datas/FieldPosition";
 import WarGame from "../WarGame";
+import Hero from "./Hero";
 
 export default class FieldItems
 {
@@ -74,7 +75,7 @@ export default class FieldItems
         return list
     }
 
-    findHeroCard(): Card
+    findHeroCard(): Hero
     {
         var item: Card;
         for (var y = 0; y < this.rowCount; y++) 
@@ -84,7 +85,7 @@ export default class FieldItems
                 item = this.items[x][y];
                 if(item.isHero)
                 {
-                    return item;
+                    return <any> item;
                 }
             }
         }
