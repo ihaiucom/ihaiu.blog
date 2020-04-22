@@ -28,7 +28,15 @@ export default class CPLockDial extends CPLockDialStruct
                 {
                     case ChestLockItemType.LoadBig:
                     case ChestLockItemType.LoadSmall:
-                        (<CPLockDialLoadBig>itemView).m_state.setSelectedIndex(itemData.isOpen ? 1 : 0);
+                        var itemViewLoad = <CPLockDialLoadBig>itemView;
+                        if(itemViewLoad.m_state)
+                        {
+                            itemViewLoad.m_state.setSelectedIndex(itemData.isOpen ? 1 : 0);
+                        }
+                        else
+                        {
+                            console.error(itemData.config.type, itemViewLoad);
+                        }
                         break;
 
                 }

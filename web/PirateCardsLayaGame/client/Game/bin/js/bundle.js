@@ -4100,7 +4100,7 @@
     }
     CardScoreTypeHelper.itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.Multiplier, CardScoreType.Skull];
     CardScoreTypeHelper.itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
-    CardScoreTypeHelper.powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
+    CardScoreTypeHelper.powerUps = [CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Chest];
 
     class GameStatus {
         static init() {
@@ -15493,7 +15493,13 @@
                     switch (itemData.config.type) {
                         case ChestLockItemType.LoadBig:
                         case ChestLockItemType.LoadSmall:
-                            itemView.m_state.setSelectedIndex(itemData.isOpen ? 1 : 0);
+                            var itemViewLoad = itemView;
+                            if (itemViewLoad.m_state) {
+                                itemViewLoad.m_state.setSelectedIndex(itemData.isOpen ? 1 : 0);
+                            }
+                            else {
+                                console.error(itemData.config.type, itemViewLoad);
+                            }
                             break;
                     }
                 }

@@ -330,6 +330,7 @@ export default class Card extends AbstractCard
             this.lifeAmount = this.lifeAmount + score;
             setTimeout(this.increaseLifeTween.bind(this), delay);
         }
+        
     }
 
 
