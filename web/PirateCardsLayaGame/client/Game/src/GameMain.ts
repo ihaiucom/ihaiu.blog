@@ -13,7 +13,7 @@ class GameMain
     constructor() 
     {
 		LayaExtendClass();
-		if(!Laya3D._isInit)
+		if(!Laya.stage)
 		{
 			this.InitLaya();
 		}
@@ -74,7 +74,7 @@ class GameMain
 		//兼容微信不支持加载scene后缀场景
 		Laya.URL.exportSceneToJson = GameConfig.exportSceneToJson;
 
-		Laya.Shader3D.debugMode = false;
+		if(window["Laya3D"]) Laya.Shader3D.debugMode = false;
 
 		//打开调试面板（通过IDE设置调试模式，或者url地址增加debug=true参数，均可打开调试面板）
 		// if (GameConfig.debug || Laya.Utils.getQueryString("debug") == "true") Laya.enableDebugPanel();

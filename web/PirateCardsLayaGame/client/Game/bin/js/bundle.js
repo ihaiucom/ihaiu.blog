@@ -295,7 +295,6 @@
         restart() {
             setTimeout(this.onEnd.bind(this), this.animationDuration);
             this.onStart.dispatch();
-            console.log(this.tweens);
             if (this._delay > 0) {
                 Laya.timer.once(this._delay, this, this.playTweens);
             }
@@ -920,11 +919,9 @@
         setPowerUpText() {
             var card = this.card;
             if (card.isDisplayLife()) {
-                console.log("setHealthText", card.type, card.lifeAmount);
                 this.front.m_life.title = card.lifeAmount.toString();
             }
             else {
-                console.log("setPowerUpText", card.type, card.powerUpAmount);
                 this.front.m_life.title = card.powerUpAmount.toString();
             }
         }
@@ -4289,7 +4286,6 @@
                 this.isNeedCreateBoss = true;
                 this.levelStep++;
                 this.turnsToBoss = this.levelStep + 1;
-                console.log("需要创建Bosss");
             }
         }
         static isBossShouldBeCreated() {
@@ -4610,7 +4606,6 @@
             return tweenContainer;
         }
         removeShapeFromStage() {
-            console.log("Card 移除", this);
             if (this.view.parent) {
                 this.view.removeFromParent();
                 this.delayPoolRecover();
@@ -4665,7 +4660,6 @@
             this.canLightningStrike = false;
         }
         static GetDefault(game) {
-            console.log("Card 创建空牌");
             var card = Pool.createByClass(NullCard);
             card.game = game;
             card.type = CardScoreType.None;
@@ -4673,7 +4667,6 @@
             return card;
         }
         static GetNew(game, cardScoreType, level, score) {
-            console.log("Card 创建", cardScoreType);
             var config = Game.config.card.getTypeLevelConfig(cardScoreType, level);
             if (config == null) {
                 console.error("没有找到卡牌配置", cardScoreType, level, score);
@@ -4697,7 +4690,6 @@
         }
         multiplyScore(mul) {
             if (this.lifeAmount > 0) {
-                this.increaseLife(this.lifeAmount * mul);
                 var tween = this.view.tweenLife();
                 tween.onComplete.addOnce(() => {
                     this.increaseLife(mul);
@@ -6597,7 +6589,6 @@
             return hero;
         }
         getCard(cardGenerationType = CardGenerationType.Random, score, cardTypeList) {
-            console.log("随机生成卡牌", "cardGenerationType=", cardGenerationType, "score=", score, "cardTypeList=", cardTypeList);
             if (GameStatus.isNeedCreateBoss && cardGenerationType == CardGenerationType.Random) {
                 GameStatus.isNeedCreateBoss = false;
                 return this.getBoss();
@@ -7199,7 +7190,6 @@
         checkKeyHandler() {
             var moveType = this.keyboardManager.getMoveType();
             if (moveType) {
-                console.log(moveType);
                 var tweenList = this.move(moveType);
                 if (tweenList && tweenList.length > 0) {
                     this.field.stepUpdate();
@@ -7254,7 +7244,6 @@
                 tweenList.push(this.field.move(moveType));
             }
             else {
-                console.log("替换卡牌, 木桶替换");
                 tweenContainer = TweenContainer.PoolGet();
                 var tween = this.field.replaceCard(moveType, CardGenerationType.AfterBarrel, fightCard.getScore());
                 tweenContainer.tweens.push(tween);
@@ -17088,6 +17077,8 @@
             this.timeOutShowModelWait = true;
         }
         Init() {
+            if (!window['net'])
+                return;
             net.logic.onConnect.on(this.onConnect, this);
             net.logic.onReconnect.on(this.onReconnect, this);
             net.logic.onClose.on(this.onClose, this);
@@ -17196,7 +17187,7 @@
     class GameMain {
         constructor() {
             LayaExtendClass();
-            if (!Laya3D._isInit) {
+            if (!Laya.stage) {
                 this.InitLaya();
             }
             if (GameConfig.stat)
@@ -17237,7 +17228,8 @@
             Laya.stage.alignV = GameConfig.alignV;
             Laya.stage.alignH = GameConfig.alignH;
             Laya.URL.exportSceneToJson = GameConfig.exportSceneToJson;
-            Laya.Shader3D.debugMode = false;
+            if (window["Laya3D"])
+                Laya.Shader3D.debugMode = false;
             if (GameConfig.physicsDebug && Laya["PhysicsDebugDraw"])
                 Laya["PhysicsDebugDraw"].enable();
             Laya.alertGlobalError = true;

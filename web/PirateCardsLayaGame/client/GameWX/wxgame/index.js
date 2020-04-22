@@ -1,8 +1,8 @@
 window.screenOrientation = "sensor_landscape",
 loadLib("libs/laya.core.js"),
-  loadLib("libs/laya.d3.js"),
-loadLib("libs/laya.html.js"),
-  loadLib("libs/laya.ani.js"),
+  // loadLib("libs/laya.d3.js"),
+// loadLib("libs/laya.html.js"),
+  // loadLib("libs/laya.ani.js"),
   loadLib("libs/laya.wxmini2.js"),
 
 
@@ -19,21 +19,21 @@ loadLib("libs/game/GameCommonLib.js"),
 loadLib("libs/game/StringExtend.js"),
 loadLib("libs/game/engine-adapter-laya.js"),
 loadLib("libs/game/FguiExtend.js");
-loadLib("libs/game/gpuskinning.js");
-loadLib("libs/game/MeshText.js");
+// loadLib("libs/game/gpuskinning.js");
+// loadLib("libs/game/MeshText.js");
 
 
 
 // 扩展 -- zip
-loadLib("libs/zip/jszip.js");
-loadLib("libs/zip/zip.js");
+// loadLib("libs/zip/jszip.js");
+// loadLib("libs/zip/zip.js");
 
 // 网络协议
-require("libs/AntFrame/Net/pako.js"),
+// require("libs/AntFrame/Net/pako.js"),
 require("libs/AntFrame/Net/protobuf.js"),
-require("libs/AntFrame/Net/proto.js"),
-require("libs/AntFrame/Net/net.js"),
-require("libs/AntFrame/Net/netproto.js"),
+// require("libs/AntFrame/Net/proto.js"),
+// require("libs/AntFrame/Net/net.js"),
+// require("libs/AntFrame/Net/netproto.js"),
 
   window.Parser = require("./libs/dom/dom_parser");
 

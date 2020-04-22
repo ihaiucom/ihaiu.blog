@@ -247,7 +247,6 @@ export default abstract class AbstractCard
     /** 从场景移除视图 */
     removeShapeFromStage()
     {
-        console.log("Card 移除", this);
         if(this.view.parent)
         {
             this.view.removeFromParent();

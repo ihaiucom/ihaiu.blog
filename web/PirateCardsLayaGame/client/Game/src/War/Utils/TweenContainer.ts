@@ -147,7 +147,6 @@ export default class TweenContainer
         setTimeout(this.onEnd.bind(this), this.animationDuration);
 
         this.onStart.dispatch();
-        console.log(this.tweens);
         if(this._delay > 0)
         {
             Laya.timer.once(this._delay, this, this.playTweens);

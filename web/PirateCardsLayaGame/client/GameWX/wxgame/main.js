@@ -82,7 +82,7 @@ window.compareVersion = compareVersion;
       Laya.stage.alignV = GameConfig.alignV;
       Laya.stage.alignH = GameConfig.alignH;
       Laya.URL.exportSceneToJson = GameConfig.exportSceneToJson;
-      Laya.Shader3D.debugMode = false;
+      if (window["Laya3D"]) Laya.Shader3D.debugMode = false;
       if (GameConfig.physicsDebug && Laya["PhysicsDebugDraw"])
         Laya["PhysicsDebugDraw"].enable();
       // if (GameConfig.stat)

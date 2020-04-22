@@ -13,6 +13,8 @@ export default class GameNetStat
     isLogined: boolean = false;
     Init()
     {
+        if(!window['net']) return;
+
         net.logic.onConnect.on(this.onConnect, this);
         net.logic.onReconnect.on(this.onReconnect, this);
         net.logic.onClose.on(this.onClose, this);

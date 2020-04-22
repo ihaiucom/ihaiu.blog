@@ -72,7 +72,7 @@ export default class CardFactory
     // 随机生成卡牌
     getCard(cardGenerationType: CardGenerationType = CardGenerationType.Random, score: number, cardTypeList: CardScoreType[]) : Card
     {
-        console.log("随机生成卡牌", "cardGenerationType=", cardGenerationType, "score=", score, "cardTypeList=", cardTypeList);
+        // console.log("随机生成卡牌", "cardGenerationType=", cardGenerationType, "score=", score, "cardTypeList=", cardTypeList);
         // 是否需要创建Boss
         if(GameStatus.isNeedCreateBoss && cardGenerationType == CardGenerationType.Random)
         {

@@ -18,16 +18,15 @@ export default class Card extends AbstractCard
     
     static GetDefault(game) 
     {
-        console.log("Card 创建空牌");
         var card = <NullCard> Pool.createByClass(NullCard);
         card.game = game;
         card.type = CardScoreType.None;
         card.SetEmpty();
         return card;
     }
-    static GetNew(game, cardScoreType: CardScoreType, level: number, score: number) {
+    static GetNew(game, cardScoreType: CardScoreType, level: number, score: number) 
+    {
         
-        console.log("Card 创建", cardScoreType);
         var config: CardConfig = Game.config.card.getTypeLevelConfig(cardScoreType, level);
         if(config == null)
         {
@@ -106,8 +105,6 @@ export default class Card extends AbstractCard
     {
         if(this.lifeAmount > 0)
         {
-            this.increaseLife(this.lifeAmount * mul);
-
             var tween = this.view.tweenLife();
             tween.onComplete.addOnce(()=>{
                 this.increaseLife(mul);

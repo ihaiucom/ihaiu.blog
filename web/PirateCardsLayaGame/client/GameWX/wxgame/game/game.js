@@ -1,8 +1,8 @@
 
 
 // 战斗配置
-require("libs/pbconfig/pbconfig.js"),
-require("libs/pbconfig/pbconfig-extends.js"),
+// require("libs/pbconfig/pbconfig.js"),
+// require("libs/pbconfig/pbconfig-extends.js"),
 
 // Excel PB配置
 require("libs/pbconfig/excelconfig.js"),
@@ -18,4 +18,4 @@ wx.setKeepScreenOn && wx.setKeepScreenOn({
   }
 });
 
-// require('testFile.js');
+require('testFile.js');

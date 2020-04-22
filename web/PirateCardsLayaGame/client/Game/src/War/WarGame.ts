@@ -275,7 +275,6 @@ export default class WarGame
         var moveType = this.keyboardManager.getMoveType();
         if (moveType) 
         {
-            console.log(moveType);
             var tweenList = this.move(moveType);
             if(tweenList && tweenList.length > 0)
             {
@@ -361,7 +360,6 @@ export default class WarGame
         }
         else
         {
-            console.log("替换卡牌, 木桶替换");
             tweenContainer = TweenContainer.PoolGet();
             // 替换卡牌, 木桶替换
             var tween = this.field.replaceCard(moveType, CardGenerationType.AfterBarrel, fightCard.getScore() );

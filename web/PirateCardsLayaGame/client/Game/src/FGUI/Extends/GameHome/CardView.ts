@@ -244,12 +244,10 @@ export default class CardView extends CardViewStruct
         var card: Card = <Card> this.card;
         if(card.isDisplayLife())
         {
-            console.log("setHealthText",  card.type, card.lifeAmount);
             (<CardViewFrontHero>this.front).m_life.title = card.lifeAmount.toString();
         }
         else
         {
-            console.log("setPowerUpText",  card.type, card.powerUpAmount);
             (<CardViewFrontHero>this.front).m_life.title = card.powerUpAmount.toString();
         }
 

@@ -17,18 +17,18 @@ window.screenOrientation = "sensor_portrait";
 
 //-----libs-begin-----
 loadLib("libs/laya.core.js");
-loadLib("libs/laya.d3.js");
-loadLib("libs/laya.html.js");
-loadLib("libs/laya.ani.js");
+// loadLib("libs/laya.d3.js");
+// loadLib("libs/laya.html.js");
+// loadLib("libs/laya.ani.js");
 // loadLib("libs/laya.debugtool.js");
 
 
 
-loadLib("libs/AntFrame/Net/pako.js")
+// loadLib("libs/AntFrame/Net/pako.js")
 loadLib("libs/AntFrame/Net/protobuf.js")
-loadLib("libs/AntFrame/Net/proto.js")
-loadLib("libs/AntFrame/Net/net.js")
-loadLib("libs/AntFrame/Net/netproto.js")
+// loadLib("libs/AntFrame/Net/proto.js")
+// loadLib("libs/AntFrame/Net/net.js")
+// loadLib("libs/AntFrame/Net/netproto.js")
 
 // fgui
 loadLib("libs/fairygui/rawinflate.min.js");
