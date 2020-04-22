@@ -366,9 +366,15 @@ export default class WarGame
             // 替换卡牌, 木桶替换
             var tween = this.field.replaceCard(moveType, CardGenerationType.AfterBarrel, fightCard.getScore() );
             tweenContainer.tweens.push(tween);
-            tweenContainer.tweens.push(this.field.getHero().increaseLifeByOneTween());
             tweenList.push(tweenContainer);
         }
+
+        // 打死Boss, 最多血量和血量+1
+        if(fightResult.isNeedIncreaseLifeByOneAfterBoss)
+        {
+            tweenList.push(this.field.getHero().increaseLifeByOneTween());
+        }
+        
 
         if(this.isChangeTurnsToBoss())
         {

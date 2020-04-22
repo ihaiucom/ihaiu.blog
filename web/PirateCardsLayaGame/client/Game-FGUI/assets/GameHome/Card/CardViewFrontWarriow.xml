@@ -2,6 +2,6 @@
 <component size="209,229" pivot="0.5,0.5" anchor="true">
   <displayList>
     <loader id="n3_sqzy" name="icon" xy="104,114" pivot="0.5,0.5" anchor="true" size="101,123" url="ui://moe42ygrsqzy6m" align="center" vAlign="middle" autoSize="true"/>
-    <component id="n2_sqzy" name="life" src="sqzy9x" fileName="Card/CardLifeWarriow.xml" xy="3,1"/>
+    <component id="n2_sqzy" name="life" src="sqzy9x" fileName="Card/CardLifeWarriow.xml" xy="35,32" pivot="0.5,0.5" anchor="true"/>
   </displayList>
 </component>

@@ -107,6 +107,12 @@ export default abstract class AbstractCard
         return this.type == CardScoreType.Trap;
     }
 
+    /** 是否是加农炮 */
+    get isCannon(): boolean
+    {
+        return this.type == CardScoreType.Cannon;
+    }
+
     /** 等级 */
     get level(): number
     {

@@ -124,6 +124,5 @@ export default class GameHomeBinder
 		bind(CPLockDialFixedBig.URL, CPLockDialFixedBig);
 		bind(CPLockDial.URL, CPLockDial);
 		bind(CPLock.URL, CPLock);
-		bind(CPLockDialLoadSmall.URL, CPLockDialLoadSmall);
 	}
 }

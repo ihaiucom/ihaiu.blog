@@ -391,7 +391,6 @@
     <component id="jak7az" name="CPLockDialFixedBig.xml" path="/ChestPopup/" exported="true"/>
     <component id="jak7b0" name="CPLockDial.xml" path="/ChestPopup/" exported="true"/>
     <component id="jak7b1" name="CPLock.xml" path="/ChestPopup/" exported="true"/>
-    <component id="jak7b2" name="CPLockDialLoadSmall.xml" path="/" exported="true"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

@@ -37,7 +37,7 @@ export default class Card extends AbstractCard
         card.game = game;
         card.type = cardScoreType;
         card.SetConfig(config);
-        card.setScore(score),
+        card.setScore(score);
         GameStatus.updateCardCounter(cardScoreType),
         GameStatus.updateMovesAfterSpecialCard(cardScoreType);
         return card;
@@ -59,7 +59,7 @@ export default class Card extends AbstractCard
 
 
 
-    // 是否是打开状态
+    // 是否是打开状态, 桥
     isOpen: boolean = false;
 
     // 设置该卡牌 闪电忙碌状态 罢工
@@ -92,32 +92,16 @@ export default class Card extends AbstractCard
 
 
 
-    changeStatus()
-    {
-        if(this.isOpen)
-        {
-            this.view.setClose()
-            this.isOpen = false;
-        }
-        else
-        {
-            this.view.setClose()
-            this.isOpen = true;
-        }
-        return this.isOpen;
-    }
+
 
     
+    
+    //=====================================
+    // 设置 血量、能量 和对应视图
+    //-------------------------------------
 
-    // 血量
-    getLife() {
-        return this.lifeAmount
-    }
-    // 能量
-    getPowerUp() {
-        return this.powerUpAmount
-    }
 
+    /** 倍数，积分 */
     multiplyScore(mul) 
     {
         if(this.lifeAmount > 0)
@@ -145,34 +129,8 @@ export default class Card extends AbstractCard
 
     }
 
-    // 血量 乘倍数
-    increaseLife(mul) 
-    {
-        this.setLife(this.lifeAmount * mul);
-        this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * mul);
-    }
 
-    // 能量 乘倍数
-    increasePowerUp(mul) 
-    {
-        this.setPowerUp(this.powerUpAmount * mul)
-    }
-
-
-    // tween更新视图 -- 能量
-    increasePowerUpTween() 
-    {
-        var tweenContainer = this.view.tweenPowerUp();
-        tweenContainer.restart();
-    }
-
-    // tween更新视图 -- 血量
-    increaseLifeTween() 
-    {
-        var tweenContainer = this.view.tweenLife();
-        tweenContainer.restart();
-    }
-
+    /** 设置分数 */
     setScore(score: number) 
     {
         switch (this.type) 
@@ -200,6 +158,7 @@ export default class Card extends AbstractCard
         case CardScoreType.Trap:
             this.setPowerUp(score),
             this.setLife(score);
+            this.changeStatus();
             break;
         case CardScoreType.Chest:
             break;
@@ -208,12 +167,33 @@ export default class Card extends AbstractCard
         }
     }
 
+    
+    //=====================================
+    // 设置 血量、能量 和对应视图
+    //-------------------------------------
+
+    
+    /** 获取，血量 */
+    getLife() 
+    {
+        return this.lifeAmount
+    }
+
+    /** 获取，能量 */
+    getPowerUp() 
+    {
+        return this.powerUpAmount
+    }
+
+
+    /** 修改，能量 */
     setPowerUp(val: number) 
     {
         this.powerUpAmount = val,
         this.setPowerUpText()
     }
 
+    /** 修改，血量 */
     setLife(val?: number) 
     {
         if(val != undefined)
@@ -223,50 +203,68 @@ export default class Card extends AbstractCard
         this.setHealthText()
     }
 
+    /** 设置视图, 血量 */
     setHealthText() 
     {
-        this.view.setHealthText();
+        if(this.isDisplayLife())
+        {
+            this.view.setHealthText();
+        }
     }
 
+    /** 设置视图, 能量 */
     setPowerUpText() 
     {
-        this.view.setPowerUpText();
+        if(!this.isDisplayLife())
+        {
+            this.view.setPowerUpText();
+        }
     }
 
 
-
-
-    open(): Laya.Tween
+    /** tween更新视图 -- 能量 */
+    increasePowerUpTween() 
     {
-        return null;
+        var tweenContainer = this.view.tweenPowerUp();
+        tweenContainer.restart();
     }
+
+    /** tween更新视图 -- 血量 */
+    increaseLifeTween() 
+    {
+        var tweenContainer = this.view.tweenLife();
+        tweenContainer.restart();
+    }
+
+    
+    /** 乘倍数， 血量  */
+    increaseLife(mul) 
+    {
+        this.setLife(this.lifeAmount * mul);
+        this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * mul);
+    }
+
+    /** 乘倍数， 能量  */
+    increasePowerUp(mul) 
+    {
+        this.setPowerUp(this.powerUpAmount * mul)
+    }
+
+
 
     
     //=====================================
     // 抽象方法
     //-------------------------------------
 
-
-    /** 刷新步骤 */
-    stepUpdate() 
-    {
-        if (this.isTrap) 
-        {
-            var isOpened = this.changeStatus();
-            var isGrun = GameStatus.currentHero == HeroType.Gun;
-            this.lifeAmount = isGrun ? 0 : isOpened ? this.powerUpAmount: 0;
-            this.setHealthText()
-        }
-        this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
-        this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
-        this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
-    }
     
     /** 是否是坏牌 */
     isNegative(): boolean
     {
         switch (this.type) 
         {
+            case CardScoreType.Boss:
+            case CardScoreType.Enemy:
             case CardScoreType.Trap:
             case CardScoreType.Bomb:
             case CardScoreType.Poison:
@@ -285,6 +283,20 @@ export default class Card extends AbstractCard
             case CardScoreType.None:
                 return false;
         }
+    }
+    
+    /** 是否显示生命 */
+    isDisplayLife(): boolean
+    {
+        switch(this.type)
+        {
+            case CardScoreType.Boss:
+            case CardScoreType.Enemy:
+            case CardScoreType.Trap:
+            case CardScoreType.Poison:
+                return true;
+        }
+        return false;
     }
 
     /** 获取分数 */
@@ -322,15 +334,64 @@ export default class Card extends AbstractCard
         if(this.powerUpAmount > 0)
         {
             this.powerUpAmount = this.powerUpAmount + score;
-            setTimeout(this.increasePowerUpTween.bind(this), delay);
+            if(!this.isDisplayLife())
+            {
+                setTimeout(this.increasePowerUpTween.bind(this), delay);
+            }
         }
 
         if(this.lifeAmount > 0)
         {
             this.lifeAmount = this.lifeAmount + score;
-            setTimeout(this.increaseLifeTween.bind(this), delay);
+            if(this.isDisplayLife())
+            {
+                setTimeout(this.increaseLifeTween.bind(this), delay);
+            }
         }
         
+    }
+
+
+
+    /** 刷新步骤 */
+    stepUpdate() 
+    {
+        if (this.isTrap) 
+        {
+            var isOpened = this.changeStatus();
+            var isGrun = GameStatus.currentHero == HeroType.Gun;
+            this.lifeAmount = isGrun ? 0 : isOpened ? this.powerUpAmount: 0;
+            this.setHealthText()
+        }
+        this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
+        this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
+        this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
+    }
+    
+    //=====================================
+    // 状态
+    //-------------------------------------
+
+    /** 改变状态, 桥 */
+    changeStatus()
+    {
+        if(this.isOpen)
+        {
+            this.view.setClose()
+            this.isOpen = false;
+        }
+        else
+        {
+            this.view.setOpen()
+            this.isOpen = true;
+        }
+        return this.isOpen;
+    }
+
+    
+    open(): Laya.Tween
+    {
+        return null;
     }
 
 

@@ -3,6 +3,6 @@
   <displayList>
     <image id="n6_sqzy" name="icon" src="sqzy23" fileName="sprite/game1/bomb0000.png" xy="64,80"/>
     <movieclip id="n7_sqzy" name="fx" src="sqzy9q" fileName="Fx/MVBombFlame.jta" xy="140,73"/>
-    <component id="n2_sqzy" name="life" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="4,173"/>
+    <component id="n2_sqzy" name="life" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="36,204"/>
   </displayList>
 </component>

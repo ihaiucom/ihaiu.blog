@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="209,229" pivot="0.5,0.5" anchor="true">
-  <controller name="state" exported="true" pages="0,Close,1,Open" selected="1"/>
+  <controller name="state" exported="true" pages="0,Close,1,Open" selected="0"/>
   <displayList>
-    <loader id="n6_sqzy" name="icon" xy="104,114" pivot="0.5,0.5" anchor="true" size="181,184" url="ui://moe42ygrsqzy30" align="center" vAlign="middle" autoSize="true">
+    <loader id="n6_sqzy" name="icon" xy="104,114" pivot="0.5,0.5" anchor="true" size="130,115" url="ui://moe42ygrsqzy2z" align="center" vAlign="middle" autoSize="true">
       <gearIcon controller="state" pages="1" values="ui://moe42ygrsqzy30" default="ui://moe42ygrsqzy2z"/>
     </loader>
-    <component id="n2_sqzy" name="life" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="4,173"/>
+    <component id="n2_sqzy" name="life" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="36,204"/>
   </displayList>
 </component>

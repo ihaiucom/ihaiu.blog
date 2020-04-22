@@ -29,11 +29,13 @@ export default class PanelPopupChest extends PanelPopupChestStruct
 
         this.visible = true;
         this.alpha = 0;
+        Laya.Tween.clearAll(this)
         Laya.Tween.to(this, {alpha: 1}, 200)
     }
 
     Close()
     {
+        this.m_lock.OnClose();
         Laya.Tween.to(this, {alpha: 0}, 200, null, Laya.Handler.create(this, ()=>{
             this.visible = false;
         }))

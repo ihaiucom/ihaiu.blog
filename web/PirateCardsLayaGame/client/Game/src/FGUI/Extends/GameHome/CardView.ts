@@ -24,6 +24,7 @@ import WarGame from "../../../War/WarGame";
 import Hero from "../../../War/Logics/Hero";
 import Game from "../../../Game";
 import AbstractCard from "../../../War/Logics/AbstractCard";
+import { CardScoreType } from "../../../War/Enums/CardScoreType";
 
 export default class CardView extends CardViewStruct
 {
@@ -232,8 +233,7 @@ export default class CardView extends CardViewStruct
         }
         else
         {
-            var card: Card = <Card> this.card;
-            (<CardViewFrontHero>this.front).m_life.title = card.lifeAmount.toString();
+            this.setPowerUpText();
         }
 
     }
@@ -242,7 +242,17 @@ export default class CardView extends CardViewStruct
     setPowerUpText()
     {
         var card: Card = <Card> this.card;
-        (<CardViewFrontHero>this.front).m_life.title = card.powerUpAmount.toString();
+        if(card.isDisplayLife())
+        {
+            console.log("setHealthText",  card.type, card.lifeAmount);
+            (<CardViewFrontHero>this.front).m_life.title = card.lifeAmount.toString();
+        }
+        else
+        {
+            console.log("setPowerUpText",  card.type, card.powerUpAmount);
+            (<CardViewFrontHero>this.front).m_life.title = card.powerUpAmount.toString();
+        }
+
     }
 
     private preArmor = -1;
@@ -308,7 +318,7 @@ export default class CardView extends CardViewStruct
     {
         if(this.card.isTrap)
         {
-            (<CardViewFrontWarriowTrap>this.front).m_DoOpen.play();
+            (<CardViewFrontWarriowTrap>this.front).SetOpen();
         }
     }
 
@@ -316,7 +326,7 @@ export default class CardView extends CardViewStruct
     {
         if(this.card.isTrap)
         {
-            (<CardViewFrontWarriowTrap>this.front).m_DoClose.play();
+            (<CardViewFrontWarriowTrap>this.front).SetClose();
         }
     }
 

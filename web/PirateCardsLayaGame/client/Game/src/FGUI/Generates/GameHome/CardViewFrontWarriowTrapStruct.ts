@@ -8,7 +8,6 @@ import CardViewFrontWarriowTrap from "../../Extends/GameHome/CardViewFrontWarrio
 
 export default class CardViewFrontWarriowTrapStruct extends fgui.GButton
 {
-	public m_state : fgui.Controller;
 	public m_DoClose : fgui.Transition;
 	public m_DoOpen : fgui.Transition;
 	public m_icon : fgui.GLoader;
@@ -35,7 +34,6 @@ export default class CardViewFrontWarriowTrapStruct extends fgui.GButton
 	{
 		super.constructFromXML(xml);
 		
-		this.m_state = this.getController("state");
 
 		
 		this.m_icon = <fgui.GLoader><any>(this.getChild("icon"));

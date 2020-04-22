@@ -55,7 +55,7 @@ export default class Hero extends Card
             this.currentLife -= card.getScore();
             break;
         case CardScoreType.Horseshoe:
-            fightResult.isNeedIncreaseLifeByOne = !0;
+            fightResult.isNeedIncreaseLifeByOne = true;
             break;
         case CardScoreType.Bomb:
             break;

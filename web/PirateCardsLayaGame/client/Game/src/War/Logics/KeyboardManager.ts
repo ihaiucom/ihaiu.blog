@@ -98,8 +98,19 @@ export default class keyboardManager
 
     OnClickCard(card: Card)
     {
+        if(card.isEmpty || card.isHero)
+        {
+            return;
+        }
+
         var heroPosition = this.game.field.field.findHeroPosition();
         var position = this.game.field.field.findPosition(card);
+
+        if(!position)
+        {
+            console.error("OnClickCard position=null", card.type)
+            return;
+        }
 
         if(heroPosition.row == position.row)
         {

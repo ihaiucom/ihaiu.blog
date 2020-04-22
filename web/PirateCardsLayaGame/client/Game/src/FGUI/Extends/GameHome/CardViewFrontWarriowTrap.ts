@@ -31,4 +31,15 @@ export default class CardViewFrontWarriowTrap extends CardViewFrontWarriowTrapSt
         this.cardConfig = null;
         this.card = null;
     }
+
+    SetOpen()
+    {
+        this.m_DoOpen.play();
+    }
+
+    SetClose()
+    {
+        this.m_DoClose.play();
+    }
+
 }
