@@ -9,7 +9,6 @@ import ShopCard from "../../Extends/GameHome/ShopCard";
 
 export default class ShopCardStruct extends fgui.GComponent
 {
-	public m_ShopType : fgui.Controller;
 	public m_back : ShopCardBack;
 	public m_front : ShopCardFront;
 
@@ -34,7 +33,6 @@ export default class ShopCardStruct extends fgui.GComponent
 	{
 		super.constructFromXML(xml);
 		
-		this.m_ShopType = this.getController("ShopType");
 
 		
 		this.m_back = <ShopCardBack><any>(this.getChild("back"));

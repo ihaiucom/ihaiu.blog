@@ -375,10 +375,30 @@
         }
     }
 
+    class RandomHelper {
+        static getRandomIntInclusive(min, max) {
+            return min = Math.ceil(min),
+                max = Math.floor(max),
+                Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        static getRandomBool() {
+            return Math.random() > 0.5;
+        }
+        static shuffle(list) {
+            for (var e, i, o = list.length; 0 !== o;)
+                i = Math.floor(Math.random() * o),
+                    e = list[o -= 1],
+                    list[o] = list[i],
+                    list[i] = e;
+            return list;
+        }
+    }
+
     class SoundController {
         static get instance() {
             if (!this._instance) {
                 this._instance = new SoundController();
+                Laya.SoundManager.musicVolume = 0.1;
             }
             return this._instance;
         }
@@ -387,6 +407,9 @@
         }
         changeSoundState() {
             Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = !Laya.SoundManager.soundMuted;
+            if (!Laya.SoundManager._musicMuted) {
+                this.playMusic();
+            }
         }
         playSound(key) {
             if (Laya.SoundManager.soundMuted) {
@@ -394,6 +417,20 @@
             }
             var path = `res/sounds/mp3/${key}.mp3`;
             Laya.SoundManager.playSound(path, 1);
+        }
+        playMusic() {
+            if (Laya.SoundManager._musicMuted) {
+                return;
+            }
+            Laya.timer.clearAll(this);
+            var c = Laya.SoundManager.playMusic(`res/sounds/music/music0${RandomHelper.getRandomIntInclusive(1, 5)}.mp3`, 1, Laya.Handler.create(this, this.onPlayMusicEnd), 0);
+            if (c) {
+                c.volume = 0.1;
+            }
+        }
+        onPlayMusicEnd() {
+            Laya.timer.clearAll(this);
+            Laya.timer.once(100, this, this.playMusic);
         }
     }
 
@@ -1085,7 +1122,19 @@
                 heroView.m_shopBar.useLuck();
             }
         }
-        increaseLifeByOneTween() {
+        useHeart() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                var heroView = this.front;
+                heroView.m_shopBar.useHeart();
+            }
+        }
+        refreshShopBar() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                var heroView = this.front;
+                heroView.m_shopBar.refresh();
+            }
         }
         setOpen() {
             if (this.card.isTrap) {
@@ -1131,7 +1180,7 @@
 
     class ItemConfig extends ItemConfigLang {
         get itemToolType() {
-            return this.id % 100 - 0;
+            return this.id % 100 - 1;
         }
         get spriteIndex() {
             return this.itemToolType;
@@ -2780,7 +2829,6 @@
                                             list = [];
                                             this.tabCtrlViewsMap.set(tabIndex, list);
                                         }
-                                        console.log(tabIndex, obj.name);
                                         list.push(obj);
                                     }
                                 }
@@ -4542,25 +4590,6 @@
         }
     }
 
-    class RandomHelper {
-        static getRandomIntInclusive(min, max) {
-            return min = Math.ceil(min),
-                max = Math.floor(max),
-                Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-        static getRandomBool() {
-            return Math.random() > 0.5;
-        }
-        static shuffle(list) {
-            for (var e, i, o = list.length; 0 !== o;)
-                i = Math.floor(Math.random() * o),
-                    e = list[o -= 1],
-                    list[o] = list[i],
-                    list[i] = e;
-            return list;
-        }
-    }
-
     class FxShootLightningBig extends FxShootLightningBigStruct {
         static PoolGet() {
             var item = Pool.getItem(this.URL);
@@ -4618,7 +4647,7 @@
             Pool.recoverByClass(this);
         }
         reset() {
-            this.view.setXY(-300, -400);
+            this.view.setXY(-200, -200);
             this.view.setScale(1, 1);
         }
         SetEmpty() {
@@ -4651,9 +4680,11 @@
         setCoordinate(point) {
             this.game.container.addChild(this.view);
             this.view.setXY(point.x, point.y);
+            this.view.alpha = 1;
         }
         moveTo(point, time) {
             this.game.container.addChild(this.view);
+            point.alpha = 1;
             return TweenUtil.to(this.view, point, time);
         }
         getCenterX() {
@@ -4725,6 +4756,10 @@
     }
 
     class NullCard extends AbstractCard {
+        reset() {
+            super.reset();
+            this.view.alpha = 0;
+        }
         stepUpdate() {
         }
         isNegative() {
@@ -5168,131 +5203,6 @@
         }
     }
 
-    class ArtConsts {
-    }
-    ArtConsts.Items1 = "Items1";
-    ArtConsts.Items2 = "Items2";
-    ArtConsts.Barrel = "Barrel";
-    ArtConsts.Background = "background";
-    ArtConsts.BackgroundMenu = "backgroundMenu";
-    ArtConsts.BackgroundPause = "backgroundPause";
-    ArtConsts.FamobiLogo = "famobiLogo";
-    ArtConsts.PauseLogo = "PauseLogo";
-    ArtConsts.Skull = "skull";
-    ArtConsts.SkullLight = "skull_light";
-    ArtConsts.MenuStar = "menuStar";
-    ArtConsts.MenuLogo = "menuLogo";
-    ArtConsts.Loading = "loading";
-    ArtConsts.ChoiceBackground = "choiceBackground";
-    ArtConsts.Lock = "lock";
-    ArtConsts.CoinPanel = "coinPanel";
-    ArtConsts.ThreeXThree = "ThreeXThree";
-    ArtConsts.FourXFour = "FourXFour";
-    ArtConsts.CardBackground = "cardBackrounds";
-    ArtConsts.NoAccess = "noAccess";
-    ArtConsts.Boss = "boss";
-    ArtConsts.Enemy = "enemy";
-    ArtConsts.Shield = "shields";
-    ArtConsts.CardLifeCircle = "cardLifeCircle";
-    ArtConsts.CardPowerUpCircle = "cardPowerUpCircle";
-    ArtConsts.SmallRing = "smallRing";
-    ArtConsts.BigRing = "bigRing";
-    ArtConsts.Hero = "hero";
-    ArtConsts.HeroBomb = "heroBomb";
-    ArtConsts.HeroKey = "heroKey";
-    ArtConsts.HeroGun = "heroGun";
-    ArtConsts.Health = "health";
-    ArtConsts.Coin = "coin";
-    ArtConsts.CoinBag = "coinBag";
-    ArtConsts.Cannon = "cannon";
-    ArtConsts.BombFlame = "bomb_flame";
-    ArtConsts.GameStatusPanel = "menuPanel";
-    ArtConsts.SmallBtnBackground = "smallBtnBackground";
-    ArtConsts.BigBtnBackground = "bigBtnBackground";
-    ArtConsts.SoundBtn = "soundBtn";
-    ArtConsts.PauseBtn = "pauseBtn";
-    ArtConsts.HomeBtn = "homeBtn";
-    ArtConsts.HomeSmallBtn = "homeBtnSmall";
-    ArtConsts.GroupBtn = "groupBtn";
-    ArtConsts.NextBtn = "nextBtn";
-    ArtConsts.PrevBtn = "prevBtn";
-    ArtConsts.PlayBtn = "playBtn";
-    ArtConsts.PlusBtn = "plusBtn";
-    ArtConsts.ResumeBtn = "resumeBtn";
-    ArtConsts.SettingsBtn = "settingsBtn";
-    ArtConsts.ControlBtn = "controlBtn";
-    ArtConsts.AdvPlayBtn = "advPlayBtn";
-    ArtConsts.IBtn = "iBtn";
-    ArtConsts.Shadow = "shadow";
-    ArtConsts.ShopItemBackground = "shopItemBackground";
-    ArtConsts.BigHeart = "heartBig";
-    ArtConsts.BigHorseshoe = "horseshoeBig";
-    ArtConsts.BigLuck = "luckBig";
-    ArtConsts.Key2 = "key2";
-    ArtConsts.Key3 = "key3";
-    ArtConsts.Key4 = "key4";
-    ArtConsts.SmallHeart = "heartSmall";
-    ArtConsts.SmallHorseshoe = "horseshoeSmall";
-    ArtConsts.SmallLuck = "luckSmall";
-    ArtConsts.SmallKey = "key_small";
-    ArtConsts.Medal = "medal";
-    ArtConsts.Trap = "trap";
-    ArtConsts.Chest = "chest";
-    ArtConsts.LockBody = "lockBody";
-    ArtConsts.LockBridge = "lockBridge";
-    ArtConsts.LockSwitch = "lockSwitch";
-    ArtConsts.LockArrow = "lockArrow";
-    ArtConsts.LockRod = "lockRod";
-    ArtConsts.LockDoubleRod = "lockDoubleRod";
-    ArtConsts.LockBomb = "lockBomb";
-    ArtConsts.LockBombLamp = "lockBombLamp";
-    ArtConsts.LockFixedRod = "lockFixedRod";
-    ArtConsts.LockDoubleFixedRod = "lockDoubleFixedRod";
-    ArtConsts.MouseClick = "mouse_click";
-    ArtConsts.Core = "core";
-    ArtConsts.Smoke1 = "smoke_1";
-    ArtConsts.Smoke2 = "smoke_2";
-    ArtConsts.Smoke3 = "smoke_3";
-    ArtConsts.Smoke4 = "smoke_4";
-    ArtConsts.Smoke5 = "smoke_5";
-    ArtConsts.Bomb = "bomb";
-    ArtConsts.Poison = "poison";
-    ArtConsts.Boom = "boom";
-    ArtConsts.Lightning = "lightning";
-    ArtConsts.BigLightning = "lightning_1";
-    ArtConsts.SmallLightning = "lightning_2";
-    ArtConsts.Multiplier2 = "multiplier2";
-    ArtConsts.Multiplier3 = "multiplier3";
-    ArtConsts.Dust = "dust";
-    ArtConsts.BarrelIronDot = "barrelIronDot";
-    ArtConsts.BarrelIron = "barrelIron";
-    ArtConsts.BarrelCircleDark = "barrelCircleDark";
-    ArtConsts.BarrelCircleLight = "barrelCircleLight";
-    ArtConsts.BarrelBoardRight1 = "barrelBoardRight1";
-    ArtConsts.BarrelBoardRight2 = "barrelBoardRight2";
-    ArtConsts.BarrelBoard1 = "barrelBoard1";
-    ArtConsts.BarrelBoard2 = "barrelBoard2";
-    ArtConsts.BarrelBoard3 = "barrelBoard3";
-    ArtConsts.BarrelBoard4 = "barrelBoard4";
-    ArtConsts.BarrelBoard5 = "barrelBoard5";
-    ArtConsts.BarrelBoard6 = "barrelBoard6";
-    ArtConsts.BarrelBoard7 = "barrelBoard7";
-    ArtConsts.BarrelBoard8 = "barrelBoard8";
-    ArtConsts.BarrelBoard9 = "barrelBoard9";
-    ArtConsts.BarrelBoard10 = "barrelBoard10";
-    ArtConsts.BarrelBoardStraight1 = "barrelBoardStraight1";
-    ArtConsts.BarrelBoardStraight2 = "barrelBoardStraight2";
-    ArtConsts.Enemy9Vane = "enemy_9_vane";
-    ArtConsts.Enemy9Pipe = "enemy_9_pipe";
-    ArtConsts.TurnsToBoss = "turnsToBoss";
-    ArtConsts.CheckMark = "check";
-    ArtConsts.Arm = "arm";
-    ArtConsts.MoreGames = "more_games";
-    ArtConsts.BigPlayBtn = "bigPlayBtn";
-    ArtConsts.AdvPanel = "advPanel";
-    ArtConsts.Smile = "smile";
-    ArtConsts.NoIcon = "noIcon";
-
     class Hero extends AbstractCard {
         constructor() {
             super(...arguments);
@@ -5421,50 +5331,27 @@
             this.needRunLightning = true,
                 this.lightningScore = score;
         }
-        setShopItemsStatus() {
-        }
-        addSpriteByName(e, i, o, n) {
-            void 0 === o && (o = 0),
-                void 0 === n && (n = 1);
-            var s = 38 * i - .5 * Consts.CardWidth, a = t.ShapeFactoryHelper.getShape(this.game, s, 80, ArtConsts.Items1, e, 0);
-            a.name = e,
-                a.angle = o,
-                a.scale.set(n),
-                this.view.add(a);
-        }
-        destroySpriteByName(t) {
-            var e = this.view.getByName(t);
-            e && e.destroy();
-        }
         fightWithEnemy(card) {
             if (card.getScore() >= this.armor + this.currentLife)
-                return !1;
-            if (card.getScore() <= this.armor)
-                card.getScore() < this.armor && GameStatus.currentHero == HeroType.Base ? this.armor -= 1 : this.armor -= card.getScore();
+                return false;
+            if (card.getScore() <= this.armor) {
+                if (card.getScore() < this.armor && GameStatus.currentHero == HeroType.Base) {
+                    this.armor -= 1;
+                }
+                else {
+                    this.armor -= card.getScore();
+                }
+            }
             else if (this.armor > 0) {
                 var i = card.getScore() - this.armor;
-                this.armor = 0,
-                    this.currentLife -= i;
+                this.armor = 0;
+                this.currentLife -= i;
             }
-            else
+            else {
                 this.currentLife -= card.getScore();
-            return GameStatus.addGold(card.getScore()),
-                !0;
-        }
-        useHeart() {
-            var e = this.view.getByName(ArtConsts.SmallHeart);
-            this.view.bringToTop(e);
-            SoundController.instance.playSound(SoundConsts.Revive),
-                e.animations.add("explode", Phaser.Animation.generateFrameNames(ArtConsts.SmallHeart, 0, 16, "", 4), 30, !1, !1),
-                this.game.add.tween(e.scale).to({
-                    x: 1,
-                    y: 1
-                }, 100, null, !0).onComplete.add(function () {
-                    var t = e.animations.play("explode", 60, !1, !1);
-                    t.onComplete.add(this.setStatus, this),
-                        t.onComplete.add(this.setShopItemsStatus, this);
-                }, this),
-                this.currentLife = this.totalLife;
+            }
+            GameStatus.addGold(card.getScore());
+            return true;
         }
         increaseLifeByOneTween() {
             var tweenContainer = this.view.tweenLife();
@@ -5479,10 +5366,6 @@
             this.currentLife++,
                 this.totalLife++,
                 this.setLife();
-        }
-        useLuck() {
-            GameStatus.isLuck = false;
-            this.view.useLuck();
         }
         stepUpdate() {
         }
@@ -5527,6 +5410,22 @@
         }
         setArmorFrame(card) {
             this.view.setArmor();
+        }
+        setShopItemsStatus() {
+            this.view.refreshShopBar();
+        }
+        useLuck() {
+            this.view.useLuck();
+            GameStatus.isLuck = false;
+        }
+        useHeart() {
+            GameStatus.isHeroAlive = true;
+            this.currentLife = this.totalLife;
+            this.view.useHeart();
+            setTimeout(() => {
+                this.setStatus();
+                this.setShopItemsStatus();
+            }, 200);
         }
     }
 
@@ -7163,8 +7062,13 @@
             this.container.setScale(0.5, 0.5);
         }
         launch() {
-            GameStatus.init(),
-                this.stageClickFx.install();
+            GameStatus.init();
+            this.container.width = GameStatus.ColumnCount * Consts.CardWidth + (GameStatus.ColumnCount - 1) * Consts.CardSpaceBetweenWidth;
+            this.container.height = GameStatus.RowCount * Consts.CardHeight + (GameStatus.RowCount - 1) * Consts.CardSpaceBetweenHeight;
+            var defaultWidth = 3 * Consts.CardWidth + (3 - 1) * Consts.CardSpaceBetweenWidth;
+            var scale = defaultWidth / this.container.width;
+            this.container.setScale(scale, scale);
+            this.stageClickFx.install();
             this.keyboardManager.StartListenKeyboard();
             this.animationQueue = this.field.initField();
             Laya.timer.frameLoop(1, this, this.update);
@@ -7257,6 +7161,7 @@
             this.isPause = false;
         }
         setGameEnd() {
+            GameStatus.resetShop();
             GameStatus.isGameEnd = true;
             War.exit();
         }
@@ -7316,8 +7221,8 @@
                     this.chestOpened();
                 }
                 else if (GameStatus.isKey) {
-                    this.field.getHero().setShopItemsStatus();
                     this.chestOpened();
+                    this.field.getHero().setShopItemsStatus();
                 }
                 else {
                     this.openChestPopUp();
@@ -8088,7 +7993,7 @@
             return this.developWidth / this.developHeight;
         }
         get isLandsape() {
-            return this.screenWidth > this.screenHeight;
+            return this.developWidth > this.developHeight;
         }
         get screenWidth() {
             return Laya.stage.width;
@@ -8152,7 +8057,14 @@
             return Math.min(this.screenScaleX, this.screenScaleY);
         }
         get screenScaleShrinkMax() {
-            return Math.max(this.screenScaleX, this.screenScaleY);
+            let rate = 1;
+            if (this.screenAspect <= this.developAspect) {
+                rate = this.screenHeight / this.developHeight;
+            }
+            else {
+                rate = this.screenWidth / this.developWidth;
+            }
+            return rate;
         }
     }
 
@@ -9318,7 +9230,6 @@
             config.resAtlas.push("GameHome_atlas0.png");
             config.resAtlas.push("GameHome_atlas_sqzy0.jpg");
             config.resAtlas.push("GameHome_atlas_sqzy1.jpg");
-            config.resAtlas.push("GameHome_atlas_sqzy15.png");
             config.sounds.push("GameHome_sqzy7p.mp3");
             this.addconfig(config);
             config = new GuiResPackageConfig();
@@ -10881,13 +10792,11 @@
         hasNext() {
             var index = this.list.indexOf(this.selectHero);
             index++;
-            console.log(index);
             return index < this.list.length;
         }
         hasPrev() {
             var index = this.list.indexOf(this.selectHero);
             index--;
-            console.log(index);
             return index >= 0;
         }
         getNextItem() {
@@ -10941,6 +10850,13 @@
         }
         set isGeted(val) {
             Game.moduleModel.item.setGameStatusVal(this.itemConfig.itemToolType, val);
+        }
+        get enabelBuy() {
+            return this.itemConfig.coin <= GameStatus.gold;
+        }
+        buy() {
+            this.isGeted = true;
+            GameStatus.gold -= this.itemConfig.coin;
         }
     }
 
@@ -14776,10 +14692,8 @@
             this.m_btnBar.m_soundBtn.SetSoundBtnState();
         }
         onTabShow() {
-            console.log("PanelMainMenu onTabShow");
         }
         onTabHide() {
-            console.log("PanelMainMenu onTabHide");
         }
         OnClickPlayBtn() {
             Game.menu.openTab(MenuId.Home, HomeTabType.ChooseHero);
@@ -14872,11 +14786,9 @@
         onWindowShow() {
         }
         onTabShow() {
-            console.log("PanelChooseHero onTabShow");
             this.SetData();
         }
         onTabHide() {
-            console.log("PanelChooseHero onTabHide");
         }
         SetBtnState(isPlay = true) {
             if (isPlay) {
@@ -14956,7 +14868,6 @@
         }
         onTabShow() {
             this.OnGoldChange();
-            console.log("MenuTopPanel onTabShow");
         }
         OnOpenTab(openIndex) {
             this.visible = openIndex > HomeTabType.MenuMenu;
@@ -15158,7 +15069,6 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
-            this.m_ShopType = this.getController("ShopType");
             this.m_back = (this.getChild("back"));
             this.m_front = (this.getChild("front"));
         }
@@ -15167,7 +15077,8 @@
     ShopCardStruct.DependPackages = ["GameHome"];
 
     class ShopCard extends ShopCardStruct {
-        onWindowInited() {
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
             this.m_front.m_infoBtn.onClick(this, this.ShowBack);
             this.m_back.m_backBtn.onClick(this, this.ShowFront);
         }
@@ -15175,6 +15086,7 @@
             this.itemData = itemData;
             this.m_front.m_ShopType.setSelectedIndex(itemData.itemConfig.spriteIndex);
             this.m_back.m_ShopType.setSelectedIndex(itemData.itemConfig.spriteIndex);
+            this.m_front.SetData(itemData);
             this.SetFront();
         }
         ShowBack() {
@@ -15249,11 +15161,9 @@
         onWindowShow() {
         }
         onTabShow() {
-            console.log("PanelShop onTabShow");
             this.refreshList();
         }
         onTabHide() {
-            console.log("PanelShop onTabHide");
         }
         OnClickPlayBtn() {
             Game.menu.openTab(MenuId.Home, HomeTabType.ChooseGameFormat);
@@ -15279,14 +15189,16 @@
 
     class PanelChooseGameFormat extends PanelChooseGameFormatStruct {
         onWindowInited() {
+            this.m_format4x4.isFourXFour = true;
+            this.m_format4x4.ColumnCount = 4;
+            this.m_format4x4.RowCount = 4;
+            this.m_format4x4.coin = 700;
         }
         onWindowShow() {
         }
         onTabShow() {
-            console.log("PanelChooseGameFormat onTabShow");
         }
         onTabHide() {
-            console.log("PanelChooseGameFormat onTabHide");
         }
         OnClickPlayBtn() {
             Game.menu.open(MenuId.War);
@@ -15318,18 +15230,33 @@
     GameFormatCardStruct.DependPackages = ["GameHome"];
 
     class GameFormatCard extends GameFormatCardStruct {
+        constructor() {
+            super(...arguments);
+            this.isFourXFour = false;
+            this.ColumnCount = 3;
+            this.RowCount = 3;
+            this.coin = 0;
+        }
         onWindowInited() {
             this.m_playBtn.onClick(this, this.OnClickPlayBtn);
             this.m_plusBtn.onClick(this, this.OnClickPlusBtn);
-            this.SetBtnState(true);
         }
         onWindowShow() {
         }
         onTabShow() {
-            console.log("PanelMainMenu onTabShow");
+            this.SetData();
         }
         onTabHide() {
-            console.log("PanelMainMenu onTabHide");
+        }
+        SetData() {
+            var isLock = false;
+            if (this.isFourXFour) {
+                isLock = !GameStatus.isFourXFour;
+            }
+            this.SetBtnState(!isLock);
+            this.m_lock.visible = isLock;
+            this.m_coinText.text = this.coin + "";
+            this.m_coinGroup.visible = isLock;
         }
         SetBtnState(isPlay = true) {
             if (isPlay) {
@@ -15337,14 +15264,19 @@
                 this.m_playBtn.visible = true;
             }
             else {
-                this.m_plusBtn.visible = true;
                 this.m_playBtn.visible = false;
+                this.m_plusBtn.visible = this.coin <= GameStatus.gold;
             }
         }
         OnClickPlayBtn() {
+            GameStatus.ColumnCount = this.ColumnCount;
+            GameStatus.RowCount = this.RowCount;
             Game.menu.open(MenuId.War);
         }
         OnClickPlusBtn() {
+            GameStatus.gold -= this.coin;
+            GameStatus.isFourXFour = true;
+            this.SetData();
         }
     }
 
@@ -15392,18 +15324,19 @@
     ShopCardFrontStruct.DependPackages = ["GameHome"];
 
     class ShopCardFront extends ShopCardFrontStruct {
-        onWindowInited() {
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
             this.m_plusBtn.onClick(this, this.OnClosePlusBtn);
         }
         SetData(itemData) {
             this.itemData = itemData;
             this.m_coinText.text = itemData.itemConfig.coin + "";
             var isGeted = itemData.isGeted;
-            this.m_plusBtn.visible = !isGeted;
             this.m_hasFlag.visible = isGeted;
+            this.m_plusBtn.visible = !isGeted && itemData.enabelBuy;
         }
         OnClosePlusBtn() {
-            this.itemData.isGeted = true;
+            this.itemData.buy();
             this.SetData(this.itemData);
         }
     }
@@ -15507,11 +15440,9 @@
             this.m_playBtn.onClick(this, this.OnClickPlayBtn);
         }
         onTabShow() {
-            console.log("PanelResult onTabShow");
             this.SetData();
         }
         onTabHide() {
-            console.log("PanelResult onTabHide");
         }
         SetData() {
             this.m_coinCurrent.text = GameStatus.goldPerGame + "";
@@ -15673,14 +15604,46 @@
     CardShopBarStruct.DependPackages = ["GameHome"];
 
     class CardShopBar extends CardShopBarStruct {
+        constructor() {
+            super(...arguments);
+            this.shopList = [];
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.shopList.push(this.m_shopHeart);
+            this.shopList.push(this.m_shopKey);
+            this.shopList.push(this.m_shopLock);
+            this.shopList.push(this.m_shopHorseshoe);
+        }
         useLuck() {
+            TweenHelper.spriteHide(this.m_shopLock);
             this.m_shopHeart.visible = false;
+            Laya.timer.once(800, this, this.refresh);
+        }
+        useHeart() {
+            this.m_fxHeart.x = this.m_shopHeart.x;
+            this.m_fxHeart.y = this.m_shopHeart.y;
             this.m_fxHeart.visible = true;
             this.m_fxHeart.frame = 1;
             this.m_fxHeart.playing = true;
-            Laya.timer.once(1000, this, this.refresh);
+            Laya.timer.once(2000, this, this.refresh);
         }
         refresh() {
+            this.m_shopHeart.visible = GameStatus.isHeart;
+            this.m_shopKey.visible = GameStatus.isKey;
+            this.m_shopLock.visible = GameStatus.isLuck;
+            this.m_shopHorseshoe.visible = false;
+            this.m_fxHeart.visible = false;
+            this.m_fxHeart.frame = 1;
+            this.m_fxHeart.playing = false;
+            var x = 0;
+            for (var i = 0, len = this.shopList.length; i < len; i++) {
+                var itemIcon = this.shopList[i];
+                if (itemIcon.visible) {
+                    itemIcon.x = x + itemIcon.width * 0.5;
+                    x += itemIcon.width + 3;
+                }
+            }
         }
     }
 
@@ -16415,6 +16378,9 @@
             Engine.stage.sResize.remove(this.setScreenSize, this);
         }
         setScreenSize() {
+            let rate = Game.screenSetting.screenScaleShrinkMax;
+            this.m_icon.scaleX = rate;
+            this.m_icon.scaleY = rate;
         }
     }
 
@@ -17131,8 +17097,9 @@
                 callback();
             }
             else {
-                Game.menu.open(MenuId.War);
+                Game.menu.open(MenuId.Home);
             }
+            SoundController.instance.playMusic();
         }
         loadVersion() {
             Laya.ResourceVersion.enable("version.json", Laya.Handler.create(this, this.onVersionLoaded), Laya.ResourceVersion.FILENAME_VERSION);

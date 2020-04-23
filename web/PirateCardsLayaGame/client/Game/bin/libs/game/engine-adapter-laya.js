@@ -102,7 +102,8 @@ var Engines;
         Object.defineProperty(Browser.prototype, "isLiuHai", {
             get: function () {
                 if (this._isLiuHai === undefined) {
-                    if (!this.isBrowser || this.isWXGame) {
+                    // if (!this.isBrowser || this.isWXGame) 
+                    {
                         if(window.innerWidth > window.innerHeight)
                         {
 

@@ -9,9 +9,9 @@ import TweenHelper from "../../../War/Utils/TweenHelper";
 
 export default class ShopCard extends ShopCardStruct
 {
-    // 窗口初始化完毕
-    onWindowInited(): void
-    {
+	protected constructFromXML(xml: any): void 
+	{
+		super.constructFromXML(xml);
         this.m_front.m_infoBtn.onClick(this, this.ShowBack);
         this.m_back.m_backBtn.onClick(this, this.ShowFront);
     }
@@ -25,6 +25,8 @@ export default class ShopCard extends ShopCardStruct
 
         this.m_front.m_ShopType.setSelectedIndex(itemData.itemConfig.spriteIndex);
         this.m_back.m_ShopType.setSelectedIndex(itemData.itemConfig.spriteIndex);
+
+        this.m_front.SetData(itemData);
 
         this.SetFront();
     }

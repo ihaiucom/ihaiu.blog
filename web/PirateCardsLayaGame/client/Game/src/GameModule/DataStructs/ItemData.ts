@@ -1,5 +1,6 @@
 import ItemConfig from "../../Config/ConfigExtends/ItemConfig";
 import Game from "../../Game";
+import GameStatus from "../../War/Datas/GameStatus";
 
 export default class ItemData
 {
@@ -14,6 +15,17 @@ export default class ItemData
     set isGeted(val: boolean)
     {
         Game.moduleModel.item.setGameStatusVal(this.itemConfig.itemToolType, val);
+    }
+
+    get enabelBuy()
+    {
+        return this.itemConfig.coin <= GameStatus.gold;
+    }
+
+    buy()
+    {
+        this.isGeted = true;
+        GameStatus.gold -= this.itemConfig.coin;
     }
 
     

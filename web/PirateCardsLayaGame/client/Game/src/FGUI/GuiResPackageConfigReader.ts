@@ -40,7 +40,6 @@ export default class GuiResPackageConfigReader
             config.resAtlas.push("GameHome_atlas0.png");
             config.resAtlas.push("GameHome_atlas_sqzy0.jpg");
             config.resAtlas.push("GameHome_atlas_sqzy1.jpg");
-            config.resAtlas.push("GameHome_atlas_sqzy15.png");
             config.sounds.push("GameHome_sqzy7p.mp3");
             this.addconfig(config)
 

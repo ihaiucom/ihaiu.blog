@@ -4,7 +4,7 @@
     <image id="n4_sqzy" name="shopHeart" src="sqzy3p" fileName="sprite/game1/heartSmall0000.png" xy="18,22" pivot="0.5,0.5" anchor="true"/>
     <image id="n5_sqzy" name="shopHorseshoe" src="sqzy4c" fileName="sprite/game1/horseshoeSmall0000.png" xy="53,21" pivot="0.5,0.5" anchor="true" size="34,34" aspect="true"/>
     <image id="n6_sqzy" name="shopLock" src="sqzy5u" fileName="sprite/game1/luckSmall0000.png" xy="85,21" pivot="0.5,0.5" anchor="true"/>
-    <image id="n7_sqzy" name="shopKey" src="sqzy4j" fileName="sprite/game1/key_small0000.png" xy="94,1"/>
-    <movieclip id="n8_sqzy" name="fxHeart" src="sqzy9i" fileName="Fx/MVHeartSmall.jta" xy="18,22" pivot="0.5,0.5" anchor="true" hideByEditor="true" visible="false" playing="false"/>
+    <image id="n7_sqzy" name="shopKey" src="sqzy4j" fileName="sprite/game1/key_small0000.png" xy="111,21" pivot="0.5,0.5" anchor="true"/>
+    <movieclip id="n8_sqzy" name="fxHeart" src="sqzy9i" fileName="Fx/MVHeartSmall.jta" xy="18,22" pivot="0.5,0.5" anchor="true" locked="true" visible="false" playing="false"/>
   </displayList>
 </component>

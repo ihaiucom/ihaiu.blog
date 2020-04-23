@@ -2,6 +2,13 @@ import AbstractCard from "./AbstractCard";
 
 export default class NullCard extends AbstractCard
 {
+    /** 重置 */
+    reset()
+    {
+        super.reset();
+        this.view.alpha = 0;
+        
+    }
     
     /** 刷新步骤 */
     stepUpdate() 

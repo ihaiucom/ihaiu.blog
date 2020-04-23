@@ -7,9 +7,15 @@ import GameFormatCardStruct from "../../Generates/GameHome/GameFormatCardStruct"
 import HomeWindow from "../../../GameModule/ViewWindows/HomeWindow";
 import Game from "../../../Game";
 import { MenuId } from "../../../GameModule/MenuId";
+import GameStatus from "../../../War/Datas/GameStatus";
 
 export default class GameFormatCard extends GameFormatCardStruct
 {
+    isFourXFour: boolean = false;
+    ColumnCount = 3;
+    RowCount = 3;
+    coin = 0;
+
     // 窗口
     moduleWindow: HomeWindow;
 
@@ -18,7 +24,6 @@ export default class GameFormatCard extends GameFormatCardStruct
     {
         this.m_playBtn.onClick(this, this.OnClickPlayBtn);
         this.m_plusBtn.onClick(this, this.OnClickPlusBtn);
-        this.SetBtnState(true);
     }
 
     
@@ -31,14 +36,28 @@ export default class GameFormatCard extends GameFormatCardStruct
     // 该组件所在Tab 显示
     onTabShow(): void
     {
-        console.log("PanelMainMenu onTabShow");
+        this.SetData();
     }
 
     // 该组件所在Tab 隐藏
     onTabHide(): void
     {
-        console.log("PanelMainMenu onTabHide");
 
+    }
+
+    SetData()
+    {
+        var isLock = false;
+
+        if(this.isFourXFour)
+        {
+            isLock = !GameStatus.isFourXFour;
+        }
+        
+        this.SetBtnState(!isLock);
+        this.m_lock.visible = isLock;
+        this.m_coinText.text = this.coin + "";
+        this.m_coinGroup.visible = isLock;
     }
 
     
@@ -51,20 +70,25 @@ export default class GameFormatCard extends GameFormatCardStruct
         }
         else
         {
-            this.m_plusBtn.visible = true;
             this.m_playBtn.visible = false;
+            this.m_plusBtn.visible = this.coin <= GameStatus.gold;
         }
     }
 
 
     OnClickPlayBtn()
     {
+        GameStatus.ColumnCount = this.ColumnCount;
+        GameStatus.RowCount = this.RowCount;
         Game.menu.open(MenuId.War)
     }
 
     
     OnClickPlusBtn()
     {
+        GameStatus.gold -= this.coin;
+        GameStatus.isFourXFour = true;
+        this.SetData();
     }
 
 }

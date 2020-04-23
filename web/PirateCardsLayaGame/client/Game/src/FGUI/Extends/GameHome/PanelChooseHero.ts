@@ -44,14 +44,12 @@ export default class PanelChooseHero extends PanelChooseHeroStruct
     // 该组件所在Tab 显示
     onTabShow(): void
     {
-        console.log("PanelChooseHero onTabShow");
         this.SetData();
     }
 
     // 该组件所在Tab 隐藏
     onTabHide(): void
     {
-        console.log("PanelChooseHero onTabHide");
 
     }
 

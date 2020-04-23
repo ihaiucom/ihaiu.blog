@@ -16,8 +16,8 @@ function LayaExtendLogic()
 
     LayaExtendLogic_ResourceVersion();
     LayaExtendLogic_URL();
-    LayaExtendLogic_Laya3D();
-    LayaExtendLogic_Sound();
+    // LayaExtendLogic_Laya3D();
+    // LayaExtendLogic_Sound();
 
 
 

@@ -18,6 +18,7 @@ import { AssetItemType } from "./GameFrame/AssetManagers/AssetItemType";
 import Res from "./Config/Keys/Res";
 import { Mawait } from "./Libs/Mawait";
 import GameStatus from "./War/Datas/GameStatus";
+import SoundController from "./War/Logics/SoundController";
 declare var net;
 export default class GameLaunch 
 {
@@ -133,8 +134,9 @@ export default class GameLaunch
 		}
 		else
 		{
-			Game.menu.open(MenuId.War);
+			Game.menu.open(MenuId.Home);
 		}
+		SoundController.instance.playMusic();
 
 
 

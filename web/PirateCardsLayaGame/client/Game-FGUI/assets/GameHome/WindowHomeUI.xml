@@ -3,12 +3,12 @@
   <controller name="Tab" pages="0,mainMenu,1,chooseHero,2,shop,3,chooseGameFormat,4,result" selected="0"/>
   <displayList>
     <component id="n0_sqzy" name="bg" src="f84s1" fileName="ScreenBG.xml" pkg="47qsdr42" xy="-74,-133" size="899,1600" aspect="true">
-      <relation target="" sidePair="width-width,height-height"/>
+      <relation target="" sidePair="center-center,middle-middle"/>
       <Label icon="ui://moe42ygrsqzy1"/>
     </component>
-    <component id="n1_sqzy" name="mainMenu" src="sqzy7q" fileName="PanelMainMenu.xml" xy="0,0" size="855,1334">
+    <component id="n1_sqzy" name="mainMenu" src="sqzy7q" fileName="PanelMainMenu.xml" xy="0,0" size="750,1334">
       <gearDisplay controller="Tab" pages="0"/>
-      <relation target="" sidePair="center-center,height-height"/>
+      <relation target="" sidePair="width-width,height-height"/>
     </component>
     <component id="n2_sqzy" name="chooseHero" src="sqzy89" fileName="PanelChooseHero.xml" xy="0,0" size="750,1334">
       <gearDisplay controller="Tab" pages="1"/>

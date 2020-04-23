@@ -33,13 +33,11 @@ export default class PanelMainMenu extends PanelMainMenuStruct
     // 该组件所在Tab 显示
     onTabShow(): void
     {
-        console.log("PanelMainMenu onTabShow");
     }
 
     // 该组件所在Tab 隐藏
     onTabHide(): void
     {
-        console.log("PanelMainMenu onTabHide");
 
     }
     

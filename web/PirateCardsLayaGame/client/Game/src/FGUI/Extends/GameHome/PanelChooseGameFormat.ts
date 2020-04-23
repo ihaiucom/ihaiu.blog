@@ -17,6 +17,10 @@ export default class PanelChooseGameFormat extends PanelChooseGameFormatStruct
     // 窗口初始化完毕
     onWindowInited(): void
     {
+        this.m_format4x4.isFourXFour = true;
+        this.m_format4x4.ColumnCount = 4;
+        this.m_format4x4.RowCount = 4;
+        this.m_format4x4.coin = 700;
     }
 
     
@@ -29,13 +33,11 @@ export default class PanelChooseGameFormat extends PanelChooseGameFormatStruct
     // 该组件所在Tab 显示
     onTabShow(): void
     {
-        console.log("PanelChooseGameFormat onTabShow");
     }
 
     // 该组件所在Tab 隐藏
     onTabHide(): void
     {
-        console.log("PanelChooseGameFormat onTabHide");
 
     }
 

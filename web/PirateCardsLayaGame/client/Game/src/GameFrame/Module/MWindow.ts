@@ -761,7 +761,6 @@ export default abstract class MWindow extends FWindow
                                         this.tabCtrlViewsMap.set(tabIndex, list);
                                     }
 
-                                    console.log(tabIndex, obj.name);
                                     list.push(<any>obj);
                                 }
                             }

@@ -59,7 +59,7 @@ export default abstract class AbstractCard
     /** 重置 */
     reset()
     {
-        this.view.setXY(-300, -400);
+        this.view.setXY(-200, -200);
         this.view.setScale(1, 1);
     }
 
@@ -133,12 +133,14 @@ export default abstract class AbstractCard
     {
         this.game.container.addChild(this.view);
         this.view.setXY(point.x, point.y);
+        this.view.alpha = 1;
     }
 
     /** 缓动移动卡牌位置到制定位置 */
     moveTo(point: Point, time: number): Laya.Tween
     {
         this.game.container.addChild(this.view);
+        (<any>point).alpha = 1;
         return TweenUtil.to(this.view, point, time);
     }
 

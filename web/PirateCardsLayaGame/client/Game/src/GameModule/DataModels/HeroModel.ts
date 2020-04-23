@@ -71,7 +71,6 @@ export default class HeroModel extends MModel
     {
         var index = this.list.indexOf(this.selectHero);
         index ++ 
-        console.log(index);
         return index  < this.list.length;
     }
 
@@ -79,7 +78,6 @@ export default class HeroModel extends MModel
     {
         var index = this.list.indexOf(this.selectHero);
         index --
-        console.log(index);
         return index >= 0;
     }
 

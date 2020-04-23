@@ -91,7 +91,14 @@ export default class WarGame
 
     launch()
     {
-        GameStatus.init(),
+        GameStatus.init();
+        this.container.width = GameStatus.ColumnCount * Consts.CardWidth + (GameStatus.ColumnCount - 1) * Consts.CardSpaceBetweenWidth;
+        this.container.height = GameStatus.RowCount * Consts.CardHeight + (GameStatus.RowCount - 1) * Consts.CardSpaceBetweenHeight;
+
+        var defaultWidth = 3 * Consts.CardWidth + (3 - 1) * Consts.CardSpaceBetweenWidth;
+        var scale = defaultWidth / this.container.width;
+        this.container.setScale(scale, scale);
+        // this.container.x = this.container.parent.width * 0.5;
         this.stageClickFx.install();
         this.keyboardManager.StartListenKeyboard();
         this.animationQueue = this.field.initField();
@@ -239,6 +246,7 @@ export default class WarGame
 
     setGameEnd()
     {
+        GameStatus.resetShop();
         GameStatus.isGameEnd = true;
         War.exit();
     }
@@ -330,8 +338,8 @@ export default class WarGame
             // 是否购买了道具 钥匙
             else if(GameStatus.isKey)
             {
-                this.field.getHero().setShopItemsStatus();
                 this.chestOpened();
+                this.field.getHero().setShopItemsStatus();
             }
             else
             {

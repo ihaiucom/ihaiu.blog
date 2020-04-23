@@ -54,7 +54,6 @@ export default class MenuTopPanel extends MenuTopPanelStruct
     onTabShow(): void
     {
         this.OnGoldChange();
-        console.log("MenuTopPanel onTabShow");
 
     }
 

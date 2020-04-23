@@ -26,14 +26,12 @@ export default class PanelResult extends PanelResultStruct
     // 该组件所在Tab 显示
     onTabShow(): void
     {
-        console.log("PanelResult onTabShow");
         this.SetData();
     }
 
     // 该组件所在Tab 隐藏
     onTabHide(): void
     {
-        console.log("PanelResult onTabHide");
 
     }
 

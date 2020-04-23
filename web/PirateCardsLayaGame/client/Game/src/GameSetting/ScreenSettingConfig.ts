@@ -15,7 +15,8 @@ export default class ScreenSettingConfig
 	// 是否是横屏
 	get isLandsape()
 	{
-		return this.screenWidth > this.screenHeight;
+		return this.developWidth > this.developHeight;
+		// return this.screenWidth > this.screenHeight;
 	}
 
 	// 屏幕分辨率
@@ -142,16 +143,16 @@ export default class ScreenSettingConfig
 	
 	get screenScaleShrinkMax(): number
 	{
-		return Math.max(this.screenScaleX,this.screenScaleY);
-		// let rate = 1;
-		// if (this.screenAspect <= this.developAspect)
-		// {
-		// 	rate = this.screenHeight / this.developHeight;
-		// }
-		// else
-		// {
-		// 	rate = this.screenWidth / this.developWidth;
-		// }
-		// return rate;
+		// return Math.max(this.screenScaleX,this.screenScaleY);
+		let rate = 1;
+		if (this.screenAspect <= this.developAspect)
+		{
+			rate = this.screenHeight / this.developHeight;
+		}
+		else
+		{
+			rate = this.screenWidth / this.developWidth;
+		}
+		return rate;
 	}
 }

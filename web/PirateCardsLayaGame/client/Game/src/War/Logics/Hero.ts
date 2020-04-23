@@ -187,64 +187,41 @@ export default class Hero extends AbstractCard
 
 
 
-    setShopItemsStatus() 
-    {
-        // var e = 1;
-        // this.destroySpriteByName(ArtConsts.SmallHeart),
-        // this.destroySpriteByName(ArtConsts.SmallHorseshoe),
-        // this.destroySpriteByName(ArtConsts.SmallLuck),
-        // this.destroySpriteByName(ArtConsts.SmallKey),
-        // GameStatus.isHeart && this.addSpriteByName(ArtConsts.SmallHeart, e++, 0, 1),
-        // GameStatus.isHorseshoe,
-        // GameStatus.isLuck && this.addSpriteByName(ArtConsts.SmallLuck, e++, 30),
-        // GameStatus.isKey && this.addSpriteByName(ArtConsts.SmallKey, e, 30)
-    }
-    addSpriteByName(e, i, o, n) {
-        void 0 === o && (o = 0),
-        void 0 === n && (n = 1);
-        var s = 38 * i - .5 * Consts.CardWidth,
-        a = t.ShapeFactoryHelper.getShape(this.game, s, 80, ArtConsts.Items1, e, 0);
-        a.name = e,
-        a.angle = o,
-        a.scale.set(n),
-        this.view.add(a)
-    }
-    destroySpriteByName(t) {
-        var e = this.view.getByName(t);
-        e && e.destroy()
-    }
     
 
-    fightWithEnemy(card) {
-        if (card.getScore() >= this.armor + this.currentLife) return ! 1;
-        if (card.getScore() <= this.armor) card.getScore() < this.armor && GameStatus.currentHero == HeroType.Base ? this.armor -= 1 : this.armor -= card.getScore();
-        else if (this.armor > 0) {
+    /** 攻击怪物或者Boss */
+    fightWithEnemy(card) 
+    {
+        // 死亡
+        if (card.getScore() >= this.armor + this.currentLife) return false;
+
+        if (card.getScore() <= this.armor) 
+        {
+            // 如果是基础英雄, 对方分数小于自己的护甲，就只扣1点护甲
+            if(card.getScore() < this.armor && GameStatus.currentHero == HeroType.Base)
+            {
+                this.armor -= 1
+            }
+            else
+            {
+                this.armor -= card.getScore();
+            }
+        }
+        else if (this.armor > 0) 
+        {
             var i = card.getScore() - this.armor;
-            this.armor = 0,
-            this.currentLife -= i
-        } else this.currentLife -= card.getScore();
-        return GameStatus.addGold(card.getScore()),
-        !0
+            this.armor = 0;
+            this.currentLife -= i;
+        } 
+        else
+        {
+            this.currentLife -= card.getScore();
+        }
+
+        GameStatus.addGold(card.getScore());
+        return true;
     }
     
-    useHeart() 
-    {
-        var e = this.view.getByName(ArtConsts.SmallHeart);
-        this.view.bringToTop(e);
-        SoundController.instance.playSound(SoundConsts.Revive),
-        e.animations.add("explode", Phaser.Animation.generateFrameNames(ArtConsts.SmallHeart, 0, 16, "", 4), 30, !1, !1),
-        this.game.add.tween(e.scale).to({
-            x: 1,
-            y: 1
-        },
-        100, null, !0).onComplete.add(function() {
-            var t = e.animations.play("explode", 60, !1, !1);
-            t.onComplete.add(this.setStatus, this),
-            t.onComplete.add(this.setShopItemsStatus, this)
-        },
-        this),
-        this.currentLife = this.totalLife
-    }
 
     /** 添加最大血量 */
     increaseLifeByOneTween() 
@@ -265,12 +242,6 @@ export default class Hero extends AbstractCard
         this.setLife()
     }
 
-    /** 使用道具， 生命 */
-    useLuck() 
-    {
-        GameStatus.isLuck = false;
-        this.view.useLuck();
-    }
 
 
     
@@ -368,6 +339,38 @@ export default class Hero extends AbstractCard
     setArmorFrame(card: Card) 
     {
         this.view.setArmor();
+    }
+
+    
+    //=====================================
+    // 使用道具
+    //-------------------------------------
+
+    setShopItemsStatus() 
+    {
+        this.view.refreshShopBar();
+    }
+
+    /** 使用道具， 解药 */
+    useLuck() 
+    {
+        this.view.useLuck();
+        GameStatus.isLuck = false;
+    }
+
+    
+    /** 使用道具， 复活 */
+    useHeart() 
+    {
+        GameStatus.isHeroAlive = true;
+        this.currentLife = this.totalLife;
+        this.view.useHeart();
+        setTimeout(() => 
+        {
+            
+            this.setStatus();
+            this.setShopItemsStatus();
+        }, 200);
     }
     
 }

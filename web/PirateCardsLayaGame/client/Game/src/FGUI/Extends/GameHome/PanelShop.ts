@@ -54,14 +54,12 @@ export default class PanelShop extends PanelShopStruct
     // 该组件所在Tab 显示
     onTabShow(): void
     {
-        console.log("PanelShop onTabShow");
         this.refreshList();
     }
 
     // 该组件所在Tab 隐藏
     onTabHide(): void
     {
-        console.log("PanelShop onTabHide");
 
     }
 

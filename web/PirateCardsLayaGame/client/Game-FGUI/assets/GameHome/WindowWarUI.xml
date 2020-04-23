@@ -2,16 +2,18 @@
 <component size="750,1334" restrictSize="0,0,1000,0">
   <displayList>
     <component id="n0_sqzy" name="bg" src="f84s1" fileName="ScreenBG.xml" pkg="47qsdr42" xy="-74,-133" size="899,1600" locked="true" aspect="true">
-      <relation target="" sidePair="width-width,height-height"/>
+      <relation target="" sidePair="center-center,middle-middle"/>
       <Label icon="ui://moe42ygrsqzy0"/>
     </component>
     <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="65,160" locked="true">
       <relation target="" sidePair="center-center,top-top%"/>
     </component>
-    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="55,300" size="640,960" locked="true">
-      <relation target="" sidePair="center-center,middle-middle"/>
+    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="375,780" size="614,800" locked="true">
+      <relation target="" sidePair="center-center,top-top%"/>
     </component>
-    <component id="n16_jak7" name="chectPopupPanel" src="jak7ao" fileName="PanelPopupChest.xml" xy="0,0" locked="true" hideByEditor="true" visible="false"/>
+    <component id="n16_jak7" name="chectPopupPanel" src="jak7ao" fileName="PanelPopupChest.xml" xy="0,0" locked="true" hideByEditor="true" visible="false">
+      <relation target="" sidePair="width-width,height-height"/>
+    </component>
     <component id="n17_jak7" name="pausePanel" src="sqzy9a" fileName="PanelPause.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>

@@ -103,7 +103,7 @@ export default class Field
                 } 
                 var fieldPosition = new FieldPosition(column, row);
                 var defaultCard = this.cardFactory.getDefault();
-                list.push(this.moveAndSetWithAnimation(fieldPosition, defaultCard, animationTime));
+                list.push(this.moveAndSetWithAnimation(fieldPosition, <any>defaultCard, animationTime));
                 list.push(this.replaceCardByPosition(fieldPosition, card).setAnimationDuration(1));
             }
         }

@@ -1,12 +1,7 @@
-import CardView from "../../FGUI/Extends/GameHome/CardView";
+
 import { CardScoreType } from "../Enums/CardScoreType";
 import GameStatus from "../Datas/GameStatus";
-import Consts from "../Enums/Consts";
 import { HeroType } from "../Enums/HeroType";
-import TweenHelper from "../Utils/TweenHelper";
-import SoundController from "./SoundController";
-import SoundConsts from "../Enums/SoundConsts";
-import TweenContainer from "../Utils/TweenContainer";
 import CardConfig from "../../Config/ConfigExtends/CardConfig";
 import Game from "../../Game";
 import AbstractCard from "./AbstractCard";

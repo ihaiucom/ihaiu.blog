@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="191,84">
   <displayList>
-    <image id="n9_sqzy" name="n9" src="sqzy4b" fileName="sprite/game1/horseshoeBig0000.png" xy="-2,20" scale="0.5,0.5"/>
-    <image id="n11_sqzy" name="n11" src="sqzy11" fileName="sprite/game2/hero0000.png" xy="76,2" aspect="true" scale="0.5,0.5"/>
+    <image id="n9_sqzy" name="n9" src="sqzy4b" fileName="sprite/game1/horseshoeBig0000.png" xy="21,40" pivot="0.5,0.5" anchor="true" size="48,41" aspect="true"/>
+    <image id="n11_sqzy" name="n11" src="sqzy11" fileName="sprite/game2/hero0000.png" xy="108,43" pivot="0.5,0.5" anchor="true" size="64,82" aspect="true"/>
     <text id="n13_sqzy" name="n13" xy="133,31" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="="/>
     <text id="n14_sqzy" name="n14" xy="57,25" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+"/>
     <text id="n15_sqzy" name="n15" xy="156,30" size="35,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+1"/>

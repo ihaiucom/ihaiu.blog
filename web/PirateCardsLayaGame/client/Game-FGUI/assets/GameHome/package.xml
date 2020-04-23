@@ -354,7 +354,7 @@
     <component id="sqzy9y" name="CardViewFrontPowerUpCannon.xml" path="/Card/" exported="true"/>
     <component id="sqzy9z" name="CardLifePowerUp.xml" path="/Card/"/>
     <component id="sqzya0" name="CardShield.xml" path="/Card/"/>
-    <component id="sqzya1" name="CardShopBar.xml" path="/Card/"/>
+    <component id="sqzya1" name="CardShopBar.xml" path="/Card/" exported="true"/>
     <component id="sqzya2" name="CardViewBack.xml" path="/Card/" exported="true"/>
     <component id="sqzya3" name="CardViewFrontWarriowEnemy.xml" path="/Card/" exported="true"/>
     <component id="sqzya4" name="SpriteEnemy.xml" path="/Card/"/>
@@ -378,7 +378,6 @@
     <component id="sqzyam" name="FxSkull.xml" path="/Fx/" exported="true"/>
     <image id="qynnan" name="hero0000.png" path="/sprite/"/>
     <component id="jak7ao" name="PanelPopupChest.xml" path="/"/>
-    <image id="jak7ap" name="Bitmap.png" path="/"/>
     <image id="jak7aq" name="bg_color_back.png" path="/sprite/" scale="9grid" scale9grid="4,4,8,8"/>
     <component id="jak7ar" name="CPLockLamp.xml" path="/ChestPopup/" exported="true"/>
     <component id="jak7as" name="CPLockBridge.xml" path="/ChestPopup/" exported="true"/>
@@ -391,6 +390,11 @@
     <component id="jak7az" name="CPLockDialFixedBig.xml" path="/ChestPopup/" exported="true"/>
     <component id="jak7b0" name="CPLockDial.xml" path="/ChestPopup/" exported="true"/>
     <component id="jak7b1" name="CPLock.xml" path="/ChestPopup/" exported="true"/>
+    <movieclip id="gvpab2" name="diao.jta" path="/"/>
+    <image id="gvpab3" name="diao.png" path="/"/>
+    <image id="gvpab4" name="道.png" path="/"/>
+    <image id="gvpab6" name="道 (2).png" path="/"/>
+    <component id="gvpab8" name="FxLogo.xml" path="/"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

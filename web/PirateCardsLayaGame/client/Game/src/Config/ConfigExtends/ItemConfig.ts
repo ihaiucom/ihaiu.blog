@@ -6,7 +6,7 @@ export default class ItemConfig extends ItemConfigLang
     
     get itemToolType(): ItemToolType
     {
-        return this.id % 100 - 0;
+        return this.id % 100 - 1;
     }
 
     get spriteIndex(): number

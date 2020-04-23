@@ -26,7 +26,7 @@
     <image id="tnlhw3h" name="提示.png" path="/_images_new/"/>
     <component id="tnlhw3i" name="CommonButton1.xml" path="/Component~NCode/"/>
     <image id="tnlhw3l" name="bg_rectangle_gray.png" path="/_images_new/"/>
-    <image id="sqzyz6g" name="icon200.png" path="/_images_new/"/>
+    <image id="sqzyz6g" name="icon200.png" path="/_images_new/" exported="true"/>
     <image id="sqzy2" name="BackgroundPause.png" path="/_images_new/" exported="true"/>
     <image id="sqzyz6i" name="圆环.png" path="/_images_new/"/>
     <image id="sqzy4" name="Loading.png" path="/_images_new/"/>

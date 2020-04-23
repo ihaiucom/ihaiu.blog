@@ -295,7 +295,7 @@ export default class CardView extends CardViewStruct
         return tweenContainer;
     }
 
-    // 使用道具， 生命
+    /** 使用道具， 解药 */
     useLuck()
     {
         if(this.card.isHero)
@@ -306,11 +306,28 @@ export default class CardView extends CardViewStruct
         }
     }
 
-    // 
-    increaseLifeByOneTween()
+    /** 使用道具， 复活 */
+    useHeart()
     {
-
+        if(this.card.isHero)
+        {
+            var hero = <Hero> this.card;
+            var heroView = <CardViewFrontHero>this.front;
+            heroView.m_shopBar.useHeart();
+        }
     }
+
+    /** 刷新道具栏 */
+    refreshShopBar()
+    {
+        if(this.card.isHero)
+        {
+            var hero = <Hero> this.card;
+            var heroView = <CardViewFrontHero>this.front;
+            heroView.m_shopBar.refresh();
+        }
+    }
+
 
     setOpen()
     {

@@ -8,9 +8,9 @@ import ItemData from "../../../GameModule/DataStructs/ItemData";
 
 export default class ShopCardFront extends ShopCardFrontStruct
 {
-    // 窗口初始化完毕
-    onWindowInited(): void
-    {
+	protected constructFromXML(xml: any): void 
+	{
+		super.constructFromXML(xml);
         this.m_plusBtn.onClick(this, this.OnClosePlusBtn);
     }
 
@@ -22,13 +22,13 @@ export default class ShopCardFront extends ShopCardFrontStruct
         this.m_coinText.text = itemData.itemConfig.coin + "";
 
         var isGeted = itemData.isGeted;
-        this.m_plusBtn.visible = !isGeted;
         this.m_hasFlag.visible = isGeted;
+        this.m_plusBtn.visible = !isGeted && itemData.enabelBuy;
     }
 
     OnClosePlusBtn()
     {
-        this.itemData.isGeted = true;
+        this.itemData.buy();
         this.SetData(this.itemData);
     }
 }

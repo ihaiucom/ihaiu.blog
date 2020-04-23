@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="960,663">
   <displayList>
-    <image id="n6_sqzy" name="logo" src="sqzy15" fileName="sprite/game2/menuLogo0000.png" xy="0,0"/>
+    <image id="n12_gvpa" name="cri" src="gvpab6" fileName="道 (2).png" xy="430,281" pivot="0.4,0.4" anchor="true"/>
+    <image id="n14_gvpa" name="cri2" src="gvpab6" fileName="道 (2).png" xy="527,276" pivot="0.6,0.4" anchor="true"/>
+    <image id="n15_gvpa" name="cri3" src="gvpab6" fileName="道 (2).png" xy="480,331" pivot="0.5,0.5" anchor="true"/>
+    <image id="n13_gvpa" name="n13" src="sqzyz6g" fileName="_images_new/icon200.png" pkg="47qsdr42" xy="480,314" pivot="0.5,0.5" anchor="true" size="131,131" aspect="true"/>
   </displayList>
+  <transition name="t0" autoPlay="true" autoPlayRepeat="-1">
+    <item time="0" type="Alpha" target="n13_gvpa" value="1"/>
+    <item time="0" type="Rotation" target="n12_gvpa" tween="true" startValue="360" endValue="0" duration="48" ease="Linear"/>
+    <item time="0" type="Rotation" target="n14_gvpa" tween="true" startValue="0" endValue="360" duration="48" ease="Linear"/>
+    <item time="0" type="Rotation" target="n15_gvpa" tween="true" startValue="0" endValue="360" duration="48" ease="Linear"/>
+    <item time="0" type="Shake" target="n13_gvpa" value="3,0.2"/>
+    <item time="2" type="Alpha" target="n13_gvpa" tween="true" startValue="1" endValue="0" duration="3"/>
+    <item time="5" type="Alpha" target="n13_gvpa" tween="true" startValue="0" endValue="0" duration="36" ease="Linear"/>
+    <item time="41" type="Alpha" target="n13_gvpa" tween="true" startValue="0" endValue="1" duration="3"/>
+    <item time="48" type="Alpha" target="n13_gvpa" value="1"/>
+  </transition>
 </component>
