@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="264,285">
-  <controller name="ShopType" exported="true" pages="0,Heart,1,Horseshoe,2,Luck,3,Key" selected="0"/>
   <displayList>
-    <component id="n22_sqzy" name="back" src="sqzy95" fileName="ShopCard/ShopCardBack.xml" xy="0,0" hideByEditor="true" visible="false" controller="ShopType,0"/>
-    <component id="n23_sqzy" name="front" src="sqzy94" fileName="ShopCard/ShopCardFront.xml" xy="0,0" controller="ShopType,0"/>
+    <component id="n22_sqzy" name="back" src="sqzy95" fileName="ShopCard/ShopCardBack.xml" xy="132,142" pivot="0.5,0.5" anchor="true" hideByEditor="true" visible="false" controller="ShopType,0"/>
+    <component id="n23_sqzy" name="front" src="sqzy94" fileName="ShopCard/ShopCardFront.xml" xy="132,142" pivot="0.5,0.5" anchor="true" controller="ShopType,0"/>
   </displayList>
 </component>

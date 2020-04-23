@@ -796,7 +796,7 @@ export default class Field
             } 
 
             // 英雄使用生命道具
-            var hero =<Hero> card;
+            var hero:Hero =<any> card;
             GameStatus.isHeart = false;
             this.keyboardManager.reset();
             hero.useHeart();

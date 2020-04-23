@@ -56,6 +56,35 @@
             return this.zhCnName;
         }
     }
+    class ItemConfigLang extends excelconfigSources.Item {
+        get name() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnName;
+            let value = Game.lang.getValue('Item', this.id, 'zhCnName');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnName;
+        }
+        get en() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnEn;
+            let value = Game.lang.getValue('Item', this.id, 'zhCnEn');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnEn;
+        }
+        get itemDes() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnItemdes;
+            let value = Game.lang.getValue('Item', this.id, 'zhCnItemdes');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnItemdes;
+        }
+    }
     class LoaderConfigLang extends excelconfigSources.Loader {
     }
     class MenuConfigLang extends excelconfigSources.Menu {
@@ -554,7 +583,33 @@
     CardViewFrontPowerUpStruct.URL = "ui://moe42ygrsqzyaa";
     CardViewFrontPowerUpStruct.DependPackages = ["GameHome"];
 
+    class FxSmallRingStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxSmallRing"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_shadow = (this.getChild("shadow"));
+            this.m_anim = this.getTransition("anim");
+        }
+    }
+    FxSmallRingStruct.URL = "ui://moe42ygrsqzy8w";
+    FxSmallRingStruct.DependPackages = ["GameHome"];
+
+    class FxSmallRing extends FxSmallRingStruct {
+    }
+
     class CardViewFrontPowerUp extends CardViewFrontPowerUpStruct {
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.fxSmallRing = FxSmallRing.createInstance();
+            this.fxSmallRing.x = this.width * 0.5;
+            this.fxSmallRing.y = this.height * 0.5;
+            this.addChildAt(this.fxSmallRing, 0);
+        }
         SetConfig(cardConfig) {
             this.cardConfig = cardConfig;
             this.m_icon.url = cardConfig.spriteUrl;
@@ -1072,6 +1127,15 @@
     }
 
     class CardScoreTypeConfig extends CardScoreTypeConfigLang {
+    }
+
+    class ItemConfig extends ItemConfigLang {
+        get itemToolType() {
+            return this.id % 100 - 0;
+        }
+        get spriteIndex() {
+            return this.itemToolType;
+        }
     }
 
     class LoaderConfig extends LoaderConfigLang {
@@ -3708,6 +3772,7 @@
         HomeTabType[HomeTabType["ChooseGameFormat"] = 3] = "ChooseGameFormat";
         HomeTabType[HomeTabType["Result"] = 4] = "Result";
     })(HomeTabType || (HomeTabType = {}));
+    window['HomeTabType'] = HomeTabType;
     class HomeWindow extends MWindow {
         constructor() {
             super();
@@ -7713,6 +7778,33 @@
         }
     }
 
+    class ItemConfigReader extends ExcelConfigReader {
+        constructor() {
+            super(...arguments);
+            this.typeMap = new Map();
+        }
+        onGameLoadedAll() {
+            super.onGameLoadedAll();
+            this.typeMap.clear();
+            let list = this.configList;
+            for (let i = 0; i < list.length; i++) {
+                var config = list[i];
+                var configList;
+                if (this.typeMap.has(config.type)) {
+                    configList = this.typeMap.get(config.type);
+                }
+                else {
+                    configList = [];
+                    this.typeMap.set(config.type, configList);
+                }
+                configList.push(config);
+            }
+        }
+        getConfigListByTypeKey(type) {
+            return this.typeMap.get(type);
+        }
+    }
+
     class LoaderConfigReader extends ExcelConfigReader {
     }
 
@@ -7864,6 +7956,7 @@
         constructor() {
             this.card = new CardConfigReader('Card', CardConfig);
             this.cardScoreType = new CardScoreTypeConfigReader('CardScoreType', CardScoreTypeConfig);
+            this.item = new ItemConfigReader('Item', ItemConfig);
             this.loader = new LoaderConfigReader('Loader', LoaderConfig);
             this.menu = new MenuConfigReader('Menu', MenuConfig);
             this.msg = new MsgConfigReader('Msg', MsgConfig);
@@ -7872,6 +7965,7 @@
         static Init() {
             excelconfig.Card = CardConfig;
             excelconfig.CardScoreType = CardScoreTypeConfig;
+            excelconfig.Item = ItemConfig;
             excelconfig.Loader = LoaderConfig;
             excelconfig.Menu = MenuConfig;
             excelconfig.Msg = MsgConfig;
@@ -10841,15 +10935,95 @@
         }
     }
 
+    class ItemData {
+        get isGeted() {
+            return Game.moduleModel.item.getGameStatusVal(this.itemConfig.itemToolType);
+        }
+        set isGeted(val) {
+            Game.moduleModel.item.setGameStatusVal(this.itemConfig.itemToolType, val);
+        }
+    }
+
+    var ItemType;
+    (function (ItemType) {
+        ItemType[ItemType["Tool"] = 5] = "Tool";
+    })(ItemType || (ItemType = {}));
+
+    var ItemToolType;
+    (function (ItemToolType) {
+        ItemToolType[ItemToolType["Heart"] = 0] = "Heart";
+        ItemToolType[ItemToolType["Horseshoe"] = 1] = "Horseshoe";
+        ItemToolType[ItemToolType["Luck"] = 2] = "Luck";
+        ItemToolType[ItemToolType["Key"] = 3] = "Key";
+    })(ItemToolType || (ItemToolType = {}));
+
+    class ItemModel extends MModel {
+        constructor() {
+            super(...arguments);
+            this.LocalStorageKey = "ItemModel";
+            this.list = [];
+            this.map = new Map();
+            this.toolTypeMap = new Map();
+        }
+        install() {
+            var configList = Game.config.item.getConfigListByTypeKey(ItemType.Tool);
+            for (var i = 0, len = configList.length; i < len; i++) {
+                var config = configList[i];
+                var itemData = new ItemData();
+                itemData.itemConfig = config;
+                itemData.id = config.id;
+                this.list.push(itemData);
+                this.map.set(itemData.id, itemData);
+                this.toolTypeMap.set(itemData.itemConfig.itemToolType, itemData);
+            }
+        }
+        getItemTool(id) {
+            return this.map.get(id);
+        }
+        getItemToolByType(type) {
+            return this.toolTypeMap.get(type);
+        }
+        getGameStatusVal(type) {
+            switch (type) {
+                case ItemToolType.Heart:
+                    return GameStatus.isHeart;
+                case ItemToolType.Horseshoe:
+                    return GameStatus.isHorseshoe;
+                case ItemToolType.Luck:
+                    return GameStatus.isLuck;
+                case ItemToolType.Key:
+                    return GameStatus.isKey;
+            }
+        }
+        setGameStatusVal(type, val) {
+            switch (type) {
+                case ItemToolType.Heart:
+                    GameStatus.isHeart = val;
+                    break;
+                case ItemToolType.Horseshoe:
+                    GameStatus.isHorseshoe = val;
+                    break;
+                case ItemToolType.Luck:
+                    GameStatus.isLuck = val;
+                    break;
+                case ItemToolType.Key:
+                    GameStatus.isKey = val;
+                    break;
+            }
+        }
+    }
+
     class ModelManagerList {
         constructor() {
             this.list = [];
             this.login = new LoginModel();
             this.hero = new HeroModel();
+            this.item = new ItemModel();
         }
         initList() {
             this.list.push(this.login);
             this.list.push(this.hero);
+            this.list.push(this.item);
         }
     }
 
@@ -14993,25 +15167,27 @@
     ShopCardStruct.DependPackages = ["GameHome"];
 
     class ShopCard extends ShopCardStruct {
-    }
-
-    class FxSmallRingStruct extends fgui.GComponent {
-        constructor() {
-            super();
+        onWindowInited() {
+            this.m_front.m_infoBtn.onClick(this, this.ShowBack);
+            this.m_back.m_backBtn.onClick(this, this.ShowFront);
         }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "FxSmallRing"));
+        setItemData(itemData) {
+            this.itemData = itemData;
+            this.m_front.m_ShopType.setSelectedIndex(itemData.itemConfig.spriteIndex);
+            this.m_back.m_ShopType.setSelectedIndex(itemData.itemConfig.spriteIndex);
+            this.SetFront();
         }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_shadow = (this.getChild("shadow"));
-            this.m_anim = this.getTransition("anim");
+        ShowBack() {
+            TweenHelper.TurnCard(this.m_front, this.m_back);
         }
-    }
-    FxSmallRingStruct.URL = "ui://moe42ygrsqzy8w";
-    FxSmallRingStruct.DependPackages = ["GameHome"];
-
-    class FxSmallRing extends FxSmallRingStruct {
+        ShowFront() {
+            TweenHelper.TurnCard(this.m_back, this.m_front);
+        }
+        SetFront() {
+            this.m_front.visible = true;
+            this.m_back.visible = false;
+            this.m_front.setScale(1, 1);
+        }
     }
 
     class ShopIconStruct extends fgui.GLabel {
@@ -15042,6 +15218,7 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
+            this.m_list = (this.getChild("list"));
             this.m_playBtn = (this.getChild("playBtn"));
         }
     }
@@ -15049,13 +15226,31 @@
     PanelShopStruct.DependPackages = ["GameHome"];
 
     class PanelShop extends PanelShopStruct {
+        constructor() {
+            super(...arguments);
+            this.itemDataList = [];
+        }
         onWindowInited() {
             this.m_playBtn.onClick(this, this.OnClickPlayBtn);
+            this.itemDataList = Game.moduleModel.item.list;
+            let list = this.m_list;
+            list.setVirtual();
+            list.setVirtualAndLoop();
+            list.setItemRenderer(this.renderListItem, this);
+        }
+        renderListItem(index, item) {
+            let itemData = this.itemDataList[index];
+            item.setItemData(itemData);
+        }
+        refreshList() {
+            this.m_list.numItems = this.itemDataList.length;
+            this.m_list.refreshVirtualList();
         }
         onWindowShow() {
         }
         onTabShow() {
             console.log("PanelShop onTabShow");
+            this.refreshList();
         }
         onTabHide() {
             console.log("PanelShop onTabHide");
@@ -15197,6 +15392,20 @@
     ShopCardFrontStruct.DependPackages = ["GameHome"];
 
     class ShopCardFront extends ShopCardFrontStruct {
+        onWindowInited() {
+            this.m_plusBtn.onClick(this, this.OnClosePlusBtn);
+        }
+        SetData(itemData) {
+            this.itemData = itemData;
+            this.m_coinText.text = itemData.itemConfig.coin + "";
+            var isGeted = itemData.isGeted;
+            this.m_plusBtn.visible = !isGeted;
+            this.m_hasFlag.visible = isGeted;
+        }
+        OnClosePlusBtn() {
+            this.itemData.isGeted = true;
+            this.SetData(this.itemData);
+        }
     }
 
     class ShopCardBackStruct extends fgui.GComponent {

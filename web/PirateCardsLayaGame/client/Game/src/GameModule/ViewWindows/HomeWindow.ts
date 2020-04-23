@@ -13,6 +13,8 @@ export enum HomeTabType
     Result
 }
 
+window['HomeTabType'] = HomeTabType;
+
 //======================
 // 登录窗口
 //----------------------

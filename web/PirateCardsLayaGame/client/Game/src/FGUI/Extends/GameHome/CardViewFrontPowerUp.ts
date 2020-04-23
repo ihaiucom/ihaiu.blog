@@ -8,9 +8,20 @@ import CardViewFrontPowerUpStruct from "../../Generates/GameHome/CardViewFrontPo
 import CardConfig from "../../../Config/ConfigExtends/CardConfig";
 import Card from "../../../War/Logics/Card";
 import CardView from "./CardView";
+import FxSmallRing from "./FxSmallRing";
 
 export default class CardViewFrontPowerUp extends CardViewFrontPowerUpStruct
 {
+    fxSmallRing:FxSmallRing;
+	protected constructFromXML(xml: any): void 
+	{
+		super.constructFromXML(xml);
+        
+        this.fxSmallRing = FxSmallRing.createInstance();
+        this.fxSmallRing.x = this.width * 0.5;
+        this.fxSmallRing.y = this.height * 0.5;
+        this.addChildAt(this.fxSmallRing, 0);
+	}
     
     cardView: CardView;
     cardConfig: CardConfig;
