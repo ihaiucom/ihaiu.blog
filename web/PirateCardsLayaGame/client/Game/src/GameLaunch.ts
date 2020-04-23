@@ -126,7 +126,7 @@ export default class GameLaunch
 		  window['launcherInitBG'].removeSelf();
 		}
 		
-		Game.loader.closeAll();
+		// Game.loader.closeAll();
 		GameStatus.load();
 		if(callback)
 		{

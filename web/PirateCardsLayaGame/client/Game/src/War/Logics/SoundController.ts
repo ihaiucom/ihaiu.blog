@@ -8,7 +8,7 @@ export default class SoundController
         if(!this._instance)
         {
             this._instance = new SoundController();
-            Laya.SoundManager.musicVolume = 0.1;
+            // Laya.SoundManager.musicVolume = 0.1;
         }
         return this._instance;
     }
@@ -50,7 +50,7 @@ export default class SoundController
         var c = Laya.SoundManager.playMusic(`res/sounds/music/music0${RandomHelper.getRandomIntInclusive(1, 5)}.mp3`, 1, Laya.Handler.create(this, this.onPlayMusicEnd), 0);
         if(c)
         {
-            c.volume = 0.1;
+            // c.volume = 0.1;
         }
         // Laya.timer.once(25 * 1000, this, this.playMusic);
     }

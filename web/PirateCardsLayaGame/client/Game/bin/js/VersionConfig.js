@@ -23,7 +23,7 @@ var VersionConfig =
     // 是否使用Zip， 第一关是否合并为一个zip
     IsUseZip_PVE01: false,
     // 是否使用网络资源
-    IsUseWebRes : false,
+    IsUseWebRes : true,
     // 提审版本标记，关闭部分功能
     IsReviewVersion: false,
 

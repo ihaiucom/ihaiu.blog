@@ -1,7 +1,7 @@
 var VersionConfig =
 {
   // 缓存版本编号
-  VersionCacheCode: 67,
+  VersionCacheCode: 70,
   // 应用版本号
   AppVersion : "v1.0.0.0",
   // 资源版本好

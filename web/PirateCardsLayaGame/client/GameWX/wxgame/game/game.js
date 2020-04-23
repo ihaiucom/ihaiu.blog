@@ -18,4 +18,4 @@ wx.setKeepScreenOn && wx.setKeepScreenOn({
   }
 });
 
-require('testFile.js');
+// require('testFile.js');

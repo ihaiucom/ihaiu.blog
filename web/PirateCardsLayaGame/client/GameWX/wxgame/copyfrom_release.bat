@@ -1,5 +1,6 @@
 (
 zffile copy ../../Game/release/wxgame/js/bundle.js ./game/js/bundle.js
+zffile copy ../../Game/release/wxgame/libs/pbconfig/excelconfig.js ./game/libs/pbconfig/excelconfig.js
 rem zffile copy ../../Game/release/wxgame/libs/pbconfig ./game/libs/pbconfig
 rem zffile copy ../../Game/release/wxgame/libs/AntFrame ./libs/AntFrame
 zffile copy ../../Game/release/wxgame/libs/AntFrame/Net/protobuf.js ./libs/AntFrame/Net/protobuf.js

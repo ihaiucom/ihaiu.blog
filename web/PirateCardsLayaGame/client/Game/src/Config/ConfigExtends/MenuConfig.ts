@@ -36,12 +36,13 @@ export default class MenuConfig extends MenuConfigLang
     // 加载界面ID
     get menuLoaderId(): LoaderId
     {
-        switch(this.menuId)
-        {
-            case MenuId.War:
-                return LoaderId.Launch;
-        }
-        return this.loaderId;
+        return LoaderId.Launch;
+        // switch(this.menuId)
+        // {
+        //     case MenuId.War:
+        //         return LoaderId.Launch;
+        // }
+        // return this.loaderId;
     }
 
 

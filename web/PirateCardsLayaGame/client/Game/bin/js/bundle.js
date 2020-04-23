@@ -7437,11 +7437,7 @@
             return this.closeOtherType;
         }
         get menuLoaderId() {
-            switch (this.menuId) {
-                case MenuId.War:
-                    return LoaderId.Launch;
-            }
-            return this.loaderId;
+            return LoaderId.Launch;
         }
         get iconUrl() {
             if (!this._iconUrl) {
@@ -17091,7 +17087,6 @@
             if (window['launcherInitBG']) {
                 window['launcherInitBG'].removeSelf();
             }
-            Game.loader.closeAll();
             GameStatus.load();
             if (callback) {
                 callback();
