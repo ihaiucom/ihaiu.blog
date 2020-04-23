@@ -29,6 +29,7 @@ namespace configs{
 		public zh_cn_name : string = "";
 		public level : number = 0;
 		public sprite : string = "";
+		public coin : number = 0;
 	}
 	export class ConfigCardScoreType {
 		public id : number = 0;

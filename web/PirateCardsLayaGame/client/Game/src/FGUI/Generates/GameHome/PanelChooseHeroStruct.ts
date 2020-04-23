@@ -3,6 +3,7 @@
 // http://blog.ihaiu.com
 /////////////////////////////////////
 
+import ChoiceHero from "../../Extends/GameHome/ChoiceHero";
 import PanelChooseHero from "../../Extends/GameHome/PanelChooseHero";
 
 export default class PanelChooseHeroStruct extends fgui.GComponent
@@ -13,7 +14,7 @@ export default class PanelChooseHeroStruct extends fgui.GComponent
 	public m_plusBtn : fgui.GButton;
 	public m_nextHeroBtn : fgui.GButton;
 	public m_prevHeroBtn : fgui.GButton;
-	public m_choiceHero : fgui.GComponent;
+	public m_choiceHero : ChoiceHero;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy89";
@@ -44,7 +45,7 @@ export default class PanelChooseHeroStruct extends fgui.GComponent
 		this.m_plusBtn = <fgui.GButton><any>(this.getChild("plusBtn"));
 		this.m_nextHeroBtn = <fgui.GButton><any>(this.getChild("nextHeroBtn"));
 		this.m_prevHeroBtn = <fgui.GButton><any>(this.getChild("prevHeroBtn"));
-		this.m_choiceHero = <fgui.GComponent><any>(this.getChild("choiceHero"));
+		this.m_choiceHero = <ChoiceHero><any>(this.getChild("choiceHero"));
 		
 		
 	}

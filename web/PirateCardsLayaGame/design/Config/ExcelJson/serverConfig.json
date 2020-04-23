@@ -1,9 +1,9 @@
 {
 	"Card":{
 		"101":{"id":101,"scoreTypeKey":"Hero","en_name":"Base","zh_cn_name":"基础英雄","level":1,"sprite":"hero0000"},
-		"102":{"id":102,"scoreTypeKey":"Hero","en_name":"Bomb","zh_cn_name":"炸弹英雄","level":2,"sprite":"heroBomb0000"},
-		"103":{"id":103,"scoreTypeKey":"Hero","en_name":"Gun","zh_cn_name":"枪管英雄","level":3,"sprite":"heroGun0000"},
-		"104":{"id":104,"scoreTypeKey":"Hero","en_name":"Key","zh_cn_name":"钥匙英雄","level":4,"sprite":"heroKey0000"},
+		"102":{"id":102,"scoreTypeKey":"Hero","en_name":"Bomb","zh_cn_name":"炸弹英雄","level":2,"sprite":"heroBomb0000","coin":600},
+		"103":{"id":103,"scoreTypeKey":"Hero","en_name":"Gun","zh_cn_name":"枪管英雄","level":3,"sprite":"heroGun0000","coin":900},
+		"104":{"id":104,"scoreTypeKey":"Hero","en_name":"Key","zh_cn_name":"钥匙英雄","level":4,"sprite":"heroKey0000","coin":1300},
 		"201":{"id":201,"scoreTypeKey":"Trap","en_name":"Trap","zh_cn_name":"陷阱","level":1},
 		"301":{"id":301,"scoreTypeKey":"Enemy","en_name":"Enemy","zh_cn_name":"小怪1","level":2,"sprite":"enemy_10000"},
 		"302":{"id":302,"scoreTypeKey":"Enemy","en_name":"Enemy","zh_cn_name":"小怪2","level":3,"sprite":"enemy_20000"},

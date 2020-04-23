@@ -1,6 +1,8 @@
 import Consts from "../Enums/Consts";
 import TweenContainer from "./TweenContainer";
 import TweenUtil from "./TweenUtil";
+import SoundController from "../Logics/SoundController";
+import SoundConsts from "../Enums/SoundConsts";
 
 export default class TweenHelper
 {
@@ -114,6 +116,25 @@ export default class TweenHelper
         
         return tweenContainer;
     }
+
+    static TurnCard(viewFrom: fgui.GComponent, viewTo: fgui.GComponent)
+    {
+        SoundController.instance.playSound(SoundConsts.Card);
+        
+        viewTo.setScale(0, Consts.FlipZoom);
+        var tweenContainer = TweenHelper.turnAnimationStart(null, viewFrom);
+        tweenContainer.onComplete.add(()=>
+        {
+            viewFrom.visible = false;
+            viewTo.visible = true;
+            viewTo.scaleX = 0.1;
+            TweenHelper.turnAnimationEnd(null, viewTo).restart();
+        }, this);
+        tweenContainer.restart();
+
+    }
+
+
 
     static  scaleIn(tweenContainer: TweenContainer, view: fgui.GComponent, o = true) 
     {

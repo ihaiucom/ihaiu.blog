@@ -346,6 +346,64 @@
         }
     }
 
+    class SoundController {
+        static get instance() {
+            if (!this._instance) {
+                this._instance = new SoundController();
+            }
+            return this._instance;
+        }
+        get soundBtnIndex() {
+            return Laya.SoundManager.soundMuted ? 0 : 1;
+        }
+        changeSoundState() {
+            Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = !Laya.SoundManager.soundMuted;
+        }
+        playSound(key) {
+            if (Laya.SoundManager.soundMuted) {
+                return;
+            }
+            var path = `res/sounds/mp3/${key}.mp3`;
+            Laya.SoundManager.playSound(path, 1);
+        }
+    }
+
+    class SoundConsts {
+    }
+    SoundConsts.Click = "click";
+    SoundConsts.Barrel1 = "barrel1";
+    SoundConsts.Barrel2 = "barrel2";
+    SoundConsts.Bomb = "bomb";
+    SoundConsts.BossAppearance = "bossAppearance";
+    SoundConsts.Buy = "buy";
+    SoundConsts.Cannon = "cannon";
+    SoundConsts.Card = "card";
+    SoundConsts.ChestOpening = "chestOpening";
+    SoundConsts.Coin = "coin";
+    SoundConsts.CoinsBag = "coinsBag";
+    SoundConsts.CoinsCounting = "coinsCounting";
+    SoundConsts.Health1 = "health1";
+    SoundConsts.Health2 = "health2";
+    SoundConsts.HeroDies = "heroDies";
+    SoundConsts.Hit1 = "hit1";
+    SoundConsts.Hit2 = "hit2";
+    SoundConsts.Horseshoe = "horseshoe";
+    SoundConsts.Idol = "idol";
+    SoundConsts.IncorrectClick = "incorrectClick";
+    SoundConsts.Lighting = "lighting";
+    SoundConsts.Melody = "melody";
+    SoundConsts.PickLockFail = "picklockFail";
+    SoundConsts.PickLockNeutral = "picklockNeutral";
+    SoundConsts.PickLockSuccess = "picklockSuccess";
+    SoundConsts.Poison = "poison";
+    SoundConsts.Revive = "revive";
+    SoundConsts.ShieldMetal = "shieldMetal";
+    SoundConsts.ShieldWood = "shieldWood";
+    SoundConsts.Skull = "skull";
+    SoundConsts.Move01 = "move01";
+    SoundConsts.Move02 = "move02";
+    SoundConsts.Trap = "trap";
+
     class TweenHelper {
         static spriteHide(view) {
             Laya.Tween.clearAll(view);
@@ -409,6 +467,18 @@
             }, Consts.FlipSpeed);
             tweenContainer.tweens.push(t2);
             return tweenContainer;
+        }
+        static TurnCard(viewFrom, viewTo) {
+            SoundController.instance.playSound(SoundConsts.Card);
+            viewTo.setScale(0, Consts.FlipZoom);
+            var tweenContainer = TweenHelper.turnAnimationStart(null, viewFrom);
+            tweenContainer.onComplete.add(() => {
+                viewFrom.visible = false;
+                viewTo.visible = true;
+                viewTo.scaleX = 0.1;
+                TweenHelper.turnAnimationEnd(null, viewTo).restart();
+            }, this);
+            tweenContainer.restart();
         }
         static scaleIn(tweenContainer, view, o = true) {
             if (!tweenContainer)
@@ -977,6 +1047,15 @@
     class CardConfig extends CardConfigLang {
         get cardScoreConfig() {
             return Game.config.cardScoreType.getConfig(this.scoreTypeKey);
+        }
+        get cardScoreType() {
+            var scoreConfig = this.cardScoreConfig;
+            if (scoreConfig) {
+                return scoreConfig.id;
+            }
+            else {
+                console.error("CardConfig.cardScoreType    scoreConfig=null", this.name, this);
+            }
         }
         get spriteUrl() {
             if (!this._spriteUrl) {
@@ -4457,64 +4536,6 @@
         }
     }
 
-    class SoundController {
-        static get instance() {
-            if (!this._instance) {
-                this._instance = new SoundController();
-            }
-            return this._instance;
-        }
-        get soundBtnIndex() {
-            return Laya.SoundManager.soundMuted ? 0 : 1;
-        }
-        changeSoundState() {
-            Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = !Laya.SoundManager.soundMuted;
-        }
-        playSound(key) {
-            if (Laya.SoundManager.soundMuted) {
-                return;
-            }
-            var path = `res/sounds/mp3/${key}.mp3`;
-            Laya.SoundManager.playSound(path, 1);
-        }
-    }
-
-    class SoundConsts {
-    }
-    SoundConsts.Click = "click";
-    SoundConsts.Barrel1 = "barrel1";
-    SoundConsts.Barrel2 = "barrel2";
-    SoundConsts.Bomb = "bomb";
-    SoundConsts.BossAppearance = "bossAppearance";
-    SoundConsts.Buy = "buy";
-    SoundConsts.Cannon = "cannon";
-    SoundConsts.Card = "card";
-    SoundConsts.ChestOpening = "chestOpening";
-    SoundConsts.Coin = "coin";
-    SoundConsts.CoinsBag = "coinsBag";
-    SoundConsts.CoinsCounting = "coinsCounting";
-    SoundConsts.Health1 = "health1";
-    SoundConsts.Health2 = "health2";
-    SoundConsts.HeroDies = "heroDies";
-    SoundConsts.Hit1 = "hit1";
-    SoundConsts.Hit2 = "hit2";
-    SoundConsts.Horseshoe = "horseshoe";
-    SoundConsts.Idol = "idol";
-    SoundConsts.IncorrectClick = "incorrectClick";
-    SoundConsts.Lighting = "lighting";
-    SoundConsts.Melody = "melody";
-    SoundConsts.PickLockFail = "picklockFail";
-    SoundConsts.PickLockNeutral = "picklockNeutral";
-    SoundConsts.PickLockSuccess = "picklockSuccess";
-    SoundConsts.Poison = "poison";
-    SoundConsts.Revive = "revive";
-    SoundConsts.ShieldMetal = "shieldMetal";
-    SoundConsts.ShieldWood = "shieldWood";
-    SoundConsts.Skull = "skull";
-    SoundConsts.Move01 = "move01";
-    SoundConsts.Move02 = "move02";
-    SoundConsts.Trap = "trap";
-
     class AbstractCard {
         constructor() {
             this.type = CardScoreType.None;
@@ -7614,12 +7635,36 @@
     }
 
     class CardConfigReader extends ExcelConfigReader {
+        constructor() {
+            super(...arguments);
+            this.typeMap = new Map();
+        }
         static GetId(type, level = 1) {
             return type * 100 + level;
         }
         getTypeLevelConfig(type, level = 1) {
             var id = CardConfigReader.GetId(type, level);
             return this.getConfig(id);
+        }
+        onGameLoadedAll() {
+            super.onGameLoadedAll();
+            this.typeMap.clear();
+            let list = this.configList;
+            for (let i = 0; i < list.length; i++) {
+                var config = list[i];
+                var configList;
+                if (this.typeMap.has(config.cardScoreType)) {
+                    configList = this.typeMap.get(config.cardScoreType);
+                }
+                else {
+                    configList = [];
+                    this.typeMap.set(config.cardScoreType, configList);
+                }
+                configList.push(config);
+            }
+        }
+        getConfigListByTypeKey(type) {
+            return this.typeMap.get(type);
         }
     }
 
@@ -7629,6 +7674,9 @@
             this.configsByKey = new Map();
         }
         onGameLoadedAll() {
+            if (this.configsByKey.size != 0) {
+                return;
+            }
             super.onGameLoadedAll();
             let list = this.configList;
             for (let i = 0; i < list.length; i++) {
@@ -7640,6 +7688,9 @@
             }
         }
         getConfig(key) {
+            if (this.configsByKey.size == 0) {
+                this.onGameLoadedAll();
+            }
             if (!this.configsByKey.has(key)) {
                 if (this.hasConfig(key)) {
                     return super.getConfig(key);
@@ -7647,6 +7698,12 @@
                 console.log(`${this.tableName} 没有 key=${key} 的配置`);
             }
             return this.configsByKey.get(key);
+        }
+        keyToTypeId(key) {
+            var config = this.getConfig(key);
+            if (config) {
+                return config.id;
+            }
         }
     }
 
@@ -10670,13 +10727,108 @@
         }
     }
 
+    class HeroData {
+        constructor() {
+            this.id = 0;
+            this.isGeted = false;
+        }
+    }
+
+    class HeroModel extends MModel {
+        constructor() {
+            super(...arguments);
+            this.LocalStorageKey = "HeroModel";
+            this.list = [];
+            this.map = new Map();
+            this.selectId = -1;
+        }
+        install() {
+            var configList = Game.config.card.getConfigListByTypeKey(CardScoreType.Hero);
+            for (var i = 0, len = configList.length; i < len; i++) {
+                var config = configList[i];
+                var heroData = new HeroData();
+                heroData.cardConfig = config;
+                heroData.id = config.id;
+                this.list.push(heroData);
+                this.map.set(heroData.id, heroData);
+            }
+            if (this.list.length > 0) {
+                this.selectId = this.list[0].id;
+            }
+            this.read();
+        }
+        getItem(id) {
+            return this.map.get(id);
+        }
+        get selectHero() {
+            var item = this.getItem(this.selectId);
+            if (item) {
+                return item;
+            }
+            else {
+                if (this.list.length > 0) {
+                    this.selectId = this.list[0].id;
+                    return this.list[0];
+                }
+            }
+        }
+        set selectHero(heroData) {
+            this.selectId = heroData.id;
+        }
+        hasNext() {
+            var index = this.list.indexOf(this.selectHero);
+            return index++ < this.list.length;
+        }
+        hasPrev() {
+            var index = this.list.indexOf(this.selectHero);
+            return index-- >= 0;
+        }
+        getNextItem() {
+            var index = this.list.indexOf(this.selectHero);
+            index++;
+            if (index < this.list.length) {
+                this.selectHero = this.list[index];
+            }
+            return this.selectHero;
+        }
+        getPrevItem() {
+            var index = this.list.indexOf(this.selectHero);
+            index--;
+            if (index >= 0) {
+                this.selectHero = this.list[index];
+            }
+            return this.selectHero;
+        }
+        save() {
+            var json = { selectId: this.selectId, list: [] };
+            for (var item of this.list) {
+                json.list.push({ id: item.id, num: item.isGeted ? 1 : 0 });
+            }
+            Game.localStorage.setJSON(this.LocalStorageKey, json, false);
+        }
+        read() {
+            if (Game.localStorage.hasItem(this.LocalStorageKey, false)) {
+                var json = Game.localStorage.getJSON(this.LocalStorageKey, false);
+                this.selectId = json.selectId;
+                for (var item of json.list) {
+                    var heroData = this.getItem(item.id);
+                    if (heroData) {
+                        heroData.isGeted = item.num > 0;
+                    }
+                }
+            }
+        }
+    }
+
     class ModelManagerList {
         constructor() {
             this.list = [];
             this.login = new LoginModel();
+            this.hero = new HeroModel();
         }
         initList() {
             this.list.push(this.login);
+            this.list.push(this.hero);
         }
     }
 
@@ -14510,16 +14662,23 @@
     PanelChooseHeroStruct.DependPackages = ["GameHome"];
 
     class PanelChooseHero extends PanelChooseHeroStruct {
+        constructor() {
+            super(...arguments);
+            this.heroDataList = [];
+        }
         onWindowInited() {
             this.m_playBtn.onClick(this, this.OnClickPlayBtn);
             this.m_plusBtn.onClick(this, this.OnClickPlusBtn);
+            this.m_nextHeroBtn.onClick(this, this.OnClickNextHeroBtn);
+            this.m_prevHeroBtn.onClick(this, this.OnClickPrevHeroBtn);
+            this.heroDataList = Game.moduleModel.hero.list;
+            this.currentHeroData = Game.moduleModel.hero.selectHero;
         }
         onWindowShow() {
-            this.SetBtnState();
         }
         onTabShow() {
             console.log("PanelChooseHero onTabShow");
-            this.SetBtnState();
+            this.SetData();
         }
         onTabHide() {
             console.log("PanelChooseHero onTabHide");
@@ -14533,6 +14692,20 @@
                 this.m_plusBtn.visible = true;
                 this.m_playBtn.visible = false;
             }
+        }
+        SetData() {
+            this.m_choiceHero.SetData(this.currentHeroData);
+            this.SetBtnState(!this.currentHeroData.isGeted);
+            this.m_prevHeroBtn.visible = Game.moduleModel.hero.hasPrev();
+            this.m_nextHeroBtn.visible = Game.moduleModel.hero.hasNext();
+        }
+        OnClickNextHeroBtn() {
+            this.currentHeroData = Game.moduleModel.hero.getNextItem();
+            this.SetData();
+        }
+        OnClickPrevHeroBtn() {
+            this.currentHeroData = Game.moduleModel.hero.getPrevItem();
+            this.SetData();
         }
         OnClickPlayBtn() {
             Game.menu.openTab(MenuId.Home, HomeTabType.Shop);
@@ -14608,6 +14781,40 @@
         }
     }
 
+    class ChoiceHeroStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ChoiceHero"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_info = (this.getChild("info"));
+            this.m_card = (this.getChild("card"));
+        }
+    }
+    ChoiceHeroStruct.URL = "ui://moe42ygrsqzy8l";
+    ChoiceHeroStruct.DependPackages = ["GameHome"];
+
+    class ChoiceHero extends ChoiceHeroStruct {
+        onWindowInited() {
+            this.m_card.m_infoBtn.onClick(this, this.OnClickInfoBtn);
+            this.m_info.m_backBtn.onClick(this, this.OnClickBackInfo);
+        }
+        SetData(heroData) {
+            this.heroData = heroData;
+            this.m_card.SetData(heroData);
+            this.m_info.SetData(heroData);
+        }
+        OnClickInfoBtn() {
+            TweenHelper.TurnCard(this.m_card, this.m_info);
+        }
+        OnClickBackInfo() {
+            TweenHelper.TurnCard(this.m_info, this.m_card);
+        }
+    }
+
     class HeroSpriteStruct extends fgui.GLabel {
         constructor() {
             super();
@@ -14626,6 +14833,131 @@
     HeroSpriteStruct.DependPackages = ["GameHome"];
 
     class HeroSprite extends HeroSpriteStruct {
+    }
+
+    class ChoiceHeroInfoStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ChoiceHeroInfo"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_hero = this.getController("hero");
+            this.m_bg = (this.getChild("bg"));
+            this.m_heroKey = (this.getChild("heroKey"));
+            this.m_heroBase = (this.getChild("heroBase"));
+            this.m_heroBomb = (this.getChild("heroBomb"));
+            this.m_gunHero = (this.getChild("gunHero"));
+            this.m_backBtn = (this.getChild("backBtn"));
+        }
+    }
+    ChoiceHeroInfoStruct.URL = "ui://moe42ygrsqzy8p";
+    ChoiceHeroInfoStruct.DependPackages = ["GameHome"];
+
+    class ChoiceHeroInfo extends ChoiceHeroInfoStruct {
+        SetData(heroData) {
+            this.heroData = heroData;
+        }
+    }
+
+    class HeroInfoKeyStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "HeroInfoKey"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+        }
+    }
+    HeroInfoKeyStruct.URL = "ui://moe42ygrsqzy8q";
+    HeroInfoKeyStruct.DependPackages = ["GameHome"];
+
+    class HeroInfoKey extends HeroInfoKeyStruct {
+    }
+
+    class HeroInfoBombStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "HeroInfoBomb"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+        }
+    }
+    HeroInfoBombStruct.URL = "ui://moe42ygrsqzy8s";
+    HeroInfoBombStruct.DependPackages = ["GameHome"];
+
+    class HeroInfoBomb extends HeroInfoBombStruct {
+    }
+
+    class HeroInfoGunStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "HeroInfoGun"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+        }
+    }
+    HeroInfoGunStruct.URL = "ui://moe42ygrsqzy8t";
+    HeroInfoGunStruct.DependPackages = ["GameHome"];
+
+    class HeroInfoGun extends HeroInfoGunStruct {
+    }
+
+    class ChoiceHeroCardStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ChoiceHeroCard"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_coinIcon = (this.getChild("coinIcon"));
+            this.m_coinText = (this.getChild("coinText"));
+            this.m_coinGroup = (this.getChild("coinGroup"));
+            this.m_heroSprite = (this.getChild("heroSprite"));
+            this.m_infoBtn = (this.getChild("infoBtn"));
+            this.m_lock = (this.getChild("lock"));
+        }
+    }
+    ChoiceHeroCardStruct.URL = "ui://moe42ygrsqzy8u";
+    ChoiceHeroCardStruct.DependPackages = ["GameHome"];
+
+    class ChoiceHeroCard extends ChoiceHeroCardStruct {
+        SetData(heroData) {
+            this.heroData = heroData;
+        }
+    }
+
+    class ShopCardStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ShopCard"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_ShopType = this.getController("ShopType");
+            this.m_back = (this.getChild("back"));
+            this.m_front = (this.getChild("front"));
+        }
+    }
+    ShopCardStruct.URL = "ui://moe42ygrsqzy8v";
+    ShopCardStruct.DependPackages = ["GameHome"];
+
+    class ShopCard extends ShopCardStruct {
     }
 
     class FxSmallRingStruct extends fgui.GComponent {
@@ -14784,6 +15116,76 @@
         }
         OnClickPlusBtn() {
         }
+    }
+
+    class FxShadowStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "FxShadow"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_shadow = (this.getChild("shadow"));
+            this.m_anim = this.getTransition("anim");
+        }
+    }
+    FxShadowStruct.URL = "ui://moe42ygrsqzy93";
+    FxShadowStruct.DependPackages = ["GameHome"];
+
+    class FxShadow extends FxShadowStruct {
+    }
+
+    class ShopCardFrontStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ShopCardFront"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_ShopType = this.getController("ShopType");
+            this.m_bg = (this.getChild("bg"));
+            this.m_coinIcon = (this.getChild("coinIcon"));
+            this.m_coinText = (this.getChild("coinText"));
+            this.m_coinGroup = (this.getChild("coinGroup"));
+            this.m_hasFlag = (this.getChild("hasFlag"));
+            this.m_infoBtn = (this.getChild("infoBtn"));
+            this.m_fxSmallRing = (this.getChild("fxSmallRing"));
+            this.m_shopIcon = (this.getChild("shopIcon"));
+            this.m_plusBtn = (this.getChild("plusBtn"));
+        }
+    }
+    ShopCardFrontStruct.URL = "ui://moe42ygrsqzy94";
+    ShopCardFrontStruct.DependPackages = ["GameHome"];
+
+    class ShopCardFront extends ShopCardFrontStruct {
+    }
+
+    class ShopCardBackStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ShopCardBack"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_ShopType = this.getController("ShopType");
+            this.m_bg = (this.getChild("bg"));
+            this.m_backBtn = (this.getChild("backBtn"));
+            this.m_heart = (this.getChild("heart"));
+            this.m_luck = (this.getChild("luck"));
+            this.m_key = (this.getChild("key"));
+            this.m_horseshoe = (this.getChild("horseshoe"));
+        }
+    }
+    ShopCardBackStruct.URL = "ui://moe42ygrsqzy95";
+    ShopCardBackStruct.DependPackages = ["GameHome"];
+
+    class ShopCardBack extends ShopCardBackStruct {
     }
 
     class PanelPauseStruct extends fgui.GComponent {
@@ -15680,12 +16082,22 @@
             bind(PanelChooseHero.URL, PanelChooseHero);
             bind(WindowHomeUI.URL, WindowHomeUI);
             bind(MenuTopPanel.URL, MenuTopPanel);
+            bind(ChoiceHero.URL, ChoiceHero);
             bind(HeroSprite.URL, HeroSprite);
+            bind(ChoiceHeroInfo.URL, ChoiceHeroInfo);
+            bind(HeroInfoKey.URL, HeroInfoKey);
+            bind(HeroInfoBomb.URL, HeroInfoBomb);
+            bind(HeroInfoGun.URL, HeroInfoGun);
+            bind(ChoiceHeroCard.URL, ChoiceHeroCard);
+            bind(ShopCard.URL, ShopCard);
             bind(FxSmallRing.URL, FxSmallRing);
             bind(ShopIcon.URL, ShopIcon);
             bind(PanelShop.URL, PanelShop);
             bind(PanelChooseGameFormat.URL, PanelChooseGameFormat);
             bind(GameFormatCard.URL, GameFormatCard);
+            bind(FxShadow.URL, FxShadow);
+            bind(ShopCardFront.URL, ShopCardFront);
+            bind(ShopCardBack.URL, ShopCardBack);
             bind(PanelPause.URL, PanelPause);
             bind(WindowWarUI.URL, WindowWarUI);
             bind(PanelResult.URL, PanelResult);

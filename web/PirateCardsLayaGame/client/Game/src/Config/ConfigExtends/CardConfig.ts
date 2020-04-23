@@ -9,6 +9,20 @@ export default class CardConfig extends CardConfigLang
         return Game.config.cardScoreType.getConfig(this.scoreTypeKey);
     }
 
+    get cardScoreType()
+    {
+        var scoreConfig = this.cardScoreConfig;
+        if(scoreConfig)
+        {
+
+            return scoreConfig.id;
+        }
+        else
+        {
+            console.error("CardConfig.cardScoreType    scoreConfig=null", this.name, this)
+        }
+    }
+
     private _spriteUrl:string;
     get spriteUrl()
     {

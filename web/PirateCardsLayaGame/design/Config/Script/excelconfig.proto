@@ -37,6 +37,7 @@ message Card
 	string zh_cn_name = 4;
 	int32 level = 5;
 	string sprite = 6;
+	int32 coin = 7;
 }
 
 message CardScoreType 

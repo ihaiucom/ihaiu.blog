@@ -438,6 +438,7 @@ $excelRoot.Card = (function() {
     Card.prototype.zhCnName = "";
     Card.prototype.level = 0;
     Card.prototype.sprite = "";
+    Card.prototype.coin = 0;
     Card.create = function create(properties) {
         return new Card(properties);
     };
@@ -456,6 +457,8 @@ $excelRoot.Card = (function() {
             writer.uint32(/* id 5, wireType 0 =*/40).int32(message.level);
         if (message.sprite != null && message.hasOwnProperty("sprite"))
             writer.uint32(/* id 6, wireType 2 =*/50).string(message.sprite);
+        if (message.coin != null && message.hasOwnProperty("coin"))
+            writer.uint32(/* id 7, wireType 0 =*/56).int32(message.coin);
         return writer;
     };
     Card.encodeDelimited = function encodeDelimited(message, writer) {
@@ -485,6 +488,9 @@ $excelRoot.Card = (function() {
                 break;
             case 6:
                 message.sprite = reader.string();
+                break;
+            case 7:
+                message.coin = reader.int32();
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -519,6 +525,9 @@ $excelRoot.Card = (function() {
         if (message.sprite != null && message.hasOwnProperty("sprite"))
             if (!$util.isString(message.sprite))
                 return "sprite: string expected";
+        if (message.coin != null && message.hasOwnProperty("coin"))
+            if (!$util.isInteger(message.coin))
+                return "coin: integer expected";
         return null;
     };
     Card.fromObject = function fromObject(object) {
@@ -537,6 +546,8 @@ $excelRoot.Card = (function() {
             message.level = object.level | 0;
         if (object.sprite != null)
             message.sprite = String(object.sprite);
+        if (object.coin != null)
+            message.coin = object.coin | 0;
         return message;
     };
     Card.toObject = function toObject(message, options) {
@@ -550,6 +561,7 @@ $excelRoot.Card = (function() {
             object.zhCnName = "";
             object.level = 0;
             object.sprite = "";
+            object.coin = 0;
         }
         if (message.id != null && message.hasOwnProperty("id"))
             object.id = message.id;
@@ -563,6 +575,8 @@ $excelRoot.Card = (function() {
             object.level = message.level;
         if (message.sprite != null && message.hasOwnProperty("sprite"))
             object.sprite = message.sprite;
+        if (message.coin != null && message.hasOwnProperty("coin"))
+            object.coin = message.coin;
         return object;
     };
     Card.prototype.toJSON = function toJSON() {

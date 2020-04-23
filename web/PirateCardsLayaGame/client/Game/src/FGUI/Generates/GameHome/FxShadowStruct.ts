@@ -4,21 +4,20 @@
 /////////////////////////////////////
 
 import FxShadow from "../../Extends/GameHome/FxShadow";
-import FxSmallRing from "../../Extends/GameHome/FxSmallRing";
 
-export default class FxSmallRingStruct extends fgui.GComponent
+export default class FxShadowStruct extends fgui.GComponent
 {
 	public m_anim : fgui.Transition;
-	public m_shadow : FxShadow;
+	public m_shadow : fgui.GImage;
 
 	
-	public static URL:string = "ui://moe42ygrsqzy8w";
+	public static URL:string = "ui://moe42ygrsqzy93";
 	
 	public static DependPackages:string[] = ["GameHome"];
 
 	
-	public static createInstance():FxSmallRing {
-		return <FxSmallRing><any>(fgui.UIPackage.createObject("GameHome","FxSmallRing"));
+	public static createInstance():FxShadow {
+		return <FxShadow><any>(fgui.UIPackage.createObject("GameHome","FxShadow"));
 	}
 
 	
@@ -34,7 +33,7 @@ export default class FxSmallRingStruct extends fgui.GComponent
 		
 
 		
-		this.m_shadow = <FxShadow><any>(this.getChild("shadow"));
+		this.m_shadow = <fgui.GImage><any>(this.getChild("shadow"));
 		
 		
 		this.m_anim =  this.getTransition("anim");

@@ -82,6 +82,7 @@ declare module excelconfig {
 	    zhCnName?: (string|null);
 	    level?: (number|null);
 	    sprite?: (string|null);
+	    coin?: (number|null);
 	}
 	 class Card implements ICard {
 	    constructor(properties?: ICard);
@@ -91,6 +92,7 @@ declare module excelconfig {
 	    public zhCnName: string;
 	    public level: number;
 	    public sprite: string;
+	    public coin: number;
 	    public static create(properties?: ICard): Card;
 	    public static encode(message: ICard, writer?: $protobuf.Writer): $protobuf.Writer;
 	    public static encodeDelimited(message: ICard, writer?: $protobuf.Writer): $protobuf.Writer;
