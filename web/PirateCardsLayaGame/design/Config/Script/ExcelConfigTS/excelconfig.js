@@ -757,6 +757,193 @@ $excelRoot.CardScoreType = (function() {
     };
     return CardScoreType;
 })();
+$excelRoot.Item = (function() {
+    function Item(properties) {
+        if (properties)
+            for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                if (properties[keys[i]] != null)
+                    this[keys[i]] = properties[keys[i]];
+    }
+    Item.prototype.id = 0;
+    Item.prototype.zhCnName = "";
+    Item.prototype.zhCnEn = "";
+    Item.prototype.zhCnItemDes = "";
+    Item.prototype.icon = "";
+    Item.prototype.iconSmall = "";
+    Item.prototype.typeKey = "";
+    Item.prototype.type = 0;
+    Item.prototype.coin = 0;
+    Item.create = function create(properties) {
+        return new Item(properties);
+    };
+    Item.encode = function encode(message, writer) {
+        if (!writer)
+            writer = $Writer.create();
+        if (message.id != null && message.hasOwnProperty("id"))
+            writer.uint32(/* id 1, wireType 0 =*/8).int32(message.id);
+        if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
+            writer.uint32(/* id 2, wireType 2 =*/18).string(message.zhCnName);
+        if (message.zhCnEn != null && message.hasOwnProperty("zhCnEn"))
+            writer.uint32(/* id 3, wireType 2 =*/26).string(message.zhCnEn);
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            writer.uint32(/* id 4, wireType 2 =*/34).string(message.zhCnItemDes);
+        if (message.icon != null && message.hasOwnProperty("icon"))
+            writer.uint32(/* id 5, wireType 2 =*/42).string(message.icon);
+        if (message.iconSmall != null && message.hasOwnProperty("iconSmall"))
+            writer.uint32(/* id 6, wireType 2 =*/50).string(message.iconSmall);
+        if (message.typeKey != null && message.hasOwnProperty("typeKey"))
+            writer.uint32(/* id 7, wireType 2 =*/58).string(message.typeKey);
+        if (message.type != null && message.hasOwnProperty("type"))
+            writer.uint32(/* id 8, wireType 0 =*/64).int32(message.type);
+        if (message.coin != null && message.hasOwnProperty("coin"))
+            writer.uint32(/* id 9, wireType 0 =*/72).int32(message.coin);
+        return writer;
+    };
+    Item.encodeDelimited = function encodeDelimited(message, writer) {
+        return this.encode(message, writer).ldelim();
+    };
+    Item.decode = function decode(reader, length) {
+        if (!(reader instanceof $Reader))
+            reader = $Reader.create(reader);
+        var end = length === undefined ? reader.len : reader.pos + length, message = new $excelRoot.Item();
+        while (reader.pos < end) {
+            var tag = reader.uint32();
+            switch (tag >>> 3) {
+            case 1:
+                message.id = reader.int32();
+                break;
+            case 2:
+                message.zhCnName = reader.string();
+                break;
+            case 3:
+                message.zhCnEn = reader.string();
+                break;
+            case 4:
+                message.zhCnItemDes = reader.string();
+                break;
+            case 5:
+                message.icon = reader.string();
+                break;
+            case 6:
+                message.iconSmall = reader.string();
+                break;
+            case 7:
+                message.typeKey = reader.string();
+                break;
+            case 8:
+                message.type = reader.int32();
+                break;
+            case 9:
+                message.coin = reader.int32();
+                break;
+            default:
+                reader.skipType(tag & 7);
+                break;
+            }
+        }
+        return message;
+    };
+    Item.decodeDelimited = function decodeDelimited(reader) {
+        if (!(reader instanceof $Reader))
+            reader = new $Reader(reader);
+        return this.decode(reader, reader.uint32());
+    };
+    Item.verify = function verify(message) {
+        if (typeof message !== "object" || message === null)
+            return "object expected";
+        if (message.id != null && message.hasOwnProperty("id"))
+            if (!$util.isInteger(message.id))
+                return "id: integer expected";
+        if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
+            if (!$util.isString(message.zhCnName))
+                return "zhCnName: string expected";
+        if (message.zhCnEn != null && message.hasOwnProperty("zhCnEn"))
+            if (!$util.isString(message.zhCnEn))
+                return "zhCnEn: string expected";
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            if (!$util.isString(message.zhCnItemDes))
+                return "zhCnItemDes: string expected";
+        if (message.icon != null && message.hasOwnProperty("icon"))
+            if (!$util.isString(message.icon))
+                return "icon: string expected";
+        if (message.iconSmall != null && message.hasOwnProperty("iconSmall"))
+            if (!$util.isString(message.iconSmall))
+                return "iconSmall: string expected";
+        if (message.typeKey != null && message.hasOwnProperty("typeKey"))
+            if (!$util.isString(message.typeKey))
+                return "typeKey: string expected";
+        if (message.type != null && message.hasOwnProperty("type"))
+            if (!$util.isInteger(message.type))
+                return "type: integer expected";
+        if (message.coin != null && message.hasOwnProperty("coin"))
+            if (!$util.isInteger(message.coin))
+                return "coin: integer expected";
+        return null;
+    };
+    Item.fromObject = function fromObject(object) {
+        if (object instanceof $excelRoot.Item)
+            return object;
+        var message = new $excelRoot.Item();
+        if (object.id != null)
+            message.id = object.id | 0;
+        if (object.zhCnName != null)
+            message.zhCnName = String(object.zhCnName);
+        if (object.zhCnEn != null)
+            message.zhCnEn = String(object.zhCnEn);
+        if (object.zhCnItemDes != null)
+            message.zhCnItemDes = String(object.zhCnItemDes);
+        if (object.icon != null)
+            message.icon = String(object.icon);
+        if (object.iconSmall != null)
+            message.iconSmall = String(object.iconSmall);
+        if (object.typeKey != null)
+            message.typeKey = String(object.typeKey);
+        if (object.type != null)
+            message.type = object.type | 0;
+        if (object.coin != null)
+            message.coin = object.coin | 0;
+        return message;
+    };
+    Item.toObject = function toObject(message, options) {
+        if (!options)
+            options = {};
+        var object = {};
+        if (options.defaults) {
+            object.id = 0;
+            object.zhCnName = "";
+            object.zhCnEn = "";
+            object.zhCnItemDes = "";
+            object.icon = "";
+            object.iconSmall = "";
+            object.typeKey = "";
+            object.type = 0;
+            object.coin = 0;
+        }
+        if (message.id != null && message.hasOwnProperty("id"))
+            object.id = message.id;
+        if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
+            object.zhCnName = message.zhCnName;
+        if (message.zhCnEn != null && message.hasOwnProperty("zhCnEn"))
+            object.zhCnEn = message.zhCnEn;
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            object.zhCnItemDes = message.zhCnItemDes;
+        if (message.icon != null && message.hasOwnProperty("icon"))
+            object.icon = message.icon;
+        if (message.iconSmall != null && message.hasOwnProperty("iconSmall"))
+            object.iconSmall = message.iconSmall;
+        if (message.typeKey != null && message.hasOwnProperty("typeKey"))
+            object.typeKey = message.typeKey;
+        if (message.type != null && message.hasOwnProperty("type"))
+            object.type = message.type;
+        if (message.coin != null && message.hasOwnProperty("coin"))
+            object.coin = message.coin;
+        return object;
+    };
+    Item.prototype.toJSON = function toJSON() {
+        return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+    };
+    return Item;
+})();
 $excelRoot.Loader = (function() {
     function Loader(properties) {
         if (properties)
@@ -1534,6 +1721,7 @@ $excelRoot.ConfigMng = (function() {
     function ConfigMng(properties) {
         this.Card = {};
         this.CardScoreType = {};
+        this.Item = {};
         this.Loader = {};
         this.Menu = {};
         this.Msg = {};
@@ -1546,6 +1734,7 @@ $excelRoot.ConfigMng = (function() {
     ConfigMng.prototype.Global = null;
     ConfigMng.prototype.Card = $util.emptyObject;
     ConfigMng.prototype.CardScoreType = $util.emptyObject;
+    ConfigMng.prototype.Item = $util.emptyObject;
     ConfigMng.prototype.Loader = $util.emptyObject;
     ConfigMng.prototype.Menu = $util.emptyObject;
     ConfigMng.prototype.Msg = $util.emptyObject;
@@ -1568,24 +1757,29 @@ $excelRoot.ConfigMng = (function() {
                 writer.uint32(/* id 3, wireType 2 =*/26).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
                 $excelRoot.CardScoreType.encode(message.CardScoreType[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
             }
+        if (message.Item != null && message.hasOwnProperty("Item"))
+            for (var keys = Object.keys(message.Item), i = 0; i < keys.length; ++i) {
+                writer.uint32(/* id 4, wireType 2 =*/34).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
+                $excelRoot.Item.encode(message.Item[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
+            }
         if (message.Loader != null && message.hasOwnProperty("Loader"))
             for (var keys = Object.keys(message.Loader), i = 0; i < keys.length; ++i) {
-                writer.uint32(/* id 4, wireType 2 =*/34).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
+                writer.uint32(/* id 5, wireType 2 =*/42).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
                 $excelRoot.Loader.encode(message.Loader[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
             }
         if (message.Menu != null && message.hasOwnProperty("Menu"))
             for (var keys = Object.keys(message.Menu), i = 0; i < keys.length; ++i) {
-                writer.uint32(/* id 5, wireType 2 =*/42).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
+                writer.uint32(/* id 6, wireType 2 =*/50).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
                 $excelRoot.Menu.encode(message.Menu[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
             }
         if (message.Msg != null && message.hasOwnProperty("Msg"))
             for (var keys = Object.keys(message.Msg), i = 0; i < keys.length; ++i) {
-                writer.uint32(/* id 6, wireType 2 =*/50).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
+                writer.uint32(/* id 7, wireType 2 =*/58).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
                 $excelRoot.Msg.encode(message.Msg[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
             }
         if (message.Unlock != null && message.hasOwnProperty("Unlock"))
             for (var keys = Object.keys(message.Unlock), i = 0; i < keys.length; ++i) {
-                writer.uint32(/* id 7, wireType 2 =*/58).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
+                writer.uint32(/* id 8, wireType 2 =*/66).fork().uint32(/* id 1, wireType 0 =*/8).int32(keys[i]);
                 $excelRoot.Unlock.encode(message.Unlock[keys[i]], writer.uint32(/* id 2, wireType 2 =*/18).fork()).ldelim().ldelim();
             }
         return writer;
@@ -1621,13 +1815,21 @@ $excelRoot.ConfigMng = (function() {
                 break;
             case 4:
                 reader.skip().pos++;
+                if (message.Item === $util.emptyObject)
+                    message.Item = {};
+                key = reader.int32();
+                reader.pos++;
+                message.Item[key] = $excelRoot.Item.decode(reader, reader.uint32());
+                break;
+            case 5:
+                reader.skip().pos++;
                 if (message.Loader === $util.emptyObject)
                     message.Loader = {};
                 key = reader.int32();
                 reader.pos++;
                 message.Loader[key] = $excelRoot.Loader.decode(reader, reader.uint32());
                 break;
-            case 5:
+            case 6:
                 reader.skip().pos++;
                 if (message.Menu === $util.emptyObject)
                     message.Menu = {};
@@ -1635,7 +1837,7 @@ $excelRoot.ConfigMng = (function() {
                 reader.pos++;
                 message.Menu[key] = $excelRoot.Menu.decode(reader, reader.uint32());
                 break;
-            case 6:
+            case 7:
                 reader.skip().pos++;
                 if (message.Msg === $util.emptyObject)
                     message.Msg = {};
@@ -1643,7 +1845,7 @@ $excelRoot.ConfigMng = (function() {
                 reader.pos++;
                 message.Msg[key] = $excelRoot.Msg.decode(reader, reader.uint32());
                 break;
-            case 7:
+            case 8:
                 reader.skip().pos++;
                 if (message.Unlock === $util.emptyObject)
                     message.Unlock = {};
@@ -1696,6 +1898,20 @@ $excelRoot.ConfigMng = (function() {
                     var error = $excelRoot.CardScoreType.verify(message.CardScoreType[key[i]]);
                     if (error)
                         return "CardScoreType." + error;
+                }
+            }
+        }
+        if (message.Item != null && message.hasOwnProperty("Item")) {
+            if (!$util.isObject(message.Item))
+                return "Item: object expected";
+            var key = Object.keys(message.Item);
+            for (var i = 0; i < key.length; ++i) {
+                if (!$util.key32Re.test(key[i]))
+                    return "Item: integer key{k:int32} expected";
+                {
+                    var error = $excelRoot.Item.verify(message.Item[key[i]]);
+                    if (error)
+                        return "Item." + error;
                 }
             }
         }
@@ -1786,6 +2002,16 @@ $excelRoot.ConfigMng = (function() {
                 message.CardScoreType[keys[i]] = $excelRoot.CardScoreType.fromObject(object.CardScoreType[keys[i]]);
             }
         }
+        if (object.Item) {
+            if (typeof object.Item !== "object")
+                throw TypeError(".ConfigMng.Item: object expected");
+            message.Item = {};
+            for (var keys = Object.keys(object.Item), i = 0; i < keys.length; ++i) {
+                if (typeof object.Item[keys[i]] !== "object")
+                    throw TypeError(".ConfigMng.Item: object expected");
+                message.Item[keys[i]] = $excelRoot.Item.fromObject(object.Item[keys[i]]);
+            }
+        }
         if (object.Loader) {
             if (typeof object.Loader !== "object")
                 throw TypeError(".ConfigMng.Loader: object expected");
@@ -1835,6 +2061,7 @@ $excelRoot.ConfigMng = (function() {
         if (options.objects || options.defaults) {
             object.Card = {};
             object.CardScoreType = {};
+            object.Item = {};
             object.Loader = {};
             object.Menu = {};
             object.Msg = {};
@@ -1854,6 +2081,11 @@ $excelRoot.ConfigMng = (function() {
             object.CardScoreType = {};
             for (var j = 0; j < keys2.length; ++j)
                 object.CardScoreType[keys2[j]] = $excelRoot.CardScoreType.toObject(message.CardScoreType[keys2[j]], options);
+        }
+        if (message.Item && (keys2 = Object.keys(message.Item)).length) {
+            object.Item = {};
+            for (var j = 0; j < keys2.length; ++j)
+                object.Item[keys2[j]] = $excelRoot.Item.toObject(message.Item[keys2[j]], options);
         }
         if (message.Loader && (keys2 = Object.keys(message.Loader)).length) {
             object.Loader = {};

@@ -14,13 +14,10 @@ export default class ChoiceHeroCard extends ChoiceHeroCardStruct
     {
         this.heroData = heroData;
         
-        this.m_heroSprite.m_sprite.setSelectedIndex(heroData.cardConfig.id % 100 - 1);
-        this.m_lock.visible = !heroData.isGeted;
+        this.m_heroSprite.m_sprite.setSelectedIndex(heroData.cardConfig.spriteIndex);
+        this.m_coinText.text = heroData.cardConfig.coin + "";
+        this.m_coinGroup.visible = this.m_lock.visible = !heroData.isGeted;
     }
 
     
-    // 窗口初始化完毕
-    onWindowInited(): void
-    {
-    }
 }

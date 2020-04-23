@@ -52,6 +52,19 @@ message CardScoreType
 	bool isPowerUp = 8;
 }
 
+message Item 
+{
+	int32 id = 1;
+	string zh_cn_name = 2;
+	string zh_cn_en = 3;
+	string zh_cn_itemDes = 4;
+	string icon = 5;
+	string iconSmall = 6;
+	string typeKey = 7;
+	int32 type = 8;
+	int32 coin = 9;
+}
+
 message Loader 
 {
 	int32 id = 1;
@@ -110,9 +123,10 @@ message ConfigMng
 	Global Global = 1;
 	map<int32,Card> Card = 2;
 	map<int32,CardScoreType> CardScoreType = 3;
-	map<int32,Loader> Loader = 4;
-	map<int32,Menu> Menu = 5;
-	map<int32,Msg> Msg = 6;
-	map<int32,Unlock> Unlock = 7;
+	map<int32,Item> Item = 4;
+	map<int32,Loader> Loader = 5;
+	map<int32,Menu> Menu = 6;
+	map<int32,Msg> Msg = 7;
+	map<int32,Unlock> Unlock = 8;
 
 }

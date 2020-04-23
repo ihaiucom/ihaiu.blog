@@ -4,7 +4,7 @@
     <component id="n1_sqzy" name="playBtn" src="sqzy7v" fileName="Btn~NCode/BigPlayBtn.xml" xy="291,964">
       <relation target="" sidePair="center-center,middle-middle%"/>
     </component>
-    <list id="n225_sqzy" name="n225" xy="0,268" size="750,629" layout="flow_hz" overflow="scroll" lineGap="50" colGap="100" defaultItem="ui://moe42ygrsqzy8v" align="center">
+    <list id="n225_sqzy" name="list" xy="0,268" size="750,629" layout="flow_hz" overflow="scroll" lineGap="50" colGap="100" defaultItem="ui://moe42ygrsqzy8v" align="center" autoClearItems="true">
       <relation target="" sidePair="center-center,middle-middle%"/>
       <item controllers="ShopType,0"/>
       <item controllers="ShopType,1"/>

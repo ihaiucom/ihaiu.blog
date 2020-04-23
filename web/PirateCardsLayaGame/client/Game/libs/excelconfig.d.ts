@@ -133,6 +133,38 @@ declare module excelconfig {
 	    public static toObject(message: CardScoreType, options?: $protobuf.IConversionOptions): { [k: string]: any };
 	    public toJSON(): { [k: string]: any };
 	}
+	 interface IItem {
+	    id?: (number|null);
+	    zhCnName?: (string|null);
+	    zhCnEn?: (string|null);
+	    zhCnItemDes?: (string|null);
+	    icon?: (string|null);
+	    iconSmall?: (string|null);
+	    typeKey?: (string|null);
+	    type?: (number|null);
+	    coin?: (number|null);
+	}
+	 class Item implements IItem {
+	    constructor(properties?: IItem);
+	    public id: number;
+	    public zhCnName: string;
+	    public zhCnEn: string;
+	    public zhCnItemDes: string;
+	    public icon: string;
+	    public iconSmall: string;
+	    public typeKey: string;
+	    public type: number;
+	    public coin: number;
+	    public static create(properties?: IItem): Item;
+	    public static encode(message: IItem, writer?: $protobuf.Writer): $protobuf.Writer;
+	    public static encodeDelimited(message: IItem, writer?: $protobuf.Writer): $protobuf.Writer;
+	    public static decode(reader: ($protobuf.Reader|Uint8Array), length?: number): Item;
+	    public static decodeDelimited(reader: ($protobuf.Reader|Uint8Array)): Item;
+	    public static verify(message: { [k: string]: any }): (string|null);
+	    public static fromObject(object: { [k: string]: any }): Item;
+	    public static toObject(message: Item, options?: $protobuf.IConversionOptions): { [k: string]: any };
+	    public toJSON(): { [k: string]: any };
+	}
 	 interface ILoader {
 	    id?: (number|null);
 	    name?: (string|null);
@@ -265,6 +297,7 @@ declare module excelconfig {
 	    Global?: (IGlobal|null);
 	    Card?: ({ [k: string]: ICard }|null);
 	    CardScoreType?: ({ [k: string]: ICardScoreType }|null);
+	    Item?: ({ [k: string]: IItem }|null);
 	    Loader?: ({ [k: string]: ILoader }|null);
 	    Menu?: ({ [k: string]: IMenu }|null);
 	    Msg?: ({ [k: string]: IMsg }|null);
@@ -275,6 +308,7 @@ declare module excelconfig {
 	    public Global?: (IGlobal|null);
 	    public Card: { [k: string]: ICard };
 	    public CardScoreType: { [k: string]: ICardScoreType };
+	    public Item: { [k: string]: IItem };
 	    public Loader: { [k: string]: ILoader };
 	    public Menu: { [k: string]: IMenu };
 	    public Msg: { [k: string]: IMsg };

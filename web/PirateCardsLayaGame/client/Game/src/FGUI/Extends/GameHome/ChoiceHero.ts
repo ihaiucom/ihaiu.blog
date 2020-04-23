@@ -12,8 +12,8 @@ export default class ChoiceHero extends ChoiceHeroStruct
     // 窗口初始化完毕
     onWindowInited(): void
     {
-        this.m_card.m_infoBtn.onClick(this, this.OnClickInfoBtn);
-        this.m_info.m_backBtn.onClick(this, this.OnClickBackInfo);
+        this.m_card.m_infoBtn.onClick(this, this.ShowBack);
+        this.m_info.m_backBtn.onClick(this, this.ShowFront);
     }
 
 
@@ -25,13 +25,20 @@ export default class ChoiceHero extends ChoiceHeroStruct
         this.m_info.SetData(heroData);
     }
 
-    OnClickInfoBtn()
+    ShowBack()
     {
         TweenHelper.TurnCard(this.m_card, this.m_info);
     }
 
-    OnClickBackInfo()
+    ShowFront()
     {
         TweenHelper.TurnCard(this.m_info, this.m_card);
+    }
+
+    SetFront()
+    {
+        this.m_card.visible = true;
+        this.m_info.visible = false;
+        this.m_card.setScale(1, 1);
     }
 }

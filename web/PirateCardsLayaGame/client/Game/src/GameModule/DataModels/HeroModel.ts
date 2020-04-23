@@ -2,6 +2,7 @@ import MModel from "../../GameFrame/Module/MModel";
 import Game from "../../Game";
 import { CardScoreType } from "../../War/Enums/CardScoreType";
 import HeroData from "../DataStructs/HeroData";
+import GameStatus from "../../War/Datas/GameStatus";
 
 export default class HeroModel extends MModel
 {
@@ -29,6 +30,7 @@ export default class HeroModel extends MModel
 
         if(this.list.length > 0)
         {
+            this.list[0].isGeted = true;
             this.selectId = this.list[0].id;
         }
 
@@ -60,18 +62,25 @@ export default class HeroModel extends MModel
     set selectHero(heroData: HeroData)
     {
         this.selectId = heroData.id;
+        GameStatus.currentHero = heroData.cardConfig.heroType;
+
+        this.save();
     }
 
     hasNext()
     {
         var index = this.list.indexOf(this.selectHero);
-        return index ++ < this.list.length;
+        index ++ 
+        console.log(index);
+        return index  < this.list.length;
     }
 
     hasPrev()
     {
         var index = this.list.indexOf(this.selectHero);
-        return index -- >= 0;
+        index --
+        console.log(index);
+        return index >= 0;
     }
 
     getNextItem()
@@ -94,6 +103,18 @@ export default class HeroModel extends MModel
             this.selectHero = this.list[index];
         }
         return this.selectHero;
+    }
+
+    enableBuy()
+    {
+        return GameStatus.gold >= this.selectHero.cardConfig.coin;
+    }
+
+    buy()
+    {
+        this.selectHero.isGeted = true;
+        GameStatus.gold -= this.selectHero.cardConfig.coin;
+        this.save();
     }
 
 

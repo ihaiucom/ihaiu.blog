@@ -7,6 +7,7 @@ import PanelShop from "../../Extends/GameHome/PanelShop";
 
 export default class PanelShopStruct extends fgui.GComponent
 {
+	public m_list : fgui.GList;
 	public m_playBtn : fgui.GButton;
 
 	
@@ -32,6 +33,7 @@ export default class PanelShopStruct extends fgui.GComponent
 		
 
 		
+		this.m_list = <fgui.GList><any>(this.getChild("list"));
 		this.m_playBtn = <fgui.GButton><any>(this.getChild("playBtn"));
 		
 		

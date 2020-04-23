@@ -12,6 +12,11 @@ declare namespace excelconfigSources
 
     }
 
+	class Item extends excelconfig.Item 
+    {
+
+    }
+
 	class Loader extends excelconfig.Loader 
     {
 

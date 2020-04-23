@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="262,332">
   <displayList>
-    <image id="n24_sqzy" name="n24" src="sqzy28" fileName="sprite/game1/boom0001.png" xy="0,151" scale="0.37,0.37"/>
-    <image id="n25_sqzy" name="n25" src="sqzy2p" fileName="sprite/game1/cannon0000.png" xy="61,28" scale="0.8,0.8"/>
-    <image id="n26_sqzy" name="n26" src="sqzy24" fileName="sprite/game1/bomb_flame0000.png" xy="52,0"/>
-    <image id="n27_sqzy" name="n27" src="sqzy7d" fileName="sprite/game1/smile0000.png" xy="184,150"/>
-    <image id="n28_sqzy" name="n28" src="sqzy12" fileName="sprite/game2/heroBomb0000.png" xy="105,148" scale="0.5,0.5"/>
+    <image id="n24_sqzy" name="n24" src="sqzy28" fileName="sprite/game1/boom0001.png" xy="0,151" size="181,181" scale="0.37,0.37"/>
+    <image id="n25_sqzy" name="n25" src="sqzy2p" fileName="sprite/game1/cannon0000.png" xy="61,28" size="94,89" scale="0.8,0.8"/>
+    <image id="n26_sqzy" name="n26" src="sqzy24" fileName="sprite/game1/bomb_flame0000.png" xy="52,0" size="39,40"/>
+    <image id="n27_sqzy" name="n27" src="sqzy7d" fileName="sprite/game1/smile0000.png" xy="184,150" size="78,79"/>
+    <image id="n28_sqzy" name="n28" src="sqzy12" fileName="sprite/game2/heroBomb0000.png" xy="105,148" size="125,157" scale="0.5,0.5"/>
     <text id="n29_sqzy" name="n29" xy="167,171" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="="/>
     <text id="n30_sqzy" name="n30" xy="82,173" size="20,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+"/>
-    <text id="n31_sqzy" name="n31" xy="138,52" size="36,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+2"/>
+    <text id="n31_sqzy" name="n31" xy="138,52" size="35,34" fontSize="30" color="#ffffff" strokeColor="#000000" text="+2"/>
   </displayList>
 </component>

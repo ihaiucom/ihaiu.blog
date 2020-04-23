@@ -41,6 +41,17 @@ namespace configs{
 		public isInBarrel : boolean = false;
 		public isPowerUp : boolean = false;
 	}
+	export class ConfigItem {
+		public id : number = 0;
+		public zh_cn_name : string = "";
+		public zh_cn_en : string = "";
+		public zh_cn_itemDes : string = "";
+		public icon : string = "";
+		public iconSmall : string = "";
+		public typeKey : string = "";
+		public type : number = 0;
+		public coin : number = 0;
+	}
 	export class ConfigLoader {
 		public id : number = 0;
 		public name : string = "";
@@ -91,6 +102,7 @@ namespace configs{
 		private m_ErrStr : Map<number, string > = null;
 		private m_Card : Map<number, ConfigCard > = null;
 		private m_CardScoreType : Map<number, ConfigCardScoreType > = null;
+		private m_Item : Map<number, ConfigItem > = null;
 		private m_Loader : Map<number, ConfigLoader > = null;
 		private m_Menu : Map<number, ConfigMenu > = null;
 		private m_Msg : Map<number, ConfigMsg > = null;
@@ -110,6 +122,10 @@ namespace configs{
 	
 		public get CardScoreType(){
 			return this.m_CardScoreType;
+		}
+	
+		public get Item(){
+			return this.m_Item;
 		}
 	
 		public get Loader(){
@@ -146,6 +162,14 @@ namespace configs{
 	
 		public getCardScoreType(id: number): ConfigCardScoreType {
 			let obj = this.m_CardScoreType[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
+		public getItem(id: number): ConfigItem {
+			let obj = this.m_Item[id];
 			if (obj == null){
 				return null;
 			}

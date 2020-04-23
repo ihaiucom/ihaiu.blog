@@ -66,15 +66,15 @@ export default class PanelChooseHero extends PanelChooseHeroStruct
         }
         else
         {
-            this.m_plusBtn.visible = true;
             this.m_playBtn.visible = false;
+            this.m_plusBtn.visible = Game.moduleModel.hero.enableBuy();
         }
     }
 
     SetData()
     {
         this.m_choiceHero.SetData(this.currentHeroData);
-        this.SetBtnState(!this.currentHeroData.isGeted);
+        this.SetBtnState(this.currentHeroData.isGeted);
         
         this.m_prevHeroBtn.visible = Game.moduleModel.hero.hasPrev();
         this.m_nextHeroBtn.visible = Game.moduleModel.hero.hasNext();
@@ -85,6 +85,7 @@ export default class PanelChooseHero extends PanelChooseHeroStruct
         this.currentHeroData = Game.moduleModel.hero.getNextItem();
 
         this.SetData();
+        this.m_choiceHero.SetFront();
     }
 
     OnClickPrevHeroBtn()
@@ -92,17 +93,21 @@ export default class PanelChooseHero extends PanelChooseHeroStruct
         this.currentHeroData = Game.moduleModel.hero.getPrevItem();
 
         this.SetData();
+        this.m_choiceHero.SetFront();
     }
     
 
 
     OnClickPlayBtn()
     {
+        Game.moduleModel.hero.selectHero = this.currentHeroData;
         Game.menu.openTab(MenuId.Home, HomeTabType.Shop);
     }
 
     OnClickPlusBtn()
     {
+        Game.moduleModel.hero.buy();
+        this.SetData();
     }
     
 }

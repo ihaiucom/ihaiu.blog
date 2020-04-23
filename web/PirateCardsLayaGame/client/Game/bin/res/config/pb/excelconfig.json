@@ -56,6 +56,15 @@
 		"16":{"id":16,"key":"Skull","zh_cn_name":"骷髅","backgroundType":3,"frontView":"CardViewFrontPowerUpSkull","isInChest":true}
 	},
 	"Global":{"everydayUpdateTime":6,"roleNameAutoGen":"游客","roleNameMaxLength":32,"roleNameMinLength":1,"superAccountSwitch":false,"roleNameRepated":true,"friendReqMaxCnt":50,"friendMaxCnt":50,"chatGamerMaxCnt":20,"chatWorldMaxCnt":20,"gamerMailMaxCnt":100,"worldMailMaxCnt":100,"wordCheck":true},
+	"Item":{
+		"1":{"id":1,"zh_cn_name":"元宝（废弃）","zh_cn_en":"元宝（废弃）","zh_cn_itemDes":"用于游戏内消费","type":1},
+		"2":{"id":2,"zh_cn_name":"元宝","zh_cn_en":"元宝","zh_cn_itemDes":"用于游戏内消费","type":2},
+		"3":{"id":3,"zh_cn_name":"铜钱","zh_cn_en":"铜钱","zh_cn_itemDes":"游戏内的货币","type":3},
+		"501":{"id":501,"zh_cn_name":"重生","zh_cn_en":"Heart","zh_cn_itemDes":"重生","icon":"heartBig0000","iconSmall":"heartSmall0000","typeKey":"Heart","type":5,"coin":250},
+		"502":{"id":502,"zh_cn_name":"血包","zh_cn_en":"Horseshoe","zh_cn_itemDes":"血包","icon":"horseshoeBig0000","iconSmall":"horseshoeSmall0000","typeKey":"Horseshoe","type":5,"coin":125},
+		"503":{"id":503,"zh_cn_name":"解药","zh_cn_en":"Luck","zh_cn_itemDes":"解毒药丸","icon":"luckBig0000","iconSmall":"luckSmall0000","typeKey":"Luck","type":5,"coin":125},
+		"504":{"id":504,"zh_cn_name":"钥匙","zh_cn_en":"Key","zh_cn_itemDes":"开宝箱","icon":"key40000","iconSmall":"key_small0000","typeKey":"Key","type":5,"coin":125}
+	},
 	"Loader":{
 		"0":{"id":0,"name":"没视图"},
 		"1":{"id":1,"name":"转圈"},

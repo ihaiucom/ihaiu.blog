@@ -1057,6 +1057,12 @@
                 console.error("CardConfig.cardScoreType    scoreConfig=null", this.name, this);
             }
         }
+        get heroType() {
+            return this.id % 100;
+        }
+        get spriteIndex() {
+            return this.heroType - 1;
+        }
         get spriteUrl() {
             if (!this._spriteUrl) {
                 this._spriteUrl = CardView.GetSpriteUrl(this.sprite);
@@ -10753,6 +10759,7 @@
                 this.map.set(heroData.id, heroData);
             }
             if (this.list.length > 0) {
+                this.list[0].isGeted = true;
                 this.selectId = this.list[0].id;
             }
             this.read();
@@ -10774,14 +10781,20 @@
         }
         set selectHero(heroData) {
             this.selectId = heroData.id;
+            GameStatus.currentHero = heroData.cardConfig.heroType;
+            this.save();
         }
         hasNext() {
             var index = this.list.indexOf(this.selectHero);
-            return index++ < this.list.length;
+            index++;
+            console.log(index);
+            return index < this.list.length;
         }
         hasPrev() {
             var index = this.list.indexOf(this.selectHero);
-            return index-- >= 0;
+            index--;
+            console.log(index);
+            return index >= 0;
         }
         getNextItem() {
             var index = this.list.indexOf(this.selectHero);
@@ -10798,6 +10811,14 @@
                 this.selectHero = this.list[index];
             }
             return this.selectHero;
+        }
+        enableBuy() {
+            return GameStatus.gold >= this.selectHero.cardConfig.coin;
+        }
+        buy() {
+            this.selectHero.isGeted = true;
+            GameStatus.gold -= this.selectHero.cardConfig.coin;
+            this.save();
         }
         save() {
             var json = { selectId: this.selectId, list: [] };
@@ -14689,28 +14710,33 @@
                 this.m_playBtn.visible = true;
             }
             else {
-                this.m_plusBtn.visible = true;
                 this.m_playBtn.visible = false;
+                this.m_plusBtn.visible = Game.moduleModel.hero.enableBuy();
             }
         }
         SetData() {
             this.m_choiceHero.SetData(this.currentHeroData);
-            this.SetBtnState(!this.currentHeroData.isGeted);
+            this.SetBtnState(this.currentHeroData.isGeted);
             this.m_prevHeroBtn.visible = Game.moduleModel.hero.hasPrev();
             this.m_nextHeroBtn.visible = Game.moduleModel.hero.hasNext();
         }
         OnClickNextHeroBtn() {
             this.currentHeroData = Game.moduleModel.hero.getNextItem();
             this.SetData();
+            this.m_choiceHero.SetFront();
         }
         OnClickPrevHeroBtn() {
             this.currentHeroData = Game.moduleModel.hero.getPrevItem();
             this.SetData();
+            this.m_choiceHero.SetFront();
         }
         OnClickPlayBtn() {
+            Game.moduleModel.hero.selectHero = this.currentHeroData;
             Game.menu.openTab(MenuId.Home, HomeTabType.Shop);
         }
         OnClickPlusBtn() {
+            Game.moduleModel.hero.buy();
+            this.SetData();
         }
     }
 
@@ -14799,19 +14825,24 @@
 
     class ChoiceHero extends ChoiceHeroStruct {
         onWindowInited() {
-            this.m_card.m_infoBtn.onClick(this, this.OnClickInfoBtn);
-            this.m_info.m_backBtn.onClick(this, this.OnClickBackInfo);
+            this.m_card.m_infoBtn.onClick(this, this.ShowBack);
+            this.m_info.m_backBtn.onClick(this, this.ShowFront);
         }
         SetData(heroData) {
             this.heroData = heroData;
             this.m_card.SetData(heroData);
             this.m_info.SetData(heroData);
         }
-        OnClickInfoBtn() {
+        ShowBack() {
             TweenHelper.TurnCard(this.m_card, this.m_info);
         }
-        OnClickBackInfo() {
+        ShowFront() {
             TweenHelper.TurnCard(this.m_info, this.m_card);
+        }
+        SetFront() {
+            this.m_card.visible = true;
+            this.m_info.visible = false;
+            this.m_card.setScale(1, 1);
         }
     }
 
@@ -14859,6 +14890,7 @@
     class ChoiceHeroInfo extends ChoiceHeroInfoStruct {
         SetData(heroData) {
             this.heroData = heroData;
+            this.m_hero.setSelectedIndex(heroData.cardConfig.id % 100 - 1);
         }
     }
 
@@ -14937,6 +14969,9 @@
     class ChoiceHeroCard extends ChoiceHeroCardStruct {
         SetData(heroData) {
             this.heroData = heroData;
+            this.m_heroSprite.m_sprite.setSelectedIndex(heroData.cardConfig.spriteIndex);
+            this.m_coinText.text = heroData.cardConfig.coin + "";
+            this.m_coinGroup.visible = this.m_lock.visible = !heroData.isGeted;
         }
     }
 

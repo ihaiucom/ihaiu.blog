@@ -2,6 +2,7 @@
 import {CardConfigLang} from "../ExcelConfigLange";
 import Game from "../../Game";
 import CardView from "../../FGUI/Extends/GameHome/CardView";
+import { HeroType } from "../../War/Enums/HeroType";
 export default class CardConfig extends CardConfigLang
 {
     get cardScoreConfig()
@@ -21,6 +22,16 @@ export default class CardConfig extends CardConfigLang
         {
             console.error("CardConfig.cardScoreType    scoreConfig=null", this.name, this)
         }
+    }
+
+    get heroType(): HeroType
+    {
+        return this.id % 100;
+    }
+
+    get spriteIndex(): number
+    {
+        return this.heroType - 1;
     }
 
     private _spriteUrl:string;

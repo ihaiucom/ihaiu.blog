@@ -13,5 +13,7 @@ export default class ChoiceHeroInfo extends ChoiceHeroInfoStruct
     SetData(heroData: HeroData)
     {
         this.heroData = heroData;
+        
+        this.m_hero.setSelectedIndex(heroData.cardConfig.id % 100 - 1);
     }
 }

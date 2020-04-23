@@ -37,6 +37,50 @@ export class CardScoreTypeConfigLang extends excelconfigSources.CardScoreType
 
 }
 
+export class ItemConfigLang extends excelconfigSources.Item
+{
+
+	get name():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnName
+
+		let value = <string> Game.lang.getValue('Item', this.id, 'zhCnName');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnName
+	}
+
+	get en():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnEn
+
+		let value = <string> Game.lang.getValue('Item', this.id, 'zhCnEn');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnEn
+	}
+
+	get itemDes():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnItemdes
+
+		let value = <string> Game.lang.getValue('Item', this.id, 'zhCnItemdes');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnItemdes
+	}
+
+}
+
 export class LoaderConfigLang extends excelconfigSources.Loader
 {
 
