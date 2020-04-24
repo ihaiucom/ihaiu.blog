@@ -398,7 +398,6 @@
         static get instance() {
             if (!this._instance) {
                 this._instance = new SoundController();
-                Laya.SoundManager.musicVolume = 0.1;
             }
             return this._instance;
         }
@@ -424,9 +423,6 @@
             }
             Laya.timer.clearAll(this);
             var c = Laya.SoundManager.playMusic(`res/sounds/music/music0${RandomHelper.getRandomIntInclusive(1, 5)}.mp3`, 1, Laya.Handler.create(this, this.onPlayMusicEnd), 0);
-            if (c) {
-                c.volume = 0.1;
-            }
         }
         onPlayMusicEnd() {
             Laya.timer.clearAll(this);
