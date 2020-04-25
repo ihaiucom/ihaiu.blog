@@ -164,7 +164,7 @@ export default class ShareBtnBar extends ShareBtnBarStruct
         this.ShareCount ++;
         if(this.ShareCount <= 10)
         {
-            GameStatus.gold += 100;
+            GameStatus.addUserGold(100);
             Game.system.toastText(`今日分享 ${this.ShareCount}/10, 获得奖励金币+100`);
         }
     }

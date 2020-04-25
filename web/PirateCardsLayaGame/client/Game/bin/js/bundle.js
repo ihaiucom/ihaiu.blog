@@ -395,11 +395,24 @@
     }
 
     class SoundController {
+        constructor() {
+            this.isInit = false;
+            if (window['wx']) {
+                wx.onShow(this.onAppShow.bind(this));
+                wx.onHide(this.onAppHide.bind(this));
+            }
+        }
         static get instance() {
             if (!this._instance) {
                 this._instance = new SoundController();
             }
             return this._instance;
+        }
+        onAppShow(res) {
+            Laya.timer.once(3000, this, this.playMusic);
+        }
+        onAppHide(res) {
+            this.stopAll();
         }
         get soundBtnIndex() {
             return Laya.SoundManager.soundMuted ? 0 : 1;
@@ -418,6 +431,7 @@
             Laya.SoundManager.playSound(path, 1);
         }
         playMusic() {
+            this.isInit = true;
             if (Laya.SoundManager._musicMuted) {
                 return;
             }
@@ -427,6 +441,10 @@
         onPlayMusicEnd() {
             Laya.timer.clearAll(this);
             Laya.timer.once(100, this, this.playMusic);
+        }
+        stopAll() {
+            Laya.timer.clearAll(this);
+            Laya.SoundManager.stopAll();
         }
     }
 
@@ -4334,6 +4352,9 @@
         static load() {
             if (Game.localStorage.hasItem(this.DATE_KEY, false)) {
                 this.data = Game.localStorage.getJSON(this.DATE_KEY);
+                if (this.data.goldCumulative == undefined) {
+                    this.data.goldCumulative = 0;
+                }
             }
         }
         static save() {
@@ -4346,6 +4367,40 @@
             this.data.gold = val;
             this.save();
             this.sGold.dispatch();
+        }
+        static get goldCumulative() {
+            return this.data.goldCumulative;
+        }
+        static set goldCumulative(val) {
+            this.data.goldCumulative = val;
+            this.save();
+        }
+        static addUserGold(t) {
+            this.data.gold += t;
+            this.data.goldCumulative += t;
+            this.save();
+            this.sGold.dispatch();
+            if (window['wx']) {
+                var scoreVal = {
+                    "wxgame": {
+                        "score": GameStatus.goldCumulative,
+                        "update_time": Date.now()
+                    },
+                    "cost_ms": Date.now() - War.launchtimestamp
+                };
+                var scoreValStr = JSON.stringify(scoreVal);
+                var list = [];
+                list.push({ key: "score", value: scoreValStr });
+                wx.setUserCloudStorage({
+                    KVDataList: list,
+                    success: (res) => {
+                        console.log("上传排行榜数据成功", res);
+                    },
+                    fail: (res) => {
+                        console.error("上传排行榜数据失败", res);
+                    }
+                });
+            }
         }
         static get bestGoldPerGame() {
             return this.data.bestGoldPerGame;
@@ -4505,6 +4560,7 @@
     GameStatus.sGold = new Signal();
     GameStatus.DATE_KEY = "GameStatus";
     GameStatus.data = {
+        goldCumulative: 0,
         gold: 0,
         bestGoldPerGame: 0,
         isTutorialSeen: false,
@@ -5430,7 +5486,7 @@
             }
             wx.aldStage.onRunning({
                 stageId: this.stageId,
-                stageName: this.name,
+                stageName: this.stageName,
                 userId: AntFrame.platform.userInfo.nickName,
                 event: "tools",
                 params: {
@@ -5446,7 +5502,7 @@
             }
             wx.aldStage.onEnd({
                 stageId: this.stageId,
-                stageName: this.name,
+                stageName: this.stageName,
                 userId: AntFrame.platform.userInfo.nickName,
                 event: "complete",
                 params: {
@@ -7599,6 +7655,7 @@
             this.isInited = true;
         }
         static launch() {
+            this.launchtimestamp = Date.now();
             this.uninstall();
             this.game.launch();
         }
@@ -7609,7 +7666,7 @@
             this.game.uninstall();
         }
         static exit() {
-            GameStatus.gold += GameStatus.goldPerGame;
+            GameStatus.addUserGold(GameStatus.goldPerGame);
             ReportMonitor.OnGload(GameStatus.goldPerGame);
             ReportMonitor.OnGloadBest(GameStatus.bestGoldPerGame);
             ReportMonitor.OnWarOver();
@@ -7618,6 +7675,7 @@
         }
     }
     War.isInited = false;
+    War.launchtimestamp = 0;
     window['War'] = War;
 
     class WindowWarUI extends WindowWarUIStruct {
@@ -16759,7 +16817,7 @@
         OnShareGet() {
             this.ShareCount++;
             if (this.ShareCount <= 10) {
-                GameStatus.gold += 100;
+                GameStatus.addUserGold(100);
                 Game.system.toastText(`今日分享 ${this.ShareCount}/10, 获得奖励金币+100`);
             }
         }

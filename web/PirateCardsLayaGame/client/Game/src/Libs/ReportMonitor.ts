@@ -249,7 +249,7 @@ export default class ReportMonitor
         // 在关卡中等级
         wx.aldStage.onRunning({
             stageId   :  this.stageId,
-            stageName :  this.name,
+            stageName :  this.stageName,
             userId    :  AntFrame.platform.userInfo.nickName,
             event     :  "tools",
             params    : 
@@ -269,7 +269,7 @@ export default class ReportMonitor
         }
         wx.aldStage.onEnd({
             stageId   :  this.stageId,
-            stageName :  this.name,
+            stageName :  this.stageName,
             userId    :  AntFrame.platform.userInfo.nickName,
             event     : "complete",   //关卡完成  关卡进行中，用户触发的操作    该字段必传
             params    : {

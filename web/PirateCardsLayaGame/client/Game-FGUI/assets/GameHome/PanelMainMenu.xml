@@ -2,7 +2,7 @@
 <component size="750,1334" restrictSize="0,0,800,0">
   <controller name="state" exported="true" pages="0,default,1,login" selected="1"/>
   <displayList>
-    <image id="n10_gvpa" name="n10" src="gvpab4" fileName="道.png" xy="484,101" alpha="0.31">
+    <image id="n10_gvpa" name="n10" src="gvpab4" fileName="ui/道.png" xy="484,101" alpha="0.31">
       <relation target="" sidePair="right-right,top-top"/>
     </image>
     <component id="n6_sqzy" name="menuLogo" src="sqzy7r" fileName="MenuLogo.xml" xy="-104,0">
@@ -13,7 +13,7 @@
       <gearDisplay controller="state" pages="0"/>
       <relation target="" sidePair="center-center,middle-middle"/>
     </component>
-    <component id="n13_gvpa" name="getUserInfoBtn" src="gvpab9" fileName="Btn/GetUserInfoBtn.xml" xy="248,622">
+    <component id="n13_gvpa" name="getUserInfoBtn" src="gvpab9" fileName="Btn/GetUserInfoBtn.xml" xy="213,622">
       <gearDisplay controller="state" pages="1"/>
       <relation target="" sidePair="center-center,middle-middle"/>
     </component>
