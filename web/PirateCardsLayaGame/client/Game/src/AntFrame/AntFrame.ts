@@ -47,3 +47,4 @@ export default class AntFrame
     }
 
 }
+window['AntFrame'] = AntFrame;

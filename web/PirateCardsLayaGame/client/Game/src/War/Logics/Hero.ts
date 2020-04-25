@@ -9,6 +9,8 @@ import SoundController from "./SoundController";
 import { HeroType } from "../Enums/HeroType";
 import Consts from "../Enums/Consts";
 import AbstractCard from "./AbstractCard";
+import ReportMonitor from "../../Libs/ReportMonitor";
+import { ItemToolType } from "../../GameModule/DataEnums/ItemToolType";
 
 export default class Hero extends AbstractCard
 {
@@ -356,6 +358,7 @@ export default class Hero extends AbstractCard
     {
         this.view.useLuck();
         GameStatus.isLuck = false;
+        ReportMonitor.OnStageRuningTools(ItemToolType.Luck);
     }
 
     
@@ -371,6 +374,7 @@ export default class Hero extends AbstractCard
             this.setStatus();
             this.setShopItemsStatus();
         }, 200);
+        ReportMonitor.OnStageRuningTools(ItemToolType.Heart);
     }
     
 }

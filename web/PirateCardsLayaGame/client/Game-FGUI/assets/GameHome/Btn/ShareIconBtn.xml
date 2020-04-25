@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="254,89" pivot="0.5,0.5" extention="Button">
+  <displayList>
+    <image id="n13_gvpa" name="n13" src="sqzy3e" fileName="sprite/game1/coinPanel0000.png" xy="0,0">
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <text id="n14_gvpa" name="title" xy="105,27" size="125,34" fontSize="30" color="#ffffff" vAlign="middle" autoSize="shrink" text="炫耀">
+      <relation target="" sidePair="width-width,height-height"/>
+    </text>
+    <loader id="n15_p1wh" name="icon" xy="63,44" pivot="0.5,0.5" anchor="true" size="69,69" aspect="true" url="ui://moe42ygrp1whbb" align="center" vAlign="middle" fill="scaleFree" playing="false">
+      <relation target="" sidePair="left-left,middle-middle"/>
+    </loader>
+  </displayList>
+  <Button downEffect="scale" downEffectValue="0.90"/>
+</component>

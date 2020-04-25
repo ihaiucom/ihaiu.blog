@@ -24,7 +24,7 @@
     <component id="tnlh36" name="CloseButton.xml" path="/Component~NCode/"/>
     <image id="tnlh37" name="关闭.png" path="/_images_pic/" exported="true"/>
     <image id="tnlh38" name="横线箭头.png" path="/_images_pic/" exported="true"/>
-    <component id="tnlh39" name="CommonButton1.xml" path="/Component~NCode/"/>
+    <component id="tnlh39" name="CommonButton1.xml" path="/Component~NCode/" exported="true"/>
     <image id="tnlh3a" name="按钮1.png" path="/_images_pic/" exported="true"/>
     <image id="tnlh3b" name="出售文本框.png" path="/_images_pic/" exported="true" scale="9grid" scale9grid="4,12,2,23"/>
     <image id="tnlh3c" name="欢乐互娱.png" path="/_images_pic/" exported="true"/>

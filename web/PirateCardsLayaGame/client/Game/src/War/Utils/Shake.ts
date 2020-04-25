@@ -39,7 +39,7 @@ export class Shake
         this._target.x += this._offsetPos[0];
         this._target.y += this._offsetPos[1];
         if (Laya.timer.currTimer - this._startTime >= duration) {
-            Laya.timer.clear(this, this._pos);
+            Laya.timer.clearAll(this);
             this.shank_I = 0;
             this._isShaking = false;
             this._target.x = this._orgX;

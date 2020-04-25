@@ -323,17 +323,17 @@ interface _updateShareMenuObject {
   /**
    * 接口调用成功的回调函数
    */
-  success: () => void;
+  success?: () => void;
 
   /**
    * 接口调用失败的回调函数
    */
-  fail: () => void;
+  fail?: () => void;
 
   /**
    * 接口调用结束的回调函数（调用成功、失败都会执行）
    */
-  complete: () => void;
+  complete?: (res:any) => void;
 }
 interface _switchTabObject {
   /**
@@ -4642,6 +4642,13 @@ declare function Page(page: PageOptions): void;
 declare function getCurrentPages(): object[];
 
 declare namespace wx {
+  export function shareAppMessage(obj:any);
+  export function onShareAppMessage(callback:Function );
+  export function onShareMessageToFriend(callback:Function );
+  export function showShareMenu();
+  export function setMessageToFriendQuery(obj: {shareMessageToFriendScene: number});
+  export function reportMonitor(name: string, value: number);
+  
   /**
    * 批量添加卡券。
    */
@@ -5327,7 +5334,7 @@ declare namespace wx {
   /**
    * 自定义分析数据上报接口。使用前，需要在小程序管理后台自定义分析中新建事件，配置好事件名与字段。
    */
-  export function reportAnalytics(eventname: string, data: string): void;
+  export function reportAnalytics(eventname: string, data: object): void;
 
   /**
    * 发起网络请求。**使用前请先阅读[说明](./api-network.md)**。

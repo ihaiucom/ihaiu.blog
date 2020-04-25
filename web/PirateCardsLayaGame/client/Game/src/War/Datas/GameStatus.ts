@@ -2,6 +2,7 @@ import Game from "../../Game";
 import { HeroType } from "../Enums/HeroType";
 import { CardScoreType } from "../Enums/CardScoreType";
 import CardScoreTypeHelper from "../Utils/CardScoreTypeHelper";
+import ReportMonitor from "../../Libs/ReportMonitor";
 
 export default class GameStatus
 {
@@ -45,6 +46,10 @@ export default class GameStatus
         lastResultAdvCoolDown: 0
     };
 
+    static addGameLevel()
+    {
+        this.gameLevel ++;
+    }
     
     // 游戏等级
     static gameLevel = 1;

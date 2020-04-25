@@ -95,6 +95,31 @@ window.compareVersion = compareVersion;
       MiniMainLib.Init();
 
       this.initLoader();
+
+
+      // var getShareImage = function()
+      // {
+      //   var shareImage = 'https://ihaiu.gitee.io/gameweb/PirateCardsLayaGame/diao_share_image.png'
+
+      //   if (window['VersionConfig']) {
+      //     shareImage = VersionConfig.ShareImgUrl;
+      //   }
+      //   return shareImage;
+      // }
+
+      // wx.onShareAppMessage(function () {
+      //   console.log("onShareAppMessage");
+      //   return {
+      //     imageUrl: getShareImage() // 图片 URL
+      //     // imageUrl: canvas.toTempFilePathSync({
+      //     //   destWidth: 750,
+      //     //   destHeight: 1334
+      //     // })
+      //   }
+      // })
+
+
+      // 
     
       // console.log("Int32Array", Int32Array);
       // console.log("BigInt64Array", BigInt64Array);

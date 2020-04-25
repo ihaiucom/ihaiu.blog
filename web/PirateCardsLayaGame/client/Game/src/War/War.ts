@@ -4,6 +4,7 @@ import Game from "../Game";
 import { MenuId } from "../GameModule/MenuId";
 import { HomeTabType } from "../GameModule/ViewWindows/HomeWindow";
 import GameStatus from "./Datas/GameStatus";
+import ReportMonitor from "../Libs/ReportMonitor";
 
 export default class War
 {
@@ -40,6 +41,10 @@ export default class War
     static exit()
     {
         GameStatus.gold += GameStatus.goldPerGame;
+        ReportMonitor.OnGload(GameStatus.goldPerGame);
+        ReportMonitor.OnGloadBest(GameStatus.bestGoldPerGame);
+        ReportMonitor.OnWarOver();
+
         this.uninstall();
         Game.menu.openTab(MenuId.Home, HomeTabType.Result);
     }

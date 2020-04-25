@@ -1,5 +1,9 @@
 var VersionConfig =
 {
+    // 标题
+    Title: "道",
+    // 转发默认图片
+    ShareImgUrl: "https://ihaiu.gitee.io/gameweb/PirateCardsLayaGame/diao_share_image.png",
     // 缓存版本编号
     VersionCacheCode: 37,
     // 应用版本号
@@ -23,7 +27,7 @@ var VersionConfig =
     // 是否使用Zip， 第一关是否合并为一个zip
     IsUseZip_PVE01: false,
     // 是否使用网络资源
-    IsUseWebRes : true,
+    IsUseWebRes : false,
     // 提审版本标记，关闭部分功能
     IsReviewVersion: false,
 

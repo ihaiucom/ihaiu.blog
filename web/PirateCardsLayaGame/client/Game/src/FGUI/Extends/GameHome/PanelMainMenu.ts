@@ -8,6 +8,9 @@ import { MenuId } from "../../../GameModule/MenuId";
 import Game from "../../../Game";
 import HomeWindow, { HomeTabType } from "../../../GameModule/ViewWindows/HomeWindow";
 import SoundController from "../../../War/Logics/SoundController";
+import AntPlatformBase from "../../../AntFrame/Platform/AntPlatformBase";
+import AntFrame from "../../../AntFrame/AntFrame";
+import { AntPlatformWX } from "../../../AntFrame/Platform/AntWX";
 
 export default class PanelMainMenu extends PanelMainMenuStruct
 {
@@ -20,9 +23,9 @@ export default class PanelMainMenu extends PanelMainMenuStruct
         this.m_btnBar.m_bigPlayBtn.onClick(this, this.OnClickPlayBtn);
         this.m_btnBar.m_soundBtn.onClick(this, this.OnClickSoundBtn);
         this.m_btnBar.m_groupBtn.onClick(this, this.OnClickGroupBtn);
+        this.onTabShow();
     }
 
-    
     // 窗口显示
     onWindowShow(): void
     {
@@ -33,12 +36,19 @@ export default class PanelMainMenu extends PanelMainMenuStruct
     // 该组件所在Tab 显示
     onTabShow(): void
     {
+        AntPlatformBase.sGetUserInfoBtnVisiable.add(this.OnGetUserInfoBtnVisiable, this);
+        
+        if(!AntFrame.platform.userInfo.isAuthed)
+        {
+            this.getAuth();
+        }
+        
     }
 
     // 该组件所在Tab 隐藏
     onTabHide(): void
     {
-
+        AntPlatformBase.sGetUserInfoBtnVisiable.remove(this.OnGetUserInfoBtnVisiable, this);
     }
     
 
@@ -57,4 +67,41 @@ export default class PanelMainMenu extends PanelMainMenuStruct
     OnClickGroupBtn()
     {
     }
+
+    
+    
+    async getAuth()
+    {
+        if(AntFrame.platform instanceof AntPlatformWX)
+        {
+            let antWx:AntPlatformWX = AntFrame.platform;
+            let userInfo = await antWx.WXAuth();
+            if(userInfo)
+            {
+                console.log("userInfo:", userInfo);
+                this.OnGetUserInfoBtnVisiable(false);
+            }
+
+            // let result = await antWx.WXGetSdkAuthSetting();
+            // if(!result)
+            // {
+            //     this.OnGetUserInfoBtnVisiable(true);
+            //     let userInfo = await antWx.WXAuth();
+            //     if(userInfo)
+            //     {
+            //         this.OnGetUserInfoBtnVisiable(false);
+            //     }
+            // }
+            // else
+            // {
+            //     this.OnGetUserInfoBtnVisiable(false);
+            // }
+        }
+    }
+
+    OnGetUserInfoBtnVisiable(visiable: boolean)
+    {
+        this.m_state.setSelectedIndex(visiable ? 1 : 0);
+    }
+    
 }

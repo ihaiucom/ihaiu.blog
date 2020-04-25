@@ -8,6 +8,7 @@ import MenuTopPanelWar from "../../Extends/GameHome/MenuTopPanelWar";
 import Container from "../../Extends/GameHome/Container";
 import PanelPopupChest from "../../Extends/GameHome/PanelPopupChest";
 import PanelPause from "../../Extends/GameHome/PanelPause";
+import ShareBtnBar from "../../Extends/GameHome/ShareBtnBar";
 import WindowWarUI from "../../Extends/GameHome/WindowWarUI";
 
 export default class WindowWarUIStruct extends fgui.GComponent
@@ -17,6 +18,7 @@ export default class WindowWarUIStruct extends fgui.GComponent
 	public m_container : Container;
 	public m_chectPopupPanel : PanelPopupChest;
 	public m_pausePanel : PanelPause;
+	public m_shareBtnBar : ShareBtnBar;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy9c";
@@ -46,6 +48,7 @@ export default class WindowWarUIStruct extends fgui.GComponent
 		this.m_container = <Container><any>(this.getChild("container"));
 		this.m_chectPopupPanel = <PanelPopupChest><any>(this.getChild("chectPopupPanel"));
 		this.m_pausePanel = <PanelPause><any>(this.getChild("pausePanel"));
+		this.m_shareBtnBar = <ShareBtnBar><any>(this.getChild("shareBtnBar"));
 		
 		
 	}

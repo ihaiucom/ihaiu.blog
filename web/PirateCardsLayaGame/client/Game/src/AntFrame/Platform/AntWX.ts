@@ -207,6 +207,7 @@ export class AntPlatformWX extends AntPlatformBase
                 resolve(this.m_stSdkUserInfo);
             });
         } else {
+            console.error("GameDoSdkAuthAsync 获取授权 获取用户信息 失败");
             return new Promise<SdkUserInfo>(resolve=>{
                 resolve(null);
             });
@@ -251,11 +252,14 @@ export class AntPlatformWX extends AntPlatformBase
             }
         });
         button.show();
+        AntPlatformBase.sGetUserInfoBtnVisiable.dispatch(true);
+
         return new Promise<any>(resolve=>{
             button.onTap(function (res) {
                     if (res.userInfo) {
                         console.log("按钮获取用户信息成功", "wxLogin auth success");
                         button.hide();
+                        AntPlatformBase.sGetUserInfoBtnVisiable.dispatch(false);
                         resolve(res.userInfo);
                     } else {
                         console.error("按钮获取用户信息失败");
@@ -269,6 +273,7 @@ export class AntPlatformWX extends AntPlatformBase
     protected SetUserInfo(info: any): any
     {
         console.info("用户信息", info);
+        this.m_stSdkUserInfo.isAuthed = true;
         this.m_stSdkUserInfo.language = info.language;
         this.m_stSdkUserInfo.nickName = info.nickName;
         this.m_stSdkUserInfo.avatarUrl = info.avatarUrl;
@@ -296,7 +301,7 @@ export class AntPlatformWX extends AntPlatformBase
         return this.m_stSystemInfo;
     }
 
-    public Share(title:string, imgUrl:string, query:string): Promise<boolean> {
+    public async Share(title:string, imgUrl:string, query:string): Promise<boolean> {
         return new Promise<boolean>(resolve => {
             wx.shareAppMessage({
                 title: title,

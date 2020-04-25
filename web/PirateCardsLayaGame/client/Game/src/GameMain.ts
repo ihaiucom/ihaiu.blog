@@ -8,6 +8,7 @@
  */
 import GameConfig from "./GameConfig";
 import Game from "./Game";
+import ReportMonitor from "./Libs/ReportMonitor";
 class GameMain 
 {
     constructor() 
@@ -26,7 +27,7 @@ class GameMain
 		Engine.init();
 		
 		Game.init();
-		
+		ReportMonitor.OnOpen();
 		Game.launch.install();
 		
 		Laya.stage.on(Laya.Event.KEY_DOWN, this, this.OnKeyDownHandler);

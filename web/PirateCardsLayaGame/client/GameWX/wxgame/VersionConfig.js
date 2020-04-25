@@ -1,7 +1,11 @@
 var VersionConfig =
 {
+  // 标题
+  Title: "简单好玩，有意思易上手，快来一起玩。",
+  // 转发默认图片
+  ShareImgUrl: "https://ihaiu.gitee.io/gameweb/PirateCardsLayaGame/diao_share_image.png",
   // 缓存版本编号
-  VersionCacheCode: 70,
+  VersionCacheCode: 76,
   // 应用版本号
   AppVersion : "v1.0.0.0",
   // 资源版本好
@@ -9,7 +13,7 @@ var VersionConfig =
   // 是否是调试版本
   IsDebugVer: true,
   // 是否是微信登录
-  IsEnableWx: false,
+  IsEnableWx: true,
   // 是否使用Zip
   IsUseZip: true,
   // 是否开启新手引导
@@ -23,7 +27,7 @@ var VersionConfig =
   IsUseWebRes: true,
   // 网络资源路径
   // UrlBasePath: "https://h5-jjsg-cdn.123u.com/web_beta/",
-  // UrlBasePath: "http://192.168.11.1:8900/bin/",
+  // UrlBasePath: "http://192.168.1.8:8900/bin/",
   UrlBasePath: "https://ihaiu.gitee.io/gameweb/PirateCardsLayaGame/",
   
   // 海外CDN

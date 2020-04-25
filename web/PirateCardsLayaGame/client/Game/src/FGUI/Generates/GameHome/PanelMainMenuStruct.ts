@@ -4,12 +4,15 @@
 /////////////////////////////////////
 
 import MainMenuBtnBar from "../../Extends/GameHome/MainMenuBtnBar";
+import GetUserInfoBtn from "../../Extends/GameHome/GetUserInfoBtn";
 import PanelMainMenu from "../../Extends/GameHome/PanelMainMenu";
 
 export default class PanelMainMenuStruct extends fgui.GComponent
 {
+	public m_state : fgui.Controller;
 	public m_menuLogo : fgui.GComponent;
 	public m_btnBar : MainMenuBtnBar;
+	public m_getUserInfoBtn : GetUserInfoBtn;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy7q";
@@ -32,10 +35,12 @@ export default class PanelMainMenuStruct extends fgui.GComponent
 	{
 		super.constructFromXML(xml);
 		
+		this.m_state = this.getController("state");
 
 		
 		this.m_menuLogo = <fgui.GComponent><any>(this.getChild("menuLogo"));
 		this.m_btnBar = <MainMenuBtnBar><any>(this.getChild("btnBar"));
+		this.m_getUserInfoBtn = <GetUserInfoBtn><any>(this.getChild("getUserInfoBtn"));
 		
 		
 	}

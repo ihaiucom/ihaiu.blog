@@ -20,6 +20,7 @@ import Hero from "./Logics/Hero";
 import { MenuId } from "../GameModule/MenuId";
 import { HomeTabType } from "../GameModule/ViewWindows/HomeWindow";
 import War from "./War";
+import ReportMonitor from "../Libs/ReportMonitor";
 
 export default class WarGame
 {
@@ -91,6 +92,8 @@ export default class WarGame
 
     launch()
     {
+        ReportMonitor.OnWar(GameStatus.ColumnCount == 4);
+
         GameStatus.init();
         this.container.width = GameStatus.ColumnCount * Consts.CardWidth + (GameStatus.ColumnCount - 1) * Consts.CardSpaceBetweenWidth;
         this.container.height = GameStatus.RowCount * Consts.CardHeight + (GameStatus.RowCount - 1) * Consts.CardSpaceBetweenHeight;

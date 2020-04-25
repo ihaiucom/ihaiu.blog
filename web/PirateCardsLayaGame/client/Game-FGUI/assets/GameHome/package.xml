@@ -108,7 +108,7 @@
     <image id="sqzy2y" name="check0000.png" path="/sprite/game1/"/>
     <image id="sqzy2z" name="chest0000.png" path="/sprite/game1/"/>
     <image id="sqzy30" name="chest0001.png" path="/sprite/game1/"/>
-    <image id="sqzy31" name="choiceBackground0000.png" path="/sprite/game1/"/>
+    <image id="sqzy31" name="choiceBackground0000.png" path="/sprite/game1/" scale="9grid" scale9grid="75,92,150,184"/>
     <image id="sqzy32" name="choiceBackground0001.png" path="/sprite/game1/"/>
     <image id="sqzy33" name="coin0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy34" name="coin0001.png" path="/sprite/game1/"/>
@@ -390,11 +390,15 @@
     <component id="jak7az" name="CPLockDialFixedBig.xml" path="/ChestPopup/" exported="true"/>
     <component id="jak7b0" name="CPLockDial.xml" path="/ChestPopup/" exported="true"/>
     <component id="jak7b1" name="CPLock.xml" path="/ChestPopup/" exported="true"/>
-    <movieclip id="gvpab2" name="diao.jta" path="/"/>
-    <image id="gvpab3" name="diao.png" path="/"/>
-    <image id="gvpab4" name="道.png" path="/"/>
-    <image id="gvpab6" name="道 (2).png" path="/"/>
+    <image id="gvpab4" name="道.png" path="/ui/"/>
+    <image id="gvpab6" name="道 (2).png" path="/ui/"/>
     <component id="gvpab8" name="FxLogo.xml" path="/"/>
+    <component id="gvpab9" name="GetUserInfoBtn.xml" path="/Btn/" exported="true"/>
+    <image id="p1whba" name="hero0000.psd" path="/sprite/"/>
+    <image id="p1whbb" name="icon_wx.png" path="/sprite/icon/"/>
+    <component id="p1whbd" name="ShareBtn.xml" path="/Btn/" exported="true"/>
+    <component id="p1whbe" name="ShareBtnBar.xml" path="/Btn/" exported="true"/>
+    <component id="p1whbg" name="ShareIconBtn.xml" path="/Btn/" exported="true"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>
