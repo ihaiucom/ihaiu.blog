@@ -92,6 +92,8 @@ var VersionConfig =
           "res/fgui/GameLaunch_atlas_qyvzw2s.png",
           "res/fgui/GameLaunch_atlas_tnlhw3c.png",
           "res/sprite/launchlogo.png",
+          "res/atlas/test.atlas",
+          "res/atlas/test.png",
         ];
     }
 

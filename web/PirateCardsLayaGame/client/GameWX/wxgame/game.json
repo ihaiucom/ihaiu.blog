@@ -13,5 +13,6 @@
       "name": "GameMain",
       "root": "game/"
     }
-  ]
+  ],
+  "openDataContext": "openDataContext"
 }

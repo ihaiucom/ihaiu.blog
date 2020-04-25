@@ -36,7 +36,6 @@ require("libs/AntFrame/Net/protobuf.js"),
 // require("libs/AntFrame/Net/netproto.js"),
 
   window.Parser = require("./libs/dom/dom_parser");
-
   loadLib("main.js");
 
 function initTimeLog()
