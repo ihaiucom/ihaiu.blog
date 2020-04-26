@@ -1,7 +1,8 @@
-import KeyedCollection from "../../GameWar/Cards/KeyedCollection";
+
 import GMath from "../Utils/GMath";
 import GameStatus from "./GameStatus";
 import { CardScoreType } from "../Enums/CardScoreType";
+import KeyedCollection from "./KeyedCollection";
 
 export default class Basket
 {
