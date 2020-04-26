@@ -399,6 +399,7 @@
     <component id="p1whbd" name="ShareBtn.xml" path="/Btn/" exported="true"/>
     <component id="p1whbe" name="ShareBtnBar.xml" path="/Btn/" exported="true"/>
     <component id="p1whbg" name="ShareIconBtn.xml" path="/Btn/" exported="true"/>
+    <movieclip id="m3nqbh" name="MVSkull2.jta" path="/Fx/"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

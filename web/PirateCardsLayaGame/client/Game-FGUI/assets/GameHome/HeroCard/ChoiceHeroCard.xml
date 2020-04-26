@@ -4,7 +4,7 @@
     <image id="n1_sqzy" name="bg" src="sqzy31" fileName="sprite/game1/choiceBackground0000.png" xy="0,0">
       <relation target="" sidePair="width-width,height-height"/>
     </image>
-    <component id="n0_sqzy" name="heroSprite" src="sqzy8m" fileName="HeroCard/HeroSprite.xml" xy="89,138" controller="sprite,0"/>
+    <component id="n0_sqzy" name="heroSprite" src="sqzy8m" fileName="HeroCard/HeroSprite.xml" xy="153,303" pivot="0.5,1" anchor="true" size="128,165" aspect="true" scale="1.5,1.5" controller="sprite,3"/>
     <component id="n2_sqzy" name="infoBtn" src="sqzy8g" fileName="Btn~NCode/SamallInfoBtn.xml" xy="-33,301">
       <relation target="" sidePair="left-left,bottom-bottom"/>
     </component>
