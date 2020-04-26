@@ -32,7 +32,7 @@ setTimeout(()=>{
 
  //显示子域
 function showShareCanvas() {
-  Laya.timer.loop(1000, this, function () {
+  Laya.timer.frameLoop(1, this, function () {
 
     // var openDataContext = wx.getOpenDataContext()
     // var sharedCanvas = openDataContext.canvas
