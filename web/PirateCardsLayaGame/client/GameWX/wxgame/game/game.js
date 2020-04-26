@@ -20,15 +20,15 @@ wx.setKeepScreenOn && wx.setKeepScreenOn({
 
 // require('testFile.js');
 
-setTimeout(()=>{
+// setTimeout(()=>{
 
-  Laya.loader.load(["res/atlas/test.atlas"], Laya.Handler.create(null, function () {
-    //加载完成
-    //使用接口将图集透传到子域
-    Laya.MiniAdpter.sendAtlasToOpenDataContext("res/atlas/test.atlas");
-    showShareCanvas();
-  }));
-}, 5000);
+//   Laya.loader.load(["res/atlas/test.atlas"], Laya.Handler.create(null, function () {
+//     //加载完成
+//     //使用接口将图集透传到子域
+//     Laya.MiniAdpter.sendAtlasToOpenDataContext("res/atlas/test.atlas");
+//     showShareCanvas();
+//   }));
+// }, 5000);
 
  //显示子域
 function showShareCanvas() {

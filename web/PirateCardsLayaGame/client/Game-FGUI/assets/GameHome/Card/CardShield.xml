@@ -2,10 +2,10 @@
 <component size="68,67" pivot="0.5,0.5" anchor="true" extention="Label">
   <controller name="level" pages="0,木盾,1,木铁盾,2,铁盾,3,重铁盾,4,黄金盾" selected="0"/>
   <displayList>
-    <loader id="n3_sqzy" name="icon" xy="0,0" size="85,84" scale="0.8,0.8" url="ui://moe42ygrsqzy6x">
+    <loader id="n3_sqzy" name="icon" xy="36,34" pivot="0.5,0.5" anchor="true" size="76,72" aspect="true" scale="0.8,0.8" rotation="30" url="ui://moe42ygrsqzy6x" fill="scaleFree">
       <gearIcon controller="level" pages="1,2,3,4" values="ui://moe42ygrsqzy6y|ui://moe42ygrsqzy6z|ui://moe42ygrsqzy70|ui://moe42ygrsqzy71" default="ui://moe42ygrsqzy6x"/>
     </loader>
-    <text id="n4_sqzy" name="title" xy="3,23" size="47,26" fontSize="22" color="#ffffff" align="center" vAlign="middle" autoSize="none" strokeColor="#1f1717" text="11">
+    <text id="n4_sqzy" name="title" xy="10,22" size="47,26" fontSize="22" color="#ffffff" align="center" vAlign="middle" autoSize="none" strokeColor="#1f1717" text="11">
       <relation target="" sidePair="center-center,middle-middle"/>
     </text>
   </displayList>

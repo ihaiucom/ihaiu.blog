@@ -33,6 +33,7 @@ export default class CardConfig extends CardConfigLang
     {
         return this.heroType - 1;
     }
+    
 
     private _spriteUrl:string;
     get spriteUrl()
@@ -42,5 +43,32 @@ export default class CardConfig extends CardConfigLang
             this._spriteUrl = CardView.GetSpriteUrl(this.sprite);
         }
         return this._spriteUrl;
+    }
+
+    static getArmorLevel(score)
+    {
+        var level = 1;
+        if(score <=3)
+        {
+            level = 1
+        }
+        else if(score <= 5)
+        {
+            level = 2
+        }
+        else if(score <= 8)
+        {
+            level = 3
+        }
+        else if(score <= 10)
+        {
+            level = 4
+        }
+        else
+        {
+            level = 5
+        }
+
+        return level;
     }
 }

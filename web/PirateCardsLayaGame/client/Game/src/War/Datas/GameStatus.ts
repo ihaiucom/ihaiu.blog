@@ -435,6 +435,12 @@ export default class GameStatus
             this.levelStep ++;
             this.turnsToBoss = this.levelStep + 1;
         }
+
+        if(this.isNeedCreateChestOnNextStep)
+        {
+            this.isNeedCreateChestOnNextStep = false;
+            this.isNeedCreateChest = true;
+        }
     }
 
     // 是否应该创建Boss

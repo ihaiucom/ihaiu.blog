@@ -515,7 +515,8 @@
             }, 250, null, null, 100);
             Laya.Tween.to(view, {
                 scaleX: 1,
-                scaleY: 1
+                scaleY: 1,
+                alpha: 1
             }, 100, null, null, 100 + 250);
         }
         static turnAnimationStart(tweenContainer, view) {
@@ -614,6 +615,8 @@
             }
         }
         setArmorShowOrChange() {
+            var level = CardConfig.getArmorLevel(this.card.armor) - 1;
+            this.m_shield.m_level.setSelectedIndex(level);
             TweenHelper.spriteShow(this.m_shield);
         }
     }
@@ -1186,6 +1189,25 @@
                 this._spriteUrl = CardView.GetSpriteUrl(this.sprite);
             }
             return this._spriteUrl;
+        }
+        static getArmorLevel(score) {
+            var level = 1;
+            if (score <= 3) {
+                level = 1;
+            }
+            else if (score <= 5) {
+                level = 2;
+            }
+            else if (score <= 8) {
+                level = 3;
+            }
+            else if (score <= 10) {
+                level = 4;
+            }
+            else {
+                level = 5;
+            }
+            return level;
         }
     }
 
@@ -4549,6 +4571,10 @@
                 this.levelStep++;
                 this.turnsToBoss = this.levelStep + 1;
             }
+            if (this.isNeedCreateChestOnNextStep) {
+                this.isNeedCreateChestOnNextStep = false;
+                this.isNeedCreateChest = true;
+            }
         }
         static isBossShouldBeCreated() {
             return !this.isNeedCreateBoss && 1 == this.turnsToBoss;
@@ -6980,6 +7006,11 @@
             var cardScoreType = this.generatePowerUpType(cardGenerationTyp, cardTypeList);
             var level = 1;
             var score = this.generateCardScore(cardScoreType, score);
+            switch (cardScoreType) {
+                case CardScoreType.Armor:
+                    level = CardConfig.getArmorLevel(score);
+                    break;
+            }
             return Card.GetNew(this.game, cardScoreType, level, score);
         }
         generateCardScore(cardScoreType, score = 0) {
@@ -16306,7 +16337,6 @@
     class CPLockSwitch extends CPLockSwitchStruct {
         constructor() {
             super(...arguments);
-            this.speed = 0.05;
             this.elasticList = [Laya.Ease.linearInOut];
             this.isRuning = false;
         }
@@ -16319,39 +16349,32 @@
                 return;
             }
             this.isRuning = true;
-            Laya.Tween.clearAll(this.m_arrow);
-            this.ArrowTweenToMax();
+            Laya.timer.frameLoop(1, this, this.onLoop);
         }
         Stop() {
-            console.log("Stop");
             this.isRuning = false;
-            Laya.Tween.clearAll(this.m_arrow);
+            Laya.timer.clearAll(this);
         }
-        ArrowTweenToMax() {
-            console.log("ArrowTweenToMax", this.lockData.endAngle);
-            Laya.Tween.clearAll(this.m_arrow);
-            var duration = this.getDuration(this.lockData.endAngle);
-            console.log(ChestLockData.AngleSub360(this.m_arrow.rotation, this.lockData.endAngle), duration);
-            var tween = Laya.Tween.to(this.m_arrow, { rotation: this.lockData.endAngle }, duration, Laya.Ease.linearInOut, Laya.Handler.create(this, this.ArrowTweenToMin), 0, true, true);
+        get angle() {
+            return this.m_arrow.rotation;
         }
-        ArrowTweenToMin() {
-            console.log("ArrowTweenToMin", this.lockData.beginAngle);
-            Laya.Tween.clearAll(this.m_arrow);
-            var duration = this.getDuration(this.lockData.beginAngle);
-            console.log(ChestLockData.AngleSub360(this.m_arrow.rotation, this.lockData.beginAngle), duration);
-            var tween = Laya.Tween.to(this.m_arrow, { rotation: this.lockData.beginAngle }, duration, Laya.Ease.linearInOut, Laya.Handler.create(this, this.ArrowTweenToMax), 0, true, true);
+        set angle(val) {
+            this.m_arrow.rotation = val;
         }
-        getDuration(endAngle) {
-            var duration = Math.ceil(ChestLockData.AngleSub360(this.m_arrow.rotation, endAngle) / this.speed);
-            if (!duration) {
-                duration = 200;
+        onLoop() {
+            this.angle += Laya.timer.delta * CPLockSwitch.speed;
+            if (this.angle >= this.lockData.endAngle) {
+                this.angle = this.lockData.endAngle;
+                CPLockSwitch.speed *= -1;
             }
-            else if (duration > 3000) {
-                duration = 3000;
+            else if (this.angle <= this.lockData.beginAngle) {
+                this.angle = this.lockData.beginAngle;
+                CPLockSwitch.speed *= -1;
             }
-            return duration;
         }
     }
+    CPLockSwitch.speed = 0.2;
+    window['CPLockSwitch'] = CPLockSwitch;
 
     class CPLockArrowStruct extends fgui.GComponent {
         constructor() {
@@ -16592,7 +16615,7 @@
         onClickHandler() {
             this.panel.off(Laya.Event.MOUSE_DOWN, this, this.onClickHandler);
             this.m_switch.Stop();
-            var angle = this.m_switch.m_arrow.rotation;
+            var angle = this.m_switch.angle;
             var itemData = this.lockData.getItemByAngle(angle);
             console.log(angle, itemData);
             if (itemData) {
@@ -16648,7 +16671,7 @@
                 fx.setXY(RandomHelper.getRandomIntInclusive(-120, 120), RandomHelper.getRandomIntInclusive(-280, 120));
                 fx.DelayPalay(RandomHelper.getRandomIntInclusive(0, 200), this);
             }
-            Laya.timer.once(500, this, this.SetResult, [true]);
+            Laya.timer.once(500, this, this.SetResult, [false]);
         }
         SetResult(isSuccess = true) {
             this.panel.sResult.dispatch(isSuccess);

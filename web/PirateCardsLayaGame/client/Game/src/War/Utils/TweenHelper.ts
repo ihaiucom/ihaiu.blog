@@ -58,7 +58,8 @@ export default class TweenHelper
         Laya.Tween.to(view, 
             {
                 scaleX: 1,
-                scaleY: 1
+                scaleY: 1,
+                alpha:1
             }, 
             100, 
             null,

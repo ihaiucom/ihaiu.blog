@@ -11,7 +11,7 @@ export default class CPLockSwitch extends CPLockSwitchStruct
 {
     lockData:ChestLockData;
 
-    speed = 0.05;
+    static speed = 0.2;
 
     elasticList = [Laya.Ease.linearInOut];
 
@@ -30,50 +30,41 @@ export default class CPLockSwitch extends CPLockSwitchStruct
             return;
         }
         this.isRuning = true;
-        Laya.Tween.clearAll(this.m_arrow);
-        this.ArrowTweenToMax();
+        Laya.timer.frameLoop(1, this, this.onLoop);
     }
 
     Stop()
     {
-        console.log("Stop");
         this.isRuning = false;
-        Laya.Tween.clearAll(this.m_arrow);
+        Laya.timer.clearAll(this);
     }
 
-    ArrowTweenToMax()
+
+
+    get angle()
     {
-        console.log("ArrowTweenToMax",  this.lockData.endAngle);
-        Laya.Tween.clearAll(this.m_arrow);
-        var duration = this.getDuration( this.lockData.endAngle);
-        console.log(ChestLockData.AngleSub360(this.m_arrow.rotation, this.lockData.endAngle), duration);
-        var tween = Laya.Tween.to(this.m_arrow, {rotation: this.lockData.endAngle}, duration, Laya.Ease.linearInOut, Laya.Handler.create(this, this.ArrowTweenToMin), 0, true, true);
-      
+        return this.m_arrow.rotation;
     }
 
-    
-    ArrowTweenToMin()
+    set angle(val: number)
     {
-        console.log("ArrowTweenToMin", this.lockData.beginAngle);
-        Laya.Tween.clearAll(this.m_arrow);
-        var duration = this.getDuration( this.lockData.beginAngle);
-        console.log(ChestLockData.AngleSub360(this.m_arrow.rotation, this.lockData.beginAngle), duration);
-        var tween = Laya.Tween.to(this.m_arrow, {rotation: this.lockData.beginAngle}, duration, Laya.Ease.linearInOut, Laya.Handler.create(this, this.ArrowTweenToMax), 0, true, true);
-       
+        this.m_arrow.rotation = val;
     }
 
-    getDuration(endAngle: number)
+    onLoop()
     {
-        var duration = Math.ceil(ChestLockData.AngleSub360(this.m_arrow.rotation,endAngle) / this.speed);
-        if(!duration)
+        this.angle += Laya.timer.delta * CPLockSwitch.speed;
+        if(this.angle >= this.lockData.endAngle)
         {
-            duration = 200;
+            this.angle = this.lockData.endAngle;
+            CPLockSwitch.speed *= -1;
         }
-        else if(duration > 3000)
+        else if(this.angle <= this.lockData.beginAngle)
         {
-            duration = 3000;
+            this.angle = this.lockData.beginAngle;
+            CPLockSwitch.speed *= -1;
         }
-        return duration;
-
     }
 }
+
+window['CPLockSwitch'] = CPLockSwitch;

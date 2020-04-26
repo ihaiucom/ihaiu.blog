@@ -888,7 +888,7 @@ export default class Field
     shootLightning () 
     {
         var heroPosition = this.getHeroPosition();
-        var heroCard = <Hero> this.field.get(heroPosition);
+        var heroCard : Hero= <any> this.field.get(heroPosition);
         var list = [];
 
         var tween = this.shootLightningInAllDirections(heroCard.lightningScore, heroPosition, Consts.LightningDuration);

@@ -37,7 +37,7 @@ export default class CPLock extends CPLockStruct
     {
         this.panel.off(Laya.Event.MOUSE_DOWN,this, this.onClickHandler);
         this.m_switch.Stop();
-        var angle = this.m_switch.m_arrow.rotation;
+        var angle = this.m_switch.angle;
         var itemData = this.lockData.getItemByAngle(angle);
         console.log(angle, itemData);
         if(itemData)
@@ -114,7 +114,7 @@ export default class CPLock extends CPLockStruct
             fx.setXY(RandomHelper.getRandomIntInclusive( -120, 120), RandomHelper.getRandomIntInclusive( -280, 120));
             fx.DelayPalay(RandomHelper.getRandomIntInclusive(0, 200), this);
         }
-        Laya.timer.once(500, this, this.SetResult, [true]);
+        Laya.timer.once(500, this, this.SetResult, [false]);
     }
 
     SetResult(isSuccess: boolean = true)

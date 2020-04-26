@@ -9,12 +9,13 @@ import Card from "../../../War/Logics/Card";
 import CardView from "./CardView";
 import TweenHelper from "../../../War/Utils/TweenHelper";
 import Game from "../../../Game";
+import Hero from "../../../War/Logics/Hero";
 
 export default class CardViewFrontHero extends CardViewFrontHeroStruct
 {
     cardView: CardView;
     cardConfig: CardConfig;
-    card: Card;
+    card: Hero;
 
     
 	protected constructFromXML(xml: any): void 
@@ -34,7 +35,7 @@ export default class CardViewFrontHero extends CardViewFrontHeroStruct
 
     SetCard(card: Card)
     {
-        this.card = card;
+        this.card = <any> card;
     }
 
     OnRecover()
@@ -55,6 +56,8 @@ export default class CardViewFrontHero extends CardViewFrontHeroStruct
     
     setArmorShowOrChange()
     {
+        var level = CardConfig.getArmorLevel(this.card.armor) - 1;
+        this.m_shield.m_level.setSelectedIndex(level)
         TweenHelper.spriteShow(this.m_shield);
     }
 }

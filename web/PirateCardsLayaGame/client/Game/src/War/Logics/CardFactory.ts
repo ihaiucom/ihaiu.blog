@@ -208,6 +208,13 @@ export default class CardFactory
         var level = 1;
         var score = this.generateCardScore(cardScoreType, score);
 
+        switch(cardScoreType)
+        {
+            case CardScoreType.Armor:
+                level = CardConfig.getArmorLevel(score);
+                break;
+        }
+
         return Card.GetNew(this.game, cardScoreType, level,  score)
     }
 
