@@ -12114,11 +12114,11 @@
         starTweenPrecent() {
             this.stopTweenPrecent();
             this._tweenHandler = setInterval(() => {
-                this.showPercent = Math.min(100, Math.ceil(Mathf.Lerp(this.showPercent, this.percent, 0.5)));
+                this.showPercent = Math.min(100, Math.ceil(Mathf.Lerp(this.showPercent, this.percent, 0.8)));
                 this.setPercent(this.showPercent);
                 if (this.showPercent >= 100)
                     this.stopTweenPrecent();
-            }, 100);
+            }, 50);
         }
         stopTweenPrecent() {
             if (this._tweenHandler) {
@@ -12144,7 +12144,10 @@
         }
         onEnd() {
             this.setTip(Game.launchText.LoadedEnd);
-            this.loading(100);
+            this.stopTweenPrecent();
+            this.showPercent = 100;
+            this.setPercent(this.showPercent);
+            this.percent = 100;
         }
         Reset() {
             this.loading(0);

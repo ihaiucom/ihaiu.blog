@@ -57,11 +57,11 @@ export default class LoaderSettingHandler
 		this.stopTweenPrecent();
 		this._tweenHandler = setInterval(() =>
 		{
-			this.showPercent = Math.min(100, Math.ceil(Mathf.Lerp(this.showPercent, this.percent, 0.5)));
+			this.showPercent = Math.min(100, Math.ceil(Mathf.Lerp(this.showPercent, this.percent, 0.8)));
 			this.setPercent(this.showPercent);
 			if(this.showPercent >= 100)
 				this.stopTweenPrecent();
-		}, 100);
+		}, 50);
 	}
 
 	private stopTweenPrecent()
@@ -113,7 +113,11 @@ export default class LoaderSettingHandler
 	onEnd()
 	{
 		this.setTip(Game.launchText.LoadedEnd);
-		this.loading(100);
+		this.stopTweenPrecent();
+		this.showPercent = 100;
+		this.setPercent(this.showPercent);
+		this.percent = 100;
+		// this.loading(100);
 
 		// let panel = Game.loader.current.loaderPanel;
 		// if (panel instanceof LoaderEnterWarPanel) 

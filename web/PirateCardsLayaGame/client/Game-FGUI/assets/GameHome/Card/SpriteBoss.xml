@@ -2,7 +2,7 @@
 <component size="128,165" extention="Label">
   <controller name="sprite" exported="true" pages="0,Boss01,1,Boss02,2,Boss03" selected="0"/>
   <displayList>
-    <loader id="n0_sqzy" name="icon" xy="-47,-73" pivot="0.5,1" size="222,238" url="ui://moe42ygrsqzy6" align="center" vAlign="bottom">
+    <loader id="n0_sqzy" name="icon" xy="-50,-49" pivot="0.5,1" size="228,214" url="ui://moe42ygrsqzy6" align="center" vAlign="bottom">
       <gearIcon controller="sprite" pages="0,1,2" values="ui://moe42ygrsqzy6|ui://moe42ygrsqzy7|ui://moe42ygrsqzy8"/>
     </loader>
   </displayList>
