@@ -323,7 +323,7 @@ export default class Field
         else 
         {
             // 如果是Boss，游戏关卡等级加1
-            card.isBoss && GameStatus.gameLevel++;
+            card.isBoss && GameStatus.addGameLevel();
 
             var cardPositionType:CardPositionType = this.getCardPositionType(moveType, heroPosition);
             var replaceCard = this.getCardToReplace(card);
@@ -843,7 +843,7 @@ export default class Field
         }
 
         // 如果是Boss , 关卡等级+1
-        oldCard.isBoss && GameStatus.gameLevel++;
+        oldCard.isBoss && GameStatus.addGameLevel();
         // 设置新卡牌到对应位置
         this.moveAndSet(fieldPosition, card);
 

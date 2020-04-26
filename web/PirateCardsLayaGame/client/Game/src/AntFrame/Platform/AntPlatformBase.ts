@@ -8,6 +8,7 @@ export enum eSex
 }
 export class SdkUserInfo
 {
+    public isAuthed = false;            // 是否授权的
     public language: string = "";
     public nickName: string = "";       // 玩家昵称
     public avatarUrl: string = "";      // 玩家头像
@@ -78,13 +79,14 @@ export enum MsgType
 }
 export default class AntPlatformBase
 {
+    public static sGetUserInfoBtnVisiable: TypedSignal<boolean> = new  TypedSignal<boolean>();
     protected m_stSystemInfo: SystemInfo = null;
     protected m_stSdkUserInfo: SdkUserInfo = null;
     protected m_stSdkLoginInfo: SdkLoginInfo = null; 
     
 
     public static get platformWX():boolean{
-        return Game.browserSetting.isWeixinMinigame;
+        return Engine.borwer.isWXGame;
     }
 
     public get userInfo(): SdkUserInfo
@@ -156,7 +158,7 @@ export default class AntPlatformBase
         });
     } 
 
-    public Share(title:string, imgUrl:string, query:string): Promise<boolean>{
+    public async Share(title:string, imgUrl:string, query:string): Promise<boolean>{
         return null;
     }
 }

@@ -1,0 +1,7 @@
+{
+  "code": "import GameConfig from \"./GameConfig\";\r\nimport BigRank from \"./view/BigRank\";\r\nclass Main {\r\n    constructor() {\r\n        Laya.isWXOpenDataContext = true;\r\n        Laya.isWXPosMsg = true;\r\n        Laya.init(GameConfig.width, GameConfig.height, false);\r\n        Laya.stage.scaleMode = GameConfig.scaleMode;\r\n        Laya.stage.screenMode = GameConfig.screenMode;\r\n        Laya.stage.alignV = GameConfig.alignV;\r\n        Laya.stage.alignH = GameConfig.alignH;\r\n        if (Laya.Browser.onMiniGame)\r\n            wx.onMessage(function (data) {\r\n                if (data.url == \"res/atlas/test.atlas\") {\r\n                    Laya.loader.load(\"res/atlas/test.atlas\", Laya.Handler.create(this, this.onComplete));\r\n                }\r\n            }.bind(this));\r\n        else\r\n            Laya.loader.load(\"res/atlas/test.atlas\", Laya.Handler.create(this, this.onComplete));\r\n    }\r\n    onComplete() {\r\n        var rank = new BigRank();\r\n        rank.init();\r\n    }\r\n}\r\nnew Main();\r\n",
+  "references": [
+    "D:/zengfeng/githubs/ihaiu.blog/web/PirateCardsLayaGame/client/WXOpenDataContext/src/GameConfig.ts",
+    "D:/zengfeng/githubs/ihaiu.blog/web/PirateCardsLayaGame/client/WXOpenDataContext/src/view/BigRank.ts"
+  ]
+}

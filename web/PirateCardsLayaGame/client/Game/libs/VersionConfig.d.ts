@@ -1,5 +1,7 @@
 declare class VersionConfig
 {
+    static Title: string;
+    static ShareImgUrl: string;
     // 缓存编号
     static VersionCacheCode: number;
     // 应用版本号

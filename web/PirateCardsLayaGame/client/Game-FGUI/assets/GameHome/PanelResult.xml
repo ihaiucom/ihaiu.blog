@@ -6,13 +6,17 @@
     <group id="n231_sqzy" name="btnGroup" xy="163,1053" size="424,166" advanced="true">
       <relation target="" sidePair="center-center,bottom-bottom%"/>
     </group>
-    <image id="n232_sqzy" name="resultBg" src="sqzy31" fileName="sprite/game1/choiceBackground0000.png" xy="225,366" group="n237_sqzy"/>
-    <image id="n233_sqzy" name="n233" src="sqzy5v" fileName="sprite/game1/medal0000.png" xy="289,454" group="n237_sqzy"/>
-    <image id="n234_sqzy" name="n234" src="sqzy5w" fileName="sprite/game1/medal0001.png" xy="289,583" group="n237_sqzy"/>
-    <text id="n235_sqzy" name="coinCurrent" xy="371,481" size="110,34" group="n237_sqzy" fontSize="30" color="#ffcc00" autoSize="none" strokeColor="#000000" text="10"/>
-    <text id="n236_sqzy" name="coinMax" xy="375,609" size="110,34" group="n237_sqzy" fontSize="30" color="#ffcc00" autoSize="none" strokeColor="#000000" text="10"/>
-    <group id="n237_sqzy" name="resultGroup" xy="225,366" size="300,367" advanced="true">
+    <image id="n232_sqzy" name="resultBg" src="sqzy31" fileName="sprite/game1/choiceBackground0000.png" xy="125,349" size="500,400" group="n237_sqzy"/>
+    <image id="n233_sqzy" name="n233" src="sqzy5v" fileName="sprite/game1/medal0000.png" xy="250,437" size="64,69" group="n237_sqzy"/>
+    <image id="n234_sqzy" name="n234" src="sqzy5w" fileName="sprite/game1/medal0001.png" xy="250,566" size="64,69" group="n237_sqzy"/>
+    <text id="n235_sqzy" name="coinCurrent" xy="371,464" size="110,34" group="n237_sqzy" fontSize="30" color="#ffcc00" autoSize="none" strokeColor="#000000" text="10"/>
+    <text id="n236_sqzy" name="coinMax" xy="375,592" size="110,34" group="n237_sqzy" fontSize="30" color="#ffcc00" autoSize="none" strokeColor="#000000" text="10"/>
+    <group id="n237_sqzy" name="resultGroup" xy="125,349" size="500,400" advanced="true">
       <relation target="" sidePair="center-center,middle-middle"/>
     </group>
+    <component id="n239_p1wh" name="shareBtn" src="p1whbg" fileName="Btn/ShareIconBtn.xml" xy="270,785" size="210,89">
+      <relation target="" sidePair="center-center,middle-middle"/>
+      <Button title="炫耀"/>
+    </component>
   </displayList>
 </component>

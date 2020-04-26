@@ -1,0 +1,6 @@
+{
+  "code": "import { ui } from \"../ui/layaMaxUI\";\r\nexport default class BigItem extends ui.test.BigItemUI {\r\n    constructor() {\r\n        super();\r\n    }\r\n    set dataSource(value) {\r\n        if (!value)\r\n            return;\r\n        this.img_head.skin = value.avatarIP;\r\n        this.text_name.text = value.UserName;\r\n        this.text_score.text = value.RankValue;\r\n    }\r\n}\r\n",
+  "references": [
+    "D:/zengfeng/githubs/ihaiu.blog/web/PirateCardsLayaGame/client/WXOpenDataContext/src/ui/layaMaxUI.ts"
+  ]
+}

@@ -88,6 +88,7 @@ export default class TookManager
      */
     start()
     {
+        return;
         this.install();
         this.stop();
         Laya.timer.loop(1000, this, this.onTick);

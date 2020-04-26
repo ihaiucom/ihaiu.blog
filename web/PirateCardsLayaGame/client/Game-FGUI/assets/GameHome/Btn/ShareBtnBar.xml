@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="112,112">
+  <displayList>
+    <component id="n0_p1wh" name="wxBtn" src="p1whbd" fileName="Btn/ShareBtn.xml" xy="0,0" controller="icon,0"/>
+  </displayList>
+</component>

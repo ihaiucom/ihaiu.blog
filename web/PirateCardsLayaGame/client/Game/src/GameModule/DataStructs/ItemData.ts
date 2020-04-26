@@ -1,6 +1,7 @@
 import ItemConfig from "../../Config/ConfigExtends/ItemConfig";
 import Game from "../../Game";
 import GameStatus from "../../War/Datas/GameStatus";
+import ReportMonitor from "../../Libs/ReportMonitor";
 
 export default class ItemData
 {
@@ -26,6 +27,7 @@ export default class ItemData
     {
         this.isGeted = true;
         GameStatus.gold -= this.itemConfig.coin;
+        ReportMonitor.OnBuyShop(this.itemConfig.spriteIndex);
     }
 
     

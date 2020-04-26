@@ -3,6 +3,7 @@ import WindowHomeUI from "../../FGUI/Extends/GameHome/WindowHomeUI";
 import Game from "../../Game";
 import { MenuId } from "../MenuId";
 import MenuOpenParameter from "../../GameFrame/Menu/MenuOpenParameter";
+import SoundController from "../../War/Logics/SoundController";
 
 export enum HomeTabType
 {
@@ -71,6 +72,9 @@ export default class HomeWindow extends MWindow
         this.registerControllerTabViews(this.conent.m_Tab);
 
         super.onMenuCreate();
+
+        
+		SoundController.instance.playMusic();
     }
 
 

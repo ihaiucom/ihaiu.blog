@@ -395,11 +395,24 @@
     }
 
     class SoundController {
+        constructor() {
+            this.isInit = false;
+            if (window['wx']) {
+                wx.onShow(this.onAppShow.bind(this));
+                wx.onHide(this.onAppHide.bind(this));
+            }
+        }
         static get instance() {
             if (!this._instance) {
                 this._instance = new SoundController();
             }
             return this._instance;
+        }
+        onAppShow(res) {
+            Laya.timer.once(3000, this, this.playMusic);
+        }
+        onAppHide(res) {
+            this.stopAll();
         }
         get soundBtnIndex() {
             return Laya.SoundManager.soundMuted ? 0 : 1;
@@ -418,6 +431,7 @@
             Laya.SoundManager.playSound(path, 1);
         }
         playMusic() {
+            this.isInit = true;
             if (Laya.SoundManager._musicMuted) {
                 return;
             }
@@ -427,6 +441,10 @@
         onPlayMusicEnd() {
             Laya.timer.clearAll(this);
             Laya.timer.once(100, this, this.playMusic);
+        }
+        stopAll() {
+            Laya.timer.clearAll(this);
+            Laya.SoundManager.stopAll();
         }
     }
 
@@ -2985,6 +3003,7 @@
     })(eSex || (eSex = {}));
     class SdkUserInfo {
         constructor() {
+            this.isAuthed = false;
             this.language = "";
             this.nickName = "";
             this.avatarUrl = "";
@@ -3031,7 +3050,7 @@
             this.m_stSdkLoginInfo = new SdkLoginInfo();
         }
         static get platformWX() {
-            return Game.browserSetting.isWeixinMinigame;
+            return Engine.borwer.isWXGame;
         }
         get userInfo() {
             return this.m_stSdkUserInfo;
@@ -3079,10 +3098,11 @@
                 resolve(true);
             });
         }
-        Share(title, imgUrl, query) {
+        async Share(title, imgUrl, query) {
             return null;
         }
     }
+    AntPlatformBase.sGetUserInfoBtnVisiable = new TypedSignal();
 
     class AntPlatformMine extends AntPlatformBase {
         constructor() {
@@ -3395,6 +3415,7 @@
                 });
             }
             else {
+                console.error("GameDoSdkAuthAsync 获取授权 获取用户信息 失败");
                 return new Promise(resolve => {
                     resolve(null);
                 });
@@ -3433,11 +3454,13 @@
                 }
             });
             button.show();
+            AntPlatformBase.sGetUserInfoBtnVisiable.dispatch(true);
             return new Promise(resolve => {
                 button.onTap(function (res) {
                     if (res.userInfo) {
                         console.log("按钮获取用户信息成功", "wxLogin auth success");
                         button.hide();
+                        AntPlatformBase.sGetUserInfoBtnVisiable.dispatch(false);
                         resolve(res.userInfo);
                     }
                     else {
@@ -3449,6 +3472,7 @@
         }
         SetUserInfo(info) {
             console.info("用户信息", info);
+            this.m_stSdkUserInfo.isAuthed = true;
             this.m_stSdkUserInfo.language = info.language;
             this.m_stSdkUserInfo.nickName = info.nickName;
             this.m_stSdkUserInfo.avatarUrl = info.avatarUrl;
@@ -3473,7 +3497,7 @@
             this.m_stSystemInfo.SDKVersion = info.SDKVersion;
             return this.m_stSystemInfo;
         }
-        Share(title, imgUrl, query) {
+        async Share(title, imgUrl, query) {
             return new Promise(resolve => {
                 wx.shareAppMessage({
                     title: title,
@@ -3534,6 +3558,7 @@
     }
     AntFrame.enableWXLogin = VersionConfig.IsEnableWx;
     AntFrame._insPlatform = null;
+    window['AntFrame'] = AntFrame;
 
     class LoginWindowUI extends LoginWindowUIStruct {
         onWindowShow() {
@@ -3800,6 +3825,7 @@
             this.m_chooseGameFormat = (this.getChild("chooseGameFormat"));
             this.m_result = (this.getChild("result"));
             this.m_menuTopPanel = (this.getChild("menuTopPanel"));
+            this.m_shareBtnBar = (this.getChild("shareBtnBar"));
         }
     }
     WindowHomeUIStruct.URL = "ui://moe42ygrsqzy8a";
@@ -3831,6 +3857,7 @@
             this.contentPane = windowUI;
             this.registerControllerTabViews(this.conent.m_Tab);
             super.onMenuCreate();
+            SoundController.instance.playMusic();
         }
         openTab(tabIndex) {
             if (this.conent) {
@@ -3860,6 +3887,7 @@
             this.m_container = (this.getChild("container"));
             this.m_chectPopupPanel = (this.getChild("chectPopupPanel"));
             this.m_pausePanel = (this.getChild("pausePanel"));
+            this.m_shareBtnBar = (this.getChild("shareBtnBar"));
         }
     }
     WindowWarUIStruct.URL = "ui://moe42ygrsqzy9c";
@@ -4305,6 +4333,9 @@
     CardScoreTypeHelper.powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
 
     class GameStatus {
+        static addGameLevel() {
+            this.gameLevel++;
+        }
         static init() {
             if (this.currentHero == HeroType.Key) {
                 this.isKey = true;
@@ -4321,6 +4352,9 @@
         static load() {
             if (Game.localStorage.hasItem(this.DATE_KEY, false)) {
                 this.data = Game.localStorage.getJSON(this.DATE_KEY);
+                if (this.data.goldCumulative == undefined) {
+                    this.data.goldCumulative = 0;
+                }
             }
         }
         static save() {
@@ -4333,6 +4367,40 @@
             this.data.gold = val;
             this.save();
             this.sGold.dispatch();
+        }
+        static get goldCumulative() {
+            return this.data.goldCumulative;
+        }
+        static set goldCumulative(val) {
+            this.data.goldCumulative = val;
+            this.save();
+        }
+        static addUserGold(t) {
+            this.data.gold += t;
+            this.data.goldCumulative += t;
+            this.save();
+            this.sGold.dispatch();
+            if (window['wx']) {
+                var scoreVal = {
+                    "wxgame": {
+                        "score": GameStatus.goldCumulative,
+                        "update_time": Date.now()
+                    },
+                    "cost_ms": Date.now() - War.launchtimestamp
+                };
+                var scoreValStr = JSON.stringify(scoreVal);
+                var list = [];
+                list.push({ key: "score", value: scoreValStr });
+                wx.setUserCloudStorage({
+                    KVDataList: list,
+                    success: (res) => {
+                        console.log("上传排行榜数据成功", res);
+                    },
+                    fail: (res) => {
+                        console.error("上传排行榜数据失败", res);
+                    }
+                });
+            }
         }
         static get bestGoldPerGame() {
             return this.data.bestGoldPerGame;
@@ -4492,6 +4560,7 @@
     GameStatus.sGold = new Signal();
     GameStatus.DATE_KEY = "GameStatus";
     GameStatus.data = {
+        goldCumulative: 0,
         gold: 0,
         bestGoldPerGame: 0,
         isTutorialSeen: false,
@@ -5199,6 +5268,267 @@
         }
     }
 
+    class ReportMonitorKeyIndex {
+        static GetBuyHero(i) {
+            return this.BuyHero_0 + i;
+        }
+        static GetBuyShop(i) {
+            return this.BuyShop_0 + i;
+        }
+        static GetBuyMenuHomeTab(i) {
+            return this.MenuHomeTab_0 + i;
+        }
+    }
+    ReportMonitorKeyIndex.SystemPlatform = "0";
+    ReportMonitorKeyIndex.Open = "1";
+    ReportMonitorKeyIndex.Menu = "2";
+    ReportMonitorKeyIndex.War3x3 = "3";
+    ReportMonitorKeyIndex.War4x4 = "4";
+    ReportMonitorKeyIndex.WarOver = "5";
+    ReportMonitorKeyIndex.Share = "6";
+    ReportMonitorKeyIndex.ShareBtn = "7";
+    ReportMonitorKeyIndex.ShareResult = "8";
+    ReportMonitorKeyIndex.ShareWar = "9";
+    ReportMonitorKeyIndex.Gold = "10";
+    ReportMonitorKeyIndex.GoldBest = "11";
+    ReportMonitorKeyIndex.BuyHero = "12";
+    ReportMonitorKeyIndex.BuyShop = "13";
+    ReportMonitorKeyIndex.BuyHero_0 = 14;
+    ReportMonitorKeyIndex.BuyShop_0 = 19;
+    ReportMonitorKeyIndex.MenuHomeTab_0 = 24;
+    class ReportMonitorKeyName {
+        static GetBuyHero(i) {
+            return "BuyHero_" + i;
+        }
+        static GetBuyShop(i) {
+            return "BuyShop_" + i;
+        }
+        static GetBuyMenuHomeTab(i) {
+            return "MenuHomeTab_" + i;
+        }
+    }
+    ReportMonitorKeyName.SystemPlatform = "SystemPlatform";
+    ReportMonitorKeyName.Open = "Open";
+    ReportMonitorKeyName.Menu = "Menu";
+    ReportMonitorKeyName.War3x3 = "War3x3";
+    ReportMonitorKeyName.War4x4 = "War4x4";
+    ReportMonitorKeyName.WarOver = "WarOver";
+    ReportMonitorKeyName.Share = "Share";
+    ReportMonitorKeyName.ShareBtn = "ShareBtn";
+    ReportMonitorKeyName.ShareResult = "ShareResult";
+    ReportMonitorKeyName.ShareWar = "ShareWar";
+    ReportMonitorKeyName.Gold = "Gold";
+    ReportMonitorKeyName.GoldBest = "GoldBest";
+    ReportMonitorKeyName.BuyHero = "BuyHero";
+    ReportMonitorKeyName.BuyShop = "BuyShop";
+
+    class ReportMonitor {
+        static Send(name, value) {
+            return;
+            if (!Engine.borwer.isWXGame) {
+                return;
+            }
+            wx.reportMonitor(name, value);
+        }
+        static SendAnalytics(name, value) {
+            return;
+            if (!Engine.borwer.isWXGame) {
+                return;
+            }
+            wx.reportAnalytics(name, {
+                value: 1,
+                color: 'red'
+            });
+        }
+        static SendEvent(name, arg) {
+            if (!Engine.borwer.isWXGame) {
+                return;
+            }
+            wx.aldSendEvent(name, arg);
+        }
+        static OnOpen() {
+            var date = new Date().getDate();
+            var lastOpenDate = Game.localStorage.getInt("ReportManitor_Open_Date", true);
+            var lastOpenNum = Game.localStorage.getInt("ReportManitor_Open", true);
+            if (lastOpenDate != date) {
+                Game.localStorage.setInt("ReportManitor_Open_Date", date, true);
+                this.SystemPlatform();
+                lastOpenNum = 0;
+            }
+            lastOpenNum++;
+            Game.localStorage.setInt("ReportManitor_Open", lastOpenNum, true);
+            this.Send(ReportMonitorKeyIndex.Open, 1);
+            this.SendAnalytics(ReportMonitorKeyName.Open, lastOpenNum);
+            this.SendEvent("打开游戏", { "openNum": lastOpenNum });
+        }
+        static OnMenu(menuId, tabIndex) {
+            this.SendEvent("打开菜单", { "menuId": menuId, "tabIndex": tabIndex });
+            if (menuId != MenuId.Home) {
+                return;
+            }
+            if (tabIndex === undefined || tabIndex === null) {
+                tabIndex = 0;
+            }
+            else if (typeof tabIndex == "string") {
+                tabIndex = parseInt(tabIndex);
+            }
+            this.Send(ReportMonitorKeyIndex.GetBuyMenuHomeTab(tabIndex).toString(), 1);
+            this.SendAnalytics(ReportMonitorKeyName.GetBuyMenuHomeTab(tabIndex), 1);
+        }
+        static OnWar(isF) {
+            if (isF) {
+                this.SendEvent("进入关卡", { "type": 3 });
+                this.war4x4++;
+                this.Send(ReportMonitorKeyIndex.War4x4, 1);
+                this.SendAnalytics(ReportMonitorKeyName.War4x4, this.war4x4);
+                ReportMonitor.OnStageStart(4, "关卡4x4");
+            }
+            else {
+                this.SendEvent("进入关卡", { "type": 4 });
+                this.war3x3++;
+                this.Send(ReportMonitorKeyIndex.War3x3, 1);
+                this.SendAnalytics(ReportMonitorKeyName.War3x3, this.war3x3);
+                ReportMonitor.OnStageStart(3, "关卡3x3");
+            }
+        }
+        static OnWarOver() {
+            this.warOver++;
+            this.SendEvent("战斗结束", { "结束次数": this.warOver });
+            this.Send(ReportMonitorKeyIndex.ShareResult, 1);
+            this.SendAnalytics(ReportMonitorKeyName.ShareResult, this.warOver);
+            this.OnStageEnd(GameStatus.gameLevel, GameStatus.gold);
+        }
+        static SystemPlatform() {
+            var val = 0;
+            var name = "";
+            if (Laya.Browser.onAndroid) {
+                name = "Android";
+                val = 1;
+            }
+            else if (Laya.Browser.onIPhone) {
+                name = "IPhone";
+                val = 2;
+            }
+            else if (Laya.Browser.onIPad) {
+                name = "IPad";
+                val = 3;
+            }
+            else if (Laya.Browser.onIOS) {
+                name = "IOS";
+                val = 4;
+            }
+            this.SendEvent("系统平台", { platform: name });
+            this.Send(ReportMonitorKeyIndex.SystemPlatform, val);
+            this.SendAnalytics(ReportMonitorKeyName.SystemPlatform, val);
+        }
+        static OnShare(i) {
+            this.Send(ReportMonitorKeyIndex.Share, 1);
+            this.SendAnalytics(ReportMonitorKeyName.Share, 1);
+        }
+        static OnShareBtn(i) {
+            this.Send(ReportMonitorKeyIndex.ShareBtn, 1);
+            this.SendAnalytics(ReportMonitorKeyName.ShareBtn, 1);
+        }
+        static OnShareResult(i) {
+            i = this._shareResult++;
+            this.Send(ReportMonitorKeyIndex.ShareResult, 1);
+            this.SendAnalytics(ReportMonitorKeyName.ShareResult, 1);
+        }
+        static OnShareWar(i) {
+            i = this._shareWar++;
+            this.Send(ReportMonitorKeyIndex.ShareWar, 1);
+            this.SendAnalytics(ReportMonitorKeyName.ShareWar, 1);
+        }
+        static OnGload(i) {
+            this.SendAnalytics(ReportMonitorKeyName.Gold, i);
+            this.SendEvent("一次关卡活得金币数量", { value: i });
+        }
+        static OnGloadBest(i) {
+            var lastGoldBest = Game.localStorage.getInt("ReportManitor_GoldBest", false);
+            if (lastGoldBest != i) {
+                Game.localStorage.setInt("ReportManitor_GoldBest", i, false);
+                this.SendAnalytics(ReportMonitorKeyName.GoldBest, i);
+                this.SendEvent("一次关卡活得最多金币数量", { value: lastGoldBest });
+            }
+        }
+        static OnBuyHero(i) {
+            this.Send(ReportMonitorKeyIndex.GetBuyHero(i).toString(), 1);
+            this.SendAnalytics(ReportMonitorKeyName.GetBuyHero(i), 1);
+            this.SendEvent(ReportMonitorKeyName.GetBuyHero(i), { value: 1 });
+        }
+        static OnBuyShop(i) {
+            this.SendEvent(ReportMonitorKeyName.GetBuyShop(i), { value: 1 });
+            this.Send(ReportMonitorKeyIndex.GetBuyShop(i).toString(), 1);
+            this.SendAnalytics(ReportMonitorKeyName.GetBuyShop(i), 1);
+        }
+        static OnStageStart(stageId, stageName) {
+            this.stageId = stageId;
+            this.stageName = stageName;
+            if (!Engine.borwer.isWXGame) {
+                return;
+            }
+            wx.aldStage.onStart({
+                stageId: stageId,
+                stageName: stageName,
+                userId: AntFrame.platform.userInfo.nickName
+            });
+        }
+        static OnStageRuningTools(itemType) {
+            if (!Engine.borwer.isWXGame) {
+                return;
+            }
+            var itemData = Game.moduleModel.item.getItemToolByType(itemType);
+            var itemName = "不知名道具";
+            var itemDesc = "不知名道具";
+            if (itemData && itemData.itemConfig) {
+                itemName = itemData.itemConfig.name;
+                itemDesc = itemData.itemConfig.itemDes;
+            }
+            wx.aldStage.onRunning({
+                stageId: this.stageId,
+                stageName: this.stageName,
+                userId: AntFrame.platform.userInfo.nickName,
+                event: "tools",
+                params: {
+                    itemName: itemName,
+                    itemCount: 1,
+                    desc: itemDesc,
+                }
+            });
+        }
+        static OnStageEnd(level, gold) {
+            if (!Engine.borwer.isWXGame) {
+                return;
+            }
+            wx.aldStage.onEnd({
+                stageId: this.stageId,
+                stageName: this.stageName,
+                userId: AntFrame.platform.userInfo.nickName,
+                event: "complete",
+                params: {
+                    desc: "关卡完成",
+                    gold: gold,
+                    level: level
+                }
+            });
+        }
+    }
+    ReportMonitor.war4x4 = 0;
+    ReportMonitor.war3x3 = 0;
+    ReportMonitor.warOver = 0;
+    ReportMonitor._shareResult = 0;
+    ReportMonitor._shareWar = 0;
+    ReportMonitor.stageId = "";
+    ReportMonitor.stageName = "";
+
+    var ItemToolType;
+    (function (ItemToolType) {
+        ItemToolType[ItemToolType["Heart"] = 0] = "Heart";
+        ItemToolType[ItemToolType["Horseshoe"] = 1] = "Horseshoe";
+        ItemToolType[ItemToolType["Luck"] = 2] = "Luck";
+        ItemToolType[ItemToolType["Key"] = 3] = "Key";
+    })(ItemToolType || (ItemToolType = {}));
+
     class Hero extends AbstractCard {
         constructor() {
             super(...arguments);
@@ -5413,6 +5743,7 @@
         useLuck() {
             this.view.useLuck();
             GameStatus.isLuck = false;
+            ReportMonitor.OnStageRuningTools(ItemToolType.Luck);
         }
         useHeart() {
             GameStatus.isHeroAlive = true;
@@ -5422,6 +5753,7 @@
                 this.setStatus();
                 this.setShopItemsStatus();
             }, 200);
+            ReportMonitor.OnStageRuningTools(ItemToolType.Heart);
         }
     }
 
@@ -5806,7 +6138,7 @@
                 list.push(this.moveAndSetWithAnimation(heroPosition, card, Consts.AnimationTime));
             }
             else {
-                card.isBoss && GameStatus.gameLevel++;
+                card.isBoss && GameStatus.addGameLevel();
                 var cardPositionType = this.getCardPositionType(moveType, heroPosition);
                 var replaceCard = this.getCardToReplace(card);
                 var tweenContainer = TweenContainer.PoolGet();
@@ -6148,7 +6480,7 @@
                     tweens.push(oldCard.open());
                 }
             }
-            oldCard.isBoss && GameStatus.gameLevel++;
+            oldCard.isBoss && GameStatus.addGameLevel();
             this.moveAndSet(fieldPosition, card);
             card.endTurnAnimationStart();
             tweenContainer.tweens.push(oldCard.startTurnAnimation(card.endTurnAnimationEnd, card));
@@ -7013,7 +7345,7 @@
             this._target.x += this._offsetPos[0];
             this._target.y += this._offsetPos[1];
             if (Laya.timer.currTimer - this._startTime >= duration) {
-                Laya.timer.clear(this, this._pos);
+                Laya.timer.clearAll(this);
                 this.shank_I = 0;
                 this._isShaking = false;
                 this._target.x = this._orgX;
@@ -7058,6 +7390,7 @@
             this.container.setScale(0.5, 0.5);
         }
         launch() {
+            ReportMonitor.OnWar(GameStatus.ColumnCount == 4);
             GameStatus.init();
             this.container.width = GameStatus.ColumnCount * Consts.CardWidth + (GameStatus.ColumnCount - 1) * Consts.CardSpaceBetweenWidth;
             this.container.height = GameStatus.RowCount * Consts.CardHeight + (GameStatus.RowCount - 1) * Consts.CardSpaceBetweenHeight;
@@ -7322,6 +7655,7 @@
             this.isInited = true;
         }
         static launch() {
+            this.launchtimestamp = Date.now();
             this.uninstall();
             this.game.launch();
         }
@@ -7332,12 +7666,16 @@
             this.game.uninstall();
         }
         static exit() {
-            GameStatus.gold += GameStatus.goldPerGame;
+            GameStatus.addUserGold(GameStatus.goldPerGame);
+            ReportMonitor.OnGload(GameStatus.goldPerGame);
+            ReportMonitor.OnGloadBest(GameStatus.bestGoldPerGame);
+            ReportMonitor.OnWarOver();
             this.uninstall();
             Game.menu.openTab(MenuId.Home, HomeTabType.Result);
         }
     }
     War.isInited = false;
+    War.launchtimestamp = 0;
     window['War'] = War;
 
     class WindowWarUI extends WindowWarUIStruct {
@@ -9940,6 +10278,7 @@
             }
         }
         _open(menuId, parametar) {
+            ReportMonitor.OnMenu(menuId, parametar.openIndex);
             let ctl = this.getMenuCtl(menuId);
             if (!ctl) {
                 let menuConfig = Game.config.menu.getConfig(menuId);
@@ -10814,6 +11153,7 @@
             this.selectHero.isGeted = true;
             GameStatus.gold -= this.selectHero.cardConfig.coin;
             this.save();
+            ReportMonitor.OnBuyHero(this.selectHero.cardConfig.spriteIndex);
         }
         save() {
             var json = { selectId: this.selectId, list: [] };
@@ -10849,6 +11189,7 @@
         buy() {
             this.isGeted = true;
             GameStatus.gold -= this.itemConfig.coin;
+            ReportMonitor.OnBuyShop(this.itemConfig.spriteIndex);
         }
     }
 
@@ -10856,14 +11197,6 @@
     (function (ItemType) {
         ItemType[ItemType["Tool"] = 5] = "Tool";
     })(ItemType || (ItemType = {}));
-
-    var ItemToolType;
-    (function (ItemToolType) {
-        ItemToolType[ItemToolType["Heart"] = 0] = "Heart";
-        ItemToolType[ItemToolType["Horseshoe"] = 1] = "Horseshoe";
-        ItemToolType[ItemToolType["Luck"] = 2] = "Luck";
-        ItemToolType[ItemToolType["Key"] = 3] = "Key";
-    })(ItemToolType || (ItemToolType = {}));
 
     class ItemModel extends MModel {
         constructor() {
@@ -14667,8 +15000,10 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
+            this.m_state = this.getController("state");
             this.m_menuLogo = (this.getChild("menuLogo"));
             this.m_btnBar = (this.getChild("btnBar"));
+            this.m_getUserInfoBtn = (this.getChild("getUserInfoBtn"));
         }
     }
     PanelMainMenuStruct.URL = "ui://moe42ygrsqzy7q";
@@ -14679,13 +15014,19 @@
             this.m_btnBar.m_bigPlayBtn.onClick(this, this.OnClickPlayBtn);
             this.m_btnBar.m_soundBtn.onClick(this, this.OnClickSoundBtn);
             this.m_btnBar.m_groupBtn.onClick(this, this.OnClickGroupBtn);
+            this.onTabShow();
         }
         onWindowShow() {
             this.m_btnBar.m_soundBtn.SetSoundBtnState();
         }
         onTabShow() {
+            AntPlatformBase.sGetUserInfoBtnVisiable.add(this.OnGetUserInfoBtnVisiable, this);
+            if (!AntFrame.platform.userInfo.isAuthed) {
+                this.getAuth();
+            }
         }
         onTabHide() {
+            AntPlatformBase.sGetUserInfoBtnVisiable.remove(this.OnGetUserInfoBtnVisiable, this);
         }
         OnClickPlayBtn() {
             Game.menu.openTab(MenuId.Home, HomeTabType.ChooseHero);
@@ -14695,6 +15036,19 @@
             this.m_btnBar.m_soundBtn.SetSoundBtnState();
         }
         OnClickGroupBtn() {
+        }
+        async getAuth() {
+            if (AntFrame.platform instanceof AntPlatformWX) {
+                let antWx = AntFrame.platform;
+                let userInfo = await antWx.WXAuth();
+                if (userInfo) {
+                    console.log("userInfo:", userInfo);
+                    this.OnGetUserInfoBtnVisiable(false);
+                }
+            }
+        }
+        OnGetUserInfoBtnVisiable(visiable) {
+            this.m_state.setSelectedIndex(visiable ? 1 : 0);
         }
     }
 
@@ -15421,15 +15775,21 @@
             this.m_resultGroup = (this.getChild("resultGroup"));
             this.m_homeBtn = (this.getChild("homeBtn"));
             this.m_playBtn = (this.getChild("playBtn"));
+            this.m_shareBtn = (this.getChild("shareBtn"));
         }
     }
     PanelResultStruct.URL = "ui://moe42ygrsqzy9d";
     PanelResultStruct.DependPackages = ["GameHome"];
 
     class PanelResult extends PanelResultStruct {
+        constructor() {
+            super(...arguments);
+            this.shareCount = 0;
+        }
         onWindowInited() {
             this.m_homeBtn.onClick(this, this.OnClickHome);
             this.m_playBtn.onClick(this, this.OnClickPlayBtn);
+            this.m_shareBtn.onClick(this, this.OnClickShareBtn);
         }
         onTabShow() {
             this.SetData();
@@ -15445,6 +15805,34 @@
         }
         OnClickHome() {
             Game.menu.openTab(MenuId.Home, HomeTabType.MenuMenu);
+        }
+        OnClickShareBtn() {
+            console.log("PanelResult OnClickShareBtn");
+            if (!Engine.borwer.isWXGame) {
+                return;
+            }
+            wx.setMessageToFriendQuery({ shareMessageToFriendScene: 2 });
+            var query = "nickName=" + AntFrame.platform.userInfo.nickName;
+            var pos = this.m_resultGroup.localToGlobal(0, 0);
+            pos.x = Math.floor(pos.x);
+            pos.y = Math.floor(pos.y);
+            var w = Math.floor(this.m_resultGroup.width);
+            var h = Math.floor(this.m_resultGroup.height);
+            console.log("x=", pos.x, ", y=", pos.y, ", w=", w, ", h=,", h);
+            let tempFilePath = canvas.toTempFilePathSync({
+                x: pos.x,
+                y: pos.y,
+                width: w,
+                height: h,
+                destWidth: w,
+                destHeight: h
+            });
+            ReportMonitor.OnShareResult(this.shareCount++);
+            wx.aldShareAppMessage({
+                title: `${AntFrame.platform.userInfo.nickName} 战绩`,
+                imageUrl: tempFilePath,
+                query: query
+            });
         }
     }
 
@@ -16272,6 +16660,189 @@
         }
     }
 
+    class GetUserInfoBtnStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "GetUserInfoBtn"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_title = (this.getChild("title"));
+            this.m_icon = (this.getChild("icon"));
+        }
+    }
+    GetUserInfoBtnStruct.URL = "ui://moe42ygrgvpab9";
+    GetUserInfoBtnStruct.DependPackages = ["GameHome"];
+
+    class GetUserInfoBtn extends GetUserInfoBtnStruct {
+    }
+
+    class ShareBtnStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ShareBtn"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_icon = this.getController("icon");
+            this.m_icon = (this.getChild("icon"));
+        }
+    }
+    ShareBtnStruct.URL = "ui://moe42ygrp1whbd";
+    ShareBtnStruct.DependPackages = ["GameHome"];
+
+    class ShareBtn extends ShareBtnStruct {
+    }
+
+    class ShareBtnBarStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ShareBtnBar"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_wxBtn = (this.getChild("wxBtn"));
+        }
+    }
+    ShareBtnBarStruct.URL = "ui://moe42ygrp1whbe";
+    ShareBtnBarStruct.DependPackages = ["GameHome"];
+
+    class ShareBtnBar extends ShareBtnBarStruct {
+        constructor() {
+            super(...arguments);
+            this._shareCount = 0;
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_wxBtn.onClick(this, this.OnClickWxBtn);
+            this.InitWXShare();
+        }
+        async OnClickWxBtn() {
+            console.log("ShareBtnBar OnClickWxBtn");
+            this.getShareImage();
+            if (!Engine.borwer.isWXGame) {
+                return;
+            }
+            ReportMonitor.OnShareBtn(this.ShareCount);
+            wx.aldShareAppMessage(this.getShareObj());
+            this.DelayShareGet();
+        }
+        getShareObj() {
+            return {
+                title: VersionConfig.Title,
+                query: this.getShareQuery(),
+                imageUrl: this.getShareImage()
+            };
+        }
+        getShareQuery() {
+            var menuId = Game.menu.getLastOpenMenuId();
+            var menuCtrl = Game.menu.getMenuCtl(menuId);
+            var query = "nickName=" + AntFrame.platform.userInfo.nickName +
+                "&menuId=" + menuId +
+                "&tabIndex=" + (menuCtrl && menuCtrl.openParametar ? menuCtrl.openParametar.openIndex : 0);
+            return query;
+        }
+        getShareImage() {
+            if (Engine.borwer.isWXGame) {
+                if (Game.menu.isOpened(MenuId.War)) {
+                    if (War.game && War.game.container) {
+                        ReportMonitor.OnShareWar(this.ShareCount);
+                        var container = War.game.container;
+                        var pos = container.localToGlobal(container.width * -0.5, container.height * -0.5);
+                        pos.x = Math.floor(pos.x);
+                        pos.y = Math.floor(pos.y);
+                        var w = Math.floor(container.width * 0.5);
+                        var h = Math.floor(container.height * 0.5);
+                        var endPos = container.localToGlobal(w, h);
+                        w = endPos.x - pos.x;
+                        h = endPos.y - pos.y;
+                        var tempFilePath = canvas.toTempFilePathSync({
+                            x: pos.x,
+                            y: pos.y,
+                            width: w,
+                            height: h,
+                            destWidth: w,
+                            destHeight: h
+                        });
+                        return tempFilePath;
+                    }
+                }
+            }
+            return VersionConfig.ShareImgUrl;
+        }
+        InitWXShare() {
+            if (ShareBtnBar.isInited) {
+                return;
+            }
+            ShareBtnBar.isInited = true;
+            if (window['wx']) {
+                wx.showShareMenu();
+                wx.aldOnShareAppMessage(() => {
+                    ReportMonitor.OnShare(this.ShareCount);
+                    this.DelayShareGet();
+                    return this.getShareObj();
+                });
+            }
+        }
+        get ShareCount() {
+            var lastDate = Game.localStorage.getInt("ShareDate", false);
+            var date = new Date().getDate();
+            if (date != lastDate) {
+                this._shareCount = 0;
+            }
+            else {
+                this._shareCount = Game.localStorage.getInt("ShareCount2", false);
+            }
+            return this._shareCount;
+        }
+        set ShareCount(val) {
+            var lastDate = Game.localStorage.getInt("ShareDate", false);
+            var date = new Date().getDate();
+            if (date != lastDate) {
+                val = 1;
+                Game.localStorage.setInt("ShareDate", date);
+            }
+            this._shareCount = val;
+            Game.localStorage.setInt("ShareCount2", val, false);
+        }
+        DelayShareGet() {
+            Laya.timer.once(1000, this, this.OnShareGet);
+        }
+        OnShareGet() {
+            this.ShareCount++;
+            if (this.ShareCount <= 10) {
+                GameStatus.addUserGold(100);
+                Game.system.toastText(`今日分享 ${this.ShareCount}/10, 获得奖励金币+100`);
+            }
+        }
+    }
+    ShareBtnBar.isInited = false;
+
+    class ShareIconBtnStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ShareIconBtn"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_title = (this.getChild("title"));
+            this.m_icon = (this.getChild("icon"));
+        }
+    }
+    ShareIconBtnStruct.URL = "ui://moe42ygrp1whbg";
+    ShareIconBtnStruct.DependPackages = ["GameHome"];
+
+    class ShareIconBtn extends ShareIconBtnStruct {
+    }
+
     class GameHomeBinder {
         static bindAll() {
             let bind = fgui.UIObjectFactory.setPackageItemExtension;
@@ -16342,6 +16913,10 @@
             bind(CPLockDialFixedBig.URL, CPLockDialFixedBig);
             bind(CPLockDial.URL, CPLockDial);
             bind(CPLock.URL, CPLock);
+            bind(GetUserInfoBtn.URL, GetUserInfoBtn);
+            bind(ShareBtn.URL, ShareBtn);
+            bind(ShareBtnBar.URL, ShareBtnBar);
+            bind(ShareIconBtn.URL, ShareIconBtn);
         }
     }
 
@@ -17088,9 +17663,8 @@
                 callback();
             }
             else {
-                Game.menu.open(MenuId.Home);
+                Game.menu.openTab(MenuId.Home, HomeTabType.MenuMenu);
             }
-            SoundController.instance.playMusic();
         }
         loadVersion() {
             Laya.ResourceVersion.enable("version.json", Laya.Handler.create(this, this.onVersionLoaded), Laya.ResourceVersion.FILENAME_VERSION);
@@ -17536,6 +18110,7 @@
             }
         }
         start() {
+            return;
             this.install();
             this.stop();
             Laya.timer.loop(1000, this, this.onTick);
@@ -17810,6 +18385,7 @@
             FguiExtend();
             Engine.init();
             Game.init();
+            ReportMonitor.OnOpen();
             Game.launch.install();
             Laya.stage.on(Laya.Event.KEY_DOWN, this, this.OnKeyDownHandler);
         }

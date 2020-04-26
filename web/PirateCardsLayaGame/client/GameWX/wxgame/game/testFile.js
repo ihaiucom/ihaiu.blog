@@ -58,3 +58,26 @@ function __testFun()
 
 window.__testFun = __testFun;
 
+
+
+let keyList = ["score"]
+// wx.getUserCloudStorage({
+//   keyList: keyList,
+//   success: res => {
+//     let data = res.data
+//     console.log(res)
+//   },
+//   fail: res => {
+//     console.log(res)
+//   }
+// })
+// wx.getFriendUserGameData({
+//   keyList: keyList,
+//   success: res => {
+//     let data = res.data
+//     drawRankList(data)
+//   },
+//   fail: res => {
+//     console.log(res)
+//   }
+// })

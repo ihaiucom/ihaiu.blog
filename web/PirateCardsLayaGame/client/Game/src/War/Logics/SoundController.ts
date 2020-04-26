@@ -1,5 +1,6 @@
 import RandomHelper from "../Utils/RandomHelper";
 
+declare var wx;
 export default class SoundController
 {
     private static _instance:SoundController;
@@ -11,6 +12,26 @@ export default class SoundController
             // Laya.SoundManager.musicVolume = 0.1;
         }
         return this._instance;
+    }
+    
+    constructor()
+    {
+        if(window['wx'])
+        {
+            wx.onShow(this.onAppShow.bind(this))
+            wx.onHide(this.onAppHide.bind(this))
+        }
+    }
+
+    isInit: boolean = false;
+    onAppShow(res)
+    {
+        Laya.timer.once(3000, this, this.playMusic);
+    }
+
+    onAppHide(res)
+    {
+        this.stopAll();
     }
 
     get soundBtnIndex()
@@ -41,6 +62,7 @@ export default class SoundController
 
     playMusic()
     {
+        this.isInit = true;
         if(Laya.SoundManager._musicMuted)
         {
             return;
@@ -59,6 +81,12 @@ export default class SoundController
     {
         Laya.timer.clearAll(this);
         Laya.timer.once(100, this, this.playMusic);
+    }
+
+    stopAll()
+    {
+        Laya.timer.clearAll(this);
+        Laya.SoundManager.stopAll();
     }
 
 

@@ -2,13 +2,17 @@ import Game from "../../Game";
 import { HeroType } from "../Enums/HeroType";
 import { CardScoreType } from "../Enums/CardScoreType";
 import CardScoreTypeHelper from "../Utils/CardScoreTypeHelper";
-
+import ReportMonitor from "../../Libs/ReportMonitor";
+import War from "../War";
+declare var wx;
 export default class GameStatus
 {
     static sGold = new Signal();
     private static DATE_KEY = "GameStatus";
     private static data = 
     {
+        // 累计金币
+        goldCumulative: 0,
         // 当前金本
         gold: 0,
         // 历史最大金本
@@ -45,6 +49,10 @@ export default class GameStatus
         lastResultAdvCoolDown: 0
     };
 
+    static addGameLevel()
+    {
+        this.gameLevel ++;
+    }
     
     // 游戏等级
     static gameLevel = 1;
@@ -99,6 +107,10 @@ export default class GameStatus
         if(Game.localStorage.hasItem(this.DATE_KEY, false))
         {
             this.data = Game.localStorage.getJSON(this.DATE_KEY);
+            if(this.data.goldCumulative == undefined)
+            {
+                this.data.goldCumulative = 0;
+            }
         }
     }
 
@@ -119,6 +131,51 @@ export default class GameStatus
         this.sGold.dispatch();
     }
 
+    static get goldCumulative(): number
+    {
+        return this.data.goldCumulative;
+    }
+
+    static set goldCumulative(val: number)
+    {
+        this.data.goldCumulative = val;
+        this.save();
+    }
+
+    
+    static addUserGold(t: number)
+    {
+        this.data.gold += t;
+        this.data.goldCumulative += t;
+        this.save();
+        this.sGold.dispatch();
+
+        
+        if(window['wx'])
+        {
+            var scoreVal = {
+                "wxgame": {
+                    "score":GameStatus.goldCumulative,
+                    "update_time": Date.now()
+                },
+                "cost_ms":Date.now() - War.launchtimestamp
+            };
+            var scoreValStr = JSON.stringify(scoreVal)
+
+            var list = [];
+            // list.push({ key: "score", value: GameStatus.goldCumulative.toString()});
+            list.push({ key: "score", value: scoreValStr});
+            wx.setUserCloudStorage({
+                KVDataList: list,
+                  success: (res)=>{
+                    console.log("上传排行榜数据成功", res)
+                  },
+                  fail: (res)=>{
+                    console.error("上传排行榜数据失败", res)
+                  }
+            });
+        }
+    }
     
     static get bestGoldPerGame(): number
     {

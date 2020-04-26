@@ -71,6 +71,10 @@ import CPLockDialFixedSmall from "../../Extends/GameHome/CPLockDialFixedSmall";
 import CPLockDialFixedBig from "../../Extends/GameHome/CPLockDialFixedBig";
 import CPLockDial from "../../Extends/GameHome/CPLockDial";
 import CPLock from "../../Extends/GameHome/CPLock";
+import GetUserInfoBtn from "../../Extends/GameHome/GetUserInfoBtn";
+import ShareBtn from "../../Extends/GameHome/ShareBtn";
+import ShareBtnBar from "../../Extends/GameHome/ShareBtnBar";
+import ShareIconBtn from "../../Extends/GameHome/ShareIconBtn";
 
 export default class GameHomeBinder
 {
@@ -144,5 +148,9 @@ export default class GameHomeBinder
 		bind(CPLockDialFixedBig.URL, CPLockDialFixedBig);
 		bind(CPLockDial.URL, CPLockDial);
 		bind(CPLock.URL, CPLock);
+		bind(GetUserInfoBtn.URL, GetUserInfoBtn);
+		bind(ShareBtn.URL, ShareBtn);
+		bind(ShareBtnBar.URL, ShareBtnBar);
+		bind(ShareIconBtn.URL, ShareIconBtn);
 	}
 }

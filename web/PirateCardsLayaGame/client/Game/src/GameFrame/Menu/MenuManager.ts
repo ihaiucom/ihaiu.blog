@@ -11,6 +11,7 @@ import Log from "../Log/Log";
 import MenuWindows from "../../GameModule/MenuWindows";
 import HomeWindow from "../../GameModule/ViewWindows/HomeWindow";
 import TEXT from "../../Config/Keys/TEXT";
+import ReportMonitor from "../../Libs/ReportMonitor";
 
 //=================
 // 模块管理器
@@ -153,6 +154,7 @@ export default class MenuManager
     // 打开模块
     private _open(menuId: MenuId, parametar: MenuOpenParameter)
     {
+        ReportMonitor.OnMenu(menuId,<number> parametar.openIndex);
         let ctl = this.getMenuCtl(menuId);
         if (!ctl)
         {

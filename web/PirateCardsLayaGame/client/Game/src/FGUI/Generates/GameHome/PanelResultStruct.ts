@@ -3,6 +3,7 @@
 // http://blog.ihaiu.com
 /////////////////////////////////////
 
+import ShareIconBtn from "../../Extends/GameHome/ShareIconBtn";
 import PanelResult from "../../Extends/GameHome/PanelResult";
 
 export default class PanelResultStruct extends fgui.GComponent
@@ -14,6 +15,7 @@ export default class PanelResultStruct extends fgui.GComponent
 	public m_resultGroup : fgui.GGroup;
 	public m_homeBtn : fgui.GButton;
 	public m_playBtn : fgui.GButton;
+	public m_shareBtn : ShareIconBtn;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy9d";
@@ -45,6 +47,7 @@ export default class PanelResultStruct extends fgui.GComponent
 		this.m_resultGroup = <fgui.GGroup><any>(this.getChild("resultGroup"));
 		this.m_homeBtn = <fgui.GButton><any>(this.getChild("homeBtn"));
 		this.m_playBtn = <fgui.GButton><any>(this.getChild("playBtn"));
+		this.m_shareBtn = <ShareIconBtn><any>(this.getChild("shareBtn"));
 		
 		
 	}

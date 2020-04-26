@@ -4,7 +4,9 @@ import Game from "../Game";
 import { MenuId } from "../GameModule/MenuId";
 import { HomeTabType } from "../GameModule/ViewWindows/HomeWindow";
 import GameStatus from "./Datas/GameStatus";
+import ReportMonitor from "../Libs/ReportMonitor";
 
+declare var wx;
 export default class War
 {
     private static isInited: boolean = false;
@@ -20,8 +22,10 @@ export default class War
         this.isInited = true;
     }
 
+    static launchtimestamp = 0;
     static launch()
     {
+        this.launchtimestamp = Date.now();
         this.uninstall();
         this.game.launch();
     }
@@ -39,7 +43,11 @@ export default class War
 
     static exit()
     {
-        GameStatus.gold += GameStatus.goldPerGame;
+        GameStatus.addUserGold(GameStatus.goldPerGame);
+        ReportMonitor.OnGload(GameStatus.goldPerGame);
+        ReportMonitor.OnGloadBest(GameStatus.bestGoldPerGame);
+        ReportMonitor.OnWarOver();
+
         this.uninstall();
         Game.menu.openTab(MenuId.Home, HomeTabType.Result);
     }

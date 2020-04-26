@@ -3,6 +3,7 @@ import Game from "../../Game";
 import { CardScoreType } from "../../War/Enums/CardScoreType";
 import HeroData from "../DataStructs/HeroData";
 import GameStatus from "../../War/Datas/GameStatus";
+import ReportMonitor from "../../Libs/ReportMonitor";
 
 export default class HeroModel extends MModel
 {
@@ -113,6 +114,7 @@ export default class HeroModel extends MModel
         this.selectHero.isGeted = true;
         GameStatus.gold -= this.selectHero.cardConfig.coin;
         this.save();
+        ReportMonitor.OnBuyHero(this.selectHero.cardConfig.spriteIndex);
     }
 
 
