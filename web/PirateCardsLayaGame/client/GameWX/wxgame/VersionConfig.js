@@ -5,7 +5,7 @@ var VersionConfig =
   // 转发默认图片
   ShareImgUrl: "https://ihaiu.gitee.io/gameweb/PirateCardsLayaGame/diao_share_image.png",
   // 缓存版本编号
-  VersionCacheCode: 81,
+  VersionCacheCode: 83,
   // 应用版本号
   AppVersion : "v1.0.0.0",
   // 资源版本好

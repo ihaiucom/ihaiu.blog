@@ -376,7 +376,6 @@
     <movieclip id="sqzyak" name="MVSmallLighting.jta" path="/Fx/"/>
     <component id="sqzyal" name="FxShootLightningSmall.xml" path="/Fx/" exported="true"/>
     <component id="sqzyam" name="FxSkull.xml" path="/Fx/" exported="true"/>
-    <image id="qynnan" name="hero0000.png" path="/sprite/"/>
     <component id="jak7ao" name="PanelPopupChest.xml" path="/"/>
     <image id="jak7aq" name="bg_color_back.png" path="/sprite/" scale="9grid" scale9grid="4,4,8,8"/>
     <component id="jak7ar" name="CPLockLamp.xml" path="/ChestPopup/" exported="true"/>
@@ -394,7 +393,6 @@
     <image id="gvpab6" name="道 (2).png" path="/ui/"/>
     <component id="gvpab8" name="FxLogo.xml" path="/"/>
     <component id="gvpab9" name="GetUserInfoBtn.xml" path="/Btn/" exported="true"/>
-    <image id="p1whba" name="hero0000.psd" path="/sprite/"/>
     <image id="p1whbb" name="icon_wx.png" path="/sprite/icon/"/>
     <component id="p1whbd" name="ShareBtn.xml" path="/Btn/" exported="true"/>
     <component id="p1whbe" name="ShareBtnBar.xml" path="/Btn/" exported="true"/>
