@@ -1,0 +1,5 @@
+release
+.laya/chrome
+.rpt2_cache
+.vscode/chrome
+node_modules
