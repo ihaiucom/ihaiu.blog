@@ -262,8 +262,8 @@ export class Resource extends EventDispatcher implements ICreateResource, IDestr
 				(resList.length === 0) && (delete Resource._urlResourcesMap[this._url]);
 			}
 
-			var resou: Resource =  Engine.Loader.loadedMap[this._url];
-			(resou == this) && (delete Engine.Loader.loadedMap[this._url]);
+			// var resou: Resource =  Engine.Loader.loadedMap[this._url];
+			// (resou == this) && (delete Engine.Loader.loadedMap[this._url]);
 		}
 	}
 }
