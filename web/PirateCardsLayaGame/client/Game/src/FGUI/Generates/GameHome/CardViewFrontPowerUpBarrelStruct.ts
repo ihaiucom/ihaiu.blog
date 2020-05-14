@@ -11,7 +11,7 @@ export default class CardViewFrontPowerUpBarrelStruct extends fgui.GComponent
 {
 	public m_icon : fgui.GLoader;
 	public m_openFx : FxBarrel;
-	public m_life : CardLifePowerUp;
+	public m_power : CardLifePowerUp;
 
 	
 	public static URL:string = "ui://moe42ygrsqzyab";
@@ -38,7 +38,7 @@ export default class CardViewFrontPowerUpBarrelStruct extends fgui.GComponent
 		
 		this.m_icon = <fgui.GLoader><any>(this.getChild("icon"));
 		this.m_openFx = <FxBarrel><any>(this.getChild("openFx"));
-		this.m_life = <CardLifePowerUp><any>(this.getChild("life"));
+		this.m_power = <CardLifePowerUp><any>(this.getChild("power"));
 		
 		
 	}

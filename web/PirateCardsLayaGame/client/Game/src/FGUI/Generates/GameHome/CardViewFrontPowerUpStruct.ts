@@ -9,7 +9,7 @@ import CardViewFrontPowerUp from "../../Extends/GameHome/CardViewFrontPowerUp";
 export default class CardViewFrontPowerUpStruct extends fgui.GComponent
 {
 	public m_icon : fgui.GLoader;
-	public m_life : CardLifePowerUp;
+	public m_power : CardLifePowerUp;
 
 	
 	public static URL:string = "ui://moe42ygrsqzyaa";
@@ -35,7 +35,7 @@ export default class CardViewFrontPowerUpStruct extends fgui.GComponent
 
 		
 		this.m_icon = <fgui.GLoader><any>(this.getChild("icon"));
-		this.m_life = <CardLifePowerUp><any>(this.getChild("life"));
+		this.m_power = <CardLifePowerUp><any>(this.getChild("power"));
 		
 		
 	}

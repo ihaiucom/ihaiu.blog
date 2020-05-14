@@ -92,6 +92,9 @@ export default class WarGame
 
     launch()
     {
+        this.rnd.reset([(Date.now() * Math.random()).toString()]);
+        this.cardFactory.reset();
+        
         ReportMonitor.OnWar(GameStatus.ColumnCount == 4);
 
         GameStatus.init();

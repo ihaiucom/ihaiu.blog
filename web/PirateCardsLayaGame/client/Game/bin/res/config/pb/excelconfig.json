@@ -35,7 +35,11 @@
 		"1401":{"id":1401,"scoreTypeKey":"Lightning","en_name":"Lightning","zh_cn_name":"闪电","level":1,"sprite":"lightning0000"},
 		"1501":{"id":1501,"scoreTypeKey":"Multiplier","en_name":"Multiplier","zh_cn_name":"倍数x2","level":1,"sprite":"multiplier20000"},
 		"1502":{"id":1502,"scoreTypeKey":"Multiplier","en_name":"Multiplier","zh_cn_name":"倍数x3","level":2,"sprite":"multiplier30000"},
-		"1601":{"id":1601,"scoreTypeKey":"Skull","en_name":"Skull","zh_cn_name":"骷髅","level":1}
+		"1601":{"id":1601,"scoreTypeKey":"Skull","en_name":"Skull","zh_cn_name":"骷髅","level":1},
+		"1701":{"id":1701,"scoreTypeKey":"MultiplierPositive","en_name":"MultiplierPositive","zh_cn_name":"倍数好牌x2","level":1,"sprite":"multiplier20000"},
+		"1801":{"id":1801,"scoreTypeKey":"MultiplierNegative","en_name":"MultiplierNegative","zh_cn_name":"倍数坏牌x3","level":1,"sprite":"multiplier20000"},
+		"1901":{"id":1901,"scoreTypeKey":"AddPositive","en_name":"AddPositive","zh_cn_name":"加分好牌+1","level":1,"sprite":"multiplier30000"},
+		"2001":{"id":2001,"scoreTypeKey":"AddNegative","en_name":"AddNegative","zh_cn_name":"加分坏牌+1","level":1,"sprite":"multiplier30000"}
 	},
 	"CardScoreType":{
 		"1":{"id":1,"key":"Hero","zh_cn_name":"英雄","backgroundType":2,"frontView":"CardViewFrontHero"},
@@ -53,7 +57,11 @@
 		"13":{"id":13,"key":"Horseshoe","zh_cn_name":"马蹄铁","backgroundType":3,"frontView":"CardViewFrontPowerUp","isInChest":true},
 		"14":{"id":14,"key":"Lightning","zh_cn_name":"闪电","backgroundType":3,"frontView":"CardViewFrontPowerUp","isInChest":true},
 		"15":{"id":15,"key":"Multiplier","zh_cn_name":"倍数","backgroundType":3,"frontView":"CardViewFrontPowerUp","isInChest":true},
-		"16":{"id":16,"key":"Skull","zh_cn_name":"骷髅","backgroundType":3,"frontView":"CardViewFrontPowerUpSkull","isInChest":true}
+		"16":{"id":16,"key":"Skull","zh_cn_name":"骷髅","backgroundType":3,"frontView":"CardViewFrontPowerUpSkull","isInChest":true},
+		"17":{"id":17,"key":"MultiplierPositive","zh_cn_name":"倍数好牌","backgroundType":3,"frontView":"CardViewFrontPowerUp","isInChest":true},
+		"18":{"id":18,"key":"MultiplierNegative","zh_cn_name":"倍数坏牌","backgroundType":1,"frontView":"CardViewFrontPowerUp","isInChest":true},
+		"19":{"id":19,"key":"AddPositive","zh_cn_name":"加分好牌","backgroundType":3,"frontView":"CardViewFrontPowerUp","isInChest":true},
+		"20":{"id":20,"key":"AddNegative","zh_cn_name":"加分坏牌","backgroundType":1,"frontView":"CardViewFrontPowerUp","isInChest":true}
 	},
 	"Global":{"everydayUpdateTime":6,"roleNameAutoGen":"游客","roleNameMaxLength":32,"roleNameMinLength":1,"superAccountSwitch":false,"roleNameRepated":true,"friendReqMaxCnt":50,"friendMaxCnt":50,"chatGamerMaxCnt":20,"chatWorldMaxCnt":20,"gamerMailMaxCnt":100,"worldMailMaxCnt":100,"wordCheck":true},
 	"Item":{

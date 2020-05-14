@@ -397,6 +397,7 @@
     class SoundController {
         constructor() {
             this.isInit = false;
+            this.lastEndTime = 0;
             if (window['wx']) {
                 wx.onShow(this.onAppShow.bind(this));
                 wx.onHide(this.onAppHide.bind(this));
@@ -409,6 +410,7 @@
             return this._instance;
         }
         onAppShow(res) {
+            this.stopAll();
             Laya.timer.once(3000, this, this.playMusic);
         }
         onAppHide(res) {
@@ -436,9 +438,14 @@
                 return;
             }
             Laya.timer.clearAll(this);
-            var c = Laya.SoundManager.playMusic(`res/sounds/music/music0${RandomHelper.getRandomIntInclusive(1, 5)}.mp3`, 1, Laya.Handler.create(this, this.onPlayMusicEnd), 0);
+            var c = Laya.SoundManager.playMusic(`res/sounds/music/music${RandomHelper.getRandomIntInclusive(6, 15)}.mp3`, 1, Laya.Handler.create(this, this.onPlayMusicEnd), 0);
         }
         onPlayMusicEnd() {
+            console.log("onPlayMusicEnd");
+            if (Laya.timer.currTimer - this.lastEndTime < 1000 * 20) {
+                return;
+            }
+            this.lastEndTime = Laya.timer.currTimer;
             Laya.timer.clearAll(this);
             Laya.timer.once(100, this, this.playMusic);
         }
@@ -631,7 +638,7 @@
         constructFromXML(xml) {
             super.constructFromXML(xml);
             this.m_icon = (this.getChild("icon"));
-            this.m_life = (this.getChild("life"));
+            this.m_power = (this.getChild("power"));
         }
     }
     CardViewFrontPowerUpStruct.URL = "ui://moe42ygrsqzyaa";
@@ -689,7 +696,7 @@
             super.constructFromXML(xml);
             this.m_icon = (this.getChild("icon"));
             this.m_openFx = (this.getChild("openFx"));
-            this.m_life = (this.getChild("life"));
+            this.m_power = (this.getChild("power"));
         }
     }
     CardViewFrontPowerUpBarrelStruct.URL = "ui://moe42ygrsqzyab";
@@ -720,7 +727,7 @@
             super.constructFromXML(xml);
             this.m_icon = (this.getChild("icon"));
             this.m_fx = (this.getChild("fx"));
-            this.m_life = (this.getChild("life"));
+            this.m_power = (this.getChild("power"));
         }
     }
     CardViewFrontPowerUpCannonStruct.URL = "ui://moe42ygrsqzy9y";
@@ -751,6 +758,7 @@
             super.constructFromXML(xml);
             this.m_icon = (this.getChild("icon"));
             this.m_fx = (this.getChild("fx"));
+            this.m_power = (this.getChild("power"));
             this.m_life = (this.getChild("life"));
         }
     }
@@ -782,7 +790,7 @@
             super.constructFromXML(xml);
             this.m_state = this.getController("state");
             this.m_icon = (this.getChild("icon"));
-            this.m_life = (this.getChild("life"));
+            this.m_power = (this.getChild("power"));
         }
     }
     CardViewFrontPowerUpChestStruct.URL = "ui://moe42ygrsqzyac";
@@ -812,7 +820,7 @@
         constructFromXML(xml) {
             super.constructFromXML(xml);
             this.m_fx = (this.getChild("fx"));
-            this.m_life = (this.getChild("life"));
+            this.m_power = (this.getChild("power"));
         }
     }
     CardViewFrontPowerUpSkullStruct.URL = "ui://moe42ygrsqzyae";
@@ -1092,16 +1100,16 @@
                 this.front.m_life.title = hero.currentLife + "/" + hero.totalLife;
             }
             else {
-                this.setPowerUpText();
+                var card = this.card;
+                if (this.front.m_life) {
+                    this.front.m_life.title = card.lifeAmount.toString();
+                }
             }
         }
         setPowerUpText() {
             var card = this.card;
-            if (card.isDisplayLife()) {
-                this.front.m_life.title = card.lifeAmount.toString();
-            }
-            else {
-                this.front.m_life.title = card.powerUpAmount.toString();
+            if (this.front.m_power) {
+                this.front.m_power.title = card.powerUpAmount.toString();
             }
         }
         setArmor() {
@@ -1122,14 +1130,20 @@
         }
         tweenLife() {
             var view = this.front.m_life;
+            if (!view) {
+                view = this.front.m_power;
+            }
             var tweenContainer = this.card.getScaleTween(view);
             tweenContainer.onComplete.addOnce(this.setHealthText, this);
             return tweenContainer;
         }
         tweenPowerUp() {
-            var view = this.front.m_life;
+            var view = this.front.m_power;
+            if (!view) {
+                view = this.front.m_life;
+            }
             var tweenContainer = this.card.getScaleTween(view);
-            tweenContainer.onComplete.addOnce(this.setHealthText, this);
+            tweenContainer.onComplete.addOnce(this.setPowerUpText, this);
             return tweenContainer;
         }
         useLuck() {
@@ -3935,6 +3949,10 @@
         CardScoreType[CardScoreType["Lightning"] = 14] = "Lightning";
         CardScoreType[CardScoreType["Multiplier"] = 15] = "Multiplier";
         CardScoreType[CardScoreType["Skull"] = 16] = "Skull";
+        CardScoreType[CardScoreType["MultiplierPositive"] = 17] = "MultiplierPositive";
+        CardScoreType[CardScoreType["MultiplierNegative"] = 18] = "MultiplierNegative";
+        CardScoreType[CardScoreType["AddPositive"] = 19] = "AddPositive";
+        CardScoreType[CardScoreType["AddNegative"] = 20] = "AddNegative";
     })(CardScoreType || (CardScoreType = {}));
 
     var HeroType;
@@ -4330,7 +4348,9 @@
             return cardScoreType == CardScoreType.Trap ||
                 cardScoreType == CardScoreType.Boss ||
                 cardScoreType == CardScoreType.Enemy ||
-                cardScoreType == CardScoreType.Poison;
+                cardScoreType == CardScoreType.Poison ||
+                cardScoreType == CardScoreType.MultiplierNegative ||
+                cardScoreType == CardScoreType.AddNegative;
         }
         static isCardScoreTypePositive(cardScoreType) {
             return cardScoreType == CardScoreType.Health ||
@@ -4338,7 +4358,9 @@
                 cardScoreType == CardScoreType.Cannon ||
                 cardScoreType == CardScoreType.Horseshoe ||
                 cardScoreType == CardScoreType.Lightning ||
-                cardScoreType == CardScoreType.Skull;
+                cardScoreType == CardScoreType.Skull ||
+                cardScoreType == CardScoreType.MultiplierPositive ||
+                cardScoreType == CardScoreType.AddPositive;
         }
         static getRandomFromChest() {
             return ArrayUtils.getRandomItem(CardScoreTypeHelper.itemsFromChest);
@@ -4350,7 +4372,7 @@
             return ArrayUtils.getRandomItem(CardScoreTypeHelper.powerUps);
         }
     }
-    CardScoreTypeHelper.itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.Multiplier, CardScoreType.Skull];
+    CardScoreTypeHelper.itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.MultiplierPositive, CardScoreType.AddNegative, CardScoreType.Skull];
     CardScoreTypeHelper.itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
     CardScoreTypeHelper.powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
 
@@ -4906,18 +4928,18 @@
             this.isOpen = false;
             this.canLightningStrike = false;
         }
-        multiplyScore(mul) {
+        increaseScore(v, isMul) {
             if (this.lifeAmount > 0) {
                 var tween = this.view.tweenLife();
                 tween.onComplete.addOnce(() => {
-                    this.increaseLife(mul);
+                    this.increaseLife(v, isMul);
                 }, this);
                 return tween;
             }
             else if (this.powerUpAmount > 0) {
-                var tween = this.view.tweenLife();
+                var tween = this.view.tweenPowerUp();
                 tween.onComplete.addOnce(() => {
-                    this.increasePowerUp(mul);
+                    this.increasePowerUp(v, isMul);
                 }, this);
                 return tween;
             }
@@ -4939,6 +4961,10 @@
                 case CardScoreType.Cannon:
                 case CardScoreType.Lightning:
                 case CardScoreType.Multiplier:
+                case CardScoreType.MultiplierPositive:
+                case CardScoreType.MultiplierNegative:
+                case CardScoreType.AddPositive:
+                case CardScoreType.AddNegative:
                 case CardScoreType.Skull:
                 case CardScoreType.Barrel:
                     this.setPowerUp(score);
@@ -4975,14 +5001,10 @@
             this.setHealthText();
         }
         setHealthText() {
-            if (this.isDisplayLife()) {
-                this.view.setHealthText();
-            }
+            this.view.setHealthText();
         }
         setPowerUpText() {
-            if (!this.isDisplayLife()) {
-                this.view.setPowerUpText();
-            }
+            this.view.setPowerUpText();
         }
         increasePowerUpTween() {
             var tweenContainer = this.view.tweenPowerUp();
@@ -4992,12 +5014,12 @@
             var tweenContainer = this.view.tweenLife();
             tweenContainer.restart();
         }
-        increaseLife(mul) {
-            this.setLife(this.lifeAmount * mul);
-            this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * mul);
+        increaseLife(v, isMul) {
+            this.setLife(isMul ? this.lifeAmount * v : this.lifeAmount + v);
+            this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * v);
         }
-        increasePowerUp(mul) {
-            this.setPowerUp(this.powerUpAmount * mul);
+        increasePowerUp(v, isMul) {
+            this.setPowerUp(isMul ? this.powerUpAmount * v : this.powerUpAmount + v);
         }
         isNegative() {
             switch (this.type) {
@@ -5006,6 +5028,8 @@
                 case CardScoreType.Trap:
                 case CardScoreType.Bomb:
                 case CardScoreType.Poison:
+                case CardScoreType.MultiplierNegative:
+                case CardScoreType.AddNegative:
                     return true;
                 case CardScoreType.Health:
                 case CardScoreType.Gold:
@@ -5051,15 +5075,11 @@
         increaseScoreInNSeconds(score, delay) {
             if (this.powerUpAmount > 0) {
                 this.powerUpAmount = this.powerUpAmount + score;
-                if (!this.isDisplayLife()) {
-                    setTimeout(this.increasePowerUpTween.bind(this), delay);
-                }
+                setTimeout(this.increasePowerUpTween.bind(this), delay);
             }
             if (this.lifeAmount > 0) {
                 this.lifeAmount = this.lifeAmount + score;
-                if (this.isDisplayLife()) {
-                    setTimeout(this.increaseLifeTween.bind(this), delay);
-                }
+                setTimeout(this.increaseLifeTween.bind(this), delay);
             }
         }
         stepUpdate() {
@@ -5566,6 +5586,7 @@
             this.needShoot = false;
             this.shootScore = 0;
             this.needShootMultiplier = false;
+            this.multiplierType = CardScoreType.MultiplierPositive;
             this.multiplierScore = 0;
             this.needShootSkull = false;
         }
@@ -5666,7 +5687,12 @@
                     this.needSmashLightning(card.getScore());
                     break;
                 case CardScoreType.Multiplier:
+                case CardScoreType.MultiplierPositive:
+                case CardScoreType.MultiplierNegative:
+                case CardScoreType.AddPositive:
+                case CardScoreType.AddNegative:
                     this.needShootMultiplier = true,
+                        this.multiplierType = card.type,
                         this.multiplierScore = card.getScore();
                     break;
                 case CardScoreType.Skull:
@@ -6253,6 +6279,10 @@
                 case CardScoreType.Horseshoe:
                 case CardScoreType.Lightning:
                 case CardScoreType.Multiplier:
+                case CardScoreType.MultiplierPositive:
+                case CardScoreType.MultiplierNegative:
+                case CardScoreType.AddPositive:
+                case CardScoreType.AddNegative:
                 case CardScoreType.Skull:
                     return true;
             }
@@ -6383,6 +6413,12 @@
                 if (itemCard.type === CardScoreType.Cannon) {
                     itemCard.increaseScoreInNSeconds(heroCard.shootScore, 400);
                 }
+                else if (itemCard.type === CardScoreType.Barrel) {
+                    var replaceCard = this.getCardFromFactory(CardGenerationType.AfterBarrel, itemCard.getScore());
+                    var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                    tweenContainer.setFirstDelay(400);
+                    list.push(tweenContainer);
+                }
                 else if (heroCard.shootScore >= itemCard.getScore()) {
                     var replaceCard = this.getCardToReplaceAfterSmash(itemCard);
                     var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
@@ -6415,6 +6451,7 @@
                 case CardScoreType.Health:
                 case CardScoreType.Poison:
                 case CardScoreType.Cannon:
+                case CardScoreType.Barrel:
                     return true;
                 default:
                     return false;
@@ -6585,7 +6622,7 @@
                 else {
                     card.reduceScoreInNSeconds(lightningScore, 2 * duration);
                 }
-                card.canLightningStrike = false;
+                card.canLightningStrike = true;
                 list.push(this.shootLightningInAllDirections(lightningScore, position, duration));
             }
             return list;
@@ -6605,10 +6642,22 @@
             var heroPosition = this.getHeroPosition();
             var heroCard = this.field.get(heroPosition);
             var list = [];
-            list.push(this.shootMultiplierInDirection(MoveType.Right, heroCard.multiplierScore, heroPosition));
-            list.push(this.shootMultiplierInDirection(MoveType.Left, heroCard.multiplierScore, heroPosition));
-            list.push(this.shootMultiplierInDirection(MoveType.Up, heroCard.multiplierScore, heroPosition));
-            list.push(this.shootMultiplierInDirection(MoveType.Down, heroCard.multiplierScore, heroPosition));
+            var positionList = this.field.getPositions(function (card) {
+                return !card.isHero;
+            });
+            if (heroCard.multiplierType != CardScoreType.Multiplier) {
+                for (var i = 0; i < positionList.length; i++) {
+                    var position = positionList[i];
+                    var tweenContainer = this.shootMultiplierInPosition(position, heroCard.multiplierType, heroCard.multiplierScore);
+                    list.push(tweenContainer);
+                }
+            }
+            else {
+                list.push(this.shootMultiplierInDirection(MoveType.Right, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+                list.push(this.shootMultiplierInDirection(MoveType.Left, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+                list.push(this.shootMultiplierInDirection(MoveType.Up, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+                list.push(this.shootMultiplierInDirection(MoveType.Down, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+            }
             return list;
         }
         shootSkull() {
@@ -6636,14 +6685,42 @@
             tweenContainer.animationDuration = 1;
             return tweenContainer;
         }
-        shootMultiplierInDirection(moveType, multiplierScore, heroPosition) {
-            var list = [];
+        shootMultiplierInDirection(moveType, multiplierScore, heroPosition, multiplierType) {
             var position = heroPosition.getNewPosition(moveType);
+            return this.shootMultiplierInPosition(position, multiplierType, multiplierScore);
+        }
+        shootMultiplierInPosition(position, multiplierType, multiplierScore) {
+            var list = [];
             if (!this.field.isPositionValid(position))
                 return list;
             var card = this.field.get(position);
+            var isNegativeCard = CardScoreTypeHelper.isCardScoreTypeNegative(card.type);
+            switch (multiplierType) {
+                case CardScoreType.MultiplierPositive:
+                case CardScoreType.AddPositive:
+                    if (isNegativeCard) {
+                        return list;
+                    }
+                    break;
+                case CardScoreType.MultiplierNegative:
+                case CardScoreType.AddNegative:
+                    if (!isNegativeCard) {
+                        return list;
+                    }
+                    break;
+            }
             if (Field.canMultiply(card.type, card.getScore())) {
-                var tweenContainer = card.multiplyScore(multiplierScore);
+                var tweenContainer;
+                switch (multiplierType) {
+                    case CardScoreType.MultiplierPositive:
+                    case CardScoreType.MultiplierNegative:
+                        tweenContainer = card.increaseScore(multiplierScore, true);
+                        break;
+                    case CardScoreType.AddPositive:
+                    case CardScoreType.AddNegative:
+                        tweenContainer = card.increaseScore(multiplierScore, false);
+                        break;
+                }
                 if (!tweenContainer)
                     return list;
                 tweenContainer.setAnimationDuration(1);
@@ -6667,28 +6744,20 @@
                 case CardScoreType.Trap:
                     return score > 0;
                 case CardScoreType.Multiplier:
+                case CardScoreType.MultiplierPositive:
+                case CardScoreType.MultiplierNegative:
+                case CardScoreType.AddPositive:
+                case CardScoreType.AddNegative:
                 case CardScoreType.Horseshoe:
-                case CardScoreType.Chest:
                 case CardScoreType.Skull:
+                case CardScoreType.Chest:
+                case CardScoreType.Chest:
                     return false;
             }
         }
         stopAllAnimations() {
         }
         playAllAnimations() {
-        }
-        replaceAllNegativeCards() {
-            for (var e = [], i = 0, o = this.field.getPositions(function (e) {
-                return !(e instanceof t.Hero);
-            }); i < o.length; i++) {
-                var n = o[i];
-                if (this.field.get(n).isNegative()) {
-                    var s = this.getCardFromFactory(t.CardGenerationType.Positive), a = this.replaceCardByPosition(n, s, !0).setAnimationDuration(1);
-                    a.tweens[0].delay(200),
-                        e.push(a);
-                }
-            }
-            return e;
         }
         smashHero(delay) {
             var hero = this.getHero();
@@ -6774,6 +6843,10 @@
             this.items = {};
             this.count = 0;
         }
+        reset() {
+            this.items = {};
+            this.count = 0;
+        }
         ContainsKey(key) {
             return this.items.hasOwnProperty(key);
         }
@@ -6814,6 +6887,13 @@
             this.updateVal = 0.2;
             this.step = 0.2;
             this.resetToZero = false;
+            this.updateVal = updateVal,
+                this.step = step,
+                this.resetToZero = resetToZero;
+        }
+        reset(updateVal = 0.2, step = 0.2, resetToZero = false) {
+            this.status.reset();
+            this.initialStatus.reset();
             this.updateVal = updateVal,
                 this.step = step,
                 this.resetToZero = resetToZero;
@@ -6867,7 +6947,8 @@
                 basket.add(CardScoreType.Bomb.toString(), 1),
                 basket.add(CardScoreType.Lightning.toString(), 1),
                 basket.add(CardScoreType.Skull.toString(), 1),
-                basket.add(CardScoreType.Multiplier.toString(), 1);
+                basket.add(CardScoreType.MultiplierPositive.toString(), 1);
+            basket.add(CardScoreType.AddNegative.toString(), 1);
             return basket;
         }
         add(key, val) {
@@ -6911,6 +6992,15 @@
             this.chestBasket = Basket.AfterChestBasket();
             this.game = game;
             this.container = game.container;
+        }
+        reset() {
+            this.healthBasket.reset();
+            this.armorBasket.reset();
+            this.cannonBasket.reset();
+            this.enemyBasket.reset();
+            this.goldBasket.reset();
+            this.chestBasket.reset();
+            this.chestBasket = Basket.AfterChestBasket();
         }
         getDefault() {
             return Card.GetDefault(this.game);
@@ -7056,6 +7146,16 @@
             if (cardScoreType === CardScoreType.Multiplier) {
                 score = 2;
             }
+            switch (cardScoreType) {
+                case CardScoreType.MultiplierNegative:
+                case CardScoreType.MultiplierPositive:
+                    score = 2;
+                    break;
+                case CardScoreType.AddNegative:
+                case CardScoreType.AddPositive:
+                    score = 1;
+                    break;
+            }
             return score;
         }
         generateScore(min, start, level, max) {
@@ -7154,6 +7254,18 @@
 
     class RandomDataGenerator {
         constructor(t = []) {
+            this.c = 1;
+            this.s0 = 0;
+            this.s1 = 0;
+            this.s2 = 0;
+            if (typeof t == "string") {
+                this.state(t);
+            }
+            else {
+                this.sow(t);
+            }
+        }
+        reset(t = []) {
             this.c = 1;
             this.s0 = 0;
             this.s1 = 0;
@@ -7421,6 +7533,8 @@
             this.container.setScale(0.5, 0.5);
         }
         launch() {
+            this.rnd.reset([(Date.now() * Math.random()).toString()]);
+            this.cardFactory.reset();
             ReportMonitor.OnWar(GameStatus.ColumnCount == 4);
             GameStatus.init();
             this.container.width = GameStatus.ColumnCount * Consts.CardWidth + (GameStatus.ColumnCount - 1) * Consts.CardSpaceBetweenWidth;
@@ -9761,40 +9875,6 @@
         MenuCtlStateType[MenuCtlStateType["Destoryed"] = 4] = "Destoryed";
     })(MenuCtlStateType || (MenuCtlStateType = {}));
 
-    class SoundKey {
-        static get idDict() {
-            if (!SoundKey._idDict) {
-                SoundKey.init();
-            }
-            return SoundKey._idDict;
-        }
-        static get extDict() {
-            if (!SoundKey._extDict) {
-                SoundKey.init();
-            }
-            return SoundKey._extDict;
-        }
-        static getId(key) {
-            if (!SoundKey.idDict.hasKey(key)) {
-                console.error("SoundKey 不存在 key=" + key);
-                return "";
-            }
-            return SoundKey.idDict.getValue(key);
-        }
-        static getUrl(key) {
-            return `ui://${SoundKey.SoundPackageId}${SoundKey.getId(key)}`;
-        }
-        static getPath(key) {
-            return GuiSetting.getResPath(`${SoundKey.SoundPackageName}_${SoundKey.getId(key)}${SoundKey.extDict.getValue(key)}`, "fgui");
-        }
-        static init() {
-            let dict = SoundKey._idDict = new Dictionary();
-            let exts = SoundKey._extDict = new Dictionary();
-        }
-    }
-    SoundKey.SoundPackageName = "Sound";
-    SoundKey.SoundPackageId = "44whq70o";
-
     var MenuCloseOtherType;
     (function (MenuCloseOtherType) {
         MenuCloseOtherType[MenuCloseOtherType["None"] = 0] = "None";
@@ -9894,10 +9974,8 @@
             this.moduleWindow.menuShow(this.moduleWindow.windowContainer);
             switch (this.menuId) {
                 case MenuId.Login:
-                    Game.sound.playMusic(SoundKey.MM_BGM_01);
                     break;
                 case MenuId.Home:
-                    Game.sound.playMusic(SoundKey.MM_BGM_01);
                     break;
             }
             this.sOpen.dispatch();
@@ -9906,7 +9984,7 @@
         }
         closeOther() {
             let homeIsOpen = this.__menuManager.isOpened(MenuId.Home);
-            let backMenuId = this.__menuManager.getLastModuleOpenMenuId([this.backExcludeMenuIdMenuId, this.menuId, MenuId.BattleResultWindow]);
+            let backMenuId = this.__menuManager.getLastModuleOpenMenuId([this.backExcludeMenuIdMenuId, this.menuId]);
             let hasCloseOtherMenu = false;
             let list = Game.menu.dict.getValues();
             switch (this.menuConfig.menuCloseOtherType) {
@@ -11421,6 +11499,40 @@
             return false;
         }
     }
+
+    class SoundKey {
+        static get idDict() {
+            if (!SoundKey._idDict) {
+                SoundKey.init();
+            }
+            return SoundKey._idDict;
+        }
+        static get extDict() {
+            if (!SoundKey._extDict) {
+                SoundKey.init();
+            }
+            return SoundKey._extDict;
+        }
+        static getId(key) {
+            if (!SoundKey.idDict.hasKey(key)) {
+                console.error("SoundKey 不存在 key=" + key);
+                return "";
+            }
+            return SoundKey.idDict.getValue(key);
+        }
+        static getUrl(key) {
+            return `ui://${SoundKey.SoundPackageId}${SoundKey.getId(key)}`;
+        }
+        static getPath(key) {
+            return GuiSetting.getResPath(`${SoundKey.SoundPackageName}_${SoundKey.getId(key)}${SoundKey.extDict.getValue(key)}`, "fgui");
+        }
+        static init() {
+            let dict = SoundKey._idDict = new Dictionary();
+            let exts = SoundKey._extDict = new Dictionary();
+        }
+    }
+    SoundKey.SoundPackageName = "Sound";
+    SoundKey.SoundPackageId = "44whq70o";
 
     var SoundManager = Laya.SoundManager;
     var Handler$3 = Laya.Handler;
@@ -16212,12 +16324,8 @@
         getItemByAngle(angle) {
             angle = this.angle360(angle);
             for (var itemData of this.items) {
-                var min = itemData.angle - itemData.config.angle * 0.5;
-                var max = itemData.angle + itemData.config.angle * 0.5;
-                min = this.angle360(min);
-                max = this.angle360(max);
-                console.log("angle=", angle, "min=", min, "max=", max);
-                if (angle >= min && angle <= max) {
+                var subAngle = Math.abs(this.angle360(itemData.angle) - angle);
+                if (subAngle <= itemData.config.angle * 0.5) {
                     return itemData;
                 }
             }
@@ -16620,7 +16728,6 @@
             this.m_switch.Stop();
             var angle = this.m_switch.angle;
             var itemData = this.lockData.getItemByAngle(angle);
-            console.log(angle, itemData);
             if (itemData) {
                 if (!itemData.isOpen && !this.lockData.isEnd) {
                     switch (itemData.config.type) {

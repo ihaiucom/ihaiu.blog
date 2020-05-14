@@ -33,6 +33,7 @@ export default class Hero extends AbstractCard
 
     // CardScoreType.Multiplier
     needShootMultiplier: boolean = false;
+    multiplierType: CardScoreType = CardScoreType.MultiplierPositive;
     multiplierScore: number = 0;
 
 
@@ -168,7 +169,12 @@ export default class Hero extends AbstractCard
             this.needSmashLightning(card.getScore());
             break;
         case CardScoreType.Multiplier:
+        case CardScoreType.MultiplierPositive:
+        case CardScoreType.MultiplierNegative:
+        case CardScoreType.AddPositive:
+        case CardScoreType.AddNegative:
             this.needShootMultiplier = true,
+            this.multiplierType = card.type,
             this.multiplierScore = card.getScore();
             break;
         case CardScoreType.Skull:

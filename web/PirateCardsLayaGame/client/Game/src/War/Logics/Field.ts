@@ -22,6 +22,7 @@ import FxShootCannon from "../../FGUI/Extends/GameHome/FxShootCannon";
 import FxShootBoom from "../../FGUI/Extends/GameHome/FxShootBoom";
 import { HeroType } from "../Enums/HeroType";
 import FxSkull from "../../FGUI/Extends/GameHome/FxSkull";
+import CardScoreTypeHelper from "../Utils/CardScoreTypeHelper";
 
 export default class Field
 {
@@ -217,7 +218,7 @@ export default class Field
     // 获取英雄Card
     getHero(): Hero
     {
-        return <Hero>this.field.get(this.getHeroPosition())
+        return <any>this.field.get(this.getHeroPosition())
     }
 
     // 获取英雄FieldPosition
@@ -317,7 +318,7 @@ export default class Field
         // 如果是炸弹，先把英雄移动炸弹位置，再播放炸弹动画
         if (card.type === CardScoreType.Bomb) 
         {
-            list.push(this.moveAndSetWithAnimation(heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime).setAnimationDuration(1));
+            list.push(this.moveAndSetWithAnimation(heroPosition.getNewPosition(moveType), <any>heroCard, Consts.AnimationTime).setAnimationDuration(1));
             list.push(this.moveAndSetWithAnimation(heroPosition, card, Consts.AnimationTime));
         }
         else 
@@ -338,7 +339,7 @@ export default class Field
                 // 英雄往中间移动
                 case CardPositionType.Center:
                     // 移动英雄卡牌
-                    list.push(this.moveAndSetWithAnimation(  heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime) );
+                    list.push(this.moveAndSetWithAnimation(  heroPosition.getNewPosition(moveType), <any>heroCard, Consts.AnimationTime) );
                     
                     switch (moveType) 
                     {
@@ -463,6 +464,10 @@ export default class Field
         case CardScoreType.Horseshoe:
         case CardScoreType.Lightning:
         case CardScoreType.Multiplier:
+        case CardScoreType.MultiplierPositive:
+        case CardScoreType.MultiplierNegative:
+        case CardScoreType.AddPositive:
+        case CardScoreType.AddNegative:
         case CardScoreType.Skull:
             return true
         }
@@ -606,7 +611,7 @@ export default class Field
             fieldPosition = fieldPosition.getNewPosition(moveTo);
         }
 
-        var defaultCard = this.cardFactory.getDefault(),
+        var defaultCard:any = this.cardFactory.getDefault(),
         cardFieldPosition = fieldPosition.getNewPosition(moveTypeB);
         animationList.push(this.moveAndSetWithAnimation(cardFieldPosition, defaultCard, Consts.AnimationTime)),
         animationList.push(this.replaceCardByPosition(cardFieldPosition, card).setAnimationDuration(1));
@@ -660,6 +665,14 @@ export default class Field
             {
                 itemCard.increaseScoreInNSeconds(heroCard.shootScore, 400);
             }
+            // 如果是木桶
+            else if(itemCard.type === CardScoreType.Barrel)
+            {
+                var replaceCard = this.getCardFromFactory(CardGenerationType.AfterBarrel, itemCard.getScore());
+                var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                tweenContainer.setFirstDelay(400);
+                list.push(tweenContainer);
+            }
             // 替换卡牌
             else if (heroCard.shootScore >= itemCard.getScore()) 
             {
@@ -703,6 +716,7 @@ export default class Field
             case CardScoreType.Health:
             case CardScoreType.Poison:
             case CardScoreType.Cannon:
+            case CardScoreType.Barrel:
                 return true;
             default:
                 return false
@@ -957,7 +971,7 @@ export default class Field
             {
                 card.reduceScoreInNSeconds(lightningScore, 2 * duration);
             } 
-            card.canLightningStrike = false;
+            card.canLightningStrike = true;
             list.push(this.shootLightningInAllDirections(lightningScore, position, duration));
         }
         return list
@@ -982,13 +996,33 @@ export default class Field
     {
         SoundController.instance.playSound(SoundConsts.Idol);
         var heroPosition = this.getHeroPosition();
-        var heroCard = <Hero> this.field.get(heroPosition);
+        var heroCard:Hero = <any> this.field.get(heroPosition);
         var list = [];
 
-        list.push(this.shootMultiplierInDirection(MoveType.Right, heroCard.multiplierScore, heroPosition));
-        list.push(this.shootMultiplierInDirection(MoveType.Left, heroCard.multiplierScore, heroPosition));
-        list.push(this.shootMultiplierInDirection(MoveType.Up, heroCard.multiplierScore, heroPosition));
-        list.push(this.shootMultiplierInDirection(MoveType.Down, heroCard.multiplierScore, heroPosition));
+        
+        // 不是英雄的位置
+        var positionList = this.field.getPositions(function(card:Card) {
+            return !card.isHero;
+        });
+
+        if(heroCard.multiplierType != CardScoreType.Multiplier)
+        {
+            for (var  i = 0; i < positionList.length; i++) 
+            {
+                var position = positionList[i];
+                var tweenContainer = this.shootMultiplierInPosition(position,  heroCard.multiplierType,  heroCard.multiplierScore);
+                list.push(tweenContainer);
+            }
+        }
+        else
+        {
+            list.push(this.shootMultiplierInDirection(MoveType.Right, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+            list.push(this.shootMultiplierInDirection(MoveType.Left, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+            list.push(this.shootMultiplierInDirection(MoveType.Up, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+            list.push(this.shootMultiplierInDirection(MoveType.Down, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+            
+        }
+
         return list;
     }
 
@@ -1029,24 +1063,62 @@ export default class Field
 
 
     // 执行倍数，具体卡牌
-    shootMultiplierInDirection (moveType:MoveType, multiplierScore: number, heroPosition: FieldPosition) 
+    shootMultiplierInDirection (moveType:MoveType, multiplierScore: number, heroPosition: FieldPosition, multiplierType: CardScoreType) 
     {
-        var list = [];
         var position = heroPosition.getNewPosition(moveType);
+        return this.shootMultiplierInPosition(position, multiplierType, multiplierScore);
+    }
+
+    shootMultiplierInPosition(position:FieldPosition, multiplierType: CardScoreType, multiplierScore: number)
+    {
+        
+        var list = [];
         // 验证位置是否有效
         if (!this.field.isPositionValid(position)) return list;
 
         var card = this.field.get(position);
+        var isNegativeCard = CardScoreTypeHelper.isCardScoreTypeNegative(card.type)
+        switch(multiplierType)
+        {
+            case CardScoreType.MultiplierPositive:
+            case CardScoreType.AddPositive:
+                if(isNegativeCard)
+                {
+                    return list;
+                }
+                break;
+             
+            case CardScoreType.MultiplierNegative:
+            case CardScoreType.AddNegative:
+                if(!isNegativeCard)
+                {
+                    return list;
+                }
+                break;   
+        }
         // 判断 倍速，是否可以应用该卡牌类型
         if (Field.canMultiply(card.type, card.getScore())) 
         {
-            var tweenContainer = card.multiplyScore(multiplierScore);
+            var tweenContainer ;
+            switch(multiplierType)
+            {
+                case CardScoreType.MultiplierPositive:
+                case CardScoreType.MultiplierNegative:
+                    tweenContainer = card.increaseScore(multiplierScore, true);
+                    break;
+                case CardScoreType.AddPositive:
+                case CardScoreType.AddNegative:
+                    tweenContainer = card.increaseScore(multiplierScore, false);
+                    break;
+            }
             if (!tweenContainer) return list;
             tweenContainer.setAnimationDuration(1);
             list.push(tweenContainer);
         }
         return list;
     }
+
+
     // 倍速，是否可以应用该卡牌类型
     static canMultiply (cardScoreType: CardScoreType, score: number) 
     {
@@ -1066,9 +1138,14 @@ export default class Field
             case CardScoreType.Trap:
                 return score > 0;
             case CardScoreType.Multiplier:
+            case CardScoreType.MultiplierPositive:
+            case CardScoreType.MultiplierNegative:
+            case CardScoreType.AddPositive:
+            case CardScoreType.AddNegative:
             case CardScoreType.Horseshoe:
-            case CardScoreType.Chest:
             case CardScoreType.Skull:
+            case CardScoreType.Chest:
+            case CardScoreType.Chest:
                 return false;
         }
     }
@@ -1095,20 +1172,7 @@ export default class Field
         //     })
         // }
     }
-    replaceAllNegativeCards () {
-        for (var e = [], i = 0, o = this.field.getPositions(function(e) {
-            return ! (e instanceof t.Hero)
-        }); i < o.length; i++) {
-            var n = o[i];
-            if (this.field.get(n).isNegative()) {
-                var s = this.getCardFromFactory(t.CardGenerationType.Positive),
-                a = this.replaceCardByPosition(n, s, !0).setAnimationDuration(1);
-                a.tweens[0].delay(200),
-                e.push(a)
-            }
-        }
-        return e
-    }
+
     // 英雄位置播放爆炸特效
     smashHero (delay: number) 
     {

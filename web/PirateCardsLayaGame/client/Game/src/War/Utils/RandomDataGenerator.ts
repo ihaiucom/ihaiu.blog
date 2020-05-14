@@ -16,6 +16,24 @@ export default class RandomDataGenerator
         }
     }
 
+    reset(t:any = [])
+    {
+        this.c = 1;
+        this.s0 = 0;
+        this.s1 = 0;
+        this.s2 = 0;
+
+        
+        if(typeof t == "string")
+        {
+            this.state(t);
+        }
+        else
+        {
+            this.sow(t);
+        }
+    }
+
     rnd() 
     {
         var t = 2091639 * this.s0 + 2.3283064365386963e-10 * this.c;

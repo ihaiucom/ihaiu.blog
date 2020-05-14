@@ -36,4 +36,12 @@ export enum CardScoreType
     Multiplier = 15,
     // 骷髅
     Skull = 16,
+    // 倍数好牌
+    MultiplierPositive = 17,
+    // 倍数坏牌
+    MultiplierNegative = 18,
+    // 加分好牌
+    AddPositive = 19,
+    // 加分坏牌
+    AddNegative = 20,
 }

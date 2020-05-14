@@ -42,6 +42,17 @@ export default class CardFactory
         this.container = game.container;
     }
 
+    reset()
+    {
+        this.healthBasket.reset();
+        this.armorBasket.reset();
+        this.cannonBasket.reset();
+        this.enemyBasket.reset();
+        this.goldBasket.reset();
+        this.chestBasket.reset();
+        this.chestBasket = Basket.AfterChestBasket();
+    }
+
     getDefault()
     {
         // var cardView = this.cardShapeFactory.getDefaultShape();
@@ -269,6 +280,18 @@ export default class CardFactory
         if(cardScoreType === CardScoreType.Multiplier)
         {
             score = 2;
+        }
+
+        switch(cardScoreType)
+        {
+            case CardScoreType.MultiplierNegative:
+            case CardScoreType.MultiplierPositive:
+                score = 2;
+                break;
+            case CardScoreType.AddNegative:
+            case CardScoreType.AddPositive:
+                score = 1;
+                break;
         }
 
 

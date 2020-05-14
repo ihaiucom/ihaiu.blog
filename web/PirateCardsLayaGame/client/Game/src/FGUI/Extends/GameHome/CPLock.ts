@@ -39,7 +39,6 @@ export default class CPLock extends CPLockStruct
         this.m_switch.Stop();
         var angle = this.m_switch.angle;
         var itemData = this.lockData.getItemByAngle(angle);
-        console.log(angle, itemData);
         if(itemData)
         {
             if(!itemData.isOpen && !this.lockData.isEnd)

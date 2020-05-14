@@ -4,20 +4,23 @@ import ArrayUtils from "./ArrayUtils";
 export default class CardScoreTypeHelper
 {
     // 开宝箱的牌
-    static itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.Multiplier, CardScoreType.Skull];
+    static itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.MultiplierPositive, CardScoreType.AddNegative, CardScoreType.Skull];
     // 开木桶的牌
     static itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
     // 好的牌
     static powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.Barrel, CardScoreType.Gold];
-    // static powerUps = [CardScoreType.Cannon];
-
+    
+    // static powerUps = [CardScoreType.Health, CardScoreType.Armor, CardScoreType.Cannon, CardScoreType.MultiplierPositive, CardScoreType.MultiplierNegative, CardScoreType.AddPositive, CardScoreType.AddNegative];
+    
     // 是否是减分的卡牌
     static isCardScoreTypeNegative(cardScoreType:CardScoreType)
     {
         return cardScoreType == CardScoreType.Trap || 
         cardScoreType == CardScoreType.Boss || 
         cardScoreType == CardScoreType.Enemy || 
-        cardScoreType == CardScoreType.Poison;
+        cardScoreType == CardScoreType.Poison ||
+        cardScoreType == CardScoreType.MultiplierNegative||
+        cardScoreType == CardScoreType.AddNegative;
     }
     
     // 是否是加分的卡牌
@@ -28,7 +31,9 @@ export default class CardScoreTypeHelper
         cardScoreType == CardScoreType.Cannon || 
         cardScoreType == CardScoreType.Horseshoe || 
         cardScoreType == CardScoreType.Lightning || 
-        cardScoreType == CardScoreType.Skull;
+        cardScoreType == CardScoreType.Skull ||
+        cardScoreType == CardScoreType.MultiplierPositive||
+        cardScoreType == CardScoreType.AddPositive;
     }
 
 
