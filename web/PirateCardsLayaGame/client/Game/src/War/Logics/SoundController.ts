@@ -42,9 +42,14 @@ export default class SoundController
 
     changeSoundState()
     {
-        Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = !Laya.SoundManager.soundMuted;
+        var v = !Laya.SoundManager.soundMuted;
+        if(!v)
+        {
+            Laya.SoundManager.stopMusic();
+        }
+        Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = v;
 
-        if(!Laya.SoundManager._musicMuted)
+        if(!v)
         {
             this.playMusic();
         }

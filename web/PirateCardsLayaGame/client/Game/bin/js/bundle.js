@@ -420,8 +420,12 @@
             return Laya.SoundManager.soundMuted ? 0 : 1;
         }
         changeSoundState() {
-            Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = !Laya.SoundManager.soundMuted;
-            if (!Laya.SoundManager._musicMuted) {
+            var v = !Laya.SoundManager.soundMuted;
+            if (!v) {
+                Laya.SoundManager.stopMusic();
+            }
+            Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = v;
+            if (!v) {
                 this.playMusic();
             }
         }
@@ -6452,6 +6456,11 @@
                 case CardScoreType.Poison:
                 case CardScoreType.Cannon:
                 case CardScoreType.Barrel:
+                case CardScoreType.Multiplier:
+                case CardScoreType.MultiplierPositive:
+                case CardScoreType.MultiplierNegative:
+                case CardScoreType.AddPositive:
+                case CardScoreType.AddNegative:
                     return true;
                 default:
                     return false;
@@ -7174,9 +7183,15 @@
             if (0 == level) {
                 return this.getTrap(score + 1);
             }
+            else if (10 == level) {
+                return this.getPoison(score);
+            }
             else {
                 return this.getWarrior(level, score);
             }
+        }
+        getPoison(score) {
+            return Card.GetNew(this.game, CardScoreType.Poison, 1, score);
         }
         getTrap(score) {
             return Card.GetNew(this.game, CardScoreType.Trap, 1, score);
@@ -7242,11 +7257,11 @@
             return RandomHelper.getRandomIntInclusive(1, 2);
         }
         generateEnemyPower(score) {
-            this.enemyBasket.fillBasketWithStep(0, 4, 2, 9);
+            this.enemyBasket.fillBasketWithStep(0, 4, 2, 10);
             if (0 == score) {
                 return Number(this.enemyBasket.getFromBasket());
             }
-            var power = GMath.clamp(score, 0, 9);
+            var power = GMath.clamp(score, 0, 10);
             this.enemyBasket.removeFromBasket(power.toString());
             return power;
         }

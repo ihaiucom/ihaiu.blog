@@ -717,6 +717,11 @@ export default class Field
             case CardScoreType.Poison:
             case CardScoreType.Cannon:
             case CardScoreType.Barrel:
+            case CardScoreType.Multiplier:
+            case CardScoreType.MultiplierPositive:
+            case CardScoreType.MultiplierNegative:
+            case CardScoreType.AddPositive:
+            case CardScoreType.AddNegative:
                 return true;
             default:
                 return false

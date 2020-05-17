@@ -16860,8 +16860,11 @@ window.Laya= (function (exports) {
             }
             ILaya.SoundManager.addChannel(this);
             Browser.container.appendChild(this._audio);
-            if ("play" in this._audio)
+            if(this._audio)
+            {
+                if ("play" in this._audio)
                 this._audio.play();
+            }
         }
         get position() {
             if (!this._audio)
@@ -16910,8 +16913,11 @@ window.Laya= (function (exports) {
                 return;
             this.isStopped = false;
             ILaya.SoundManager.addChannel(this);
-            if ("play" in this._audio)
+            if(this._audio)
+            {
+                if ("play" in this._audio)
                 this._audio.play();
+            }
         }
         set volume(v) {
             if (!this._audio)

@@ -322,12 +322,22 @@ export default class CardFactory
             // 桥
             return this.getTrap(score + 1);
         }
+        else if(10 == level)
+        {
+            // 毒瓶
+            return this.getPoison(score);
+        }
         else
         {
             // 怪
             return this.getWarrior(level, score);
         }
 
+    }
+    
+    // 毒药
+    getPoison(score) {
+        return Card.GetNew(this.game, CardScoreType.Poison, 1, score);
     }
      // 桥
     getTrap(score) {
@@ -440,13 +450,13 @@ export default class CardFactory
     // 生成敌人血量
     generateEnemyPower(score) 
     {
-        this.enemyBasket.fillBasketWithStep(0, 4, 2, 9);
+        this.enemyBasket.fillBasketWithStep(0, 4, 2, 10);
 
         if (0 == score)
         {
             return Number(this.enemyBasket.getFromBasket());
         } 
-        var power = GMath.clamp(score, 0, 9);
+        var power = GMath.clamp(score, 0, 10);
         this.enemyBasket.removeFromBasket(power.toString());
         return power
     }
