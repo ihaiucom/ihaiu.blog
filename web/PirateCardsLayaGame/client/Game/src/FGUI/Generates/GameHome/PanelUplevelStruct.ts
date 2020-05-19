@@ -4,12 +4,13 @@
 /////////////////////////////////////
 
 import ScreenBG from "../../Extends/GameLaunch/ScreenBG";
+import UplevelAlert from "../../Extends/GameHome/UplevelAlert";
 import PanelUplevel from "../../Extends/GameHome/PanelUplevel";
 
 export default class PanelUplevelStruct extends fgui.GComponent
 {
 	public m_bg : ScreenBG;
-	public m_panel : fgui.GComponent;
+	public m_panel : UplevelAlert;
 
 	
 	public static URL:string = "ui://moe42ygrn2s1cq";
@@ -35,7 +36,7 @@ export default class PanelUplevelStruct extends fgui.GComponent
 
 		
 		this.m_bg = <ScreenBG><any>(this.getChild("bg"));
-		this.m_panel = <fgui.GComponent><any>(this.getChild("panel"));
+		this.m_panel = <UplevelAlert><any>(this.getChild("panel"));
 		
 		
 	}

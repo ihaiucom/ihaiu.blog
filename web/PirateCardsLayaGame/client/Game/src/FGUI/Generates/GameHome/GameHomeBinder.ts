@@ -76,7 +76,12 @@ import ShareBtn from "../../Extends/GameHome/ShareBtn";
 import ShareBtnBar from "../../Extends/GameHome/ShareBtnBar";
 import ShareIconBtn from "../../Extends/GameHome/ShareIconBtn";
 import PlayerLevelBar from "../../Extends/GameHome/PlayerLevelBar";
+import Level from "../../Extends/GameHome/Level";
+import ExpBar from "../../Extends/GameHome/ExpBar";
+import EquipIcon from "../../Extends/GameHome/EquipIcon";
 import PanelUplevel from "../../Extends/GameHome/PanelUplevel";
+import EquipSelectIcon from "../../Extends/GameHome/EquipSelectIcon";
+import UplevelAlert from "../../Extends/GameHome/UplevelAlert";
 
 export default class GameHomeBinder
 {
@@ -155,6 +160,11 @@ export default class GameHomeBinder
 		bind(ShareBtnBar.URL, ShareBtnBar);
 		bind(ShareIconBtn.URL, ShareIconBtn);
 		bind(PlayerLevelBar.URL, PlayerLevelBar);
+		bind(Level.URL, Level);
+		bind(ExpBar.URL, ExpBar);
+		bind(EquipIcon.URL, EquipIcon);
 		bind(PanelUplevel.URL, PanelUplevel);
+		bind(EquipSelectIcon.URL, EquipSelectIcon);
+		bind(UplevelAlert.URL, UplevelAlert);
 	}
 }
