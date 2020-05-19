@@ -63,15 +63,67 @@
 		"19":{"id":19,"key":"AddPositive","zh_cn_name":"加分好牌","backgroundType":3,"frontView":"CardViewFrontPowerUp","isInChest":true},
 		"20":{"id":20,"key":"AddNegative","zh_cn_name":"加分坏牌","backgroundType":1,"frontView":"CardViewFrontPowerUp","isInChest":true}
 	},
+	"EffectType":{
+		"1":{"id":1,"effectTypeKey":"AddArmor","describe":"获得{0}点护盾"},
+		"2":{"id":2,"effectTypeKey":"AddHPMax","describe":"增加{0}点生命最大值"},
+		"3":{"id":3,"effectTypeKey":"AddHP","describe":"获得{0}生命"},
+		"4":{"id":4,"effectTypeKey":"AddHPPer","describe":"恢复{0}生命值"},
+		"5":{"id":5,"effectTypeKey":"AddDamageExtra","describe":"计算攻击时{0}"},
+		"6":{"id":6,"effectTypeKey":"TiggerLightning","describe":"触发一次{0}伤害的闪电链效果"},
+		"8":{"id":8,"effectTypeKey":"TiggerCannonOne","describe":"触发一次{0}伤害的飞箭效果"},
+		"9":{"id":9,"effectTypeKey":"TiggerBomb","describe":"触发一次十字{0}伤害的炸弹效果"},
+		"10":{"id":10,"effectTypeKey":"ImmuneFar","describe":"免疫远程伤害"},
+		"11":{"id":11,"effectTypeKey":"ImmunePoison","describe":"免疫毒性攻击"},
+		"12":{"id":12,"effectTypeKey":"Invincible","describe":"无敌一回合，回合结束，无论使用与否，无敌消失。"},
+		"13":{"id":13,"effectTypeKey":"GoldMultiplier","describe":"结算金币*{0}"},
+		"14":{"id":14,"effectTypeKey":"AutoUnlockChest","describe":"自动解锁宝箱"}
+	},
 	"Global":{"everydayUpdateTime":6,"roleNameAutoGen":"游客","roleNameMaxLength":32,"roleNameMinLength":1,"superAccountSwitch":false,"roleNameRepated":true,"friendReqMaxCnt":50,"friendMaxCnt":50,"chatGamerMaxCnt":20,"chatWorldMaxCnt":20,"gamerMailMaxCnt":100,"worldMailMaxCnt":100,"wordCheck":true},
 	"Item":{
-		"1":{"id":1,"zh_cn_name":"元宝（废弃）","zh_cn_en":"元宝（废弃）","type":1},
-		"2":{"id":2,"zh_cn_name":"元宝","zh_cn_en":"元宝","type":2},
-		"3":{"id":3,"zh_cn_name":"铜钱","zh_cn_en":"铜钱","type":3},
-		"501":{"id":501,"zh_cn_name":"重生","zh_cn_en":"Heart","icon":"heartBig0000","iconSmall":"heartSmall0000","typeKey":"Heart","type":5,"coin":250},
-		"502":{"id":502,"zh_cn_name":"血包","zh_cn_en":"Horseshoe","icon":"horseshoeBig0000","iconSmall":"horseshoeSmall0000","typeKey":"Horseshoe","type":5,"coin":125},
-		"503":{"id":503,"zh_cn_name":"解药","zh_cn_en":"Luck","icon":"luckBig0000","iconSmall":"luckSmall0000","typeKey":"Luck","type":5,"coin":125},
-		"504":{"id":504,"zh_cn_name":"钥匙","zh_cn_en":"Key","icon":"key40000","iconSmall":"key_small0000","typeKey":"Key","type":5,"coin":125}
+		"1":{"id":1,"zh_cn_name":"元宝（废弃）","type":1},
+		"2":{"id":2,"zh_cn_name":"元宝","type":2},
+		"3":{"id":3,"zh_cn_name":"铜钱","type":3},
+		"501":{"id":501,"zh_cn_name":"重生","icon":"heartBig0000","typeKey":"Heart","type":5,"coin":250},
+		"502":{"id":502,"zh_cn_name":"血包","icon":"horseshoeBig0000","typeKey":"Horseshoe","type":5,"coin":125},
+		"503":{"id":503,"zh_cn_name":"解药","icon":"luckBig0000","typeKey":"Luck","type":5,"coin":125},
+		"504":{"id":504,"zh_cn_name":"钥匙","icon":"key40000","typeKey":"Key","type":5,"coin":125}
+	},
+	"ItemConsume":{
+		"1401":{"id":1401,"zh_cn_name":"恢复少量生命","icon":"Buff_00001","effectType":"AddHPPer","effectArgs":[10,30]},
+		"1402":{"id":1402,"zh_cn_name":"恢复部分生命","icon":"Buff_00002","effectType":"AddHPPer","effectArgs":[30,60]},
+		"1403":{"id":1403,"zh_cn_name":"恢复大量生命","icon":"Buff_00003","effectType":"AddHPPer","effectArgs":[50,80]},
+		"1404":{"id":1404,"zh_cn_name":"生命之力","icon":"Buff_00004","effectType":"AddHPMax","effectArgs":[1]},
+		"1405":{"id":1405,"zh_cn_name":"生命祝福","icon":"Buff_00005","effectType":"AddHPMax","effectArgs":[2]},
+		"1406":{"id":1406,"zh_cn_name":"生命礼赞","icon":"Buff_00006","effectType":"AddHPMax","effectArgs":[3]},
+		"1407":{"id":1407,"zh_cn_name":"守护1","icon":"Buff_00007","effectType":"AddArmor","effectArgs":[1,3]},
+		"1408":{"id":1408,"zh_cn_name":"守护2","icon":"Buff_00008","effectType":"AddArmor","effectArgs":[2,6]},
+		"1409":{"id":1409,"zh_cn_name":"守护3","icon":"Buff_00009","effectType":"AddArmor","effectArgs":[3,8]},
+		"1410":{"id":1410,"zh_cn_name":"守护4","icon":"Buff_00010","effectType":"AddArmor","effectArgs":[5,12]}
+	},
+	"ItemDecorate":{
+		"1301":{"id":1301,"zh_cn_name":"精打细算","icon":"Accessorie_00001","effectType":"GoldMultiplier","effectArgs":[2],"triggerType":"EatCardEnemy","triggerArgs":[1]},
+		"1302":{"id":1302,"zh_cn_name":"生命转化","icon":"Accessorie_00002","effectType":"TiggerLightning","effectArgs":[5],"triggerType":"EatCardHealth","triggerArgs":[10]},
+		"1303":{"id":1303,"zh_cn_name":"盗贼之力","icon":"Accessorie_00003","effectType":"AutoUnlockChest","effectArgs":[1],"triggerType":"EatCardChest","triggerArgs":[1]},
+		"1304":{"id":1304,"zh_cn_name":"女神","icon":"Accessorie_00004","effectType":"AddArmor","effectArgs":[1],"triggerType":"EatCardArmor","triggerArgs":[1]},
+		"1305":{"id":1305,"zh_cn_name":"宙斯之盾","icon":"Accessorie_00005","effectType":"Invincible","effectArgs":[1],"triggerType":"EatCardEnemy","triggerArgs":[10]},
+		"1306":{"id":1306,"zh_cn_name":"魔法项链","icon":"Accessorie_00006","effectType":"ImmunePoison","effectArgs":[1]},
+		"1307":{"id":1307,"zh_cn_name":"无敌之甲","icon":"Accessorie_00007","effectType":"Invincible","effectArgs":[1],"triggerType":"Step","triggerArgs":[20]},
+		"1308":{"id":1308,"zh_cn_name":"敏捷之靴","icon":"Accessorie_00008","effectType":"ImmuneFar","effectArgs":[1]}
+	},
+	"ItemWeapon":{
+		"1201":{"id":1201,"zh_cn_name":"木剑","icon":"Weapon_00001","effectType":"AddDamageExtra","effectArgs":[1],"triggerType":"EatCardEnemy","triggerArgs":[1]},
+		"1202":{"id":1202,"zh_cn_name":"铁剑","icon":"Weapon_00002","effectType":"AddDamageExtra","effectArgs":[2],"triggerType":"EatCardEnemy","triggerArgs":[1]},
+		"1203":{"id":1203,"zh_cn_name":"钢剑","icon":"Weapon_00003","effectType":"AddDamageExtra","effectArgs":[3],"triggerType":"EatCardEnemy","triggerArgs":[1]},
+		"1204":{"id":1204,"zh_cn_name":"黄金之剑","icon":"Weapon_00004","effectType":"AddDamageExtra","effectArgs":[4],"triggerType":"EatCardEnemy","triggerArgs":[1]},
+		"1205":{"id":1205,"zh_cn_name":"勇者之刃","icon":"Weapon_00005","effectType":"AddDamageExtra","effectArgs":[5],"triggerType":"EatCardEnemy","triggerArgs":[1]},
+		"1206":{"id":1206,"zh_cn_name":"屠龙之刃","icon":"Weapon_00006","effectType":"AddDamageExtra","effectArgs":[6],"triggerType":"EatCardEnemy","triggerArgs":[1]},
+		"1207":{"id":1207,"zh_cn_name":"游侠之力","icon":"Weapon_00007","effectType":"TiggerCannonOne","effectArgs":[2],"triggerType":"Step","triggerArgs":[3]},
+		"1208":{"id":1208,"zh_cn_name":"希瓦娜斯","icon":"Weapon_00008","effectType":"TiggerCannonOne","effectArgs":[4],"triggerType":"Step","triggerArgs":[3]},
+		"1209":{"id":1209,"zh_cn_name":"雷神之锤","icon":"Weapon_00009","effectType":"TiggerLightning","effectArgs":[5],"triggerType":"EatCardArmor","triggerArgs":[3]},
+		"1210":{"id":1210,"zh_cn_name":"宙斯的祝福","icon":"Weapon_00010","effectType":"TiggerLightning","effectArgs":[7],"triggerType":"EatCardArmor","triggerArgs":[3]},
+		"1211":{"id":1211,"zh_cn_name":"十字弩","icon":"Weapon_00011","effectType":"TiggerBomb","effectArgs":[1],"triggerType":"Step","triggerArgs":[1]},
+		"1212":{"id":1212,"zh_cn_name":"生存之刃","icon":"Weapon_00012","effectType":"AddHP","effectArgs":[1],"triggerType":"EatCardEnemy","triggerArgs":[3]},
+		"1213":{"id":1213,"zh_cn_name":"龙牙","icon":"Weapon_00013","effectType":"AddHP","effectArgs":[3],"triggerType":"EatCardEnemy","triggerArgs":[2]}
 	},
 	"Loader":{
 		"0":{"id":0},
@@ -112,6 +164,27 @@
 		"1012":{"id":1012,"key":"guide_go_back_home"},
 		"1013":{"id":1013,"key":"guide_go_section"},
 		"1014":{"id":1014,"key":"guide_go_back"}
+	},
+	"Property":{
+		"1":{"id":1,"field":"HP","des":"当前生命","zh_cn_name":"当前生命","ValueType":1},
+		"2":{"id":2,"field":"MP","des":"当前魔法","zh_cn_name":"当前魔法","ValueType":1,"visible":true},
+		"3":{"id":3,"field":"HPMax","des":"生命","zh_cn_name":"生命","ValueType":1,"icon":2000000,"groupType":1,"visible":true},
+		"4":{"id":4,"field":"MPMax","des":"最大魔法","zh_cn_name":"最大魔法","ValueType":1,"groupType":1,"visible":true},
+		"5":{"id":5,"field":"Armor","des":"护盾","zh_cn_name":"护盾","ValueType":1,"groupType":1,"visible":true},
+		"6":{"id":6,"field":"DamageExtra","des":"额外伤害","zh_cn_name":"额外伤害","ValueType":1,"groupType":1,"visible":true},
+		"7":{"id":7,"field":"ImmuneFar","des":"免疫远程伤害","zh_cn_name":"免疫远程伤害","ValueType":1,"groupType":2,"visible":true},
+		"8":{"id":8,"field":"ImmunePoison","des":"免疫毒性伤害","zh_cn_name":"免疫毒性伤害","ValueType":1,"groupType":2,"visible":true},
+		"9":{"id":9,"field":"Far","des":"远程","zh_cn_name":"远程","ValueType":1,"groupType":2,"visible":true},
+		"10":{"id":10,"field":"Poison","des":"毒性","zh_cn_name":"毒性","ValueType":1,"groupType":2,"visible":true},
+		"10":{"id":10,"field":"Invincible","des":"无敌","zh_cn_name":"无敌","ValueType":1,"groupType":2,"visible":true}
+	},
+	"TriggerType":{
+		"1":{"id":1,"triggerTypeKey":"Step","zh_cn_name":"步"},
+		"2":{"id":2,"triggerTypeKey":"EatCard","zh_cn_name":"吃牌类型"},
+		"3":{"id":3,"triggerTypeKey":"EatCardEnemy","zh_cn_name":"击杀{0}个怪物","cardTypeList":["Enemy,Boss"]},
+		"4":{"id":4,"triggerTypeKey":"EatCardArmor","zh_cn_name":"吃{0}次盾牌","cardTypeList":["Armor"]},
+		"5":{"id":5,"triggerTypeKey":"EatCardHealth","zh_cn_name":"获得{0}次血瓶","cardTypeList":["Health"]},
+		"6":{"id":6,"triggerTypeKey":"EatCardChest","zh_cn_name":"吃宝箱","cardTypeList":["Chest"]}
 	},
 	"Unlock":{
 		"200":{"id":200,"zh_cn_name":"招募","menuId":200,"showLevel":1,"openLevel":1,"showIcon":10000200}

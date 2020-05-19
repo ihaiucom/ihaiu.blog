@@ -5,13 +5,13 @@
       <relation target="" sidePair="width-width,height-height"/>
       <Label icon="ui://47qsdr42sqzy2"/>
     </component>
-    <component id="n11_sqzy" name="logo" src="tnlhw2t" fileName="Component/LogoView.xml" pkg="47qsdr42" xy="-110,235">
+    <component id="n11_sqzy" name="logo" src="tnlhw2t" fileName="Component/LogoView.xml" pkg="47qsdr42" xy="-110,42">
       <relation target="" sidePair="center-center,middle-middle%"/>
     </component>
-    <component id="n15_sqzy" name="homeBtn" src="sqzy9b" fileName="Btn~NCode/BigHomeBtn.xml" xy="81,997" size="167,166" group="n16_sqzy"/>
-    <component id="n13_sqzy" name="soundBtn" src="sqzy87" fileName="Btn/BigSoundBtn.xml" xy="378,1080" pivot="0.5,0.5" anchor="true" size="112,112" group="n16_sqzy" aspect="true" scale="1.5,1.5" controller="button,0"/>
-    <component id="n12_sqzy" name="resumeBtn" src="sqzy8f" fileName="Btn~NCode/BigResumeBtn.xml" xy="620,1080" pivot="0.5,0.5" anchor="true" size="167,166" group="n16_sqzy"/>
-    <group id="n16_sqzy" name="btnGroup" xy="81,997" size="706,249" advanced="true">
+    <component id="n15_sqzy" name="homeBtn" src="sqzy9b" fileName="Btn~NCode/BigHomeBtn.xml" xy="81,791" size="167,166" group="n16_sqzy"/>
+    <component id="n13_sqzy" name="soundBtn" src="sqzy87" fileName="Btn/BigSoundBtn.xml" xy="378,874" pivot="0.5,0.5" anchor="true" size="112,112" group="n16_sqzy" aspect="true" scale="1.5,1.5" controller="button,0"/>
+    <component id="n12_sqzy" name="resumeBtn" src="sqzy8f" fileName="Btn~NCode/BigResumeBtn.xml" xy="620,874" pivot="0.5,0.5" anchor="true" size="167,166" group="n16_sqzy"/>
+    <group id="n16_sqzy" name="btnGroup" xy="81,791" size="706,249" advanced="true">
       <relation target="" sidePair="center-center,bottom-bottom%"/>
     </group>
   </displayList>

@@ -56,6 +56,8 @@
             return this.zhCnName;
         }
     }
+    class EffectTypeConfigLang extends excelconfigSources.EffectType {
+    }
     class ItemConfigLang extends excelconfigSources.Item {
         get name() {
             if (!Game.lang.isUseLang)
@@ -66,23 +68,74 @@
             }
             return this.zhCnName;
         }
-        get en() {
+        get des() {
             if (!Game.lang.isUseLang)
-                return this.zhCnEn;
-            let value = Game.lang.getValue('Item', this.id, 'zhCnEn');
+                return this.zhCnDes;
+            let value = Game.lang.getValue('Item', this.id, 'zhCnDes');
             if (!isNullOrEmpty(value)) {
                 return value;
             }
-            return this.zhCnEn;
+            return this.zhCnDes;
         }
-        get itemDes() {
+    }
+    class ItemConsumeConfigLang extends excelconfigSources.ItemConsume {
+        get name() {
             if (!Game.lang.isUseLang)
-                return this.zhCnItemdes;
-            let value = Game.lang.getValue('Item', this.id, 'zhCnItemdes');
+                return this.zhCnName;
+            let value = Game.lang.getValue('ItemConsume', this.id, 'zhCnName');
             if (!isNullOrEmpty(value)) {
                 return value;
             }
-            return this.zhCnItemdes;
+            return this.zhCnName;
+        }
+        get des() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnDes;
+            let value = Game.lang.getValue('ItemConsume', this.id, 'zhCnDes');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnDes;
+        }
+    }
+    class ItemDecorateConfigLang extends excelconfigSources.ItemDecorate {
+        get name() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnName;
+            let value = Game.lang.getValue('ItemDecorate', this.id, 'zhCnName');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnName;
+        }
+        get des() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnDes;
+            let value = Game.lang.getValue('ItemDecorate', this.id, 'zhCnDes');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnDes;
+        }
+    }
+    class ItemWeaponConfigLang extends excelconfigSources.ItemWeapon {
+        get name() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnName;
+            let value = Game.lang.getValue('ItemWeapon', this.id, 'zhCnName');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnName;
+        }
+        get des() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnDes;
+            let value = Game.lang.getValue('ItemWeapon', this.id, 'zhCnDes');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnDes;
         }
     }
     class LoaderConfigLang extends excelconfigSources.Loader {
@@ -107,6 +160,28 @@
                 return value;
             }
             return this.zhCnNotice;
+        }
+    }
+    class PropertyConfigLang extends excelconfigSources.Property {
+        get name() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnName;
+            let value = Game.lang.getValue('Property', this.id, 'zhCnName');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnName;
+        }
+    }
+    class TriggerTypeConfigLang extends excelconfigSources.TriggerType {
+        get name() {
+            if (!Game.lang.isUseLang)
+                return this.zhCnName;
+            let value = Game.lang.getValue('TriggerType', this.id, 'zhCnName');
+            if (!isNullOrEmpty(value)) {
+                return value;
+            }
+            return this.zhCnName;
         }
     }
     class UnlockConfigLang extends excelconfigSources.Unlock {
@@ -1232,6 +1307,9 @@
     class CardScoreTypeConfig extends CardScoreTypeConfigLang {
     }
 
+    class EffectTypeConfig extends EffectTypeConfigLang {
+    }
+
     class ItemConfig extends ItemConfigLang {
         get itemToolType() {
             return this.id % 100 - 1;
@@ -1239,6 +1317,15 @@
         get spriteIndex() {
             return this.itemToolType;
         }
+    }
+
+    class ItemConsumeConfig extends ItemConsumeConfigLang {
+    }
+
+    class ItemDecorateConfig extends ItemDecorateConfigLang {
+    }
+
+    class ItemWeaponConfig extends ItemWeaponConfigLang {
     }
 
     class LoaderConfig extends LoaderConfigLang {
@@ -8017,6 +8104,12 @@
     class MsgConfig extends MsgConfigLang {
     }
 
+    class PropertyConfig extends PropertyConfigLang {
+    }
+
+    class TriggerTypeConfig extends TriggerTypeConfigLang {
+    }
+
     class UnlockConfig extends UnlockConfigLang {
         get menuConfig() {
             return Game.config.menu.getConfig(this.menuId);
@@ -8173,6 +8266,9 @@
         }
     }
 
+    class EffectTypeConfigReader extends ExcelConfigReader {
+    }
+
     class ItemConfigReader extends ExcelConfigReader {
         constructor() {
             super(...arguments);
@@ -8198,6 +8294,15 @@
         getConfigListByTypeKey(type) {
             return this.typeMap.get(type);
         }
+    }
+
+    class ItemConsumeConfigReader extends ExcelConfigReader {
+    }
+
+    class ItemDecorateConfigReader extends ExcelConfigReader {
+    }
+
+    class ItemWeaponConfigReader extends ExcelConfigReader {
     }
 
     class LoaderConfigReader extends ExcelConfigReader {
@@ -8288,6 +8393,12 @@
         }
     }
 
+    class PropertyConfigReader extends ExcelConfigReader {
+    }
+
+    class TriggerTypeConfigReader extends ExcelConfigReader {
+    }
+
     class UnlockConfigReader extends ExcelConfigReader {
         constructor() {
             super(...arguments);
@@ -8351,19 +8462,31 @@
         constructor() {
             this.card = new CardConfigReader('Card', CardConfig);
             this.cardScoreType = new CardScoreTypeConfigReader('CardScoreType', CardScoreTypeConfig);
+            this.effectType = new EffectTypeConfigReader('EffectType', EffectTypeConfig);
             this.item = new ItemConfigReader('Item', ItemConfig);
+            this.itemConsume = new ItemConsumeConfigReader('ItemConsume', ItemConsumeConfig);
+            this.itemDecorate = new ItemDecorateConfigReader('ItemDecorate', ItemDecorateConfig);
+            this.itemWeapon = new ItemWeaponConfigReader('ItemWeapon', ItemWeaponConfig);
             this.loader = new LoaderConfigReader('Loader', LoaderConfig);
             this.menu = new MenuConfigReader('Menu', MenuConfig);
             this.msg = new MsgConfigReader('Msg', MsgConfig);
+            this.property = new PropertyConfigReader('Property', PropertyConfig);
+            this.triggerType = new TriggerTypeConfigReader('TriggerType', TriggerTypeConfig);
             this.unlock = new UnlockConfigReader('Unlock', UnlockConfig);
         }
         static Init() {
             excelconfig.Card = CardConfig;
             excelconfig.CardScoreType = CardScoreTypeConfig;
+            excelconfig.EffectType = EffectTypeConfig;
             excelconfig.Item = ItemConfig;
+            excelconfig.ItemConsume = ItemConsumeConfig;
+            excelconfig.ItemDecorate = ItemDecorateConfig;
+            excelconfig.ItemWeapon = ItemWeaponConfig;
             excelconfig.Loader = LoaderConfig;
             excelconfig.Menu = MenuConfig;
             excelconfig.Msg = MsgConfig;
+            excelconfig.Property = PropertyConfig;
+            excelconfig.TriggerType = TriggerTypeConfig;
             excelconfig.Unlock = UnlockConfig;
         }
     }
