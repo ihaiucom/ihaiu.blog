@@ -109,6 +109,9 @@ message Level
 {
 	int32 id = 1;
 	int32 exp = 2;
+	repeated int32 randomWeaponList = 3;
+	repeated int32 randomDecorateList = 4;
+	repeated int32 randomConsumeList = 5;
 }
 
 message Loader 

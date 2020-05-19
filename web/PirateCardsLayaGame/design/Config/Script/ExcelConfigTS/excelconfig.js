@@ -1651,6 +1651,9 @@ $excelRoot.ItemWeapon = (function() {
 })();
 $excelRoot.Level = (function() {
     function Level(properties) {
+        this.randomWeaponList = [];
+        this.randomDecorateList = [];
+        this.randomConsumeList = [];
         if (properties)
             for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
                 if (properties[keys[i]] != null)
@@ -1658,6 +1661,9 @@ $excelRoot.Level = (function() {
     }
     Level.prototype.id = 0;
     Level.prototype.exp = 0;
+    Level.prototype.randomWeaponList = $util.emptyArray;
+    Level.prototype.randomDecorateList = $util.emptyArray;
+    Level.prototype.randomConsumeList = $util.emptyArray;
     Level.create = function create(properties) {
         return new Level(properties);
     };
@@ -1668,6 +1674,24 @@ $excelRoot.Level = (function() {
             writer.uint32(/* id 1, wireType 0 =*/8).int32(message.id);
         if (message.exp != null && message.hasOwnProperty("exp"))
             writer.uint32(/* id 2, wireType 0 =*/16).int32(message.exp);
+        if (message.randomWeaponList != null && message.randomWeaponList.length) {
+            writer.uint32(/* id 3, wireType 2 =*/26).fork();
+            for (var i = 0; i < message.randomWeaponList.length; ++i)
+                writer.int32(message.randomWeaponList[i]);
+            writer.ldelim();
+        }
+        if (message.randomDecorateList != null && message.randomDecorateList.length) {
+            writer.uint32(/* id 4, wireType 2 =*/34).fork();
+            for (var i = 0; i < message.randomDecorateList.length; ++i)
+                writer.int32(message.randomDecorateList[i]);
+            writer.ldelim();
+        }
+        if (message.randomConsumeList != null && message.randomConsumeList.length) {
+            writer.uint32(/* id 5, wireType 2 =*/42).fork();
+            for (var i = 0; i < message.randomConsumeList.length; ++i)
+                writer.int32(message.randomConsumeList[i]);
+            writer.ldelim();
+        }
         return writer;
     };
     Level.encodeDelimited = function encodeDelimited(message, writer) {
@@ -1685,6 +1709,36 @@ $excelRoot.Level = (function() {
                 break;
             case 2:
                 message.exp = reader.int32();
+                break;
+            case 3:
+                if (!(message.randomWeaponList && message.randomWeaponList.length))
+                    message.randomWeaponList = [];
+                if ((tag & 7) === 2) {
+                    var end2 = reader.uint32() + reader.pos;
+                    while (reader.pos < end2)
+                        message.randomWeaponList.push(reader.int32());
+                } else
+                    message.randomWeaponList.push(reader.int32());
+                break;
+            case 4:
+                if (!(message.randomDecorateList && message.randomDecorateList.length))
+                    message.randomDecorateList = [];
+                if ((tag & 7) === 2) {
+                    var end2 = reader.uint32() + reader.pos;
+                    while (reader.pos < end2)
+                        message.randomDecorateList.push(reader.int32());
+                } else
+                    message.randomDecorateList.push(reader.int32());
+                break;
+            case 5:
+                if (!(message.randomConsumeList && message.randomConsumeList.length))
+                    message.randomConsumeList = [];
+                if ((tag & 7) === 2) {
+                    var end2 = reader.uint32() + reader.pos;
+                    while (reader.pos < end2)
+                        message.randomConsumeList.push(reader.int32());
+                } else
+                    message.randomConsumeList.push(reader.int32());
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -1707,6 +1761,27 @@ $excelRoot.Level = (function() {
         if (message.exp != null && message.hasOwnProperty("exp"))
             if (!$util.isInteger(message.exp))
                 return "exp: integer expected";
+        if (message.randomWeaponList != null && message.hasOwnProperty("randomWeaponList")) {
+            if (!Array.isArray(message.randomWeaponList))
+                return "randomWeaponList: array expected";
+            for (var i = 0; i < message.randomWeaponList.length; ++i)
+                if (!$util.isInteger(message.randomWeaponList[i]))
+                    return "randomWeaponList: integer[] expected";
+        }
+        if (message.randomDecorateList != null && message.hasOwnProperty("randomDecorateList")) {
+            if (!Array.isArray(message.randomDecorateList))
+                return "randomDecorateList: array expected";
+            for (var i = 0; i < message.randomDecorateList.length; ++i)
+                if (!$util.isInteger(message.randomDecorateList[i]))
+                    return "randomDecorateList: integer[] expected";
+        }
+        if (message.randomConsumeList != null && message.hasOwnProperty("randomConsumeList")) {
+            if (!Array.isArray(message.randomConsumeList))
+                return "randomConsumeList: array expected";
+            for (var i = 0; i < message.randomConsumeList.length; ++i)
+                if (!$util.isInteger(message.randomConsumeList[i]))
+                    return "randomConsumeList: integer[] expected";
+        }
         return null;
     };
     Level.fromObject = function fromObject(object) {
@@ -1717,12 +1792,38 @@ $excelRoot.Level = (function() {
             message.id = object.id | 0;
         if (object.exp != null)
             message.exp = object.exp | 0;
+        if (object.randomWeaponList) {
+            if (!Array.isArray(object.randomWeaponList))
+                throw TypeError(".Level.randomWeaponList: array expected");
+            message.randomWeaponList = [];
+            for (var i = 0; i < object.randomWeaponList.length; ++i)
+                message.randomWeaponList[i] = object.randomWeaponList[i] | 0;
+        }
+        if (object.randomDecorateList) {
+            if (!Array.isArray(object.randomDecorateList))
+                throw TypeError(".Level.randomDecorateList: array expected");
+            message.randomDecorateList = [];
+            for (var i = 0; i < object.randomDecorateList.length; ++i)
+                message.randomDecorateList[i] = object.randomDecorateList[i] | 0;
+        }
+        if (object.randomConsumeList) {
+            if (!Array.isArray(object.randomConsumeList))
+                throw TypeError(".Level.randomConsumeList: array expected");
+            message.randomConsumeList = [];
+            for (var i = 0; i < object.randomConsumeList.length; ++i)
+                message.randomConsumeList[i] = object.randomConsumeList[i] | 0;
+        }
         return message;
     };
     Level.toObject = function toObject(message, options) {
         if (!options)
             options = {};
         var object = {};
+        if (options.arrays || options.defaults) {
+            object.randomWeaponList = [];
+            object.randomDecorateList = [];
+            object.randomConsumeList = [];
+        }
         if (options.defaults) {
             object.id = 0;
             object.exp = 0;
@@ -1731,6 +1832,21 @@ $excelRoot.Level = (function() {
             object.id = message.id;
         if (message.exp != null && message.hasOwnProperty("exp"))
             object.exp = message.exp;
+        if (message.randomWeaponList && message.randomWeaponList.length) {
+            object.randomWeaponList = [];
+            for (var j = 0; j < message.randomWeaponList.length; ++j)
+                object.randomWeaponList[j] = message.randomWeaponList[j];
+        }
+        if (message.randomDecorateList && message.randomDecorateList.length) {
+            object.randomDecorateList = [];
+            for (var j = 0; j < message.randomDecorateList.length; ++j)
+                object.randomDecorateList[j] = message.randomDecorateList[j];
+        }
+        if (message.randomConsumeList && message.randomConsumeList.length) {
+            object.randomConsumeList = [];
+            for (var j = 0; j < message.randomConsumeList.length; ++j)
+                object.randomConsumeList[j] = message.randomConsumeList[j];
+        }
         return object;
     };
     Level.prototype.toJSON = function toJSON() {

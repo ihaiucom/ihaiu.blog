@@ -87,6 +87,9 @@ namespace configs{
 	export class ConfigLevel {
 		public id : number = 0;
 		public exp : number = 0;
+		public randomWeaponList :  Array < number >  = null;
+		public randomDecorateList :  Array < number >  = null;
+		public randomConsumeList :  Array < number >  = null;
 	}
 	export class ConfigLoader {
 		public id : number = 0;

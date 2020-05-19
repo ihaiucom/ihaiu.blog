@@ -272,11 +272,17 @@ declare module excelconfig {
 	 interface ILevel {
 	    id?: (number|null);
 	    exp?: (number|null);
+	    randomWeaponList?: (number[]|null);
+	    randomDecorateList?: (number[]|null);
+	    randomConsumeList?: (number[]|null);
 	}
 	 class Level implements ILevel {
 	    constructor(properties?: ILevel);
 	    public id: number;
 	    public exp: number;
+	    public randomWeaponList: number[];
+	    public randomDecorateList: number[];
+	    public randomConsumeList: number[];
 	    public static create(properties?: ILevel): Level;
 	    public static encode(message: ILevel, writer?: $protobuf.Writer): $protobuf.Writer;
 	    public static encodeDelimited(message: ILevel, writer?: $protobuf.Writer): $protobuf.Writer;
