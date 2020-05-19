@@ -11,21 +11,20 @@
     <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="375,542" size="614,800" locked="true">
       <relation target="" sidePair="center-center,top-top%"/>
     </component>
-    <component id="n16_jak7" name="chectPopupPanel" src="jak7ao" fileName="PanelPopupChest.xml" xy="0,0" locked="true" hideByEditor="true" visible="false">
+    <component id="n19_n2s1" name="playerLevelBar" src="n2s1cm" fileName="PlayerLevelBar.xml" xy="0,947" size="750,203">
+      <relation target="" sidePair="center-center,bottom-bottom"/>
+    </component>
+    <component id="n16_jak7" name="chectPopupPanel" src="jak7ao" fileName="PanelPopupChest.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
     <component id="n17_jak7" name="pausePanel" src="sqzy9a" fileName="PanelPause.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
-    <component id="n18_p1wh" name="shareBtnBar" src="p1whbe" fileName="Btn/ShareBtnBar.xml" xy="561,-16">
-      <relation target="" sidePair="left-left,top-top"/>
+    <component id="n26_n2s1" name="uplevelPanel" src="n2s1cq" fileName="PanelUplevel.xml" xy="0,0" locked="true">
+      <relation target="" sidePair="width-width,height-height"/>
     </component>
-    <image id="n19_n2s1" name="n19" src="n2s1bl" fileName="sprite/等级UI/等级底.png" xy="0,962"/>
-    <image id="n20_n2s1" name="n20" src="n2s1bk" fileName="sprite/等级UI/等级.png" xy="14,947"/>
-    <image id="n21_n2s1" name="n21" src="n2s1bi" fileName="sprite/等级UI/广告位.png" xy="0,1149" hideByEditor="true"/>
-    <image id="n22_n2s1" name="n22" src="n2s1bm" fileName="sprite/等级UI/经验框.png" xy="182,952"/>
-    <image id="n23_n2s1" name="n23" src="n2s1bn" fileName="sprite/等级UI/经验能量.png" xy="199,962"/>
-    <image id="n24_n2s1" name="n24" src="n2s1bo" fileName="sprite/等级UI/饰品底框.png" xy="230,996"/>
-    <image id="n25_n2s1" name="n25" src="n2s1bj" fileName="sprite/等级UI/武器底框.png" xy="465,997"/>
+    <component id="n18_p1wh" name="shareBtnBar" src="p1whbe" fileName="Btn/ShareBtnBar.xml" xy="561,-16">
+      <relation target="" sidePair="center-center,top-top"/>
+    </component>
   </displayList>
 </component>

@@ -138,6 +138,8 @@
             return this.zhCnDes;
         }
     }
+    class LevelConfigLang extends excelconfigSources.Level {
+    }
     class LoaderConfigLang extends excelconfigSources.Loader {
     }
     class MenuConfigLang extends excelconfigSources.Menu {
@@ -1326,6 +1328,9 @@
     }
 
     class ItemWeaponConfig extends ItemWeaponConfigLang {
+    }
+
+    class LevelConfig extends LevelConfigLang {
     }
 
     class LoaderConfig extends LoaderConfigLang {
@@ -4012,6 +4017,8 @@
             this.m_bg = (this.getChild("bg"));
             this.m_menuTopPanel = (this.getChild("menuTopPanel"));
             this.m_container = (this.getChild("container"));
+            this.m_uplevelPanel = (this.getChild("uplevelPanel"));
+            this.m_playerLevelBar = (this.getChild("playerLevelBar"));
             this.m_chectPopupPanel = (this.getChild("chectPopupPanel"));
             this.m_pausePanel = (this.getChild("pausePanel"));
             this.m_shareBtnBar = (this.getChild("shareBtnBar"));
@@ -8305,6 +8312,9 @@
     class ItemWeaponConfigReader extends ExcelConfigReader {
     }
 
+    class LevelConfigReader extends ExcelConfigReader {
+    }
+
     class LoaderConfigReader extends ExcelConfigReader {
     }
 
@@ -8467,6 +8477,7 @@
             this.itemConsume = new ItemConsumeConfigReader('ItemConsume', ItemConsumeConfig);
             this.itemDecorate = new ItemDecorateConfigReader('ItemDecorate', ItemDecorateConfig);
             this.itemWeapon = new ItemWeaponConfigReader('ItemWeapon', ItemWeaponConfig);
+            this.level = new LevelConfigReader('Level', LevelConfig);
             this.loader = new LoaderConfigReader('Loader', LoaderConfig);
             this.menu = new MenuConfigReader('Menu', MenuConfig);
             this.msg = new MsgConfigReader('Msg', MsgConfig);
@@ -8482,6 +8493,7 @@
             excelconfig.ItemConsume = ItemConsumeConfig;
             excelconfig.ItemDecorate = ItemDecorateConfig;
             excelconfig.ItemWeapon = ItemWeaponConfig;
+            excelconfig.Level = LevelConfig;
             excelconfig.Loader = LoaderConfig;
             excelconfig.Menu = MenuConfig;
             excelconfig.Msg = MsgConfig;
@@ -17114,6 +17126,44 @@
     class ShareIconBtn extends ShareIconBtnStruct {
     }
 
+    class PlayerLevelBarStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PlayerLevelBar"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_equipDecorate = (this.getChild("equipDecorate"));
+            this.m_equipWeapon = (this.getChild("equipWeapon"));
+        }
+    }
+    PlayerLevelBarStruct.URL = "ui://moe42ygrn2s1cm";
+    PlayerLevelBarStruct.DependPackages = ["GameHome"];
+
+    class PlayerLevelBar extends PlayerLevelBarStruct {
+    }
+
+    class PanelUplevelStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "PanelUplevel"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_panel = (this.getChild("panel"));
+        }
+    }
+    PanelUplevelStruct.URL = "ui://moe42ygrn2s1cq";
+    PanelUplevelStruct.DependPackages = ["GameHome", "GameLaunch"];
+
+    class PanelUplevel extends PanelUplevelStruct {
+    }
+
     class GameHomeBinder {
         static bindAll() {
             let bind = fgui.UIObjectFactory.setPackageItemExtension;
@@ -17188,6 +17238,8 @@
             bind(ShareBtn.URL, ShareBtn);
             bind(ShareBtnBar.URL, ShareBtnBar);
             bind(ShareIconBtn.URL, ShareIconBtn);
+            bind(PlayerLevelBar.URL, PlayerLevelBar);
+            bind(PanelUplevel.URL, PanelUplevel);
         }
     }
 

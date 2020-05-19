@@ -212,7 +212,7 @@
     <image id="sqzy5u" name="luckSmall0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy5v" name="medal0000.png" path="/sprite/game1/"/>
     <image id="sqzy5w" name="medal0001.png" path="/sprite/game1/"/>
-    <image id="sqzy5x" name="menuPanel0000.png" path="/sprite/game1/"/>
+    <image id="sqzy5x" name="menuPanel0000.png" path="/sprite/game1/" scale="9grid" scale9grid="130,22,260,44"/>
     <image id="sqzy5y" name="menuStar0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy5z" name="mouse_click0000.png" path="/sprite/game1/"/>
     <image id="sqzy60" name="mouse_click0001.png" path="/sprite/game1/"/>
@@ -253,7 +253,7 @@
     <image id="sqzy6z" name="shields0002.png" path="/sprite/game1/"/>
     <image id="sqzy70" name="shields0003.png" path="/sprite/game1/"/>
     <image id="sqzy71" name="shields0004.png" path="/sprite/game1/"/>
-    <image id="sqzy72" name="shopItemBackground0000.png" path="/sprite/game1/"/>
+    <image id="sqzy72" name="shopItemBackground0000.png" path="/sprite/game1/" scale="9grid" scale9grid="66,72,132,144"/>
     <image id="sqzy73" name="shopItemBackground0001.png" path="/sprite/game1/"/>
     <image id="sqzy74" name="skull0000.png" path="/sprite/game1/"/>
     <image id="sqzy75" name="skull0001.png" path="/sprite/game1/"/>
@@ -437,6 +437,13 @@
     <image id="n2s1cj" name="Weapon_00012.png" path="/sprite/icon_items/"/>
     <image id="n2s1ck" name="Weapon_00013.png" path="/sprite/icon_items/"/>
     <image id="n2s1cl" name="health_30000.png" path="/sprite/game1/"/>
+    <component id="n2s1cm" name="PlayerLevelBar.xml" path="/"/>
+    <component id="n2s1cn" name="Level.xml" path="/PlayerLevel/"/>
+    <component id="n2s1co" name="ExpBar.xml" path="/PlayerLevel/"/>
+    <component id="n2s1cp" name="EquipIcon.xml" path="/PlayerLevel/"/>
+    <component id="n2s1cq" name="PanelUplevel.xml" path="/"/>
+    <component id="n2s1cr" name="EquipSelectIcon.xml" path="/PlayerLevel/"/>
+    <component id="n2s1cs" name="UplevelAlert.xml" path="/PlayerLevel/"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="750,1334" restrictSize="0,0,800,0">
+  <displayList>
+    <component id="n10_sqzy" name="bg" src="f84s1" fileName="ScreenBG.xml" pkg="47qsdr42" xy="52,0" size="645,1334" locked="true" alpha="0.76">
+      <relation target="" sidePair="width-width,height-height"/>
+      <Label icon="ui://moe42ygrjak7aq"/>
+    </component>
+    <component id="n17_n2s1" name="panel" src="n2s1cs" fileName="PlayerLevel/UplevelAlert.xml" xy="56,230">
+      <relation target="" sidePair="center-center,middle-middle"/>
+    </component>
+  </displayList>
+</component>

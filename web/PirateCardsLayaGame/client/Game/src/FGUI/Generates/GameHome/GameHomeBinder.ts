@@ -75,6 +75,8 @@ import GetUserInfoBtn from "../../Extends/GameHome/GetUserInfoBtn";
 import ShareBtn from "../../Extends/GameHome/ShareBtn";
 import ShareBtnBar from "../../Extends/GameHome/ShareBtnBar";
 import ShareIconBtn from "../../Extends/GameHome/ShareIconBtn";
+import PlayerLevelBar from "../../Extends/GameHome/PlayerLevelBar";
+import PanelUplevel from "../../Extends/GameHome/PanelUplevel";
 
 export default class GameHomeBinder
 {
@@ -152,5 +154,7 @@ export default class GameHomeBinder
 		bind(ShareBtn.URL, ShareBtn);
 		bind(ShareBtnBar.URL, ShareBtnBar);
 		bind(ShareIconBtn.URL, ShareIconBtn);
+		bind(PlayerLevelBar.URL, PlayerLevelBar);
+		bind(PanelUplevel.URL, PanelUplevel);
 	}
 }
