@@ -3,11 +3,15 @@
 // http://blog.ihaiu.com
 /////////////////////////////////////
 
+import Level from "../../Extends/GameHome/Level";
+import ExpBar from "../../Extends/GameHome/ExpBar";
 import EquipIcon from "../../Extends/GameHome/EquipIcon";
 import PlayerLevelBar from "../../Extends/GameHome/PlayerLevelBar";
 
 export default class PlayerLevelBarStruct extends fgui.GComponent
 {
+	public m_level : Level;
+	public m_exp : ExpBar;
 	public m_equipDecorate : EquipIcon;
 	public m_equipWeapon : EquipIcon;
 
@@ -34,6 +38,8 @@ export default class PlayerLevelBarStruct extends fgui.GComponent
 		
 
 		
+		this.m_level = <Level><any>(this.getChild("level"));
+		this.m_exp = <ExpBar><any>(this.getChild("exp"));
 		this.m_equipDecorate = <EquipIcon><any>(this.getChild("equipDecorate"));
 		this.m_equipWeapon = <EquipIcon><any>(this.getChild("equipWeapon"));
 		

@@ -21,6 +21,7 @@ import { MenuId } from "../GameModule/MenuId";
 import { HomeTabType } from "../GameModule/ViewWindows/HomeWindow";
 import War from "./War";
 import ReportMonitor from "../Libs/ReportMonitor";
+import { Player } from "./Datas/Player";
 
 export default class WarGame
 {
@@ -94,6 +95,7 @@ export default class WarGame
     {
         this.rnd.reset([(Date.now() * Math.random()).toString()]);
         this.cardFactory.reset();
+        Player.current.reset();
         
         ReportMonitor.OnWar(GameStatus.ColumnCount == 4);
 

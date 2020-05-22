@@ -4,10 +4,10 @@
     <image id="n19_n2s1" name="n19" src="n2s1bl" fileName="sprite/等级UI/等级底.png" xy="0,15" size="750,188">
       <relation target="" sidePair="width-width,height-height"/>
     </image>
-    <component id="n20_n2s1" name="n20" src="n2s1cn" fileName="PlayerLevel/Level.xml" xy="14,0">
+    <component id="n20_n2s1" name="level" src="n2s1cn" fileName="PlayerLevel/Level.xml" xy="14,0">
       <relation target="" sidePair="center-center"/>
     </component>
-    <component id="n22_n2s1" name="n22" src="n2s1co" fileName="PlayerLevel/ExpBar.xml" xy="182,5">
+    <component id="n22_n2s1" name="exp" src="n2s1co" fileName="PlayerLevel/ExpBar.xml" xy="182,5">
       <relation target="" sidePair="width-width"/>
       <ProgressBar value="40" max="100"/>
     </component>

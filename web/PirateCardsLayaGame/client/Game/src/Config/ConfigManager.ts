@@ -48,15 +48,6 @@ export default class ConfigManager extends ConfigManagerExpressionList
         }
     }
 
-    shieldList()
-    {
-        let heros = Game.channel.serverItem.shieldHero;
-        if (heros && heros.length) 
-        {
-            Game.config.hero.shieldConfig(heros);   
-        }
-    }
-
     async loadAllAsync():Promise<void>
     {
         this.loadProgress = 0;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component size="148,61">
+<component size="148,61" extention="Label">
   <displayList>
     <image id="n20_n2s1" name="n20" src="n2s1bk" fileName="sprite/等级UI/等级.png" xy="0,0"/>
     <text id="n21_n2s1" name="title" xy="93,11" size="23,34" fontSize="30" color="#ffffff" bold="true" text="1"/>
