@@ -1348,7 +1348,8 @@ export default class Field
         if(cards.length > 0)
         {
             SoundController.instance.playSound(SoundConsts.Cannon);
-            var card = cards[Random.rangeBoth(0, cards.length - 1)];
+            // var card = cards[Random.rangeBoth(0, cards.length - 1)];
+            var card = cards[0];
             var tweenContainer = this.shootToCard(triggerCard.getCenterX(), triggerCard.getCenterY(), card, 200);
             // tweenContainer.setFirstDelay(delay)
             tweenContainer.setAnimationDuration(100);

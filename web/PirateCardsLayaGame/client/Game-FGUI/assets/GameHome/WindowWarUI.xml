@@ -5,10 +5,10 @@
       <relation target="" sidePair="center-center,middle-middle"/>
       <Label icon="ui://moe42ygrsqzy0"/>
     </component>
-    <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="65,0" locked="true">
+    <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="130,0" locked="true">
       <relation target="" sidePair="center-center,top-top%"/>
     </component>
-    <component id="n18_p1wh" name="shareBtnBar" src="p1whbe" fileName="Btn/ShareBtnBar.xml" xy="561,-16" locked="true">
+    <component id="n18_p1wh" name="shareBtnBar" src="p1whbe" fileName="Btn/ShareBtnBar.xml" xy="0,-16">
       <relation target="" sidePair="center-center,top-top"/>
     </component>
     <component id="n19_n2s1" name="playerLevelBar" src="n2s1cm" fileName="PlayerLevelBar.xml" xy="0,947" size="750,203">
@@ -23,7 +23,7 @@
     <component id="n17_jak7" name="pausePanel" src="sqzy9a" fileName="PanelPause.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
-    <component id="n26_n2s1" name="uplevelPanel" src="n2s1cq" fileName="PanelUplevel.xml" xy="0,0" locked="true" hideByEditor="true" visible="false">
+    <component id="n26_n2s1" name="uplevelPanel" src="n2s1cq" fileName="PanelUplevel.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
   </displayList>

@@ -7483,7 +7483,7 @@
             var cards = this.findEnemy(selfIsNegative);
             if (cards.length > 0) {
                 SoundController.instance.playSound(SoundConsts.Cannon);
-                var card = cards[Random.rangeBoth(0, cards.length - 1)];
+                var card = cards[0];
                 var tweenContainer = this.shootToCard(triggerCard.getCenterX(), triggerCard.getCenterY(), card, 200);
                 tweenContainer.setAnimationDuration(100);
                 list.push(tweenContainer);
