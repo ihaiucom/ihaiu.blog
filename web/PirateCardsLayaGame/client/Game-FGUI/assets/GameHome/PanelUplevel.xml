@@ -5,7 +5,7 @@
       <relation target="" sidePair="width-width,height-height"/>
       <Label icon="ui://moe42ygrjak7aq"/>
     </component>
-    <component id="n17_n2s1" name="panel" src="n2s1cs" fileName="PlayerLevel/UplevelAlert.xml" xy="56,230">
+    <component id="n17_n2s1" name="panel" src="n2s1cs" fileName="PlayerLevel/UplevelAlert.xml" xy="374,465" pivot="0.5,0.5" anchor="true">
       <relation target="" sidePair="center-center,middle-middle"/>
     </component>
   </displayList>

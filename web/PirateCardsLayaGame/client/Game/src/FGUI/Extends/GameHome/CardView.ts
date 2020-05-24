@@ -255,6 +255,20 @@ export default class CardView extends CardViewStruct
 
     }
 
+    
+    //  设置步数
+    setStepText()
+    {
+        var card: Card = <Card> this.card;
+
+        if((<any>this.front).m_step)
+        {
+            (<any>this.front).m_step.title = card.step.toString();
+            (<any>this.front).m_step.visible = card.stepMax > 0;
+        }
+
+    }
+
     private preArmor = -1;
     // 设置护甲
     setArmor()

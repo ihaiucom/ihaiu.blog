@@ -2,6 +2,8 @@ import Card from "./Card";
 import FieldPosition from "../Datas/FieldPosition";
 import WarGame from "../WarGame";
 import Hero from "./Hero";
+import { CardScoreType } from "../Enums/CardScoreType";
+import CardScoreTypeHelper from "../Utils/CardScoreTypeHelper";
 
 export default class FieldItems
 {
@@ -175,7 +177,6 @@ export default class FieldItems
     any(    filterFun: (card:Card) => boolean    ) : boolean
     {
         var arr = [];
-        arr.filter
         for (var y = 0; y < this.rowCount; y++) 
         {
             for (var x = 0; x < this.columnCount; x++) 
@@ -188,6 +189,34 @@ export default class FieldItems
             }
         }
         return false;
+    }
+
+    
+    /** 查找 */
+    find(    filterFun: (card:Card) => boolean    ) : Card[]
+    {
+        var arr = [];
+        for (var y = 0; y < this.rowCount; y++) 
+        {
+            for (var x = 0; x < this.columnCount; x++) 
+            {
+                var n = new FieldPosition(x, y);
+                var card = this.get(n)
+                if (filterFun(this.get(n))) 
+                {
+                    arr.push(card);
+                }
+            }
+        }
+        return arr;
+    }
+
+    /** 查找怪物 */
+    findEnemy(selfIsNegative: boolean = false)
+    {
+        return this.find((card: Card)=>{
+            return CardScoreTypeHelper.isEnemyType(card.type, selfIsNegative)
+        })
     }
 
     /** 验证位置是否有效 */

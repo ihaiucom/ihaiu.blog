@@ -5,7 +5,7 @@
 
 import Level from "../../Extends/GameHome/Level";
 
-export default class LevelStruct extends fgui.GComponent
+export default class LevelStruct extends fgui.GLabel
 {
 	public m_title : fgui.GTextField;
 

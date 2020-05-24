@@ -444,6 +444,8 @@
     <component id="n2s1cq" name="PanelUplevel.xml" path="/" exported="true"/>
     <component id="n2s1cr" name="EquipSelectIcon.xml" path="/PlayerLevel/" exported="true"/>
     <component id="n2s1cs" name="UplevelAlert.xml" path="/PlayerLevel/" exported="true"/>
+    <component id="n2s1cu" name="CardStep.xml" path="/Card/" exported="true"/>
+    <image id="n2s1cv" name="cardStep.png" path="/sprite/game1/"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

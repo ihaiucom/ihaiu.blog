@@ -56,5 +56,31 @@ export default class CardScoreTypeHelper
         return ArrayUtils.getRandomItem(CardScoreTypeHelper.powerUps)
     }
 
+    static isEnemyType(type:CardScoreType, selfIsNegative: boolean = false)
+    {
+        if(!selfIsNegative)
+        {
+            switch (type) 
+            {
+                case CardScoreType.Boss:
+                case CardScoreType.Enemy:
+                case CardScoreType.Trap:
+                    return true;
+            }
+        }
+        else
+        {
+            switch (type) 
+            {
+                case CardScoreType.Hero:
+                case CardScoreType.Armor:
+                case CardScoreType.Health:
+                case CardScoreType.Gold:
+                    return true;
+            }
+        }
+        return false;
+    }
+
 }
 

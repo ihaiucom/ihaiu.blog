@@ -19,7 +19,7 @@ export default class Card extends AbstractCard
         card.SetEmpty();
         return card;
     }
-    static GetNew(game, cardScoreType: CardScoreType, level: number, score: number) 
+    static GetNew(game, cardScoreType: CardScoreType, level: number, score: number, step: number = 0) 
     {
         
         var config: CardConfig = Game.config.card.getTypeLevelConfig(cardScoreType, level);
@@ -31,7 +31,7 @@ export default class Card extends AbstractCard
         card.game = game;
         card.type = cardScoreType;
         card.SetConfig(config);
-        card.setScore(score);
+        card.setScore(score, step);
         GameStatus.updateCardCounter(cardScoreType),
         GameStatus.updateMovesAfterSpecialCard(cardScoreType);
         return card;
@@ -46,6 +46,10 @@ export default class Card extends AbstractCard
     lifeAmount = 0;
     /** 能量--当前 */
     powerUpAmount = 0;
+
+    /** 步数 */
+    step = 0;
+    stepMax = 0;
 
     
 
@@ -64,6 +68,11 @@ export default class Card extends AbstractCard
     /** 重置 */
     reset()
     {
+        
+        if(this.stepMax > 0)
+        {
+            if(GameStatus.stepCardNum > 0) GameStatus.stepCardNum --;
+        }
         super.reset();
 
         // 生命--初始
@@ -72,6 +81,10 @@ export default class Card extends AbstractCard
         this.lifeAmount = 0;
         // 能量--当前
         this.powerUpAmount = 0;
+
+        // 步数
+        this.stepMax = 0;
+        this.step = 0;
     
     
     
@@ -125,7 +138,7 @@ export default class Card extends AbstractCard
 
 
     /** 设置分数 */
-    setScore(score: number) 
+    setScore(score: number, step: number = 0) 
     {
         switch (this.type) 
         {
@@ -133,6 +146,13 @@ export default class Card extends AbstractCard
         case CardScoreType.Enemy:
             this.initialLife = score;
             this.setLife(score);
+
+            this.stepMax = step;
+            this.setStep(step);
+            if(step > 0)
+            {
+                GameStatus.stepCardNum ++;
+            }
             break;
         case CardScoreType.Gold:
         case CardScoreType.Health:
@@ -201,10 +221,27 @@ export default class Card extends AbstractCard
         this.setHealthText()
     }
 
+    
+    /** 修改，步数 */
+    setStep(val?: number) 
+    {
+        if(val != undefined)
+        {
+            this.step = val;
+        }
+        this.setStepText()
+    }
+    
     /** 设置视图, 血量 */
     setHealthText() 
     {
         this.view.setHealthText();
+    }
+
+    /** 设置视图, 步数 */
+    setStepText() 
+    {
+        this.view.setStepText();
     }
 
     /** 设置视图, 能量 */
@@ -352,6 +389,7 @@ export default class Card extends AbstractCard
         this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
         this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
         this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
+        
     }
     
     //=====================================

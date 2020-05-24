@@ -346,7 +346,13 @@ export default class CardFactory
     // 怪
     getWarrior(level, score) 
     {
-        return Card.GetNew(this.game, CardScoreType.Enemy, level, score);
+        var step = 0;
+        if( GameStatus.stepCardNum <= 0 && level >= 2)
+        {
+            step = 3;
+        }
+
+        return Card.GetNew(this.game, CardScoreType.Enemy, level, score, step);
     }
     // 获取桥的伤害
     static getTrapScore() 
@@ -367,7 +373,13 @@ export default class CardFactory
     getBoss() {
         var level = CardFactory.generateBossPower();
         var score = 8 + GameStatus.gameLevel;
-        return Card.GetNew(this.game, CardScoreType.Boss, level, score)
+        
+        var step = 0;
+        if(GameStatus.gameLevel > 1)
+        {
+            step = 3;
+        }
+        return Card.GetNew(this.game, CardScoreType.Boss, level, score, step)
     }
     // 宝箱
     getChestCard() {

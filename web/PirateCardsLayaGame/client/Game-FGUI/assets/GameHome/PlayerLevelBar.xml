@@ -4,17 +4,17 @@
     <image id="n19_n2s1" name="n19" src="n2s1bl" fileName="sprite/等级UI/等级底.png" xy="0,15" size="750,188">
       <relation target="" sidePair="width-width,height-height"/>
     </image>
-    <component id="n20_n2s1" name="level" src="n2s1cn" fileName="PlayerLevel/Level.xml" xy="14,0">
+    <component id="n20_n2s1" name="level" src="n2s1cn" fileName="PlayerLevel/Level.xml" xy="88,30" pivot="0.5,0.5" anchor="true">
       <relation target="" sidePair="center-center"/>
     </component>
     <component id="n22_n2s1" name="exp" src="n2s1co" fileName="PlayerLevel/ExpBar.xml" xy="182,5">
       <relation target="" sidePair="width-width"/>
       <ProgressBar value="40" max="100"/>
     </component>
-    <component id="n24_n2s1" name="equipDecorate" src="n2s1cp" fileName="PlayerLevel/EquipIcon.xml" xy="185,43" controller="itemType,1,step,1">
+    <component id="n24_n2s1" name="equipDecorate" src="n2s1cp" fileName="PlayerLevel/EquipIcon.xml" xy="260,118" controller="itemType,1,step,1">
       <relation target="" sidePair="center-center"/>
     </component>
-    <component id="n28_n2s1" name="equipWeapon" src="n2s1cp" fileName="PlayerLevel/EquipIcon.xml" xy="415,43" controller="itemType,0,step,0">
+    <component id="n28_n2s1" name="equipWeapon" src="n2s1cp" fileName="PlayerLevel/EquipIcon.xml" xy="490,118" controller="itemType,0,step,1">
       <relation target="" sidePair="center-center"/>
     </component>
   </displayList>

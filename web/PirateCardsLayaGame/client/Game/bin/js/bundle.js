@@ -607,6 +607,23 @@
                 alpha: 1
             }, 100, null, null, 100 + 250);
         }
+        static spriteShow2(view) {
+            view.visible = true;
+            view.alpha = 0;
+            view.scaleX = 0.5;
+            view.scaleY = 0.5;
+            Laya.Tween.clearAll(view);
+            Laya.Tween.to(view, {
+                scaleX: 1.5,
+                scaleY: 1.5,
+                alpha: 1
+            }, 250, null, null, 0);
+            Laya.Tween.to(view, {
+                scaleX: 1,
+                scaleY: 1,
+                alpha: 1
+            }, 100, null, null, 250);
+        }
         static turnAnimationStart(tweenContainer, view) {
             if (!tweenContainer)
                 tweenContainer = new TweenContainer();
@@ -932,6 +949,7 @@
             super.constructFromXML(xml);
             this.m_icon = (this.getChild("icon"));
             this.m_life = (this.getChild("life"));
+            this.m_step = (this.getChild("step"));
         }
     }
     CardViewFrontWarriowBossStruct.URL = "ui://moe42ygrsqzya6";
@@ -963,6 +981,7 @@
             super.constructFromXML(xml);
             this.m_icon = (this.getChild("icon"));
             this.m_life = (this.getChild("life"));
+            this.m_step = (this.getChild("step"));
         }
     }
     CardViewFrontWarriowEnemyStruct.URL = "ui://moe42ygrsqzya3";
@@ -1193,6 +1212,13 @@
                 this.front.m_power.title = card.powerUpAmount.toString();
             }
         }
+        setStepText() {
+            var card = this.card;
+            if (this.front.m_step) {
+                this.front.m_step.title = card.step.toString();
+                this.front.m_step.visible = card.stepMax > 0;
+            }
+        }
         setArmor() {
             if (this.card.isHero) {
                 var hero = this.card;
@@ -1321,13 +1347,93 @@
         }
     }
 
+    var ItemType;
+    (function (ItemType) {
+        ItemType[ItemType["Tool"] = 5] = "Tool";
+        ItemType[ItemType["Weapon"] = 12] = "Weapon";
+        ItemType[ItemType["Decorate"] = 13] = "Decorate";
+        ItemType[ItemType["Consume"] = 14] = "Consume";
+    })(ItemType || (ItemType = {}));
+
     class ItemConsumeConfig extends ItemConsumeConfigLang {
+        constructor() {
+            super(...arguments);
+            this.type = ItemType.Consume;
+        }
+        get effectConfig() {
+            return Game.config.effectType.getConfig(this.effectType);
+        }
+        get effectTypeId() {
+            var typeConfig = this.effectConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemConsumeConfig.effectTypeId    effectConfig=null", this.name, this);
+            }
+        }
     }
 
     class ItemDecorateConfig extends ItemDecorateConfigLang {
+        constructor() {
+            super(...arguments);
+            this.type = ItemType.Decorate;
+        }
+        get effectConfig() {
+            return Game.config.effectType.getConfig(this.effectType);
+        }
+        get effectTypeId() {
+            var typeConfig = this.effectConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemDecorateConfig.effectTypeId    effectConfig=null", this.name, this);
+            }
+        }
+        get triggerConfig() {
+            return Game.config.triggerType.getConfig(this.triggerType);
+        }
+        get triggerTypeId() {
+            var typeConfig = this.triggerConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemDecorateConfig.triggerTypeId    triggerConfig=null", this.name, this);
+            }
+        }
     }
 
     class ItemWeaponConfig extends ItemWeaponConfigLang {
+        constructor() {
+            super(...arguments);
+            this.type = ItemType.Weapon;
+        }
+        get effectConfig() {
+            return Game.config.effectType.getConfig(this.effectType);
+        }
+        get effectTypeId() {
+            var typeConfig = this.effectConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemWeaponConfig.effectTypeId    effectConfig=null", this.name, this);
+            }
+        }
+        get triggerConfig() {
+            return Game.config.triggerType.getConfig(this.triggerType);
+        }
+        get triggerTypeId() {
+            var typeConfig = this.triggerConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemWeaponConfig.triggerTypeId    triggerConfig=null", this.name, this);
+            }
+        }
     }
 
     class LevelConfig extends LevelConfigLang {
@@ -4016,12 +4122,12 @@
             super.constructFromXML(xml);
             this.m_bg = (this.getChild("bg"));
             this.m_menuTopPanel = (this.getChild("menuTopPanel"));
-            this.m_container = (this.getChild("container"));
-            this.m_uplevelPanel = (this.getChild("uplevelPanel"));
+            this.m_shareBtnBar = (this.getChild("shareBtnBar"));
             this.m_playerLevelBar = (this.getChild("playerLevelBar"));
+            this.m_container = (this.getChild("container"));
             this.m_chectPopupPanel = (this.getChild("chectPopupPanel"));
             this.m_pausePanel = (this.getChild("pausePanel"));
-            this.m_shareBtnBar = (this.getChild("shareBtnBar"));
+            this.m_uplevelPanel = (this.getChild("uplevelPanel"));
         }
     }
     WindowWarUIStruct.URL = "ui://moe42ygrsqzy9c";
@@ -4469,6 +4575,26 @@
         static getRandomPowerUp() {
             return ArrayUtils.getRandomItem(CardScoreTypeHelper.powerUps);
         }
+        static isEnemyType(type, selfIsNegative = false) {
+            if (!selfIsNegative) {
+                switch (type) {
+                    case CardScoreType.Boss:
+                    case CardScoreType.Enemy:
+                    case CardScoreType.Trap:
+                        return true;
+                }
+            }
+            else {
+                switch (type) {
+                    case CardScoreType.Hero:
+                    case CardScoreType.Armor:
+                    case CardScoreType.Health:
+                    case CardScoreType.Gold:
+                        return true;
+                }
+            }
+            return false;
+        }
     }
     CardScoreTypeHelper.itemsFromChest = [CardScoreType.Bomb, CardScoreType.Poison, CardScoreType.Horseshoe, CardScoreType.Lightning, CardScoreType.MultiplierPositive, CardScoreType.AddNegative, CardScoreType.Skull];
     CardScoreTypeHelper.itemsFromBarrel = [CardScoreType.Health, CardScoreType.Gold, CardScoreType.Armor, CardScoreType.Cannon];
@@ -4490,6 +4616,7 @@
             this.movesAfterLastSpecialCard = 0;
             this.cardCounter = 0;
             this.isNeedCreateBoss = false;
+            this.stepCardNum = 0;
         }
         static load() {
             if (Game.localStorage.hasItem(this.DATE_KEY, false)) {
@@ -4738,6 +4865,7 @@
     GameStatus.isHeroAlive = false;
     GameStatus.isGameEnd = false;
     GameStatus.isNeedCreateChestOnNextStep = false;
+    GameStatus.stepCardNum = 0;
     GameStatus.movesAfterLastSpecialCard = 0;
     window['GameStatus'] = GameStatus;
 
@@ -4994,6 +5122,8 @@
             this.initialLife = 0;
             this.lifeAmount = 0;
             this.powerUpAmount = 0;
+            this.step = 0;
+            this.stepMax = 0;
             this.isOpen = false;
             this.canLightningStrike = false;
         }
@@ -5004,7 +5134,7 @@
             card.SetEmpty();
             return card;
         }
-        static GetNew(game, cardScoreType, level, score) {
+        static GetNew(game, cardScoreType, level, score, step = 0) {
             var config = Game.config.card.getTypeLevelConfig(cardScoreType, level);
             if (config == null) {
                 console.error("没有找到卡牌配置", cardScoreType, level, score);
@@ -5013,16 +5143,22 @@
             card.game = game;
             card.type = cardScoreType;
             card.SetConfig(config);
-            card.setScore(score);
+            card.setScore(score, step);
             GameStatus.updateCardCounter(cardScoreType),
                 GameStatus.updateMovesAfterSpecialCard(cardScoreType);
             return card;
         }
         reset() {
+            if (this.stepMax > 0) {
+                if (GameStatus.stepCardNum > 0)
+                    GameStatus.stepCardNum--;
+            }
             super.reset();
             this.initialLife = 0;
             this.lifeAmount = 0;
             this.powerUpAmount = 0;
+            this.stepMax = 0;
+            this.step = 0;
             this.isOpen = false;
             this.canLightningStrike = false;
         }
@@ -5045,12 +5181,17 @@
                 return null;
             }
         }
-        setScore(score) {
+        setScore(score, step = 0) {
             switch (this.type) {
                 case CardScoreType.Boss:
                 case CardScoreType.Enemy:
                     this.initialLife = score;
                     this.setLife(score);
+                    this.stepMax = step;
+                    this.setStep(step);
+                    if (step > 0) {
+                        GameStatus.stepCardNum++;
+                    }
                     break;
                 case CardScoreType.Gold:
                 case CardScoreType.Health:
@@ -5098,8 +5239,17 @@
             }
             this.setHealthText();
         }
+        setStep(val) {
+            if (val != undefined) {
+                this.step = val;
+            }
+            this.setStepText();
+        }
         setHealthText() {
             this.view.setHealthText();
+        }
+        setStepText() {
+            this.view.setStepText();
         }
         setPowerUpText() {
             this.view.setPowerUpText();
@@ -5383,6 +5533,24 @@
                 }
             }
             return false;
+        }
+        find(filterFun) {
+            var arr = [];
+            for (var y = 0; y < this.rowCount; y++) {
+                for (var x = 0; x < this.columnCount; x++) {
+                    var n = new FieldPosition(x, y);
+                    var card = this.get(n);
+                    if (filterFun(this.get(n))) {
+                        arr.push(card);
+                    }
+                }
+            }
+            return arr;
+        }
+        findEnemy(selfIsNegative = false) {
+            return this.find((card) => {
+                return CardScoreTypeHelper.isEnemyType(card.type, selfIsNegative);
+            });
         }
         isPositionValid(f) {
             return f.column >= 0 && f.column < this.columnCount && f.row >= 0 && f.row < this.rowCount;
@@ -5673,6 +5841,285 @@
         ItemToolType[ItemToolType["Key"] = 3] = "Key";
     })(ItemToolType || (ItemToolType = {}));
 
+    var EffectType;
+    (function (EffectType) {
+        EffectType[EffectType["AddArmor"] = 1] = "AddArmor";
+        EffectType[EffectType["AddHPMax"] = 2] = "AddHPMax";
+        EffectType[EffectType["AddHP"] = 3] = "AddHP";
+        EffectType[EffectType["AddHPPer"] = 4] = "AddHPPer";
+        EffectType[EffectType["AddDamageExtra"] = 5] = "AddDamageExtra";
+        EffectType[EffectType["TiggerLightning"] = 6] = "TiggerLightning";
+        EffectType[EffectType["TiggerCannonOne"] = 8] = "TiggerCannonOne";
+        EffectType[EffectType["TiggerBomb"] = 9] = "TiggerBomb";
+        EffectType[EffectType["ImmuneFar"] = 10] = "ImmuneFar";
+        EffectType[EffectType["ImmunePoison"] = 11] = "ImmunePoison";
+        EffectType[EffectType["Invincible"] = 12] = "Invincible";
+        EffectType[EffectType["GoldMultiplier"] = 13] = "GoldMultiplier";
+        EffectType[EffectType["AutoUnlockChest"] = 14] = "AutoUnlockChest";
+    })(EffectType || (EffectType = {}));
+
+    class EquipData {
+        constructor() {
+            this.sChange = new Signal();
+            this.sStepChange = new Signal();
+            this.step = 0;
+            this.stepMax = 0;
+        }
+        setId(id) {
+            this.id = id;
+            if (id <= 0) {
+                this.config = null;
+                this.step = 0;
+                this.stepMax = 0;
+            }
+            else {
+                this.config = Game.config.item.getConfig(id);
+                if (this.config.triggerArgs.length > 0) {
+                    this.stepMax = this.config.triggerArgs[0];
+                    this.step = 0;
+                }
+                else {
+                    this.stepMax = 0;
+                }
+            }
+            this.sChange.dispatch();
+        }
+        get iconUrl() {
+            return this.config ? "res/sprite/icon/" + this.config.icon + ".png" : "";
+        }
+        get effectTypeId() {
+            if (this.config) {
+                return this.config.effectTypeId;
+            }
+            return 0;
+        }
+        get effectArg() {
+            if (this.config) {
+                if (this.config.effectArgs.length > 1) {
+                    return Random.rangeBoth(this.config.effectArgs[0], this.config.effectArgs[1]);
+                }
+                else {
+                    return this.config.effectArgs[0];
+                }
+            }
+            return 0;
+        }
+        onEatCard(card) {
+            if (this.config && this.config.triggerConfig) {
+                var cardTypeList = this.config.triggerConfig.cardTypeIdList;
+                if (cardTypeList.length == 0) {
+                    this.addStep(card);
+                }
+                else if (cardTypeList.indexOf(card.type) != -1) {
+                    this.addStep(card);
+                }
+            }
+        }
+        addStep(card) {
+            if (this.step < this.stepMax) {
+                this.step++;
+                this.sStepChange.dispatch();
+            }
+            if (this.enabelUse) {
+                this.use();
+            }
+        }
+        get enabelUse() {
+            return this.step >= this.stepMax;
+        }
+        use() {
+            switch (this.effectTypeId) {
+                case EffectType.AddHP:
+                case EffectType.AddArmor:
+                case EffectType.AddHPMax:
+                case EffectType.AddHPPer:
+                    this.playShoot();
+                    break;
+                case EffectType.TiggerCannonOne:
+                    break;
+            }
+        }
+        playShoot() {
+            var tween = Player.current.game.field.shootEquipToHero(this.view, 300);
+            tween.onComplete.addOnce(this.doUse, this);
+            Player.current.game.addToAnimationQueue(tween);
+        }
+        doUse() {
+            Player.current.useEquipConsume(this.id);
+            this.onUse();
+        }
+        onUse() {
+            this.step = 0;
+            this.sStepChange.dispatch();
+        }
+    }
+    class Player {
+        constructor() {
+            this.sUpLevelChange = new Signal();
+            this.sLevelChange = new Signal();
+            this.sEquipChange = new Signal();
+            this.sExpChange = new Signal();
+            this.level = 1;
+            this.levelExp = 0;
+            this.levelExpMax = 100;
+            this.equipDecorateData = new EquipData();
+            this.equipWeaponData = new EquipData();
+            this.equips = [];
+            this.equips.push(this.equipDecorateData);
+            this.equips.push(this.equipWeaponData);
+        }
+        static get current() {
+            if (!this._current) {
+                this._current = new Player();
+            }
+            return this._current;
+        }
+        randomEquipDecorateId() {
+            var list = this.levelConfig.randomDecorateList;
+            return this.randomEquip(list, this.equipDecorateData.id);
+        }
+        randomEquipWeaponId() {
+            var list = this.levelConfig.randomWeaponList;
+            return this.randomEquip(list, this.equipWeaponData.id);
+        }
+        randomEquipConsumeId() {
+            var list = this.levelConfig.randomConsumeList;
+            var i = Random.rangeBoth(0, list.length - 1);
+            return list[i];
+        }
+        randomEquip(list, igroonId) {
+            list = list.slice(0);
+            if (list.length > 1) {
+                var i = list.indexOf(igroonId);
+                if (i != -1) {
+                    list = list.splice(i, 1);
+                }
+            }
+            var i = Random.rangeBoth(0, list.length - 1);
+            return list[i];
+        }
+        reset() {
+            this.levelExp = 0;
+            this.setLevel(1);
+            this.equipDecorateData.setId(0);
+            this.equipWeaponData.setId(0);
+            this.sLevelChange.dispatch();
+            this.sExpChange.dispatch();
+            this.sEquipChange.dispatch();
+        }
+        setLevel(level) {
+            level = Math.min(level, Game.config.level.levelMax);
+            level = Math.max(1, level);
+            if (this.levelExp > 0 && this.levelConfig) {
+                this.levelExp = this.levelExp - this.levelExpMax;
+                this.levelExp = Math.max(0, this.levelExp);
+            }
+            this.level = level;
+            var levelConfig = this.levelConfig = Game.config.level.getConfig(level);
+            this.levelExpMax = levelConfig.exp;
+            this.sLevelChange.dispatch();
+            this.sExpChange.dispatch();
+        }
+        uplevel() {
+            if (this.level >= Game.config.level.levelMax) {
+                return;
+            }
+            this.setLevel(this.level + 1);
+            this.sUpLevelChange.dispatch();
+        }
+        addExp(exp) {
+            this.levelExp += exp;
+            this.checkUplevel();
+            this.sExpChange.dispatch();
+        }
+        checkUplevel() {
+            if (this.levelExp >= this.levelExpMax) {
+                this.uplevel();
+            }
+        }
+        onCardToReplaceAfterSmash(card) {
+            if (card.config.exp > 0) {
+                this.addExp(card.config.exp);
+            }
+        }
+        onEatCard(card) {
+            if (card.config.exp > 0) {
+                this.addExp(card.config.exp);
+            }
+            for (var item of this.equips) {
+                item.onEatCard(card);
+            }
+        }
+        useEquipConsumeDelay(id) {
+            Laya.timer.once(500, this, this.useEquipConsume, [id]);
+        }
+        useEquipConsume(id) {
+            var config = Game.config.item.getConfig(id);
+            var hero = this.game.field.getHero();
+            if (hero) {
+                hero.useEffect(config.effectTypeId, config.effectArgs);
+            }
+        }
+        goldMultiplier() {
+            var v = 0;
+            for (var item of this.equips) {
+                if (item.enabelUse) {
+                    if (item.effectTypeId == EffectType.GoldMultiplier) {
+                        v += item.effectArg;
+                        item.onUse();
+                    }
+                }
+            }
+            return v > 1 ? v : 1;
+        }
+        damageExtra() {
+            var v = 0;
+            for (var item of this.equips) {
+                if (item.enabelUse) {
+                    if (item.effectTypeId == EffectType.AddDamageExtra) {
+                        v += item.effectArg;
+                        item.onUse();
+                    }
+                }
+            }
+            return v;
+        }
+        invincible() {
+            for (var item of this.equips) {
+                if (item.enabelUse) {
+                    if (item.effectTypeId == EffectType.Invincible) {
+                        item.onUse();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        autoUnlockChest() {
+            for (var item of this.equips) {
+                if (item.enabelUse) {
+                    if (item.effectTypeId == EffectType.AutoUnlockChest) {
+                        item.onUse();
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        checkTrigger() {
+            for (var item of this.equips) {
+                if (item.enabelUse) {
+                    switch (item.effectTypeId) {
+                        case EffectType.TiggerCannonOne:
+                        case EffectType.TiggerLightning:
+                        case EffectType.TiggerBomb:
+                            return this.game.field.equipTrigger(item);
+                    }
+                }
+            }
+        }
+    }
+
     class Hero extends AbstractCard {
         constructor() {
             super(...arguments);
@@ -5702,13 +6149,23 @@
             this.needShootSkull = false;
         }
         fight(card) {
+            Player.current.onEatCard(card);
             var fightResult = new FightResult(true, false, true);
             switch (card.type) {
                 case CardScoreType.Trap:
                     if (card.getLife() > 0 && GameStatus.currentHero != HeroType.Gun) {
                         SoundController.instance.playSound(SoundConsts.Trap);
-                        if (this.currentLife > card.getScore()) {
-                            this.currentLife -= card.getScore();
+                        var score = card.getScore();
+                        var isInvincible = Player.current.invincible();
+                        if (isInvincible) {
+                            score = 0;
+                        }
+                        else {
+                            score -= Player.current.damageExtra();
+                            score = Math.max(0, score);
+                        }
+                        if (this.currentLife > score) {
+                            this.currentLife -= score;
                             GameStatus.addGold(card.getScore());
                             fightResult.isHeroAlive = true;
                         }
@@ -5747,7 +6204,10 @@
                     else {
                         SoundController.instance.playSound(SoundConsts.CoinsBag);
                     }
-                    GameStatus.addGold(card.getScore());
+                    var score = card.getScore();
+                    var mul = Player.current.goldMultiplier();
+                    score *= mul;
+                    GameStatus.addGold(score);
                     break;
                 case CardScoreType.Health:
                     SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Health1, SoundConsts.Health2]));
@@ -5808,23 +6268,32 @@
                 this.lightningScore = score;
         }
         fightWithEnemy(card) {
-            if (card.getScore() >= this.armor + this.currentLife)
+            var score = card.getScore();
+            var isInvincible = Player.current.invincible();
+            if (isInvincible) {
+                score = 0;
+            }
+            else {
+                score -= Player.current.damageExtra();
+                score = Math.max(0, score);
+            }
+            if (score >= this.armor + this.currentLife)
                 return false;
-            if (card.getScore() <= this.armor) {
-                if (card.getScore() < this.armor && GameStatus.currentHero == HeroType.Base) {
+            if (score <= this.armor) {
+                if (score < this.armor && GameStatus.currentHero == HeroType.Base) {
                     this.armor -= 1;
                 }
                 else {
-                    this.armor -= card.getScore();
+                    this.armor -= score;
                 }
             }
             else if (this.armor > 0) {
-                var i = card.getScore() - this.armor;
+                var i = score - this.armor;
                 this.armor = 0;
                 this.currentLife -= i;
             }
             else {
-                this.currentLife -= card.getScore();
+                this.currentLife -= score;
             }
             GameStatus.addGold(card.getScore());
             return true;
@@ -5904,6 +6373,39 @@
                 this.setShopItemsStatus();
             }, 200);
             ReportMonitor.OnStageRuningTools(ItemToolType.Heart);
+        }
+        useEffect(effectType, effectArgs) {
+            var val = effectArgs.length > 1 ? Random.rangeBoth(effectArgs[0], effectArgs[1]) : effectArgs[0];
+            switch (effectType) {
+                case EffectType.AddArmor:
+                    SoundController.instance.playSound(SoundConsts.ShieldWood);
+                    this.armor += val;
+                    this.setArmor();
+                    break;
+                case EffectType.AddHPMax:
+                    this.currentLife += val - 1;
+                    this.totalLife += val - 1;
+                    this.currentLife = Math.min(this.totalLife, this.currentLife);
+                    var tween = this.increaseLifeByOneTween();
+                    tween.restart();
+                    break;
+                case EffectType.AddHP:
+                    this.addHP(val);
+                    break;
+                case EffectType.AddHPPer:
+                    val = val / 100;
+                    val = Math.ceil(val * this.totalLife);
+                    this.addHP(val);
+                    break;
+            }
+        }
+        addHP(val) {
+            this.currentLife += val;
+            this.currentLife = Math.min(this.totalLife, this.currentLife);
+            var tweenContainer = this.view.tweenLife();
+            tweenContainer.onStart.addOnce(this.playHorseshoe, this);
+            tweenContainer.onComplete.addOnce(this.setLife, this);
+            tweenContainer.restart();
         }
     }
 
@@ -6017,7 +6519,9 @@
         PoolRecover() {
             Laya.timer.clearAll(this);
             Laya.Tween.clearAll(this);
-            this.removeFromParent();
+            if (this && this.parent) {
+                this.removeFromParent();
+            }
             Pool.recover(FxShootCannon.URL, this);
         }
         moveTo(fromX, fromY, toX, toY, duration) {
@@ -6407,6 +6911,7 @@
             else {
                 score = card.getScore();
             }
+            Player.current.onCardToReplaceAfterSmash(card);
             return this.getCoinCardFromFactory(score);
         }
         getCardPositionType(moveType, fieldPosition) {
@@ -6585,11 +7090,11 @@
             }
             return list;
         }
-        smashBombInDirection(moveType, position, life) {
+        smashBombInDirection(moveType, position, life, selfIsNegative = false, isAll = true) {
             var list = [];
             var smashDelay = Consts.SmashDelay;
             for (position = position.getNewPosition(moveType); this.field.isPositionValid(position);) {
-                list.push(this.smashBombInPosition(position, smashDelay, life));
+                list.push(this.smashBombInPosition(position, smashDelay, life, selfIsNegative, isAll));
                 if (!GameStatus.isHeroAlive)
                     return list;
                 smashDelay += Consts.SmashDelay,
@@ -6597,7 +7102,7 @@
             }
             return list;
         }
-        smashBombInPosition(position, smashDelay, life) {
+        smashBombInPosition(position, smashDelay, life, selfIsNegative = false, isAll = true) {
             var card = this.field.get(position);
             var shakeTime = 4 == GameStatus.RowCount ? 1e3 : 500;
             this.game.shake(Consts.ShakeIntensity, shakeTime);
@@ -6606,6 +7111,12 @@
                 return [];
             if (card.isHero && GameStatus.currentHero == HeroType.Bomb)
                 return [];
+            if (!isAll) {
+                var isEnemy = CardScoreTypeHelper.isEnemyType(card.type, selfIsNegative);
+                if (!isEnemy) {
+                    return [];
+                }
+            }
             if (life >= card.getScore()) {
                 if (!card.isHero) {
                     var replaceCard = this.getCardToReplaceAfterSmash(card);
@@ -6690,15 +7201,15 @@
                 card.canLightningStrike = false;
             });
         }
-        shootLightningInAllDirections(lightningScore, heroPosition, lightningDuration) {
+        shootLightningInAllDirections(lightningScore, heroPosition, lightningDuration, selfIsNegative = false) {
             var list = [];
-            list.push(this.shootLightningInDirection(MoveType.Right, lightningScore, heroPosition, lightningDuration));
-            list.push(this.shootLightningInDirection(MoveType.Left, lightningScore, heroPosition, lightningDuration));
-            list.push(this.shootLightningInDirection(MoveType.Up, lightningScore, heroPosition, lightningDuration));
-            list.push(this.shootLightningInDirection(MoveType.Down, lightningScore, heroPosition, lightningDuration));
+            list.push(this.shootLightningInDirection(MoveType.Right, lightningScore, heroPosition, lightningDuration, selfIsNegative));
+            list.push(this.shootLightningInDirection(MoveType.Left, lightningScore, heroPosition, lightningDuration, selfIsNegative));
+            list.push(this.shootLightningInDirection(MoveType.Up, lightningScore, heroPosition, lightningDuration, selfIsNegative));
+            list.push(this.shootLightningInDirection(MoveType.Down, lightningScore, heroPosition, lightningDuration, selfIsNegative));
             return list;
         }
-        shootLightningInDirection(moveType, lightningScore, heroPosition, lightningDuration) {
+        shootLightningInDirection(moveType, lightningScore, heroPosition, lightningDuration, selfIsNegative = false) {
             var list = [];
             var position = heroPosition.getNewPosition(moveType);
             if (!this.field.isPositionValid(position)) {
@@ -6709,14 +7220,20 @@
                 return list;
             if (card.canLightningStrike)
                 return list;
-            if (Field.canShootLightning(card)) {
+            if (Field.canShootLightning(card, selfIsNegative)) {
                 var duration = lightningDuration + Consts.LightningDuration;
                 var tweenContainer = TweenContainer.PoolGet();
                 tweenContainer.tweens.push(card.runLightning());
                 tweenContainer.setAnimationDuration(Consts.LightningDuration);
                 list.push(tweenContainer);
                 if (lightningScore >= card.getScore()) {
-                    var replaceCard = this.getCardToReplaceAfterSmash(card);
+                    var replaceCard;
+                    if (selfIsNegative) {
+                        replaceCard = this.getEnemyCardFromFactory(1);
+                    }
+                    else {
+                        replaceCard = this.getCardToReplaceAfterSmash(card);
+                    }
                     replaceCard.canLightningStrike = true;
                     var replaceTweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
                     replaceTweenContainer.setFirstDelay(2 * duration);
@@ -6730,14 +7247,26 @@
             }
             return list;
         }
-        static canShootLightning(card) {
-            switch (card.type) {
-                case CardScoreType.Boss:
-                case CardScoreType.Enemy:
-                case CardScoreType.Trap:
-                    return true;
-                default:
-                    return false;
+        static canShootLightning(card, selfIsNegative = false) {
+            if (!selfIsNegative) {
+                switch (card.type) {
+                    case CardScoreType.Boss:
+                    case CardScoreType.Enemy:
+                    case CardScoreType.Trap:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            else {
+                switch (card.type) {
+                    case CardScoreType.Armor:
+                    case CardScoreType.Health:
+                    case CardScoreType.Gold:
+                        return true;
+                    default:
+                        return false;
+                }
             }
         }
         shootMultiplier() {
@@ -6865,6 +7394,135 @@
         smashHero(delay) {
             var hero = this.getHero();
             this.addBombExplosionAnimation(hero.getCenterX(), hero.getCenterY(), delay);
+        }
+        shootEquipToHero(equipIcon, time) {
+            return this.shootEquipToCard(equipIcon, this.getHero(), time);
+        }
+        shootEquipToCard(equipIcon, card, time) {
+            var p = new Laya.Point();
+            p = equipIcon.localToGlobal(0, 0);
+            p = this.game.container.displayObject.globalToLocal(p);
+            return this.shootToCard(p.x, p.y, card, time);
+        }
+        shootToCard(fromX, fromY, card, time) {
+            var toX = card.getCenterX();
+            var toY = card.getCenterX();
+            var fx = FxShootCannon.PoolGet();
+            var tweenContainer = fx.moveTo(fromX, fromY, toX, toY, time);
+            this.game.container.addChild(fx);
+            tweenContainer.animationDuration = time;
+            return tweenContainer;
+        }
+        findEnemy(selfIsNegative = false) {
+            return this.field.findEnemy(selfIsNegative);
+        }
+        onShootCard(itemCard, shootScore = 1, selfIsNegative = false) {
+            var list = [];
+            var position = this.field.findPosition(itemCard);
+            if (itemCard.type === CardScoreType.Cannon) {
+                itemCard.increaseScoreInNSeconds(shootScore, 400);
+            }
+            else if (itemCard.type === CardScoreType.Barrel) {
+                var replaceCard = this.getCardFromFactory(CardGenerationType.AfterBarrel, itemCard.getScore());
+                var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                tweenContainer.setFirstDelay(400);
+                list.push(tweenContainer);
+            }
+            else if (shootScore >= itemCard.getScore()) {
+                var replaceCard;
+                if (selfIsNegative) {
+                    replaceCard = this.getEnemyCardFromFactory(shootScore);
+                }
+                else {
+                    replaceCard = this.getCardToReplaceAfterSmash(itemCard);
+                }
+                var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                tweenContainer.setFirstDelay(400);
+                list.push(tweenContainer);
+            }
+            else {
+                itemCard.reduceScoreInNSeconds(shootScore, 400);
+            }
+            return list;
+        }
+        triggerEffect(effectType, card, shootScore, selfIsNegative = false) {
+            var list = [];
+            switch (effectType) {
+                case EffectType.TiggerCannonOne:
+                    list = this.onShootCard(card, shootScore, selfIsNegative);
+                    break;
+                case EffectType.TiggerBomb:
+                    list = this.triggerShootBomb(card, shootScore, selfIsNegative);
+                    break;
+                case EffectType.TiggerLightning:
+                    list = this.triggerShootLightning(card, shootScore, selfIsNegative);
+                    break;
+            }
+            return list;
+        }
+        equipTrigger(equipData) {
+            var selfIsNegative = false;
+            var list = [];
+            var cards = this.findEnemy(selfIsNegative);
+            if (cards.length > 0) {
+                SoundController.instance.playSound(SoundConsts.Cannon);
+                var card = cards[Random.rangeBoth(0, cards.length - 1)];
+                var tweenContainer = this.shootEquipToCard(equipData.view, card, 200);
+                tweenContainer.onComplete.addOnce(() => { equipData.onUse(); }, this);
+                list.push(tweenContainer);
+                var tweens = this.triggerEffect(equipData.effectTypeId, card, equipData.effectArg);
+                for (var tween of tweens) {
+                    list.push(tween);
+                }
+            }
+            return list;
+        }
+        cardTrigger(triggerCard, effectTypeId = EffectType.TiggerCannonOne, shootScore = 1, delay = 0) {
+            var selfIsNegative = triggerCard.isNegative();
+            var list = [];
+            var cards = this.findEnemy(selfIsNegative);
+            if (cards.length > 0) {
+                SoundController.instance.playSound(SoundConsts.Cannon);
+                var card = cards[Random.rangeBoth(0, cards.length - 1)];
+                var tweenContainer = this.shootToCard(triggerCard.getCenterX(), triggerCard.getCenterY(), card, 200);
+                tweenContainer.setAnimationDuration(100);
+                list.push(tweenContainer);
+                var tweens = this.triggerEffect(effectTypeId, card, shootScore, selfIsNegative);
+                for (var tween of tweens) {
+                    list.push(tween);
+                }
+            }
+            return list;
+        }
+        triggerShootLightning(card, shootScore = 1, selfIsNegative = false) {
+            var position = this.field.findPosition(card);
+            var list = [];
+            var tween = this.onShootCard(card, shootScore, selfIsNegative);
+            list.push(tween);
+            var tween = this.shootLightningInAllDirections(shootScore, position, Consts.LightningDuration, selfIsNegative);
+            list.push(tween);
+            this.clearLightning();
+            list.length > 0 && SoundController.instance.playSound(SoundConsts.Lighting);
+            return list;
+        }
+        triggerShootBomb(card, shootScore = 1, selfIsNegative = false) {
+            var list = [];
+            SoundController.instance.playSound(SoundConsts.Bomb);
+            var position = this.field.findPosition(card);
+            this.addBombExplosionAnimation(card.view.x, card.view.y, 100);
+            var replaceCard = this.getCardToReplaceAfterSmash(this.field.get(position));
+            var tweenContainer = this.replaceCardByPosition(position, replaceCard, !0);
+            list.push(tweenContainer);
+            var life = shootScore;
+            var moveTypeList = [MoveType.Up, MoveType.Down, MoveType.Left, MoveType.Right];
+            for (var d = 0; d < moveTypeList.length; d++) {
+                var moveType = moveTypeList[d];
+                list.push(this.smashBombInDirection(moveType, position, life, selfIsNegative, false));
+                if (!GameStatus.isHeroAlive) {
+                    return list;
+                }
+            }
+            return list;
         }
     }
 
@@ -7291,7 +7949,11 @@
             return Card.GetNew(this.game, CardScoreType.Trap, 1, score);
         }
         getWarrior(level, score) {
-            return Card.GetNew(this.game, CardScoreType.Enemy, level, score);
+            var step = 0;
+            if (GameStatus.stepCardNum <= 0 && level >= 2) {
+                step = 3;
+            }
+            return Card.GetNew(this.game, CardScoreType.Enemy, level, score, step);
         }
         static getTrapScore() {
             if (GameStatus.currentHero == HeroType.Gun) {
@@ -7304,7 +7966,11 @@
         getBoss() {
             var level = CardFactory.generateBossPower();
             var score = 8 + GameStatus.gameLevel;
-            return Card.GetNew(this.game, CardScoreType.Boss, level, score);
+            var step = 0;
+            if (GameStatus.gameLevel > 1) {
+                step = 3;
+            }
+            return Card.GetNew(this.game, CardScoreType.Boss, level, score, step);
         }
         getChestCard() {
             return Card.GetNew(this.game, CardScoreType.Chest, 1, 0);
@@ -7615,6 +8281,7 @@
             this.isAnimationing = false;
             this.isPause = false;
             this.isChest = false;
+            this.isUplevel = false;
         }
         init(windowUI) {
             window['game'] = this;
@@ -7625,6 +8292,7 @@
             this.rnd = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
             this.cardFactory = new CardFactory(this);
             this.field = new Field(this);
+            Player.current.game = this;
         }
         testCardViews() {
             var colMax = 5;
@@ -7644,6 +8312,7 @@
         launch() {
             this.rnd.reset([(Date.now() * Math.random()).toString()]);
             this.cardFactory.reset();
+            Player.current.reset();
             ReportMonitor.OnWar(GameStatus.ColumnCount == 4);
             GameStatus.init();
             this.container.width = GameStatus.ColumnCount * Consts.CardWidth + (GameStatus.ColumnCount - 1) * Consts.CardSpaceBetweenWidth;
@@ -7655,8 +8324,13 @@
             this.keyboardManager.StartListenKeyboard();
             this.animationQueue = this.field.initField();
             Laya.timer.frameLoop(1, this, this.update);
+            this.isUplevel = false;
+            Player.current.sUpLevelChange.add(this.onUplevel, this);
+            this.windowUI.m_uplevelPanel.Close();
         }
         uninstall() {
+            this.isUplevel = false;
+            Player.current.sUpLevelChange.remove(this.onUplevel, this);
             Laya.timer.clear(this, this.update);
             this.stageClickFx.uninstall();
             this.keyboardManager.StopListenKeyboard();
@@ -7711,6 +8385,16 @@
         fillQueue() {
             if (GameStatus.isHeroAlive) {
                 var hero = this.field.getHero();
+                if (hero.currentLife > 0) {
+                    if (this.checkCardStep()) {
+                        return;
+                    }
+                }
+                var twees = Player.current.checkTrigger();
+                if (twees && twees.length > 0) {
+                    this.addToAnimationQueue(twees);
+                    return;
+                }
                 if (hero.needShoot) {
                     this.addToAnimationQueue(this.field.shootCannon());
                     hero.needShoot = false;
@@ -7732,11 +8416,18 @@
                     return;
                 }
                 this.addToAnimationQueue(this.field.smashBomb());
+                if (this.isUplevel) {
+                    this.addToAnimationQueue(this.openUplevelPanel());
+                    this.isUplevel = false;
+                }
                 this.checkKeyHandler();
             }
             else if (!GameStatus.isGameEnd) {
                 this.setGameEnd();
             }
+        }
+        onUplevel() {
+            this.isUplevel = true;
         }
         setGameOver() {
             GameStatus.isHeroAlive = false;
@@ -7780,6 +8471,22 @@
                 }
             }
         }
+        checkCardStep() {
+            var result = false;
+            for (var i = 0, cardList = this.field.field.getAll(); i < cardList.length; i++) {
+                var card = cardList[i];
+                if (card.stepMax > 0 && card.step == 0) {
+                    var list = this.field.cardTrigger(card, EffectType.TiggerCannonOne, 1, 200);
+                    if (list && list.length > 0) {
+                        this.addToAnimationQueue(list);
+                        card.step = card.stepMax;
+                        card.setStepText();
+                        result = true;
+                    }
+                }
+            }
+            return result;
+        }
         move(moveType) {
             var fightCard = this.field.getCardToFight(moveType);
             if (null == fightCard)
@@ -7800,7 +8507,8 @@
             }
             if (fightResult.isChest) {
                 this.moveType = moveType;
-                if (GameStatus.currentHero == HeroType.Key) {
+                var isAuto = Player.current.autoUnlockChest();
+                if (isAuto || GameStatus.currentHero == HeroType.Key) {
                     this.chestOpened();
                 }
                 else if (GameStatus.isKey) {
@@ -7822,6 +8530,13 @@
             }
             if (fightResult.isMove) {
                 tweenList.push(this.field.move(moveType));
+                for (var i = 0, cardList = this.field.field.getAll(); i < cardList.length; i++) {
+                    var card = cardList[i];
+                    if (card.step > 0) {
+                        card.step--;
+                        card.setStepText();
+                    }
+                }
             }
             else {
                 tweenContainer = TweenContainer.PoolGet();
@@ -7831,6 +8546,10 @@
             }
             if (fightResult.isNeedIncreaseLifeByOneAfterBoss) {
                 tweenList.push(this.field.getHero().increaseLifeByOneTween());
+            }
+            if (this.isUplevel) {
+                tweenList.push(this.openUplevelPanel());
+                this.isUplevel = false;
             }
             if (this.isChangeTurnsToBoss()) {
                 GameStatus.decreaseTurnsToBoss();
@@ -7842,6 +8561,14 @@
         }
         shake(intensity, time) {
             this.shakeHandler.exe(this.windowUI, intensity, time);
+        }
+        openUplevelPanel() {
+            var tweenContainer = TweenContainer.PoolGet();
+            tweenContainer.animationDuration = 200;
+            tweenContainer.onComplete.addOnce(() => {
+                this.windowUI.m_uplevelPanel.Open();
+            }, this);
+            return tweenContainer;
         }
         openChestPopUp() {
             if (!this.isPause && !this.isChest) {
@@ -8115,6 +8842,19 @@
     }
 
     class TriggerTypeConfig extends TriggerTypeConfigLang {
+        get cardTypeIdList() {
+            if (!this._cardTypeIdList) {
+                var list = [];
+                this._cardTypeIdList = list;
+                for (var key of this.cardTypeList) {
+                    var id = Game.config.cardScoreType.keyToTypeId(key);
+                    if (id > 0) {
+                        list.push(id);
+                    }
+                }
+            }
+            return this._cardTypeIdList;
+        }
     }
 
     class UnlockConfig extends UnlockConfigLang {
@@ -8274,6 +9014,42 @@
     }
 
     class EffectTypeConfigReader extends ExcelConfigReader {
+        constructor() {
+            super(...arguments);
+            this.configsByKey = new Map();
+        }
+        onGameLoadedAll() {
+            if (this.configsByKey.size != 0) {
+                return;
+            }
+            super.onGameLoadedAll();
+            let list = this.configList;
+            for (let i = 0; i < list.length; i++) {
+                let key = list[i].effectTypeKey;
+                if (isNullOrEmpty(key)) {
+                    key = list[i].id;
+                }
+                this.configsByKey.set(key, list[i]);
+            }
+        }
+        getConfig(key) {
+            if (this.configsByKey.size == 0) {
+                this.onGameLoadedAll();
+            }
+            if (!this.configsByKey.has(key)) {
+                if (this.hasConfig(key)) {
+                    return super.getConfig(key);
+                }
+                console.log(`${this.tableName} 没有 key=${key} 的配置`);
+            }
+            return this.configsByKey.get(key);
+        }
+        keyToTypeId(key) {
+            var config = this.getConfig(key);
+            if (config) {
+                return config.id;
+            }
+        }
     }
 
     class ItemConfigReader extends ExcelConfigReader {
@@ -8285,6 +9061,12 @@
             super.onGameLoadedAll();
             this.typeMap.clear();
             let list = this.configList;
+            var itemList = Game.config.itemConsume.configList;
+            this.addConfigList(itemList, ItemType.Consume);
+            var itemList = Game.config.itemDecorate.configList;
+            this.addConfigList(itemList, ItemType.Decorate);
+            var itemList = Game.config.itemWeapon.configList;
+            this.addConfigList(itemList, ItemType.Weapon);
             for (let i = 0; i < list.length; i++) {
                 var config = list[i];
                 var configList;
@@ -8301,6 +9083,17 @@
         getConfigListByTypeKey(type) {
             return this.typeMap.get(type);
         }
+        addConfigList(configs, type) {
+            var configDict = this.configDict;
+            var configList = this.configList;
+            for (var item of configs) {
+                if (!configDict[item.id]) {
+                    item.type = type;
+                    configDict[item.id] = item;
+                    configList.push(item);
+                }
+            }
+        }
     }
 
     class ItemConsumeConfigReader extends ExcelConfigReader {
@@ -8313,6 +9106,17 @@
     }
 
     class LevelConfigReader extends ExcelConfigReader {
+        constructor() {
+            super(...arguments);
+            this.levelMax = 0;
+        }
+        onGameLoadedAll() {
+            let list = this.configList;
+            for (let i = 0; i < list.length; i++) {
+                let config = list[i];
+                this.levelMax = Math.max(this.levelMax, config.id);
+            }
+        }
     }
 
     class LoaderConfigReader extends ExcelConfigReader {
@@ -8407,6 +9211,42 @@
     }
 
     class TriggerTypeConfigReader extends ExcelConfigReader {
+        constructor() {
+            super(...arguments);
+            this.configsByKey = new Map();
+        }
+        onGameLoadedAll() {
+            if (this.configsByKey.size != 0) {
+                return;
+            }
+            super.onGameLoadedAll();
+            let list = this.configList;
+            for (let i = 0; i < list.length; i++) {
+                let key = list[i].triggerTypeKey;
+                if (isNullOrEmpty(key)) {
+                    key = list[i].id;
+                }
+                this.configsByKey.set(key, list[i]);
+            }
+        }
+        getConfig(key) {
+            if (this.configsByKey.size == 0) {
+                this.onGameLoadedAll();
+            }
+            if (!this.configsByKey.has(key)) {
+                if (this.hasConfig(key)) {
+                    return super.getConfig(key);
+                }
+                console.log(`${this.tableName} 没有 key=${key} 的配置`);
+            }
+            return this.configsByKey.get(key);
+        }
+        keyToTypeId(key) {
+            var config = this.getConfig(key);
+            if (config) {
+                return config.id;
+            }
+        }
     }
 
     class UnlockConfigReader extends ExcelConfigReader {
@@ -8530,12 +9370,6 @@
                     this.readers.push(item);
                     this.readerMap.set(item.tableName, item);
                 }
-            }
-        }
-        shieldList() {
-            let heros = Game.channel.serverItem.shieldHero;
-            if (heros && heros.length) {
-                Game.config.hero.shieldConfig(heros);
             }
         }
         async loadAllAsync() {
@@ -11451,11 +12285,6 @@
             ReportMonitor.OnBuyShop(this.itemConfig.spriteIndex);
         }
     }
-
-    var ItemType;
-    (function (ItemType) {
-        ItemType[ItemType["Tool"] = 5] = "Tool";
-    })(ItemType || (ItemType = {}));
 
     class ItemModel extends MModel {
         constructor() {
@@ -17135,6 +17964,8 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
+            this.m_level = (this.getChild("level"));
+            this.m_exp = (this.getChild("exp"));
             this.m_equipDecorate = (this.getChild("equipDecorate"));
             this.m_equipWeapon = (this.getChild("equipWeapon"));
         }
@@ -17143,6 +17974,147 @@
     PlayerLevelBarStruct.DependPackages = ["GameHome"];
 
     class PlayerLevelBar extends PlayerLevelBarStruct {
+        get player() {
+            return Player.current;
+        }
+        onWindowShow() {
+            this.SetLevel();
+            this.SetExp();
+            this.SetEquip();
+            this.player.sLevelChange.add(this.SetLevel, this);
+            this.player.sExpChange.add(this.SetExp, this);
+            this.player.sEquipChange.add(this.SetEquip, this);
+        }
+        onWindowHide() {
+            this.player.sLevelChange.remove(this.SetLevel, this);
+            this.player.sExpChange.remove(this.SetExp, this);
+            this.player.sEquipChange.remove(this.SetEquip, this);
+        }
+        SetLevel() {
+            this.m_level.m_title.text = this.player.level + "";
+            if (this.player.level > 1) {
+                TweenHelper.spriteShow(this.m_level);
+            }
+            else {
+                this.m_level.scaleX = 1;
+                this.m_level.scaleY = 1;
+                this.m_level.alpha = 1;
+            }
+        }
+        SetExp() {
+            this.m_exp.max = this.player.levelExpMax;
+            this.m_exp.value = this.player.levelExp;
+        }
+        SetEquip() {
+            this.m_equipDecorate.SetData(this.player.equipDecorateData);
+            this.m_equipWeapon.SetData(this.player.equipWeaponData);
+        }
+    }
+
+    class LevelStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "Level"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_title = (this.getChild("title"));
+        }
+    }
+    LevelStruct.URL = "ui://moe42ygrn2s1cn";
+    LevelStruct.DependPackages = ["GameHome"];
+
+    class Level extends LevelStruct {
+    }
+
+    class ExpBarStruct extends fgui.GProgressBar {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "ExpBar"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bar = (this.getChild("bar"));
+        }
+    }
+    ExpBarStruct.URL = "ui://moe42ygrn2s1co";
+    ExpBarStruct.DependPackages = ["GameHome"];
+
+    class ExpBar extends ExpBarStruct {
+    }
+
+    class EquipIconStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "EquipIcon"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_itemType = this.getController("itemType");
+            this.m_step = this.getController("step");
+            this.m_bg = (this.getChild("bg"));
+            this.m_icon = (this.getChild("icon"));
+            this.m_stepText = (this.getChild("stepText"));
+            this.m_title = (this.getChild("title"));
+        }
+    }
+    EquipIconStruct.URL = "ui://moe42ygrn2s1cp";
+    EquipIconStruct.DependPackages = ["GameHome"];
+
+    class EquipIcon extends EquipIconStruct {
+        SetData(data) {
+            data.view = this;
+            if (this.data) {
+                this.data.sChange.remove(this.OnChange, this);
+                this.data.sStepChange.remove(this.SetStep, this);
+            }
+            this.data = data;
+            if (data) {
+                this.data.sChange.add(this.OnChange, this);
+                this.data.sStepChange.add(this.SetStep, this);
+            }
+            this.OnChange();
+            this.scaleX = 1;
+            this.scaleY = 1;
+            this.alpha = 1;
+        }
+        OnChange() {
+            this.SetStep();
+            this.SetIcon();
+            if (this.data && this.data.id > 0) {
+                TweenHelper.spriteShow(this);
+                this.title = this.data.config.name;
+            }
+            else {
+                this.title = "";
+            }
+        }
+        SetStep() {
+            var data = this.data;
+            if (data && data.stepMax >= 1) {
+                this.m_stepText.text = data.step + "/" + data.stepMax;
+                this.m_step.setSelectedIndex(1);
+            }
+            else {
+                this.m_stepText.text = "";
+                this.m_step.setSelectedIndex(0);
+            }
+        }
+        SetIcon() {
+            var data = this.data;
+            if (data) {
+                this.m_icon.url = data.iconUrl;
+            }
+            else {
+                this.m_icon.url = "";
+            }
+        }
     }
 
     class PanelUplevelStruct extends fgui.GComponent {
@@ -17162,6 +18134,110 @@
     PanelUplevelStruct.DependPackages = ["GameHome", "GameLaunch"];
 
     class PanelUplevel extends PanelUplevelStruct {
+        onWindowInited() {
+            this.m_panel.panel = this;
+            this.m_panel.m_closeBtn.onClick(this, this.Close);
+        }
+        Open() {
+            this.visible = true;
+            this.m_panel.Open();
+        }
+        Close() {
+            this.visible = false;
+        }
+    }
+
+    class EquipSelectIconStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "EquipSelectIcon"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_itemType = this.getController("itemType");
+            this.m_bg = (this.getChild("bg"));
+            this.m_icon = (this.getChild("icon"));
+            this.m_title = (this.getChild("title"));
+        }
+    }
+    EquipSelectIconStruct.URL = "ui://moe42ygrn2s1cr";
+    EquipSelectIconStruct.DependPackages = ["GameHome"];
+
+    class EquipSelectIcon extends EquipSelectIconStruct {
+        SetId(id) {
+            var config = Game.config.item.getConfig(id);
+            this.config = config;
+            this.equipId = id;
+            this.m_icon.url = "res/sprite/icon/" + config.icon + ".png";
+            this.m_title.text = config.name;
+        }
+    }
+
+    class UplevelAlertStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "UplevelAlert"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_closeBtn = (this.getChild("closeBtn"));
+            this.m_equipDecorate = (this.getChild("equipDecorate"));
+            this.m_equipWeapon = (this.getChild("equipWeapon"));
+            this.m_equipConsume = (this.getChild("equipConsume"));
+        }
+    }
+    UplevelAlertStruct.URL = "ui://moe42ygrn2s1cs";
+    UplevelAlertStruct.DependPackages = ["GameHome"];
+
+    class UplevelAlert extends UplevelAlertStruct {
+        onWindowInited() {
+            this.m_equipDecorate.onClick(this, this.onClickEquipDecorate);
+            this.m_equipWeapon.onClick(this, this.onClickEquipWeapon);
+            this.m_equipConsume.onClick(this, this.onClickEquipConsume);
+        }
+        Open() {
+            this.m_equipDecorate.SetId(Player.current.randomEquipDecorateId());
+            this.m_equipWeapon.SetId(Player.current.randomEquipWeaponId());
+            this.m_equipConsume.SetId(Player.current.randomEquipConsumeId());
+            TweenHelper.spriteShow2(this);
+        }
+        onClickEquipDecorate() {
+            var id = this.m_equipDecorate.equipId;
+            Player.current.equipDecorateData.setId(id);
+            this.panel.Close();
+        }
+        onClickEquipWeapon() {
+            var id = this.m_equipWeapon.equipId;
+            Player.current.equipWeaponData.setId(id);
+            this.panel.Close();
+        }
+        onClickEquipConsume() {
+            var id = this.m_equipConsume.equipId;
+            Player.current.useEquipConsumeDelay(id);
+            this.panel.Close();
+        }
+    }
+
+    class CardStepStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "CardStep"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_title = (this.getChild("title"));
+        }
+    }
+    CardStepStruct.URL = "ui://moe42ygrn2s1cu";
+    CardStepStruct.DependPackages = ["GameHome"];
+
+    class CardStep extends CardStepStruct {
     }
 
     class GameHomeBinder {
@@ -17239,7 +18315,13 @@
             bind(ShareBtnBar.URL, ShareBtnBar);
             bind(ShareIconBtn.URL, ShareIconBtn);
             bind(PlayerLevelBar.URL, PlayerLevelBar);
+            bind(Level.URL, Level);
+            bind(ExpBar.URL, ExpBar);
+            bind(EquipIcon.URL, EquipIcon);
             bind(PanelUplevel.URL, PanelUplevel);
+            bind(EquipSelectIcon.URL, EquipSelectIcon);
+            bind(UplevelAlert.URL, UplevelAlert);
+            bind(CardStep.URL, CardStep);
         }
     }
 
