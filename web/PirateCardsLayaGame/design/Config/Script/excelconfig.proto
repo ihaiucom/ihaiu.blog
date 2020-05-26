@@ -38,6 +38,7 @@ message Card
 	int32 level = 5;
 	string sprite = 6;
 	int32 coin = 7;
+	int32 exp = 8;
 }
 
 message CardScoreType 
@@ -52,17 +53,65 @@ message CardScoreType
 	bool isPowerUp = 8;
 }
 
+message EffectType 
+{
+	int32 id = 1;
+	string effectTypeKey = 2;
+	string describe = 3;
+}
+
 message Item 
 {
 	int32 id = 1;
 	string zh_cn_name = 2;
-	string zh_cn_en = 3;
-	string zh_cn_itemDes = 4;
-	string icon = 5;
-	string iconSmall = 6;
-	string typeKey = 7;
-	int32 type = 8;
-	int32 coin = 9;
+	string zh_cn_des = 3;
+	string icon = 4;
+	string typeKey = 5;
+	int32 type = 6;
+	int32 coin = 7;
+}
+
+message ItemConsume 
+{
+	int32 id = 1;
+	string zh_cn_name = 2;
+	string zh_cn_des = 3;
+	string icon = 4;
+	string effectType = 5;
+	repeated int32 effectArgs = 6;
+}
+
+message ItemDecorate 
+{
+	int32 id = 1;
+	string zh_cn_name = 2;
+	string zh_cn_des = 3;
+	string icon = 4;
+	string effectType = 5;
+	repeated int32 effectArgs = 6;
+	string triggerType = 7;
+	repeated int32 triggerArgs = 8;
+}
+
+message ItemWeapon 
+{
+	int32 id = 1;
+	string zh_cn_name = 2;
+	string zh_cn_des = 3;
+	string icon = 4;
+	string effectType = 5;
+	repeated int32 effectArgs = 6;
+	string triggerType = 7;
+	repeated int32 triggerArgs = 8;
+}
+
+message Level 
+{
+	int32 id = 1;
+	int32 exp = 2;
+	repeated int32 randomWeaponList = 3;
+	repeated int32 randomDecorateList = 4;
+	repeated int32 randomConsumeList = 5;
 }
 
 message Loader 
@@ -103,6 +152,26 @@ message Msg
 	string en_notice = 6;
 }
 
+message Property 
+{
+	int32 id = 1;
+	string field = 2;
+	string des = 3;
+	string zh_cn_name = 4;
+	int32 ValueType = 5;
+	int32 icon = 6;
+	int32 groupType = 7;
+	bool visible = 8;
+}
+
+message TriggerType 
+{
+	int32 id = 1;
+	string triggerTypeKey = 2;
+	string zh_cn_name = 3;
+	repeated string cardTypeList = 4;
+}
+
 message Unlock 
 {
 	int32 id = 1;
@@ -123,10 +192,17 @@ message ConfigMng
 	Global Global = 1;
 	map<int32,Card> Card = 2;
 	map<int32,CardScoreType> CardScoreType = 3;
-	map<int32,Item> Item = 4;
-	map<int32,Loader> Loader = 5;
-	map<int32,Menu> Menu = 6;
-	map<int32,Msg> Msg = 7;
-	map<int32,Unlock> Unlock = 8;
+	map<int32,EffectType> EffectType = 4;
+	map<int32,Item> Item = 5;
+	map<int32,ItemConsume> ItemConsume = 6;
+	map<int32,ItemDecorate> ItemDecorate = 7;
+	map<int32,ItemWeapon> ItemWeapon = 8;
+	map<int32,Level> Level = 9;
+	map<int32,Loader> Loader = 10;
+	map<int32,Menu> Menu = 11;
+	map<int32,Msg> Msg = 12;
+	map<int32,Property> Property = 13;
+	map<int32,TriggerType> TriggerType = 14;
+	map<int32,Unlock> Unlock = 15;
 
 }

@@ -21,6 +21,8 @@ import { MenuId } from "../GameModule/MenuId";
 import { HomeTabType } from "../GameModule/ViewWindows/HomeWindow";
 import War from "./War";
 import ReportMonitor from "../Libs/ReportMonitor";
+import { Player } from "./Datas/Player";
+import { EffectType } from "./Enums/EffectType";
 
 export default class WarGame
 {
@@ -65,6 +67,7 @@ export default class WarGame
         this.rnd = new RandomDataGenerator([(Date.now() * Math.random()).toString()]);
         this.cardFactory = new CardFactory(this);
         this.field = new Field(this);
+        Player.current.game = this;
 
         // this.testCardViews();
     }
@@ -92,6 +95,10 @@ export default class WarGame
 
     launch()
     {
+        this.rnd.reset([(Date.now() * Math.random()).toString()]);
+        this.cardFactory.reset();
+        Player.current.reset();
+        
         ReportMonitor.OnWar(GameStatus.ColumnCount == 4);
 
         GameStatus.init();
@@ -106,10 +113,16 @@ export default class WarGame
         this.keyboardManager.StartListenKeyboard();
         this.animationQueue = this.field.initField();
         Laya.timer.frameLoop(1, this, this.update);
+
+        this.isUplevel = false;
+        Player.current.sUpLevelChange.add(this.onUplevel, this);
+        this.windowUI.m_uplevelPanel.Close();
     }
 
     uninstall()
     {
+        this.isUplevel = false;
+        Player.current.sUpLevelChange.remove(this.onUplevel, this);
         Laya.timer.clear(this, this.update);
         this.stageClickFx.uninstall();
         this.keyboardManager.StopListenKeyboard();
@@ -197,6 +210,21 @@ export default class WarGame
         if (GameStatus.isHeroAlive) 
         {
             var hero = this.field.getHero();
+            if(hero.currentLife > 0)
+            {
+                if(this.checkCardStep())
+                {
+                    return;
+                };
+            }
+            
+            var twees = Player.current.checkTrigger()
+            if(twees && twees.length > 0)
+            {
+                this.addToAnimationQueue(twees);
+                return;
+            }
+
             // CardScoreType.Cannon， 加农炮
             if (hero.needShoot)
             {
@@ -229,15 +257,33 @@ export default class WarGame
                 return;
             }
 
+
             // CardScoreType.Bomb 炸弹
             this.addToAnimationQueue(this.field.smashBomb());
+
+            
+            
+            if(this.isUplevel)
+            {
+                this.addToAnimationQueue(this.openUplevelPanel());
+                this.isUplevel = false;
+            }
             
             this.checkKeyHandler();
+
+
+
         }
         else if(!GameStatus.isGameEnd)
         {
             this.setGameEnd();
         }
+    }
+
+    isUplevel:boolean = false;
+    onUplevel()
+    {
+        this.isUplevel = true;
     }
 
     setGameOver()
@@ -291,6 +337,7 @@ export default class WarGame
             {
                 this.field.stepUpdate();
                 this.addToAnimationQueue(tweenList);
+
                 
             }
             else
@@ -300,6 +347,27 @@ export default class WarGame
         }
     }
 
+    checkCardStep()
+    {
+        var result = false;
+        for (var i = 0, cardList = this.field.field.getAll(); i < cardList.length; i++) 
+        {
+            var card = cardList[i];
+            if(card.stepMax > 0 && card.step == 0)
+            {
+                var list = this.field.cardTrigger(card, EffectType.TiggerCannonOne, 1, 200);
+                if(list && list.length > 0)
+                {
+                    this.addToAnimationQueue(list);
+                    card.step = card.stepMax;
+                    card.setStepText();
+                    result = true;
+                }
+
+            }
+        }
+        return result
+    }
     
     move(moveType) 
     {
@@ -333,8 +401,9 @@ export default class WarGame
         if (fightResult.isChest)
         {
             this.moveType = moveType;
+            var isAuto = Player.current.autoUnlockChest();
             // 如果英雄是 钥匙英雄
-            if(GameStatus.currentHero == HeroType.Key)
+            if(isAuto || GameStatus.currentHero == HeroType.Key)
             {
                 this.chestOpened();
             }
@@ -368,6 +437,17 @@ export default class WarGame
         if(fightResult.isMove)
         {
             tweenList.push(this.field.move(moveType));
+
+            
+            for (var i = 0, cardList = this.field.field.getAll(); i < cardList.length; i++) 
+            {
+                var card = cardList[i];
+                if(card.step > 0)
+                {
+                    card.step --;
+                    card.setStepText();
+                } 
+            }
         }
         else
         {
@@ -382,6 +462,12 @@ export default class WarGame
         if(fightResult.isNeedIncreaseLifeByOneAfterBoss)
         {
             tweenList.push(this.field.getHero().increaseLifeByOneTween());
+        }
+
+        if(this.isUplevel)
+        {
+            tweenList.push(this.openUplevelPanel());
+            this.isUplevel = false;
         }
         
 
@@ -401,6 +487,18 @@ export default class WarGame
     shake(intensity: number, time: number)
     {
         this.shakeHandler.exe(this.windowUI, intensity, time);
+    }
+
+    // 打开升级面板
+    openUplevelPanel()
+    {
+
+        var tweenContainer:TweenContainer = TweenContainer.PoolGet();
+        tweenContainer.animationDuration = 200;
+        tweenContainer.onComplete.addOnce(()=>{
+            this.windowUI.m_uplevelPanel.Open();
+        }, this)
+        return tweenContainer;
     }
 
 

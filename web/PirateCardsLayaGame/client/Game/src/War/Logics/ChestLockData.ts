@@ -119,13 +119,9 @@ export class ChestLockData
         angle = this.angle360(angle);
         for(var itemData of this.items)
         {
-            var min = itemData.angle - itemData.config.angle * 0.5;
-            var max = itemData.angle + itemData.config.angle * 0.5;
-
-            min = this.angle360(min);
-            max = this.angle360(max);
-            console.log("angle=", angle, "min=", min, "max=", max);
-            if(angle >= min && angle <= max)
+            var subAngle = Math.abs(this.angle360(itemData.angle) - angle);
+            // console.log("angle=", angle, "itemData.angle=", this.angle360(itemData.angle), "configAngle=", itemData.config.angle, "subAngle=",  Math.abs(this.angle360(itemData.angle) - angle));
+            if(subAngle <= itemData.config.angle * 0.5)
             {
                 return itemData;
             }

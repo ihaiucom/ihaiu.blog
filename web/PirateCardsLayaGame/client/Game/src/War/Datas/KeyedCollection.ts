@@ -3,6 +3,12 @@ export default class KeyedCollection
     private items = {};
     private count = 0;
 
+    reset()
+    {
+        this.items = {};
+        this.count = 0;
+    }
+
     ContainsKey(key)
     {
         return this.items.hasOwnProperty(key);

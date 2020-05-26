@@ -10,7 +10,7 @@ export default class CardViewFrontPowerUpChestStruct extends fgui.GComponent
 {
 	public m_state : fgui.Controller;
 	public m_icon : fgui.GLoader;
-	public m_life : CardLifePowerUp;
+	public m_power : CardLifePowerUp;
 
 	
 	public static URL:string = "ui://moe42ygrsqzyac";
@@ -37,7 +37,7 @@ export default class CardViewFrontPowerUpChestStruct extends fgui.GComponent
 
 		
 		this.m_icon = <fgui.GLoader><any>(this.getChild("icon"));
-		this.m_life = <CardLifePowerUp><any>(this.getChild("life"));
+		this.m_power = <CardLifePowerUp><any>(this.getChild("power"));
 		
 		
 	}

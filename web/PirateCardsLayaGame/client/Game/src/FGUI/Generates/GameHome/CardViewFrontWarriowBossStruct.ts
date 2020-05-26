@@ -5,12 +5,14 @@
 
 import SpriteBoss from "../../Extends/GameHome/SpriteBoss";
 import CardLifeWarriow from "../../Extends/GameHome/CardLifeWarriow";
+import CardStep from "../../Extends/GameHome/CardStep";
 import CardViewFrontWarriowBoss from "../../Extends/GameHome/CardViewFrontWarriowBoss";
 
 export default class CardViewFrontWarriowBossStruct extends fgui.GButton
 {
 	public m_icon : SpriteBoss;
 	public m_life : CardLifeWarriow;
+	public m_step : CardStep;
 
 	
 	public static URL:string = "ui://moe42ygrsqzya6";
@@ -37,6 +39,7 @@ export default class CardViewFrontWarriowBossStruct extends fgui.GButton
 		
 		this.m_icon = <SpriteBoss><any>(this.getChild("icon"));
 		this.m_life = <CardLifeWarriow><any>(this.getChild("life"));
+		this.m_step = <CardStep><any>(this.getChild("step"));
 		
 		
 	}

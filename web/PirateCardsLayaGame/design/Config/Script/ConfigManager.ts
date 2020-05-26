@@ -30,6 +30,7 @@ namespace configs{
 		public level : number = 0;
 		public sprite : string = "";
 		public coin : number = 0;
+		public exp : number = 0;
 	}
 	export class ConfigCardScoreType {
 		public id : number = 0;
@@ -41,16 +42,54 @@ namespace configs{
 		public isInBarrel : boolean = false;
 		public isPowerUp : boolean = false;
 	}
+	export class ConfigEffectType {
+		public id : number = 0;
+		public effectTypeKey : string = "";
+		public describe : string = "";
+	}
 	export class ConfigItem {
 		public id : number = 0;
 		public zh_cn_name : string = "";
-		public zh_cn_en : string = "";
-		public zh_cn_itemDes : string = "";
+		public zh_cn_des : string = "";
 		public icon : string = "";
-		public iconSmall : string = "";
 		public typeKey : string = "";
 		public type : number = 0;
 		public coin : number = 0;
+	}
+	export class ConfigItemConsume {
+		public id : number = 0;
+		public zh_cn_name : string = "";
+		public zh_cn_des : string = "";
+		public icon : string = "";
+		public effectType : string = "";
+		public effectArgs :  Array < number >  = null;
+	}
+	export class ConfigItemDecorate {
+		public id : number = 0;
+		public zh_cn_name : string = "";
+		public zh_cn_des : string = "";
+		public icon : string = "";
+		public effectType : string = "";
+		public effectArgs :  Array < number >  = null;
+		public triggerType : string = "";
+		public triggerArgs :  Array < number >  = null;
+	}
+	export class ConfigItemWeapon {
+		public id : number = 0;
+		public zh_cn_name : string = "";
+		public zh_cn_des : string = "";
+		public icon : string = "";
+		public effectType : string = "";
+		public effectArgs :  Array < number >  = null;
+		public triggerType : string = "";
+		public triggerArgs :  Array < number >  = null;
+	}
+	export class ConfigLevel {
+		public id : number = 0;
+		public exp : number = 0;
+		public randomWeaponList :  Array < number >  = null;
+		public randomDecorateList :  Array < number >  = null;
+		public randomConsumeList :  Array < number >  = null;
 	}
 	export class ConfigLoader {
 		public id : number = 0;
@@ -84,6 +123,22 @@ namespace configs{
 		public zh_cn_notice : string = "";
 		public en_notice : string = "";
 	}
+	export class ConfigProperty {
+		public id : number = 0;
+		public field : string = "";
+		public des : string = "";
+		public zh_cn_name : string = "";
+		public ValueType : number = 0;
+		public icon : number = 0;
+		public groupType : number = 0;
+		public visible : boolean = false;
+	}
+	export class ConfigTriggerType {
+		public id : number = 0;
+		public triggerTypeKey : string = "";
+		public zh_cn_name : string = "";
+		public cardTypeList :  Array < string >  = null;
+	}
 	export class ConfigUnlock {
 		public id : number = 0;
 		public zh_cn_name : string = "";
@@ -102,10 +157,17 @@ namespace configs{
 		private m_ErrStr : Map<number, string > = null;
 		private m_Card : Map<number, ConfigCard > = null;
 		private m_CardScoreType : Map<number, ConfigCardScoreType > = null;
+		private m_EffectType : Map<number, ConfigEffectType > = null;
 		private m_Item : Map<number, ConfigItem > = null;
+		private m_ItemConsume : Map<number, ConfigItemConsume > = null;
+		private m_ItemDecorate : Map<number, ConfigItemDecorate > = null;
+		private m_ItemWeapon : Map<number, ConfigItemWeapon > = null;
+		private m_Level : Map<number, ConfigLevel > = null;
 		private m_Loader : Map<number, ConfigLoader > = null;
 		private m_Menu : Map<number, ConfigMenu > = null;
 		private m_Msg : Map<number, ConfigMsg > = null;
+		private m_Property : Map<number, ConfigProperty > = null;
+		private m_TriggerType : Map<number, ConfigTriggerType > = null;
 		private m_Unlock : Map<number, ConfigUnlock > = null;
 
 		public get ErrStr(){
@@ -124,8 +186,28 @@ namespace configs{
 			return this.m_CardScoreType;
 		}
 	
+		public get EffectType(){
+			return this.m_EffectType;
+		}
+	
 		public get Item(){
 			return this.m_Item;
+		}
+	
+		public get ItemConsume(){
+			return this.m_ItemConsume;
+		}
+	
+		public get ItemDecorate(){
+			return this.m_ItemDecorate;
+		}
+	
+		public get ItemWeapon(){
+			return this.m_ItemWeapon;
+		}
+	
+		public get Level(){
+			return this.m_Level;
 		}
 	
 		public get Loader(){
@@ -138,6 +220,14 @@ namespace configs{
 	
 		public get Msg(){
 			return this.m_Msg;
+		}
+	
+		public get Property(){
+			return this.m_Property;
+		}
+	
+		public get TriggerType(){
+			return this.m_TriggerType;
 		}
 	
 		public get Unlock(){
@@ -168,8 +258,48 @@ namespace configs{
 			return obj;
 		}
 	
+		public getEffectType(id: number): ConfigEffectType {
+			let obj = this.m_EffectType[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
 		public getItem(id: number): ConfigItem {
 			let obj = this.m_Item[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
+		public getItemConsume(id: number): ConfigItemConsume {
+			let obj = this.m_ItemConsume[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
+		public getItemDecorate(id: number): ConfigItemDecorate {
+			let obj = this.m_ItemDecorate[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
+		public getItemWeapon(id: number): ConfigItemWeapon {
+			let obj = this.m_ItemWeapon[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
+		public getLevel(id: number): ConfigLevel {
+			let obj = this.m_Level[id];
 			if (obj == null){
 				return null;
 			}
@@ -194,6 +324,22 @@ namespace configs{
 	
 		public getMsg(id: number): ConfigMsg {
 			let obj = this.m_Msg[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
+		public getProperty(id: number): ConfigProperty {
+			let obj = this.m_Property[id];
+			if (obj == null){
+				return null;
+			}
+			return obj;
+		}
+	
+		public getTriggerType(id: number): ConfigTriggerType {
+			let obj = this.m_TriggerType[id];
 			if (obj == null){
 				return null;
 			}

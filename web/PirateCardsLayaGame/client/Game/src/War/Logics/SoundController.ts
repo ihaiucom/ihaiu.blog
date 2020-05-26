@@ -26,6 +26,7 @@ export default class SoundController
     isInit: boolean = false;
     onAppShow(res)
     {
+        this.stopAll();
         Laya.timer.once(3000, this, this.playMusic);
     }
 
@@ -41,9 +42,14 @@ export default class SoundController
 
     changeSoundState()
     {
-        Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = !Laya.SoundManager.soundMuted;
+        var v = !Laya.SoundManager.soundMuted;
+        if(!v)
+        {
+            Laya.SoundManager.stopMusic();
+        }
+        Laya.SoundManager.musicMuted = Laya.SoundManager.soundMuted = v;
 
-        if(!Laya.SoundManager._musicMuted)
+        if(!v)
         {
             this.playMusic();
         }
@@ -69,7 +75,7 @@ export default class SoundController
         }
 
         Laya.timer.clearAll(this);
-        var c = Laya.SoundManager.playMusic(`res/sounds/music/music0${RandomHelper.getRandomIntInclusive(1, 5)}.mp3`, 1, Laya.Handler.create(this, this.onPlayMusicEnd), 0);
+        var c = Laya.SoundManager.playMusic(`res/sounds/music/music${RandomHelper.getRandomIntInclusive(6, 15)}.mp3`, 1, Laya.Handler.create(this, this.onPlayMusicEnd), 0);
         if(c)
         {
             // c.volume = 0.1;
@@ -77,8 +83,15 @@ export default class SoundController
         // Laya.timer.once(25 * 1000, this, this.playMusic);
     }
 
+    private lastEndTime = 0;
     onPlayMusicEnd()
     {
+        console.log("onPlayMusicEnd");
+        if(Laya.timer.currTimer - this.lastEndTime < 1000 * 20)
+        {
+            return;
+        }
+        this.lastEndTime = Laya.timer.currTimer;
         Laya.timer.clearAll(this);
         Laya.timer.once(100, this, this.playMusic);
     }

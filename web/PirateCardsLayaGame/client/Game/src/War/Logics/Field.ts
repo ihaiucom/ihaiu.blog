@@ -22,6 +22,9 @@ import FxShootCannon from "../../FGUI/Extends/GameHome/FxShootCannon";
 import FxShootBoom from "../../FGUI/Extends/GameHome/FxShootBoom";
 import { HeroType } from "../Enums/HeroType";
 import FxSkull from "../../FGUI/Extends/GameHome/FxSkull";
+import CardScoreTypeHelper from "../Utils/CardScoreTypeHelper";
+import { Player, EquipData } from "../Datas/Player";
+import { EffectType } from "../Enums/EffectType";
 
 export default class Field
 {
@@ -217,7 +220,7 @@ export default class Field
     // 获取英雄Card
     getHero(): Hero
     {
-        return <Hero>this.field.get(this.getHeroPosition())
+        return <any>this.field.get(this.getHeroPosition())
     }
 
     // 获取英雄FieldPosition
@@ -317,7 +320,7 @@ export default class Field
         // 如果是炸弹，先把英雄移动炸弹位置，再播放炸弹动画
         if (card.type === CardScoreType.Bomb) 
         {
-            list.push(this.moveAndSetWithAnimation(heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime).setAnimationDuration(1));
+            list.push(this.moveAndSetWithAnimation(heroPosition.getNewPosition(moveType), <any>heroCard, Consts.AnimationTime).setAnimationDuration(1));
             list.push(this.moveAndSetWithAnimation(heroPosition, card, Consts.AnimationTime));
         }
         else 
@@ -338,7 +341,7 @@ export default class Field
                 // 英雄往中间移动
                 case CardPositionType.Center:
                     // 移动英雄卡牌
-                    list.push(this.moveAndSetWithAnimation(  heroPosition.getNewPosition(moveType), heroCard, Consts.AnimationTime) );
+                    list.push(this.moveAndSetWithAnimation(  heroPosition.getNewPosition(moveType), <any>heroCard, Consts.AnimationTime) );
                     
                     switch (moveType) 
                     {
@@ -463,6 +466,10 @@ export default class Field
         case CardScoreType.Horseshoe:
         case CardScoreType.Lightning:
         case CardScoreType.Multiplier:
+        case CardScoreType.MultiplierPositive:
+        case CardScoreType.MultiplierNegative:
+        case CardScoreType.AddPositive:
+        case CardScoreType.AddNegative:
         case CardScoreType.Skull:
             return true
         }
@@ -503,6 +510,7 @@ export default class Field
         {
             score = card.getScore();
         }
+        Player.current.onCardToReplaceAfterSmash(card);
 
         return this.getCoinCardFromFactory(score);
     }
@@ -606,7 +614,7 @@ export default class Field
             fieldPosition = fieldPosition.getNewPosition(moveTo);
         }
 
-        var defaultCard = this.cardFactory.getDefault(),
+        var defaultCard:any = this.cardFactory.getDefault(),
         cardFieldPosition = fieldPosition.getNewPosition(moveTypeB);
         animationList.push(this.moveAndSetWithAnimation(cardFieldPosition, defaultCard, Consts.AnimationTime)),
         animationList.push(this.replaceCardByPosition(cardFieldPosition, card).setAnimationDuration(1));
@@ -621,6 +629,7 @@ export default class Field
             card.stepUpdate()
         }
     }
+
 
     // 执行加农炮
     shootCannon () : TweenContainer[]
@@ -659,6 +668,14 @@ export default class Field
             if (itemCard.type === CardScoreType.Cannon)
             {
                 itemCard.increaseScoreInNSeconds(heroCard.shootScore, 400);
+            }
+            // 如果是木桶
+            else if(itemCard.type === CardScoreType.Barrel)
+            {
+                var replaceCard = this.getCardFromFactory(CardGenerationType.AfterBarrel, itemCard.getScore());
+                var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+                tweenContainer.setFirstDelay(400);
+                list.push(tweenContainer);
             }
             // 替换卡牌
             else if (heroCard.shootScore >= itemCard.getScore()) 
@@ -703,6 +720,12 @@ export default class Field
             case CardScoreType.Health:
             case CardScoreType.Poison:
             case CardScoreType.Cannon:
+            case CardScoreType.Barrel:
+            case CardScoreType.Multiplier:
+            case CardScoreType.MultiplierPositive:
+            case CardScoreType.MultiplierNegative:
+            case CardScoreType.AddPositive:
+            case CardScoreType.AddNegative:
                 return true;
             default:
                 return false
@@ -746,14 +769,14 @@ export default class Field
     }
 
     // 炸弹 附近一个位置 检查
-    smashBombInDirection (moveType: MoveType, position: FieldPosition, life: number) 
+    smashBombInDirection (moveType: MoveType, position: FieldPosition, life: number, selfIsNegative:boolean = false, isAll: boolean = true) 
     {
         var list = [];
         var smashDelay = Consts.SmashDelay;
         // 遍历该方向上有效位置
         for (position = position.getNewPosition(moveType); this.field.isPositionValid(position);) 
         {
-            list.push(this.smashBombInPosition(position, smashDelay, life));
+            list.push(this.smashBombInPosition(position, smashDelay, life, selfIsNegative, isAll));
 
             // 如果英雄死了就返回
             if (!GameStatus.isHeroAlive) return list;
@@ -764,7 +787,7 @@ export default class Field
         return list
     }
     // 炸弹 检查具体一个位置
-    smashBombInPosition (position: FieldPosition, smashDelay: number, life: number) 
+    smashBombInPosition (position: FieldPosition, smashDelay: number, life: number, selfIsNegative:boolean = false, isAll: boolean = true) 
     {
         var card = this.field.get(position);
         var shakeTime = 4 == GameStatus.RowCount ? 1e3: 500;
@@ -776,6 +799,15 @@ export default class Field
 
         // 如果当前卡牌是英雄，并且是炸弹英雄
         if (card.isHero && GameStatus.currentHero == HeroType.Bomb) return [];
+
+        if(!isAll)
+        {
+            var isEnemy = CardScoreTypeHelper.isEnemyType(card.type, selfIsNegative);
+            if(!isEnemy)
+            {
+                return [];
+            }
+        }
 
 
         // 如果该卡牌被炸得没有血量
@@ -908,17 +940,17 @@ export default class Field
     }
 
     // 执行闪电效果各个方向
-    shootLightningInAllDirections (lightningScore: number, heroPosition: FieldPosition, lightningDuration: number) 
+    shootLightningInAllDirections (lightningScore: number, heroPosition: FieldPosition, lightningDuration: number, selfIsNegative:boolean = false) 
     {
         var list = [];
-        list.push(this.shootLightningInDirection(MoveType.Right, lightningScore, heroPosition, lightningDuration));
-        list.push(this.shootLightningInDirection(MoveType.Left, lightningScore, heroPosition, lightningDuration));
-        list.push(this.shootLightningInDirection(MoveType.Up, lightningScore, heroPosition, lightningDuration));
-        list.push(this.shootLightningInDirection(MoveType.Down, lightningScore, heroPosition, lightningDuration));
+        list.push(this.shootLightningInDirection(MoveType.Right, lightningScore, heroPosition, lightningDuration, selfIsNegative));
+        list.push(this.shootLightningInDirection(MoveType.Left, lightningScore, heroPosition, lightningDuration, selfIsNegative));
+        list.push(this.shootLightningInDirection(MoveType.Up, lightningScore, heroPosition, lightningDuration, selfIsNegative));
+        list.push(this.shootLightningInDirection(MoveType.Down, lightningScore, heroPosition, lightningDuration, selfIsNegative));
         return list;
     }
     // 执行闪电效果 道具体卡牌
-    shootLightningInDirection (moveType: MoveType, lightningScore: number, heroPosition: FieldPosition, lightningDuration: number) 
+    shootLightningInDirection (moveType: MoveType, lightningScore: number, heroPosition: FieldPosition, lightningDuration: number, selfIsNegative:boolean = false) 
     {
         var list = [];
         var position = heroPosition.getNewPosition(moveType);
@@ -936,7 +968,7 @@ export default class Field
         if (card.canLightningStrike) return list;
 
         // 判断该卡牌是否可以受闪电攻击
-        if (Field.canShootLightning(card)) 
+        if (Field.canShootLightning(card, selfIsNegative)) 
         {
             var duration = lightningDuration + Consts.LightningDuration;
             var tweenContainer =TweenContainer.PoolGet();
@@ -947,7 +979,15 @@ export default class Field
 
             if (lightningScore >= card.getScore()) 
             {
-                var replaceCard = this.getCardToReplaceAfterSmash(card);
+                var replaceCard:Card;
+                if(selfIsNegative)
+                {
+                    replaceCard = this.getEnemyCardFromFactory(1);
+                }
+                else
+                {
+                    replaceCard = this.getCardToReplaceAfterSmash(card);
+                }
                 replaceCard.canLightningStrike = true;
                 var replaceTweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
                 replaceTweenContainer.setFirstDelay(2 * duration);
@@ -957,23 +997,38 @@ export default class Field
             {
                 card.reduceScoreInNSeconds(lightningScore, 2 * duration);
             } 
-            card.canLightningStrike = false;
+            card.canLightningStrike = true;
             list.push(this.shootLightningInAllDirections(lightningScore, position, duration));
         }
         return list
     }
 
     // 闪电，是否可以攻击该卡牌
-    static canShootLightning (card:Card) 
+    static canShootLightning (card:Card, selfIsNegative:boolean = false) 
     {
-        switch (card.type) 
+        if(!selfIsNegative)
         {
-            case CardScoreType.Boss:
-            case CardScoreType.Enemy:
-            case CardScoreType.Trap:
-                return true;
-            default:
-                return false;
+            switch (card.type) 
+            {
+                case CardScoreType.Boss:
+                case CardScoreType.Enemy:
+                case CardScoreType.Trap:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        else
+        {
+            switch (card.type) 
+            {
+                case CardScoreType.Armor:
+                case CardScoreType.Health:
+                case CardScoreType.Gold:
+                    return true;
+                default:
+                    return false;
+            } 
         }
     }
 
@@ -982,13 +1037,33 @@ export default class Field
     {
         SoundController.instance.playSound(SoundConsts.Idol);
         var heroPosition = this.getHeroPosition();
-        var heroCard = <Hero> this.field.get(heroPosition);
+        var heroCard:Hero = <any> this.field.get(heroPosition);
         var list = [];
 
-        list.push(this.shootMultiplierInDirection(MoveType.Right, heroCard.multiplierScore, heroPosition));
-        list.push(this.shootMultiplierInDirection(MoveType.Left, heroCard.multiplierScore, heroPosition));
-        list.push(this.shootMultiplierInDirection(MoveType.Up, heroCard.multiplierScore, heroPosition));
-        list.push(this.shootMultiplierInDirection(MoveType.Down, heroCard.multiplierScore, heroPosition));
+        
+        // 不是英雄的位置
+        var positionList = this.field.getPositions(function(card:Card) {
+            return !card.isHero;
+        });
+
+        if(heroCard.multiplierType != CardScoreType.Multiplier)
+        {
+            for (var  i = 0; i < positionList.length; i++) 
+            {
+                var position = positionList[i];
+                var tweenContainer = this.shootMultiplierInPosition(position,  heroCard.multiplierType,  heroCard.multiplierScore);
+                list.push(tweenContainer);
+            }
+        }
+        else
+        {
+            list.push(this.shootMultiplierInDirection(MoveType.Right, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+            list.push(this.shootMultiplierInDirection(MoveType.Left, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+            list.push(this.shootMultiplierInDirection(MoveType.Up, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+            list.push(this.shootMultiplierInDirection(MoveType.Down, heroCard.multiplierScore, heroPosition, heroCard.multiplierType));
+            
+        }
+
         return list;
     }
 
@@ -1029,24 +1104,62 @@ export default class Field
 
 
     // 执行倍数，具体卡牌
-    shootMultiplierInDirection (moveType:MoveType, multiplierScore: number, heroPosition: FieldPosition) 
+    shootMultiplierInDirection (moveType:MoveType, multiplierScore: number, heroPosition: FieldPosition, multiplierType: CardScoreType) 
     {
-        var list = [];
         var position = heroPosition.getNewPosition(moveType);
+        return this.shootMultiplierInPosition(position, multiplierType, multiplierScore);
+    }
+
+    shootMultiplierInPosition(position:FieldPosition, multiplierType: CardScoreType, multiplierScore: number)
+    {
+        
+        var list = [];
         // 验证位置是否有效
         if (!this.field.isPositionValid(position)) return list;
 
         var card = this.field.get(position);
+        var isNegativeCard = CardScoreTypeHelper.isCardScoreTypeNegative(card.type)
+        switch(multiplierType)
+        {
+            case CardScoreType.MultiplierPositive:
+            case CardScoreType.AddPositive:
+                if(isNegativeCard)
+                {
+                    return list;
+                }
+                break;
+             
+            case CardScoreType.MultiplierNegative:
+            case CardScoreType.AddNegative:
+                if(!isNegativeCard)
+                {
+                    return list;
+                }
+                break;   
+        }
         // 判断 倍速，是否可以应用该卡牌类型
         if (Field.canMultiply(card.type, card.getScore())) 
         {
-            var tweenContainer = card.multiplyScore(multiplierScore);
+            var tweenContainer ;
+            switch(multiplierType)
+            {
+                case CardScoreType.MultiplierPositive:
+                case CardScoreType.MultiplierNegative:
+                    tweenContainer = card.increaseScore(multiplierScore, true);
+                    break;
+                case CardScoreType.AddPositive:
+                case CardScoreType.AddNegative:
+                    tweenContainer = card.increaseScore(multiplierScore, false);
+                    break;
+            }
             if (!tweenContainer) return list;
             tweenContainer.setAnimationDuration(1);
             list.push(tweenContainer);
         }
         return list;
     }
+
+
     // 倍速，是否可以应用该卡牌类型
     static canMultiply (cardScoreType: CardScoreType, score: number) 
     {
@@ -1066,9 +1179,14 @@ export default class Field
             case CardScoreType.Trap:
                 return score > 0;
             case CardScoreType.Multiplier:
+            case CardScoreType.MultiplierPositive:
+            case CardScoreType.MultiplierNegative:
+            case CardScoreType.AddPositive:
+            case CardScoreType.AddNegative:
             case CardScoreType.Horseshoe:
-            case CardScoreType.Chest:
             case CardScoreType.Skull:
+            case CardScoreType.Chest:
+            case CardScoreType.Chest:
                 return false;
         }
     }
@@ -1095,25 +1213,199 @@ export default class Field
         //     })
         // }
     }
-    replaceAllNegativeCards () {
-        for (var e = [], i = 0, o = this.field.getPositions(function(e) {
-            return ! (e instanceof t.Hero)
-        }); i < o.length; i++) {
-            var n = o[i];
-            if (this.field.get(n).isNegative()) {
-                var s = this.getCardFromFactory(t.CardGenerationType.Positive),
-                a = this.replaceCardByPosition(n, s, !0).setAnimationDuration(1);
-                a.tweens[0].delay(200),
-                e.push(a)
-            }
-        }
-        return e
-    }
+
     // 英雄位置播放爆炸特效
     smashHero (delay: number) 
     {
         var hero = this.getHero();
         this.addBombExplosionAnimation(hero.getCenterX(), hero.getCenterY(), delay);
+    }
+
+    
+    // 播放骷髅头轰炸动画
+    shootEquipToHero (equipIcon:fgui.GComponent, time) 
+    {
+        return this.shootEquipToCard(equipIcon, <any>this.getHero(), time);
+    }
+
+    
+    shootEquipToCard (equipIcon:fgui.GComponent, card:Card, time) 
+    {
+        var p = new Laya.Point();
+        p = equipIcon.localToGlobal(0, 0);
+        p = this.game.container.displayObject.globalToLocal(p);
+
+        return this.shootToCard(p.x, p.y, card, time);
+    }
+
+    
+    shootToCard (fromX: number, fromY: number, card:Card, time) 
+    {
+        var toX = card.getCenterX();
+        var toY = card.getCenterX();
+
+        var fx = FxShootCannon.PoolGet();
+        var tweenContainer = fx.moveTo(fromX,fromY, toX, toY, time);
+        this.game.container.addChild(fx);
+        tweenContainer.animationDuration = time;
+        return tweenContainer;
+    }
+
+    findEnemy(selfIsNegative: boolean = false):Card[]
+    {
+        return this.field.findEnemy(selfIsNegative)
+    }
+    
+    onShootCard(itemCard: Card, shootScore: number = 1, selfIsNegative: boolean = false)
+    {
+        var list = [];
+        var position = this.field.findPosition(itemCard);
+    
+        // 如果卡牌是 加农炮， 设置积分添加
+        if (itemCard.type === CardScoreType.Cannon)
+        {
+            itemCard.increaseScoreInNSeconds(shootScore, 400);
+        }
+        // 如果是木桶
+        else if(itemCard.type === CardScoreType.Barrel)
+        {
+            var replaceCard = this.getCardFromFactory(CardGenerationType.AfterBarrel, itemCard.getScore());
+            var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+            tweenContainer.setFirstDelay(400);
+            list.push(tweenContainer);
+        }
+        // 替换卡牌
+        else if (shootScore >= itemCard.getScore()) 
+        {
+            
+            var replaceCard:Card;
+            if(selfIsNegative)
+            {
+                replaceCard = this.getEnemyCardFromFactory(shootScore);
+            }
+            else
+            {
+                replaceCard = this.getCardToReplaceAfterSmash(itemCard);
+            }
+            var tweenContainer = this.replaceCardByPosition(position, replaceCard, true).setAnimationDuration(1);
+            tweenContainer.setFirstDelay(400);
+            list.push(tweenContainer);
+        } 
+        // 减少血量, 延迟
+        else 
+        {
+            itemCard.reduceScoreInNSeconds(shootScore, 400)
+        }
+
+        return list;
+    }
+
+    triggerEffect(effectType: EffectType, card:Card, shootScore: number, selfIsNegative:boolean = false)
+    {
+        var list = [];
+        switch(effectType)
+        {
+            case EffectType.TiggerCannonOne:
+                list = this.onShootCard(card, shootScore, selfIsNegative);
+                break;
+            case EffectType.TiggerBomb:
+                list = this.triggerShootBomb(card, shootScore, selfIsNegative);
+                break;
+            case EffectType.TiggerLightning:
+                list = this.triggerShootLightning(card, shootScore, selfIsNegative);
+                break;
+        }
+
+        return list;
+    }
+
+    equipTrigger(equipData: EquipData)
+    {
+        var selfIsNegative = false;
+        var list = [];
+        var cards = this.findEnemy(selfIsNegative);
+        if(cards.length > 0)
+        {
+            SoundController.instance.playSound(SoundConsts.Cannon);
+            var card = cards[Random.rangeBoth(0, cards.length - 1)];
+            var tweenContainer = this.shootEquipToCard(equipData.view, card, 200);
+            tweenContainer.onComplete.addOnce(()=>{equipData.onUse()}, this);
+            list.push(tweenContainer);
+            var tweens = this.triggerEffect(equipData.effectTypeId, card, equipData.effectArg);
+            for(var tween of tweens)
+            {
+                list.push(tween);
+            }
+        }
+        return list;
+    }
+
+    cardTrigger(triggerCard: Card, effectTypeId = EffectType.TiggerCannonOne, shootScore: number = 1, delay: number = 0)
+    {
+        var selfIsNegative = triggerCard.isNegative()
+        var list = [];
+        var cards = this.findEnemy(selfIsNegative);
+        if(cards.length > 0)
+        {
+            SoundController.instance.playSound(SoundConsts.Cannon);
+            // var card = cards[Random.rangeBoth(0, cards.length - 1)];
+            var card = cards[0];
+            var tweenContainer = this.shootToCard(triggerCard.getCenterX(), triggerCard.getCenterY(), card, 200);
+            // tweenContainer.setFirstDelay(delay)
+            tweenContainer.setAnimationDuration(100);
+            list.push(tweenContainer);
+            var tweens = this.triggerEffect(effectTypeId, card, shootScore, selfIsNegative);
+            for(var tween of tweens)
+            {
+                list.push(tween);
+            }
+        }
+        return list;
+    }
+    
+
+    
+    // 执行闪电效果
+    triggerShootLightning (card:Card, shootScore: number = 1, selfIsNegative:boolean = false) 
+    {
+        var position = this.field.findPosition(card);
+        var list = [];
+
+        var tween = this.onShootCard(card, shootScore, selfIsNegative);
+        list.push(tween);
+
+        var tween = this.shootLightningInAllDirections(shootScore, position, Consts.LightningDuration, selfIsNegative);
+        list.push(tween);
+        this.clearLightning();
+        // 如果有受击的就播放闪电声音
+        list.length > 0 && SoundController.instance.playSound(SoundConsts.Lighting);
+        return list;
+    }
+
+    triggerShootBomb(card:Card, shootScore: number = 1, selfIsNegative:boolean = false)
+    {
+        var list = [];
+        SoundController.instance.playSound(SoundConsts.Bomb);
+        var position = this.field.findPosition(card);
+        this.addBombExplosionAnimation(card.view.x, card.view.y, 100);
+        var replaceCard = this.getCardToReplaceAfterSmash(this.field.get(position));
+        var tweenContainer = this.replaceCardByPosition(position, replaceCard, !0);
+        list.push(tweenContainer);
+
+
+        var life = shootScore;
+        var moveTypeList = [MoveType.Up, MoveType.Down, MoveType.Left, MoveType.Right];
+        for (var d = 0 ; d < moveTypeList.length; d++) 
+        {
+            var moveType = moveTypeList[d];
+            list.push( this.smashBombInDirection(moveType, position, life, selfIsNegative, false));
+
+            if (!GameStatus.isHeroAlive) 
+            {
+                return list
+            }
+        }
+        return list
     }
 
     

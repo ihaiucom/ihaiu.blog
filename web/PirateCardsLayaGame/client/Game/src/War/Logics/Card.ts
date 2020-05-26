@@ -19,7 +19,7 @@ export default class Card extends AbstractCard
         card.SetEmpty();
         return card;
     }
-    static GetNew(game, cardScoreType: CardScoreType, level: number, score: number) 
+    static GetNew(game, cardScoreType: CardScoreType, level: number, score: number, step: number = 0) 
     {
         
         var config: CardConfig = Game.config.card.getTypeLevelConfig(cardScoreType, level);
@@ -31,7 +31,7 @@ export default class Card extends AbstractCard
         card.game = game;
         card.type = cardScoreType;
         card.SetConfig(config);
-        card.setScore(score);
+        card.setScore(score, step);
         GameStatus.updateCardCounter(cardScoreType),
         GameStatus.updateMovesAfterSpecialCard(cardScoreType);
         return card;
@@ -46,6 +46,10 @@ export default class Card extends AbstractCard
     lifeAmount = 0;
     /** 能量--当前 */
     powerUpAmount = 0;
+
+    /** 步数 */
+    step = 0;
+    stepMax = 0;
 
     
 
@@ -64,6 +68,11 @@ export default class Card extends AbstractCard
     /** 重置 */
     reset()
     {
+        
+        if(this.stepMax > 0)
+        {
+            if(GameStatus.stepCardNum > 0) GameStatus.stepCardNum --;
+        }
         super.reset();
 
         // 生命--初始
@@ -72,6 +81,10 @@ export default class Card extends AbstractCard
         this.lifeAmount = 0;
         // 能量--当前
         this.powerUpAmount = 0;
+
+        // 步数
+        this.stepMax = 0;
+        this.step = 0;
     
     
     
@@ -96,21 +109,21 @@ export default class Card extends AbstractCard
 
 
     /** 倍数，积分 */
-    multiplyScore(mul) 
+    increaseScore(v, isMul: boolean) 
     {
         if(this.lifeAmount > 0)
         {
             var tween = this.view.tweenLife();
             tween.onComplete.addOnce(()=>{
-                this.increaseLife(mul);
+                this.increaseLife(v, isMul);
             }, this);
             return tween;
         }
         else if(this.powerUpAmount > 0 )
         {
-            var tween = this.view.tweenLife();
+            var tween = this.view.tweenPowerUp();
             tween.onComplete.addOnce(()=>{
-                this.increasePowerUp(mul);
+                this.increasePowerUp(v, isMul);
             }, this);
             return tween;
         }
@@ -121,9 +134,11 @@ export default class Card extends AbstractCard
 
     }
 
+    
+
 
     /** 设置分数 */
-    setScore(score: number) 
+    setScore(score: number, step: number = 0) 
     {
         switch (this.type) 
         {
@@ -131,6 +146,13 @@ export default class Card extends AbstractCard
         case CardScoreType.Enemy:
             this.initialLife = score;
             this.setLife(score);
+
+            this.stepMax = step;
+            this.setStep(step);
+            if(step > 0)
+            {
+                GameStatus.stepCardNum ++;
+            }
             break;
         case CardScoreType.Gold:
         case CardScoreType.Health:
@@ -139,6 +161,10 @@ export default class Card extends AbstractCard
         case CardScoreType.Cannon:
         case CardScoreType.Lightning:
         case CardScoreType.Multiplier:
+        case CardScoreType.MultiplierPositive:
+        case CardScoreType.MultiplierNegative:
+        case CardScoreType.AddPositive:
+        case CardScoreType.AddNegative:
         case CardScoreType.Skull:
         case CardScoreType.Barrel:
             this.setPowerUp(score);
@@ -195,22 +221,33 @@ export default class Card extends AbstractCard
         this.setHealthText()
     }
 
+    
+    /** 修改，步数 */
+    setStep(val?: number) 
+    {
+        if(val != undefined)
+        {
+            this.step = val;
+        }
+        this.setStepText()
+    }
+    
     /** 设置视图, 血量 */
     setHealthText() 
     {
-        if(this.isDisplayLife())
-        {
-            this.view.setHealthText();
-        }
+        this.view.setHealthText();
+    }
+
+    /** 设置视图, 步数 */
+    setStepText() 
+    {
+        this.view.setStepText();
     }
 
     /** 设置视图, 能量 */
     setPowerUpText() 
     {
-        if(!this.isDisplayLife())
-        {
-            this.view.setPowerUpText();
-        }
+        this.view.setPowerUpText();
     }
 
 
@@ -230,19 +267,17 @@ export default class Card extends AbstractCard
 
     
     /** 乘倍数， 血量  */
-    increaseLife(mul) 
+    increaseLife(v, isMul: boolean) 
     {
-        this.setLife(this.lifeAmount * mul);
-        this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * mul);
+        this.setLife(isMul ? this.lifeAmount * v : this.lifeAmount + v);
+        this.type === CardScoreType.Trap && this.setPowerUp(this.powerUpAmount * v);
     }
 
     /** 乘倍数， 能量  */
-    increasePowerUp(mul) 
+    increasePowerUp(v, isMul: boolean) 
     {
-        this.setPowerUp(this.powerUpAmount * mul)
+        this.setPowerUp(isMul ? this.powerUpAmount * v : this.powerUpAmount + v)
     }
-
-
 
     
     //=====================================
@@ -260,6 +295,8 @@ export default class Card extends AbstractCard
             case CardScoreType.Trap:
             case CardScoreType.Bomb:
             case CardScoreType.Poison:
+            case CardScoreType.MultiplierNegative:
+            case CardScoreType.AddNegative:
                 return true;
             case CardScoreType.Health:
             case CardScoreType.Gold:
@@ -326,19 +363,13 @@ export default class Card extends AbstractCard
         if(this.powerUpAmount > 0)
         {
             this.powerUpAmount = this.powerUpAmount + score;
-            if(!this.isDisplayLife())
-            {
-                setTimeout(this.increasePowerUpTween.bind(this), delay);
-            }
+            setTimeout(this.increasePowerUpTween.bind(this), delay);
         }
 
         if(this.lifeAmount > 0)
         {
             this.lifeAmount = this.lifeAmount + score;
-            if(this.isDisplayLife())
-            {
-                setTimeout(this.increaseLifeTween.bind(this), delay);
-            }
+            setTimeout(this.increaseLifeTween.bind(this), delay);
         }
         
     }
@@ -358,6 +389,7 @@ export default class Card extends AbstractCard
         this.type == CardScoreType.Poison && this.setPowerUp(this.powerUpAmount + 1),
         this.type == CardScoreType.Bomb && this.setPowerUp(this.powerUpAmount - 1),
         this.type == CardScoreType.Barrel && this.powerUpAmount > 2 && this.setPowerUp(this.powerUpAmount - 1)
+        
     }
     
     //=====================================

@@ -83,6 +83,8 @@ export default class GameStatus
     // 是否需要创建宝箱，下一个步骤
     static isNeedCreateChestOnNextStep: boolean = false;
 
+    static stepCardNum = 0;
+
 
     static init()
     {
@@ -98,6 +100,7 @@ export default class GameStatus
         this.movesAfterLastSpecialCard = 0;
         this.cardCounter = 0;
         this.isNeedCreateBoss = false;
+        this.stepCardNum = 0;
         
     }
 

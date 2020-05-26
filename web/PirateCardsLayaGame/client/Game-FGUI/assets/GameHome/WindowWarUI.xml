@@ -5,20 +5,26 @@
       <relation target="" sidePair="center-center,middle-middle"/>
       <Label icon="ui://moe42ygrsqzy0"/>
     </component>
-    <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="65,160" locked="true">
+    <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="130,0" locked="true">
       <relation target="" sidePair="center-center,top-top%"/>
     </component>
-    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="375,780" size="614,800" locked="true">
+    <component id="n18_p1wh" name="shareBtnBar" src="p1whbe" fileName="Btn/ShareBtnBar.xml" xy="0,-16">
+      <relation target="" sidePair="center-center,top-top"/>
+    </component>
+    <component id="n19_n2s1" name="playerLevelBar" src="n2s1cm" fileName="PlayerLevelBar.xml" xy="0,947" size="750,203">
+      <relation target="" sidePair="center-center,bottom-bottom"/>
+    </component>
+    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="375,542" size="614,800" locked="true">
       <relation target="" sidePair="center-center,top-top%"/>
     </component>
-    <component id="n16_jak7" name="chectPopupPanel" src="jak7ao" fileName="PanelPopupChest.xml" xy="0,0" locked="true" hideByEditor="true" visible="false">
+    <component id="n16_jak7" name="chectPopupPanel" src="jak7ao" fileName="PanelPopupChest.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
     <component id="n17_jak7" name="pausePanel" src="sqzy9a" fileName="PanelPause.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
-    <component id="n18_p1wh" name="shareBtnBar" src="p1whbe" fileName="Btn/ShareBtnBar.xml" xy="0,0">
-      <relation target="" sidePair="left-left,top-top"/>
+    <component id="n26_n2s1" name="uplevelPanel" src="n2s1cq" fileName="PanelUplevel.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
+      <relation target="" sidePair="width-width,height-height"/>
     </component>
   </displayList>
 </component>

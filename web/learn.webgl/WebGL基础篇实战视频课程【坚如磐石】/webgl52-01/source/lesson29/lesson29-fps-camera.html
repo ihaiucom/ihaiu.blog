@@ -1,0 +1,569 @@
+<html>
+<head>
+    <title>lesson29-fps-camera</title>
+    <meta http-equiv="content-type" content="text/html; charset=gb2312">
+    
+    <script type ="text/javascript" src="glMatrix-0.9.6.min.js"></script>
+    <script id="shader-vs" type="x-shader/x-fragment">
+        
+        attribute   vec3    v3Position;
+        attribute   vec4    inColor;
+        attribute   vec2    inUV;
+        uniform     mat4    proj;
+        varying     vec4    outColor;
+        varying     vec2    outUV;
+
+        void main()
+        {
+            gl_Position =   proj * vec4(v3Position, 1.0);
+            outColor    =   inColor;
+            outUV       =   inUV;
+        }
+    </script>
+
+    <script id="shader-fs" type="x-shader/x-fragment">
+        precision   mediump float;
+        varying     vec4        outColor;
+        varying     vec2        outUV;
+        uniform     sampler2D   texture;
+        void main(void)
+        {
+            gl_FragColor = texture2D(texture,outUV);
+        }
+    </script>
+
+    <script>
+
+        var webgl               =   null;
+        var vertexShaderObject  =   null;
+        var fragmentShaderObject=   null;
+        var programObject       =   null;
+        var triangleBuffer      =   null;
+
+        var v3PositionIndex     =   0;
+        var attrColor           =   0;
+        var attrUV              =   0;
+
+        var uniformProj         =   0;
+        var uniformTexture      =   0;
+        var textureHandle;
+        //! 绘制地面适用的纹理句柄
+        var textureGround;
+
+        var textureDynamic;
+        var fbo;
+
+
+        var projectMat  =   mat4.create();
+        var viewMat     =   mat4.create();
+        
+        var cameraEye       =   new Float32Array(3);
+        var cameraCenter    =   new Float32Array(3);
+        var cameraUp        =   new Float32Array(3);
+        var cameraLookAt    =   new Float32Array(3);
+
+        var texWidth    =   0;
+        var texHeigh    =   0;
+
+
+        function getShaderSource(scriptID) {
+            var shaderScript = document.getElementById(scriptID);
+            if (shaderScript == null) return "";
+
+            var sourceCode = "";
+            var child = shaderScript.firstChild;
+            while (child) {
+                if (child.nodeType == child.TEXT_NODE) sourceCode += child.textContent;
+                child = child.nextSibling;
+            }
+
+            return sourceCode;
+        }
+
+        /**
+        *   初始化,完成资源的加载.
+        */
+        function init() {
+
+            var canvas = document.getElementById('myCanvas');
+            webgl = canvas.getContext("webgl");
+
+            webgl.viewport(0, 0, canvas.clientWidth, canvas.clientHeight);
+
+            texWidth = canvas.clientWidth;
+            texHeigh = canvas.clientHeight;
+ 
+            cameraEye[0] = 10;
+            cameraEye[1] = 0;
+            cameraEye[2] = 10;
+
+            cameraCenter[0] = 0;
+            cameraCenter[1] = 0;
+            cameraCenter[2] = 0;
+
+            cameraUp[0] = 0;
+            cameraUp[1] = 1;
+            cameraUp[2] = 0;
+
+            
+            vec3.subtract(cameraCenter, cameraEye, cameraLookAt);
+            vec3.normalize(cameraLookAt, cameraLookAt);
+
+            mat4.perspective(45, canvas.clientWidth / canvas.clientHeight, 0.1, 10000.0, projectMat);
+
+            mat4.lookAt(cameraEye, cameraCenter, cameraUp, viewMat);
+
+            vertexShaderObject = webgl.createShader(webgl.VERTEX_SHADER);
+            fragmentShaderObject = webgl.createShader(webgl.FRAGMENT_SHADER);
+
+            webgl.shaderSource(vertexShaderObject, getShaderSource("shader-vs"));
+            webgl.shaderSource(fragmentShaderObject, getShaderSource("shader-fs"));
+
+            webgl.compileShader(vertexShaderObject);
+            webgl.compileShader(fragmentShaderObject);
+
+            if (!webgl.getShaderParameter(vertexShaderObject, webgl.COMPILE_STATUS)) {
+                var err = webgl.getShaderInfoLog(vertexShaderObject);
+                alert(err);
+                return;
+            }
+            if (!webgl.getShaderParameter(fragmentShaderObject, webgl.COMPILE_STATUS)) {
+                var err = webgl.getShaderInfoLog(fragmentShaderObject);
+                alert(err);
+                return;
+            }
+
+            programObject = webgl.createProgram();
+
+            webgl.attachShader(programObject, vertexShaderObject);
+            webgl.attachShader(programObject, fragmentShaderObject);
+
+            webgl.linkProgram(programObject);
+            if (!webgl.getProgramParameter(programObject, webgl.LINK_STATUS)) {
+                alert("error:programObject");
+                return;
+            }
+
+            webgl.useProgram(programObject);
+
+            uniformProj = webgl.getUniformLocation(programObject, "proj");
+            uniformTexture = webgl.getUniformLocation(programObject, "texture");
+
+            v3PositionIndex = webgl.getAttribLocation(programObject, "v3Position");
+
+            attrColor = webgl.getAttribLocation(programObject, "inColor");
+            attrUV = webgl.getAttribLocation(programObject, "inUV");
+
+
+            //! 绘制地面的数据
+            var   gSize   =   100;
+            var   gPos    =   -10;
+            var   rept    =   20;
+
+            var boxVertex =
+            [       //x     y     z     u    v      r    g    b    a
+                    -1.0, -1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0,
+                     1.0, -1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0,
+                     1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+
+                    -1.0, -1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1.0,
+                     1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+                    -1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 1.0,
+
+                    -1.0, -1.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+                    -1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+                     1.0, 1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+
+                    -1.0, -1.0, -1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+                     1.0, 1.0, -1.0, 0.0, 1.0, 1.0, 0.0, 0.0, 1.0,
+                     1.0, -1.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,
+
+                    -1.0, 1.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+                    -1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0,
+                     1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0,
+
+                    -1.0, 1.0, -1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+                     1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0,
+                     1.0, 1.0, -1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0,
+
+                    -1.0, -1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0,
+                     1.0, -1.0, -1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0,
+                     1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0,
+
+                    -1.0, -1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0,
+                     1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0,
+                    -1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 1.0,
+
+                     1.0, -1.0, -1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+                     1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0,
+                     1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0,
+
+                     1.0, -1.0, -1.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+                     1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0,
+                     1.0, -1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0,
+
+                    -1.0, -1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+                    -1.0, -1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+                    -1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0,
+
+                    -1.0, -1.0, -1.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0,
+                    -1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 1.0, 1.0, 1.0,
+                    -1.0, 1.0, -1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0,
+
+
+                    -gSize, gPos,   -gSize, 0.0,    0.0,    1.0,    1.0,    1.0,    1.0,
+                    gSize,  gPos,   -gSize, rept,   0.0,    1.0,    1.0,    1.0,    1.0,
+                    gSize,  gPos,   gSize,  rept,   rept,   1.0,    1.0,    1.0,    1.0,
+
+                    -gSize, gPos,   -gSize, 0.0,    0.0,    1.0,    1.0,    1.0,    1.0,
+                    gSize,  gPos,   gSize,  rept,   rept,   1.0,    1.0,    1.0,    1.0,
+                    -gSize, gPos, gSize,    0.0,    rept,   1.0,    1.0,    1.0,    1.0,
+            ];
+            triangleBuffer = webgl.createBuffer();
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, triangleBuffer);
+            webgl.bufferData(webgl.ARRAY_BUFFER, new Float32Array(boxVertex), webgl.STATIC_DRAW);
+
+            textureHandle   =   initTexture("test.gif");
+            textureGround   =   initTexture("1.jpg");
+            fbo = createFOB(canvas.clientWidth, canvas.clientHeight);
+
+            return canvas;
+        }
+
+        function createFOB(width, height) {
+
+            var obj = webgl.createFramebuffer();
+            webgl.bindFramebuffer(webgl.FRAMEBUFFER, obj);
+
+            var depthObj = webgl.createRenderbuffer();
+            webgl.bindRenderbuffer(webgl.RENDERBUFFER, depthObj);
+            webgl.renderbufferStorage(webgl.RENDERBUFFER, webgl.DEPTH_COMPONENT16, width, height);
+
+
+            webgl.framebufferRenderbuffer(webgl.FRAMEBUFFER, webgl.DEPTH_ATTACHMENT, webgl.RENDERBUFFER, depthObj);
+
+            textureDynamic = createDynamicTexture(width, height);
+
+            webgl.framebufferTexture2D(webgl.FRAMEBUFFER, webgl.COLOR_ATTACHMENT0, webgl.TEXTURE_2D, textureDynamic, 0);
+
+            webgl.bindRenderbuffer(webgl.RENDERBUFFER, null);
+            webgl.bindFramebuffer(webgl.FRAMEBUFFER, null);
+            webgl.bindTexture(webgl.TEXTURE_2D, null);
+            return obj;
+
+
+        }
+        function createDynamicTexture(width, height) {
+
+            var texture = webgl.createTexture();
+            webgl.bindTexture(webgl.TEXTURE_2D, texture);
+            webgl.texImage2D(webgl.TEXTURE_2D, 0, webgl.RGBA, width, height, 0, webgl.RGBA, webgl.UNSIGNED_BYTE, null);
+
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MAG_FILTER, webgl.LINEAR);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, webgl.LINEAR);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_S, webgl.CLAMP_TO_EDGE);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_T, webgl.CLAMP_TO_EDGE);
+
+            return texture;
+        }
+        function handleLoadedTexture(texture) {
+            webgl.bindTexture(webgl.TEXTURE_2D, texture);
+            webgl.texImage2D(webgl.TEXTURE_2D, 0, webgl.RGBA, webgl.RGBA, webgl.UNSIGNED_BYTE, texture.image);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MAG_FILTER, webgl.LINEAR);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_MIN_FILTER, webgl.LINEAR);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_S, webgl.REPEAT);
+            webgl.texParameteri(webgl.TEXTURE_2D, webgl.TEXTURE_WRAP_T, webgl.REPEAT);
+
+            webgl.bindTexture(webgl.TEXTURE_2D, null);
+        }
+        function initTexture(imageFile) {
+            var texture;
+            //! 创建一个纹理 webgl
+            texture = webgl.createTexture();
+            //! 创建一个图片
+            texture.image = new Image();
+            //! 指定图片的路径
+            texture.image.src = imageFile;
+            texture.image.onload = function () {
+                handleLoadedTexture(texture)
+            }
+            return texture;
+
+        }
+
+        var varRotFBOX  =   0;
+        var varRotFBOY  =   0;
+        var mouseDown = false;
+        var lastMouseX  =   0;
+        var lastMouseY  =   0; 
+
+        function handleMouseDown(event) {
+            if (event.button == 0)
+            {
+                mouseDown = true;
+            }
+        }
+
+
+        function handleMouseUp(event) {
+            mouseDown       = false;
+        }
+
+        function handleMouseMove(event) {
+            
+            if (mouseDown)
+            {
+                var offsetX = event.clientX - lastMouseX;
+                var offsetY = event.clientY - lastMouseY;
+
+                varRotFBOX = offsetX;
+                varRotFBOY = offsetY;
+            }
+        }
+        function handleKeyDown(event) {
+
+            if (String.fromCharCode(event.keyCode) == 'W') {
+                
+                cameraEye[0] += cameraLookAt[0] * 1;
+                cameraEye[1] += 0;
+                cameraEye[2] += cameraLookAt[2] * 1;
+
+                cameraCenter[0] = cameraEye[0] + cameraLookAt[0] * 1;
+                cameraCenter[1] = cameraEye[1] + 0;
+                cameraCenter[2] = cameraEye[2] + cameraLookAt[2] * 1;
+
+                mat4.lookAt(cameraEye, cameraCenter, cameraUp, viewMat);
+
+            }
+            if (String.fromCharCode(event.keyCode) == 'S') {
+                cameraEye[0] -= cameraLookAt[0] * 1;
+                cameraEye[1] -= 0;
+                cameraEye[2] -= cameraLookAt[2] * 1;
+
+                cameraCenter[0] = cameraEye[0] + cameraLookAt[0] * 1;
+                cameraCenter[1] = cameraEye[1] + 0;
+                cameraCenter[2] = cameraEye[2] + cameraLookAt[2] * 1;
+
+                mat4.lookAt(cameraEye, cameraCenter, cameraUp, viewMat);
+            }
+            if (String.fromCharCode(event.keyCode) == 'A') {
+                var right = vec3.create();
+                vec3.cross(cameraUp, cameraLookAt, right);
+                vec3.normalize(right, right);
+
+                right[0] *= 1;
+                right[1] *= 1;
+                right[2] *= 1;
+
+                cameraEye[0] += right[0];
+                cameraEye[1] += right[1];
+                cameraEye[2] += right[2];
+
+                cameraCenter[0] += right[0];
+                cameraCenter[1] += right[1];
+                cameraCenter[2] += right[2];
+
+                mat4.lookAt(cameraEye, cameraCenter, cameraUp, viewMat);
+
+            }
+            if (String.fromCharCode(event.keyCode) == 'D') {
+                var right = vec3.create();
+                vec3.cross(cameraUp, cameraLookAt, right);
+                vec3.normalize(right, right);
+                right[0] *= -1;
+                right[1] *= -1;
+                right[2] *= -1;
+
+                cameraEye[0] += right[0];
+                cameraEye[1] += right[1];
+                cameraEye[2] += right[2];
+
+                cameraCenter[0] += right[0];
+                cameraCenter[1] += right[1];
+                cameraCenter[2] += right[2];
+
+                mat4.lookAt(cameraEye, cameraCenter, cameraUp, viewMat);
+            }
+        }
+
+        function handleKeyUp(event) {
+        }
+        function webGLStart() {
+
+            //! 初始化
+            var canvas = init();
+//             canvas.onmousedown  =   handleMouseDown;
+//             canvas.onmouseup    =   handleMouseUp;
+//             canvas.onmousemove  =   handleMouseMove;
+            document.onkeydown    =   handleKeyDown;
+            document.onkeyup = handleKeyUp;
+            //! 进入游戏循环
+            tick();
+        }
+
+        function degToRad(degrees) {
+            return degrees * Math.PI / 180;
+        }
+
+        function renderToFBO() {
+            //! 这里使用 fbo
+            webgl.bindFramebuffer(webgl.FRAMEBUFFER, fbo);
+            webgl.viewport(0, 0, texWidth, texHeigh);
+
+
+            //! 设置重绘背景的颜色
+            webgl.clearColor(1.0,1.0,1.0, 1.0);
+            //! 执行绘制，即将背景清空成制定的颜色(clearColor)
+            webgl.clear(webgl.COLOR_BUFFER_BIT | webgl.DEPTH_BUFFER_BIT);
+            webgl.enable(webgl.DEPTH_TEST);
+            //! 指定绘制所使用的顶点数据 从 该缓冲区中获取
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, triangleBuffer);
+
+            var mvp         =   mat4.create();
+            var matTrans    =   mat4.create();
+            var matModel    =   mat4.create();
+            var matRotX     =   mat4.create();
+            var matROtY     =   mat4.create();
+            var matRot      =   mat4.create();
+            
+            mat4.identity(matRot);
+            mat4.identity(matRotX);
+            mat4.identity(matROtY);
+            mat4.identity(matTrans);
+            mat4.identity(matModel);
+            mat4.identity(mvp);
+
+            webgl.activeTexture(webgl.TEXTURE0);
+            webgl.bindTexture(webgl.TEXTURE_2D, textureHandle);
+            webgl.uniform1i(uniformTexture, 0);
+
+            mat4.translate(matTrans, [0, 0.0, -4]);
+
+            //varRot += 1;
+
+            mat4.rotate(matROtY, degToRad(varRotFBOY), [0.0, 1.0, 0.0]);
+
+            mat4.rotate(matRotX, degToRad(varRotFBOX), [1.0, 0.0, 0.0]);
+
+            mat4.multiply(matROtY, matRotX, matRot);
+
+            mat4.multiply(matTrans, matRot, matModel);
+
+            mat4.multiply(projectMat, matModel, mvp);
+
+            
+            webgl.uniformMatrix4fv(uniformProj, false, mvp);
+
+            webgl.enableVertexAttribArray(v3PositionIndex);
+            webgl.enableVertexAttribArray(attrColor);
+            webgl.enableVertexAttribArray(attrUV);
+
+            webgl.vertexAttribPointer(v3PositionIndex, 3, webgl.FLOAT, false, 4 * 9, 0);
+            webgl.vertexAttribPointer(attrUV, 2, webgl.FLOAT, false, 4 * 9, 4 * 3);
+            webgl.vertexAttribPointer(attrColor, 4, webgl.FLOAT, false, 4 * 9, 4 * 5);
+
+            webgl.drawArrays(webgl.TRIANGLES, 0, 36);
+        }
+
+        function renderScene() {
+
+            renderToFBO();
+
+            
+
+
+            varRotFBOX += 1;
+            //! 这里使用 fbo
+            webgl.bindFramebuffer(webgl.FRAMEBUFFER, null);
+            webgl.viewport(0, 0, texWidth, texHeigh);
+
+            //! 设置重绘背景的颜色
+            webgl.clearColor(0.0, 0.0, 0.0, 1.0);
+            //! 执行绘制，即将背景清空成制定的颜色(clearColor)
+            webgl.clear(webgl.COLOR_BUFFER_BIT | webgl.DEPTH_BUFFER_BIT);
+            webgl.enable(webgl.DEPTH_TEST);
+            //! 指定绘制所使用的顶点数据 从 该缓冲区中获取
+            webgl.bindBuffer(webgl.ARRAY_BUFFER, triangleBuffer);
+            
+            var mvp = mat4.create();
+            var matTrans    =   mat4.create();
+            var matModel    =   mat4.create();
+            var matRotX     =   mat4.create();
+            var matROtY     =   mat4.create();
+            var matRot      =   mat4.create();
+            var matTemp     =   mat4.create();
+
+            mat4.identity(matRot);
+            mat4.identity(matRotX);
+            mat4.identity(matROtY);
+            mat4.identity(matTrans);
+            mat4.identity(matModel);
+            mat4.identity(mvp);
+            mat4.identity(matTemp);
+
+            webgl.activeTexture(webgl.TEXTURE0);
+            webgl.bindTexture(webgl.TEXTURE_2D, textureDynamic);
+            webgl.uniform1i(uniformTexture, 0);
+
+            mat4.translate(matTrans, [0, 0.0, 0]);
+
+            //varRot += 1;
+
+            mat4.rotate(matROtY, degToRad(varRotFBOY), [0.0, 1.0, 0.0]);
+
+            mat4.rotate(matRotX, degToRad(varRotFBOX), [1.0, 0.0, 0.0]);
+
+            mat4.multiply(matROtY, matRotX, matRot);
+
+            mat4.multiply(matTrans, matRot, matModel);
+
+            mat4.multiply(projectMat, viewMat, matTemp);
+
+            mat4.multiply(matTemp, matModel, mvp);
+
+
+
+            webgl.uniformMatrix4fv(uniformProj, false, mvp);
+
+            webgl.enableVertexAttribArray(v3PositionIndex);
+            webgl.enableVertexAttribArray(attrColor);
+            webgl.enableVertexAttribArray(attrUV);
+
+            webgl.vertexAttribPointer(v3PositionIndex, 3, webgl.FLOAT, false, 4 * 9, 0);
+            webgl.vertexAttribPointer(attrUV, 2, webgl.FLOAT, false, 4 * 9, 4 * 3);
+            webgl.vertexAttribPointer(attrColor, 4, webgl.FLOAT, false, 4 * 9, 4 * 5);
+
+            webgl.drawArrays(webgl.TRIANGLES, 0, 36);
+
+            mat4.multiply(projectMat, viewMat, mvp);
+
+            webgl.uniformMatrix4fv(uniformProj, false, mvp);
+            webgl.bindTexture(webgl.TEXTURE_2D, textureGround);
+            webgl.drawArrays(webgl.TRIANGLES, 36, 6);
+        }
+
+
+        function tick() {
+            requestAnimFrame(tick);
+            renderScene();
+
+        }
+
+
+        window.requestAnimFrame = (function () {
+            return window.requestAnimationFrame ||
+                   window.webkitRequestAnimationFrame ||
+                   window.mozRequestAnimationFrame ||
+                   window.oRequestAnimationFrame ||
+                   window.msRequestAnimationFrame ||
+                   function (callback, element) {
+                       window.setTimeout(callback, 1000 / 60);
+                   };
+        })();
+
+    </script>
+</head>
+<body onload='webGLStart()'>
+    <canvas id="myCanvas" style="border: 1px solid red;" width='600' height='600'></canvas>
+</body>
+</html>

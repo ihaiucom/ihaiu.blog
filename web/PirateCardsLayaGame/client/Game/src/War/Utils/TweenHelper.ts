@@ -67,6 +67,40 @@ export default class TweenHelper
             100 + 250);
     }
 
+    
+    static spriteShow2(view: fgui.GComponent)
+    {
+        
+        view.visible = true;
+        view.alpha = 0;
+        view.scaleX = 0.5;
+        view.scaleY = 0.5;
+        Laya.Tween.clearAll(view);
+
+        Laya.Tween.to(view, 
+            {
+                scaleX: 1.5,
+                scaleY: 1.5,
+                alpha: 1
+            }, 
+            250, 
+            null,
+            null,
+            0);
+            
+
+        Laya.Tween.to(view, 
+            {
+                scaleX: 1,
+                scaleY: 1,
+                alpha:1
+            }, 
+            100, 
+            null,
+            null,
+            250);
+    }
+
     /** 翻转卡牌， 翻转前半 */
     static turnAnimationStart(tweenContainer: TweenContainer, view: fgui.GComponent) 
     {

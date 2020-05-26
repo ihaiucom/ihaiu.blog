@@ -37,6 +37,11 @@ export class CardScoreTypeConfigLang extends excelconfigSources.CardScoreType
 
 }
 
+export class EffectTypeConfigLang extends excelconfigSources.EffectType
+{
+
+}
+
 export class ItemConfigLang extends excelconfigSources.Item
 {
 
@@ -53,31 +58,116 @@ export class ItemConfigLang extends excelconfigSources.Item
 		return this.zhCnName
 	}
 
-	get en():string
+	get des():string
 	{
 		if(!Game.lang.isUseLang)
-			return this.zhCnEn
+			return this.zhCnDes
 
-		let value = <string> Game.lang.getValue('Item', this.id, 'zhCnEn');
+		let value = <string> Game.lang.getValue('Item', this.id, 'zhCnDes');
 		if (!isNullOrEmpty(value))
 		{
 			return value;
 		}
-		return this.zhCnEn
+		return this.zhCnDes
 	}
 
-	get itemDes():string
+}
+
+export class ItemConsumeConfigLang extends excelconfigSources.ItemConsume
+{
+
+	get name():string
 	{
 		if(!Game.lang.isUseLang)
-			return this.zhCnItemdes
+			return this.zhCnName
 
-		let value = <string> Game.lang.getValue('Item', this.id, 'zhCnItemdes');
+		let value = <string> Game.lang.getValue('ItemConsume', this.id, 'zhCnName');
 		if (!isNullOrEmpty(value))
 		{
 			return value;
 		}
-		return this.zhCnItemdes
+		return this.zhCnName
 	}
+
+	get des():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnDes
+
+		let value = <string> Game.lang.getValue('ItemConsume', this.id, 'zhCnDes');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnDes
+	}
+
+}
+
+export class ItemDecorateConfigLang extends excelconfigSources.ItemDecorate
+{
+
+	get name():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnName
+
+		let value = <string> Game.lang.getValue('ItemDecorate', this.id, 'zhCnName');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnName
+	}
+
+	get des():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnDes
+
+		let value = <string> Game.lang.getValue('ItemDecorate', this.id, 'zhCnDes');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnDes
+	}
+
+}
+
+export class ItemWeaponConfigLang extends excelconfigSources.ItemWeapon
+{
+
+	get name():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnName
+
+		let value = <string> Game.lang.getValue('ItemWeapon', this.id, 'zhCnName');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnName
+	}
+
+	get des():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnDes
+
+		let value = <string> Game.lang.getValue('ItemWeapon', this.id, 'zhCnDes');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnDes
+	}
+
+}
+
+export class LevelConfigLang extends excelconfigSources.Level
+{
 
 }
 
@@ -118,6 +208,42 @@ export class MsgConfigLang extends excelconfigSources.Msg
 			return value;
 		}
 		return this.zhCnNotice
+	}
+
+}
+
+export class PropertyConfigLang extends excelconfigSources.Property
+{
+
+	get name():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnName
+
+		let value = <string> Game.lang.getValue('Property', this.id, 'zhCnName');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnName
+	}
+
+}
+
+export class TriggerTypeConfigLang extends excelconfigSources.TriggerType
+{
+
+	get name():string
+	{
+		if(!Game.lang.isUseLang)
+			return this.zhCnName
+
+		let value = <string> Game.lang.getValue('TriggerType', this.id, 'zhCnName');
+		if (!isNullOrEmpty(value))
+		{
+			return value;
+		}
+		return this.zhCnName
 	}
 
 }

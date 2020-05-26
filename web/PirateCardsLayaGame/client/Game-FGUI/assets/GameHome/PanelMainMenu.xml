@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="750,1334" restrictSize="0,0,800,0">
-  <controller name="state" exported="true" pages="0,default,1,login" selected="1"/>
+  <controller name="state" exported="true" pages="0,default,1,login" selected="0"/>
   <displayList>
-    <image id="n10_gvpa" name="n10" src="gvpab4" fileName="ui/道.png" xy="484,101" alpha="0.31">
-      <relation target="" sidePair="right-right,top-top"/>
-    </image>
     <component id="n6_sqzy" name="menuLogo" src="sqzy7r" fileName="MenuLogo.xml" xy="-104,0">
       <gearDisplay controller="state" pages=""/>
       <relation target="" sidePair="center-center,top-top%"/>

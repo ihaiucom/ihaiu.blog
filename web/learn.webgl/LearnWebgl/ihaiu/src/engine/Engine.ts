@@ -4,7 +4,6 @@ import { URL } from "./net/URL";
 import { Utils } from "./utils/Utils";
 import { Loader } from "./net/Loader";
 import { Timer } from "./utils/Timer";
-import { LoaderManager } from "./net/LoaderManager";
 
 export class Engine
 {
@@ -38,7 +37,7 @@ export class Engine
 	/**游戏主时针，同时也是管理场景，动画，缓动等效果时钟，通过控制本时针缩放，达到快进慢播效果*/
 	static timer: Timer = null;
 	/** 加载管理器的引用。*/
-	static loader: LoaderManager = null;
+	// static loader: LoaderManager = null;
 
 
 	/**@internal */
@@ -76,7 +75,7 @@ export class Engine
 		Engine.lateTimer = new Timer(false);
 		Engine.timer = new Timer(false);
 
-		Engine.loader = new LoaderManager();
+		// Engine.loader = new LoaderManager();
         
     }
 

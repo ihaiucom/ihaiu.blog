@@ -195,10 +195,10 @@ export default class MenuCtl
         switch (this.menuId)
         {
             case MenuId.Login:
-                Game.sound.playMusic(SoundKey.MM_BGM_01);
+                // Game.sound.playMusic(SoundKey.MM_BGM_01);
                 break;
             case MenuId.Home:
-                Game.sound.playMusic(SoundKey.MM_BGM_01);
+                // Game.sound.playMusic(SoundKey.MM_BGM_01);
                 break;
         }
 
@@ -216,7 +216,7 @@ export default class MenuCtl
 
         let homeIsOpen = this.__menuManager.isOpened(MenuId.Home);
         // 设置返回MenuID
-        let backMenuId = this.__menuManager.getLastModuleOpenMenuId([this.backExcludeMenuIdMenuId, this.menuId, MenuId.BattleResultWindow]);
+        let backMenuId = this.__menuManager.getLastModuleOpenMenuId([this.backExcludeMenuIdMenuId, this.menuId]);
         let hasCloseOtherMenu: boolean = false;
 
         let list: MenuCtl[] = Game.menu.dict.getValues();

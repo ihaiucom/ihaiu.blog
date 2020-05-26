@@ -4,7 +4,6 @@ window.wxMiniGame = function (exports, Laya) {
   class MiniFileMgr {
 
     static onSetVersion(preBasePath, nowBasePath) {
-      return;
       console.log("替换前", MiniFileMgr.fakeObj)
       var manifest = Laya.ResourceVersion.manifest;
       if (manifest) {
@@ -686,13 +685,13 @@ window.wxMiniGame = function (exports, Laya) {
       }
     }
     onError(error) {
-      // try {
-      //   console.log("-----1---------------minisound-----id:" + MiniSound._id);
-      //   console.log(error);
-      // } catch (error) {
-      //   console.log("-----2---------------minisound-----id:" + MiniSound._id);
-      //   console.log(error);
-      // }
+      try {
+        console.log("-----1---------------minisound-----id:" + MiniSound._id);
+        console.log(error);
+      } catch (error) {
+        console.log("-----2---------------minisound-----id:" + MiniSound._id);
+        console.log(error);
+      }
       this.event(Laya.Event.ERROR);
       this._sound.offError(null);
     }
@@ -863,7 +862,7 @@ window.wxMiniGame = function (exports, Laya) {
       super();
     }
     _loadResourceFilter(type, url, relativePath) {
-      console.log(`>>>_loadResourceFilter 1, type=${type}, url=${url}, relativePath=${relativePath}`);
+      // console.log(`>>>_loadResourceFilter 1, type=${type}, url=${url}`);
       var url1 = url;
       var thisLoader = this;
       if (url.indexOf(MiniAdpter.window.wx.env.USER_DATA_PATH) == -1 && (url.indexOf("http://") != -1 || url.indexOf("https://") != -1)) {
@@ -1461,7 +1460,7 @@ window.wxMiniGame = function (exports, Laya) {
     }
   }
   MiniAdpter._inited = false;
-  MiniAdpter.autoCacheFile = false;
+  MiniAdpter.autoCacheFile = true;
   MiniAdpter.minClearSize = (5 * 1024 * 1024);
   MiniAdpter.nativefiles = ["layaNativeDir", "wxlocal"];
   MiniAdpter.subNativeFiles = [];

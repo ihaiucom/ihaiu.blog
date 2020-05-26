@@ -11,6 +11,8 @@ import Consts from "../Enums/Consts";
 import AbstractCard from "./AbstractCard";
 import ReportMonitor from "../../Libs/ReportMonitor";
 import { ItemToolType } from "../../GameModule/DataEnums/ItemToolType";
+import { Player } from "../Datas/Player";
+import { EffectType } from "../Enums/EffectType";
 
 export default class Hero extends AbstractCard
 {
@@ -33,6 +35,7 @@ export default class Hero extends AbstractCard
 
     // CardScoreType.Multiplier
     needShootMultiplier: boolean = false;
+    multiplierType: CardScoreType = CardScoreType.MultiplierPositive;
     multiplierScore: number = 0;
 
 
@@ -69,6 +72,7 @@ export default class Hero extends AbstractCard
     
     fight(card: Card) 
     {
+        Player.current.onEatCard(card)
         var fightResult = new FightResult(true, false, true);
         switch (card.type) 
         {
@@ -76,9 +80,21 @@ export default class Hero extends AbstractCard
             if(card.getLife() > 0 &&  GameStatus.currentHero != HeroType.Gun)
             {
                 SoundController.instance.playSound(SoundConsts.Trap);
-                if(this.currentLife > card.getScore())
+                var score = card.getScore();
+                var isInvincible = Player.current.invincible();
+                if(isInvincible)
                 {
-                    this.currentLife -= card.getScore();
+                    score = 0;
+                }
+                else
+                {
+                    score -= Player.current.damageExtra();
+                    score = Math.max(0, score);
+                }
+
+                if(this.currentLife > score)
+                {
+                    this.currentLife -= score;
                     GameStatus.addGold(card.getScore());
                     fightResult.isHeroAlive = true;
                 }
@@ -126,7 +142,11 @@ export default class Hero extends AbstractCard
             {
                 SoundController.instance.playSound(SoundConsts.CoinsBag);
             }
-            GameStatus.addGold(card.getScore());
+            var score = card.getScore();
+            var mul = Player.current.goldMultiplier();
+            score *= mul;
+
+            GameStatus.addGold(score);
             break;
         case CardScoreType.Health:
             SoundController.instance.playSound(ArrayUtils.getRandomItem([SoundConsts.Health1, SoundConsts.Health2]));
@@ -168,7 +188,12 @@ export default class Hero extends AbstractCard
             this.needSmashLightning(card.getScore());
             break;
         case CardScoreType.Multiplier:
+        case CardScoreType.MultiplierPositive:
+        case CardScoreType.MultiplierNegative:
+        case CardScoreType.AddPositive:
+        case CardScoreType.AddNegative:
             this.needShootMultiplier = true,
+            this.multiplierType = card.type,
             this.multiplierScore = card.getScore();
             break;
         case CardScoreType.Skull:
@@ -194,30 +219,43 @@ export default class Hero extends AbstractCard
     /** 攻击怪物或者Boss */
     fightWithEnemy(card) 
     {
-        // 死亡
-        if (card.getScore() >= this.armor + this.currentLife) return false;
+        var score = card.getScore();
+        
+        var isInvincible = Player.current.invincible();
+        if(isInvincible)
+        {
+            score = 0;
+        }
+        else
+        {
+            score -= Player.current.damageExtra();
+            score = Math.max(0, score);
+        }
 
-        if (card.getScore() <= this.armor) 
+        // 死亡
+        if (score >= this.armor + this.currentLife) return false;
+
+        if (score <= this.armor) 
         {
             // 如果是基础英雄, 对方分数小于自己的护甲，就只扣1点护甲
-            if(card.getScore() < this.armor && GameStatus.currentHero == HeroType.Base)
+            if(score < this.armor && GameStatus.currentHero == HeroType.Base)
             {
                 this.armor -= 1
             }
             else
             {
-                this.armor -= card.getScore();
+                this.armor -= score;
             }
         }
         else if (this.armor > 0) 
         {
-            var i = card.getScore() - this.armor;
+            var i = score - this.armor;
             this.armor = 0;
             this.currentLife -= i;
         } 
         else
         {
-            this.currentLife -= card.getScore();
+            this.currentLife -= score;
         }
 
         GameStatus.addGold(card.getScore());
@@ -375,6 +413,49 @@ export default class Hero extends AbstractCard
             this.setShopItemsStatus();
         }, 200);
         ReportMonitor.OnStageRuningTools(ItemToolType.Heart);
+    }
+
+
+    //=====================================
+    // Effect
+    //-------------------------------------
+    useEffect(effectType: EffectType, effectArgs: number[])
+    {
+        var val = effectArgs.length > 1 ? Random.rangeBoth(effectArgs[0], effectArgs[1]) : effectArgs[0];
+        switch(effectType)
+        {
+            case EffectType.AddArmor:
+                SoundController.instance.playSound(SoundConsts.ShieldWood);
+                this.armor += val;
+                this.setArmor();
+                break;
+            case EffectType.AddHPMax:
+                this.currentLife += val - 1;
+                this.totalLife += val - 1;
+                this.currentLife = Math.min(this.totalLife, this.currentLife);
+                var tween = this.increaseLifeByOneTween();
+                tween.restart()
+                break
+            case EffectType.AddHP:
+                this.addHP(val);
+                break
+            case EffectType.AddHPPer:
+                val = val / 100;
+                val = Math.ceil(val * this.totalLife);
+                this.addHP(val);
+                break
+        }
+    }
+
+    addHP(val: number)
+    {
+        this.currentLife += val;
+        this.currentLife = Math.min(this.totalLife, this.currentLife);
+        
+        var tweenContainer = this.view.tweenLife();
+        tweenContainer.onStart.addOnce(this.playHorseshoe, this);
+        tweenContainer.onComplete.addOnce(this.setLife, this);
+        tweenContainer.restart()
     }
     
 }

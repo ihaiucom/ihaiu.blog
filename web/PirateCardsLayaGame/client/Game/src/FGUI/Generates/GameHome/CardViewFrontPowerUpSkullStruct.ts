@@ -9,7 +9,7 @@ import CardViewFrontPowerUpSkull from "../../Extends/GameHome/CardViewFrontPower
 export default class CardViewFrontPowerUpSkullStruct extends fgui.GComponent
 {
 	public m_fx : fgui.GMovieClip;
-	public m_life : CardLifePowerUp;
+	public m_power : CardLifePowerUp;
 
 	
 	public static URL:string = "ui://moe42ygrsqzyae";
@@ -35,7 +35,7 @@ export default class CardViewFrontPowerUpSkullStruct extends fgui.GComponent
 
 		
 		this.m_fx = <fgui.GMovieClip><any>(this.getChild("fx"));
-		this.m_life = <CardLifePowerUp><any>(this.getChild("life"));
+		this.m_power = <CardLifePowerUp><any>(this.getChild("power"));
 		
 		
 	}

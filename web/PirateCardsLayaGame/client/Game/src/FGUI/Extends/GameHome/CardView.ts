@@ -233,7 +233,12 @@ export default class CardView extends CardViewStruct
         }
         else
         {
-            this.setPowerUpText();
+            var card: Card = <Card> this.card;
+            
+            if((<any>this.front).m_life)
+            {
+                (<any>this.front).m_life.title = card.lifeAmount.toString();
+            }
         }
 
     }
@@ -242,13 +247,24 @@ export default class CardView extends CardViewStruct
     setPowerUpText()
     {
         var card: Card = <Card> this.card;
-        if(card.isDisplayLife())
+
+        if((<any>this.front).m_power)
         {
-            (<CardViewFrontHero>this.front).m_life.title = card.lifeAmount.toString();
+            (<any>this.front).m_power.title = card.powerUpAmount.toString();
         }
-        else
+
+    }
+
+    
+    //  设置步数
+    setStepText()
+    {
+        var card: Card = <Card> this.card;
+
+        if((<any>this.front).m_step)
         {
-            (<CardViewFrontHero>this.front).m_life.title = card.powerUpAmount.toString();
+            (<any>this.front).m_step.title = card.step.toString();
+            (<any>this.front).m_step.visible = card.stepMax > 0;
         }
 
     }
@@ -281,6 +297,12 @@ export default class CardView extends CardViewStruct
     tweenLife()
     {
         var view = (<CardViewFrontHero>this.front).m_life;
+        
+        if(!view)
+        {
+            view = (<any>this.front).m_power;
+        }
+
         var tweenContainer = this.card.getScaleTween(view);
         tweenContainer.onComplete.addOnce(this.setHealthText, this);
         return tweenContainer;
@@ -289,9 +311,13 @@ export default class CardView extends CardViewStruct
     
     tweenPowerUp()
     {
-        var view = (<CardViewFrontHero>this.front).m_life;
+        var view = (<any>this.front).m_power;
+        if(!view)
+        {
+            view = (<CardViewFrontHero>this.front).m_life;
+        }
         var tweenContainer = this.card.getScaleTween(view);
-        tweenContainer.onComplete.addOnce(this.setHealthText, this);
+        tweenContainer.onComplete.addOnce(this.setPowerUpText, this);
         return tweenContainer;
     }
 

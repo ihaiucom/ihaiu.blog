@@ -25,7 +25,10 @@ export default class FxShootCannon extends FxShootCannonStruct
     {
         Laya.timer.clearAll(this);
         Laya.Tween.clearAll(this);
-        this.removeFromParent();
+        if(this && this.parent)
+        {
+            this.removeFromParent();
+        }
         Pool.recover(FxShootCannon.URL, this);
     }
 

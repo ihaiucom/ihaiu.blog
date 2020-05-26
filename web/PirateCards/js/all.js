@@ -28950,6 +28950,7 @@ function(t) {
         t.itemsFromChest = [e.Bomb, e.Poison, e.Horseshoe, e.Lightning, e.Multiplier, e.Skull],
         t.itemsFromBarrel = [e.Health, e.Gold, e.Armor, e.Cannon],
         t.powerUps = [e.Health, e.Armor, e.Cannon, e.Barrel, e.Gold],
+        // t.powerUps = [e.Bomb],
         t
     } ();
     t.CardScoreTypeHelper = o

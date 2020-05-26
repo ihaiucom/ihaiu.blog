@@ -20,6 +20,15 @@ export default class Basket
         this.resetToZero = resetToZero
     }
 
+    reset(updateVal = 0.2, step = 0.2, resetToZero = false)
+    {
+        this.status.reset();
+        this.initialStatus.reset();
+        this.updateVal = updateVal,
+        this.step = step,
+        this.resetToZero = resetToZero
+    }
+
     fillBasket(start, len) 
     {
         for (var i = start; i <= len; i++) 
@@ -99,7 +108,9 @@ export default class Basket
         // 骷髅
         basket.add(CardScoreType.Skull.toString(), 1),
         // 倍数
-        basket.add(CardScoreType.Multiplier.toString(), 1);
+        // basket.add(CardScoreType.Multiplier.toString(), 1);
+        basket.add(CardScoreType.MultiplierPositive.toString(), 1);
+        basket.add(CardScoreType.AddNegative.toString(), 1);
         return basket;
     }
     add(key, val) {

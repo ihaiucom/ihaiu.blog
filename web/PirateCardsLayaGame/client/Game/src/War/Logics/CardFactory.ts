@@ -42,6 +42,17 @@ export default class CardFactory
         this.container = game.container;
     }
 
+    reset()
+    {
+        this.healthBasket.reset();
+        this.armorBasket.reset();
+        this.cannonBasket.reset();
+        this.enemyBasket.reset();
+        this.goldBasket.reset();
+        this.chestBasket.reset();
+        this.chestBasket = Basket.AfterChestBasket();
+    }
+
     getDefault()
     {
         // var cardView = this.cardShapeFactory.getDefaultShape();
@@ -271,6 +282,18 @@ export default class CardFactory
             score = 2;
         }
 
+        switch(cardScoreType)
+        {
+            case CardScoreType.MultiplierNegative:
+            case CardScoreType.MultiplierPositive:
+                score = 2;
+                break;
+            case CardScoreType.AddNegative:
+            case CardScoreType.AddPositive:
+                score = 1;
+                break;
+        }
+
 
         return score
     }
@@ -299,12 +322,22 @@ export default class CardFactory
             // 桥
             return this.getTrap(score + 1);
         }
+        else if(10 == level)
+        {
+            // 毒瓶
+            return this.getPoison(score);
+        }
         else
         {
             // 怪
             return this.getWarrior(level, score);
         }
 
+    }
+    
+    // 毒药
+    getPoison(score) {
+        return Card.GetNew(this.game, CardScoreType.Poison, 1, score);
     }
      // 桥
     getTrap(score) {
@@ -313,7 +346,13 @@ export default class CardFactory
     // 怪
     getWarrior(level, score) 
     {
-        return Card.GetNew(this.game, CardScoreType.Enemy, level, score);
+        var step = 0;
+        if( GameStatus.stepCardNum <= 0 && level >= 2)
+        {
+            step = 3;
+        }
+
+        return Card.GetNew(this.game, CardScoreType.Enemy, level, score, step);
     }
     // 获取桥的伤害
     static getTrapScore() 
@@ -334,7 +373,13 @@ export default class CardFactory
     getBoss() {
         var level = CardFactory.generateBossPower();
         var score = 8 + GameStatus.gameLevel;
-        return Card.GetNew(this.game, CardScoreType.Boss, level, score)
+        
+        var step = 0;
+        if(GameStatus.gameLevel > 1)
+        {
+            step = 3;
+        }
+        return Card.GetNew(this.game, CardScoreType.Boss, level, score, step)
     }
     // 宝箱
     getChestCard() {
@@ -417,13 +462,13 @@ export default class CardFactory
     // 生成敌人血量
     generateEnemyPower(score) 
     {
-        this.enemyBasket.fillBasketWithStep(0, 4, 2, 9);
+        this.enemyBasket.fillBasketWithStep(0, 4, 2, 10);
 
         if (0 == score)
         {
             return Number(this.enemyBasket.getFromBasket());
         } 
-        var power = GMath.clamp(score, 0, 9);
+        var power = GMath.clamp(score, 0, 10);
         this.enemyBasket.removeFromBasket(power.toString());
         return power
     }
