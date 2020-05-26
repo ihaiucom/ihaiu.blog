@@ -5992,7 +5992,7 @@
             if (list.length > 1) {
                 var i = list.indexOf(igroonId);
                 if (i != -1) {
-                    list = list.splice(i, 1);
+                    list.splice(i, 1);
                 }
             }
             var i = Random.rangeBoth(0, list.length - 1);

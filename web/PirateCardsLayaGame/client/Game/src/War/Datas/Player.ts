@@ -228,7 +228,7 @@ export class Player
             var i = list.indexOf(igroonId);
             if(i != -1)
             {
-                list = list.splice(i, 1);
+                list.splice(i, 1);
             }
         }
 
