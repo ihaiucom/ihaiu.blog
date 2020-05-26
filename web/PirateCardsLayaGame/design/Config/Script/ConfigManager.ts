@@ -59,7 +59,7 @@ namespace configs{
 	export class ConfigItemConsume {
 		public id : number = 0;
 		public zh_cn_name : string = "";
-		public zh_cn_des : string = "";
+		public zh_cn_itemDes : string = "";
 		public icon : string = "";
 		public effectType : string = "";
 		public effectArgs :  Array < number >  = null;
@@ -67,7 +67,7 @@ namespace configs{
 	export class ConfigItemDecorate {
 		public id : number = 0;
 		public zh_cn_name : string = "";
-		public zh_cn_des : string = "";
+		public zh_cn_itemDes : string = "";
 		public icon : string = "";
 		public effectType : string = "";
 		public effectArgs :  Array < number >  = null;
@@ -77,7 +77,7 @@ namespace configs{
 	export class ConfigItemWeapon {
 		public id : number = 0;
 		public zh_cn_name : string = "";
-		public zh_cn_des : string = "";
+		public zh_cn_itemDes : string = "";
 		public icon : string = "";
 		public effectType : string = "";
 		public effectArgs :  Array < number >  = null;

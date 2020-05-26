@@ -75,7 +75,7 @@ message ItemConsume
 {
 	int32 id = 1;
 	string zh_cn_name = 2;
-	string zh_cn_des = 3;
+	string zh_cn_itemDes = 3;
 	string icon = 4;
 	string effectType = 5;
 	repeated int32 effectArgs = 6;
@@ -85,7 +85,7 @@ message ItemDecorate
 {
 	int32 id = 1;
 	string zh_cn_name = 2;
-	string zh_cn_des = 3;
+	string zh_cn_itemDes = 3;
 	string icon = 4;
 	string effectType = 5;
 	repeated int32 effectArgs = 6;
@@ -97,7 +97,7 @@ message ItemWeapon
 {
 	int32 id = 1;
 	string zh_cn_name = 2;
-	string zh_cn_des = 3;
+	string zh_cn_itemDes = 3;
 	string icon = 4;
 	string effectType = 5;
 	repeated int32 effectArgs = 6;
