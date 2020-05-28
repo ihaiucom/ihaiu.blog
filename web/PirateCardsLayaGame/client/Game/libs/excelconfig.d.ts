@@ -186,7 +186,7 @@ declare module excelconfig {
 	 interface IItemConsume {
 	    id?: (number|null);
 	    zhCnName?: (string|null);
-	    zhCnDes?: (string|null);
+	    zhCnItemDes?: (string|null);
 	    icon?: (string|null);
 	    effectType?: (string|null);
 	    effectArgs?: (number[]|null);
@@ -195,7 +195,7 @@ declare module excelconfig {
 	    constructor(properties?: IItemConsume);
 	    public id: number;
 	    public zhCnName: string;
-	    public zhCnDes: string;
+	    public zhCnItemDes: string;
 	    public icon: string;
 	    public effectType: string;
 	    public effectArgs: number[];
@@ -212,7 +212,7 @@ declare module excelconfig {
 	 interface IItemDecorate {
 	    id?: (number|null);
 	    zhCnName?: (string|null);
-	    zhCnDes?: (string|null);
+	    zhCnItemDes?: (string|null);
 	    icon?: (string|null);
 	    effectType?: (string|null);
 	    effectArgs?: (number[]|null);
@@ -223,7 +223,7 @@ declare module excelconfig {
 	    constructor(properties?: IItemDecorate);
 	    public id: number;
 	    public zhCnName: string;
-	    public zhCnDes: string;
+	    public zhCnItemDes: string;
 	    public icon: string;
 	    public effectType: string;
 	    public effectArgs: number[];
@@ -242,7 +242,7 @@ declare module excelconfig {
 	 interface IItemWeapon {
 	    id?: (number|null);
 	    zhCnName?: (string|null);
-	    zhCnDes?: (string|null);
+	    zhCnItemDes?: (string|null);
 	    icon?: (string|null);
 	    effectType?: (string|null);
 	    effectArgs?: (number[]|null);
@@ -253,7 +253,7 @@ declare module excelconfig {
 	    constructor(properties?: IItemWeapon);
 	    public id: number;
 	    public zhCnName: string;
-	    public zhCnDes: string;
+	    public zhCnItemDes: string;
 	    public icon: string;
 	    public effectType: string;
 	    public effectArgs: number[];

@@ -89,17 +89,17 @@ export class ItemConsumeConfigLang extends excelconfigSources.ItemConsume
 		return this.zhCnName
 	}
 
-	get des():string
+	get itemDes():string
 	{
 		if(!Game.lang.isUseLang)
-			return this.zhCnDes
+			return this.zhCnItemdes
 
-		let value = <string> Game.lang.getValue('ItemConsume', this.id, 'zhCnDes');
+		let value = <string> Game.lang.getValue('ItemConsume', this.id, 'zhCnItemdes');
 		if (!isNullOrEmpty(value))
 		{
 			return value;
 		}
-		return this.zhCnDes
+		return this.zhCnItemdes
 	}
 
 }
@@ -120,17 +120,17 @@ export class ItemDecorateConfigLang extends excelconfigSources.ItemDecorate
 		return this.zhCnName
 	}
 
-	get des():string
+	get itemDes():string
 	{
 		if(!Game.lang.isUseLang)
-			return this.zhCnDes
+			return this.zhCnItemdes
 
-		let value = <string> Game.lang.getValue('ItemDecorate', this.id, 'zhCnDes');
+		let value = <string> Game.lang.getValue('ItemDecorate', this.id, 'zhCnItemdes');
 		if (!isNullOrEmpty(value))
 		{
 			return value;
 		}
-		return this.zhCnDes
+		return this.zhCnItemdes
 	}
 
 }
@@ -151,17 +151,17 @@ export class ItemWeaponConfigLang extends excelconfigSources.ItemWeapon
 		return this.zhCnName
 	}
 
-	get des():string
+	get itemDes():string
 	{
 		if(!Game.lang.isUseLang)
-			return this.zhCnDes
+			return this.zhCnItemdes
 
-		let value = <string> Game.lang.getValue('ItemWeapon', this.id, 'zhCnDes');
+		let value = <string> Game.lang.getValue('ItemWeapon', this.id, 'zhCnItemdes');
 		if (!isNullOrEmpty(value))
 		{
 			return value;
 		}
-		return this.zhCnDes
+		return this.zhCnItemdes
 	}
 
 }

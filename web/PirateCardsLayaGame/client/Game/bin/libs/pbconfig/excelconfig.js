@@ -1043,7 +1043,7 @@ $excelRoot.ItemConsume = (function() {
     }
     ItemConsume.prototype.id = 0;
     ItemConsume.prototype.zhCnName = "";
-    ItemConsume.prototype.zhCnDes = "";
+    ItemConsume.prototype.zhCnItemDes = "";
     ItemConsume.prototype.icon = "";
     ItemConsume.prototype.effectType = "";
     ItemConsume.prototype.effectArgs = $util.emptyArray;
@@ -1057,8 +1057,8 @@ $excelRoot.ItemConsume = (function() {
             writer.uint32(/* id 1, wireType 0 =*/8).int32(message.id);
         if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
             writer.uint32(/* id 2, wireType 2 =*/18).string(message.zhCnName);
-        if (message.zhCnDes != null && message.hasOwnProperty("zhCnDes"))
-            writer.uint32(/* id 3, wireType 2 =*/26).string(message.zhCnDes);
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            writer.uint32(/* id 3, wireType 2 =*/26).string(message.zhCnItemDes);
         if (message.icon != null && message.hasOwnProperty("icon"))
             writer.uint32(/* id 4, wireType 2 =*/34).string(message.icon);
         if (message.effectType != null && message.hasOwnProperty("effectType"))
@@ -1088,7 +1088,7 @@ $excelRoot.ItemConsume = (function() {
                 message.zhCnName = reader.string();
                 break;
             case 3:
-                message.zhCnDes = reader.string();
+                message.zhCnItemDes = reader.string();
                 break;
             case 4:
                 message.icon = reader.string();
@@ -1127,9 +1127,9 @@ $excelRoot.ItemConsume = (function() {
         if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
             if (!$util.isString(message.zhCnName))
                 return "zhCnName: string expected";
-        if (message.zhCnDes != null && message.hasOwnProperty("zhCnDes"))
-            if (!$util.isString(message.zhCnDes))
-                return "zhCnDes: string expected";
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            if (!$util.isString(message.zhCnItemDes))
+                return "zhCnItemDes: string expected";
         if (message.icon != null && message.hasOwnProperty("icon"))
             if (!$util.isString(message.icon))
                 return "icon: string expected";
@@ -1153,8 +1153,8 @@ $excelRoot.ItemConsume = (function() {
             message.id = object.id | 0;
         if (object.zhCnName != null)
             message.zhCnName = String(object.zhCnName);
-        if (object.zhCnDes != null)
-            message.zhCnDes = String(object.zhCnDes);
+        if (object.zhCnItemDes != null)
+            message.zhCnItemDes = String(object.zhCnItemDes);
         if (object.icon != null)
             message.icon = String(object.icon);
         if (object.effectType != null)
@@ -1177,7 +1177,7 @@ $excelRoot.ItemConsume = (function() {
         if (options.defaults) {
             object.id = 0;
             object.zhCnName = "";
-            object.zhCnDes = "";
+            object.zhCnItemDes = "";
             object.icon = "";
             object.effectType = "";
         }
@@ -1185,8 +1185,8 @@ $excelRoot.ItemConsume = (function() {
             object.id = message.id;
         if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
             object.zhCnName = message.zhCnName;
-        if (message.zhCnDes != null && message.hasOwnProperty("zhCnDes"))
-            object.zhCnDes = message.zhCnDes;
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            object.zhCnItemDes = message.zhCnItemDes;
         if (message.icon != null && message.hasOwnProperty("icon"))
             object.icon = message.icon;
         if (message.effectType != null && message.hasOwnProperty("effectType"))
@@ -1214,7 +1214,7 @@ $excelRoot.ItemDecorate = (function() {
     }
     ItemDecorate.prototype.id = 0;
     ItemDecorate.prototype.zhCnName = "";
-    ItemDecorate.prototype.zhCnDes = "";
+    ItemDecorate.prototype.zhCnItemDes = "";
     ItemDecorate.prototype.icon = "";
     ItemDecorate.prototype.effectType = "";
     ItemDecorate.prototype.effectArgs = $util.emptyArray;
@@ -1230,8 +1230,8 @@ $excelRoot.ItemDecorate = (function() {
             writer.uint32(/* id 1, wireType 0 =*/8).int32(message.id);
         if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
             writer.uint32(/* id 2, wireType 2 =*/18).string(message.zhCnName);
-        if (message.zhCnDes != null && message.hasOwnProperty("zhCnDes"))
-            writer.uint32(/* id 3, wireType 2 =*/26).string(message.zhCnDes);
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            writer.uint32(/* id 3, wireType 2 =*/26).string(message.zhCnItemDes);
         if (message.icon != null && message.hasOwnProperty("icon"))
             writer.uint32(/* id 4, wireType 2 =*/34).string(message.icon);
         if (message.effectType != null && message.hasOwnProperty("effectType"))
@@ -1269,7 +1269,7 @@ $excelRoot.ItemDecorate = (function() {
                 message.zhCnName = reader.string();
                 break;
             case 3:
-                message.zhCnDes = reader.string();
+                message.zhCnItemDes = reader.string();
                 break;
             case 4:
                 message.icon = reader.string();
@@ -1321,9 +1321,9 @@ $excelRoot.ItemDecorate = (function() {
         if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
             if (!$util.isString(message.zhCnName))
                 return "zhCnName: string expected";
-        if (message.zhCnDes != null && message.hasOwnProperty("zhCnDes"))
-            if (!$util.isString(message.zhCnDes))
-                return "zhCnDes: string expected";
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            if (!$util.isString(message.zhCnItemDes))
+                return "zhCnItemDes: string expected";
         if (message.icon != null && message.hasOwnProperty("icon"))
             if (!$util.isString(message.icon))
                 return "icon: string expected";
@@ -1357,8 +1357,8 @@ $excelRoot.ItemDecorate = (function() {
             message.id = object.id | 0;
         if (object.zhCnName != null)
             message.zhCnName = String(object.zhCnName);
-        if (object.zhCnDes != null)
-            message.zhCnDes = String(object.zhCnDes);
+        if (object.zhCnItemDes != null)
+            message.zhCnItemDes = String(object.zhCnItemDes);
         if (object.icon != null)
             message.icon = String(object.icon);
         if (object.effectType != null)
@@ -1392,7 +1392,7 @@ $excelRoot.ItemDecorate = (function() {
         if (options.defaults) {
             object.id = 0;
             object.zhCnName = "";
-            object.zhCnDes = "";
+            object.zhCnItemDes = "";
             object.icon = "";
             object.effectType = "";
             object.triggerType = "";
@@ -1401,8 +1401,8 @@ $excelRoot.ItemDecorate = (function() {
             object.id = message.id;
         if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
             object.zhCnName = message.zhCnName;
-        if (message.zhCnDes != null && message.hasOwnProperty("zhCnDes"))
-            object.zhCnDes = message.zhCnDes;
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            object.zhCnItemDes = message.zhCnItemDes;
         if (message.icon != null && message.hasOwnProperty("icon"))
             object.icon = message.icon;
         if (message.effectType != null && message.hasOwnProperty("effectType"))
@@ -1437,7 +1437,7 @@ $excelRoot.ItemWeapon = (function() {
     }
     ItemWeapon.prototype.id = 0;
     ItemWeapon.prototype.zhCnName = "";
-    ItemWeapon.prototype.zhCnDes = "";
+    ItemWeapon.prototype.zhCnItemDes = "";
     ItemWeapon.prototype.icon = "";
     ItemWeapon.prototype.effectType = "";
     ItemWeapon.prototype.effectArgs = $util.emptyArray;
@@ -1453,8 +1453,8 @@ $excelRoot.ItemWeapon = (function() {
             writer.uint32(/* id 1, wireType 0 =*/8).int32(message.id);
         if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
             writer.uint32(/* id 2, wireType 2 =*/18).string(message.zhCnName);
-        if (message.zhCnDes != null && message.hasOwnProperty("zhCnDes"))
-            writer.uint32(/* id 3, wireType 2 =*/26).string(message.zhCnDes);
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            writer.uint32(/* id 3, wireType 2 =*/26).string(message.zhCnItemDes);
         if (message.icon != null && message.hasOwnProperty("icon"))
             writer.uint32(/* id 4, wireType 2 =*/34).string(message.icon);
         if (message.effectType != null && message.hasOwnProperty("effectType"))
@@ -1492,7 +1492,7 @@ $excelRoot.ItemWeapon = (function() {
                 message.zhCnName = reader.string();
                 break;
             case 3:
-                message.zhCnDes = reader.string();
+                message.zhCnItemDes = reader.string();
                 break;
             case 4:
                 message.icon = reader.string();
@@ -1544,9 +1544,9 @@ $excelRoot.ItemWeapon = (function() {
         if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
             if (!$util.isString(message.zhCnName))
                 return "zhCnName: string expected";
-        if (message.zhCnDes != null && message.hasOwnProperty("zhCnDes"))
-            if (!$util.isString(message.zhCnDes))
-                return "zhCnDes: string expected";
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            if (!$util.isString(message.zhCnItemDes))
+                return "zhCnItemDes: string expected";
         if (message.icon != null && message.hasOwnProperty("icon"))
             if (!$util.isString(message.icon))
                 return "icon: string expected";
@@ -1580,8 +1580,8 @@ $excelRoot.ItemWeapon = (function() {
             message.id = object.id | 0;
         if (object.zhCnName != null)
             message.zhCnName = String(object.zhCnName);
-        if (object.zhCnDes != null)
-            message.zhCnDes = String(object.zhCnDes);
+        if (object.zhCnItemDes != null)
+            message.zhCnItemDes = String(object.zhCnItemDes);
         if (object.icon != null)
             message.icon = String(object.icon);
         if (object.effectType != null)
@@ -1615,7 +1615,7 @@ $excelRoot.ItemWeapon = (function() {
         if (options.defaults) {
             object.id = 0;
             object.zhCnName = "";
-            object.zhCnDes = "";
+            object.zhCnItemDes = "";
             object.icon = "";
             object.effectType = "";
             object.triggerType = "";
@@ -1624,8 +1624,8 @@ $excelRoot.ItemWeapon = (function() {
             object.id = message.id;
         if (message.zhCnName != null && message.hasOwnProperty("zhCnName"))
             object.zhCnName = message.zhCnName;
-        if (message.zhCnDes != null && message.hasOwnProperty("zhCnDes"))
-            object.zhCnDes = message.zhCnDes;
+        if (message.zhCnItemDes != null && message.hasOwnProperty("zhCnItemDes"))
+            object.zhCnItemDes = message.zhCnItemDes;
         if (message.icon != null && message.hasOwnProperty("icon"))
             object.icon = message.icon;
         if (message.effectType != null && message.hasOwnProperty("effectType"))

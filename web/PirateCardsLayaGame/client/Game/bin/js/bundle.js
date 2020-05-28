@@ -88,14 +88,14 @@
             }
             return this.zhCnName;
         }
-        get des() {
+        get itemDes() {
             if (!Game.lang.isUseLang)
-                return this.zhCnDes;
-            let value = Game.lang.getValue('ItemConsume', this.id, 'zhCnDes');
+                return this.zhCnItemdes;
+            let value = Game.lang.getValue('ItemConsume', this.id, 'zhCnItemdes');
             if (!isNullOrEmpty(value)) {
                 return value;
             }
-            return this.zhCnDes;
+            return this.zhCnItemdes;
         }
     }
     class ItemDecorateConfigLang extends excelconfigSources.ItemDecorate {
@@ -108,14 +108,14 @@
             }
             return this.zhCnName;
         }
-        get des() {
+        get itemDes() {
             if (!Game.lang.isUseLang)
-                return this.zhCnDes;
-            let value = Game.lang.getValue('ItemDecorate', this.id, 'zhCnDes');
+                return this.zhCnItemdes;
+            let value = Game.lang.getValue('ItemDecorate', this.id, 'zhCnItemdes');
             if (!isNullOrEmpty(value)) {
                 return value;
             }
-            return this.zhCnDes;
+            return this.zhCnItemdes;
         }
     }
     class ItemWeaponConfigLang extends excelconfigSources.ItemWeapon {
@@ -128,14 +128,14 @@
             }
             return this.zhCnName;
         }
-        get des() {
+        get itemDes() {
             if (!Game.lang.isUseLang)
-                return this.zhCnDes;
-            let value = Game.lang.getValue('ItemWeapon', this.id, 'zhCnDes');
+                return this.zhCnItemdes;
+            let value = Game.lang.getValue('ItemWeapon', this.id, 'zhCnItemdes');
             if (!isNullOrEmpty(value)) {
                 return value;
             }
-            return this.zhCnDes;
+            return this.zhCnItemdes;
         }
     }
     class LevelConfigLang extends excelconfigSources.Level {
