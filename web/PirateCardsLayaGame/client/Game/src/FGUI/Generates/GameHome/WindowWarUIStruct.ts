@@ -11,6 +11,7 @@ import Container from "../../Extends/GameHome/Container";
 import PanelPopupChest from "../../Extends/GameHome/PanelPopupChest";
 import PanelPause from "../../Extends/GameHome/PanelPause";
 import PanelUplevel from "../../Extends/GameHome/PanelUplevel";
+import TextBtn from "../../Extends/GameHome/TextBtn";
 import WindowWarUI from "../../Extends/GameHome/WindowWarUI";
 
 export default class WindowWarUIStruct extends fgui.GComponent
@@ -23,6 +24,9 @@ export default class WindowWarUIStruct extends fgui.GComponent
 	public m_chectPopupPanel : PanelPopupChest;
 	public m_pausePanel : PanelPause;
 	public m_uplevelPanel : PanelUplevel;
+	public m_debugBtn_uplevel : TextBtn;
+	public m_debugBtn_addStageLevel : TextBtn;
+	public m_debugBtn_trigger : TextBtn;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy9c";
@@ -55,6 +59,9 @@ export default class WindowWarUIStruct extends fgui.GComponent
 		this.m_chectPopupPanel = <PanelPopupChest><any>(this.getChild("chectPopupPanel"));
 		this.m_pausePanel = <PanelPause><any>(this.getChild("pausePanel"));
 		this.m_uplevelPanel = <PanelUplevel><any>(this.getChild("uplevelPanel"));
+		this.m_debugBtn_uplevel = <TextBtn><any>(this.getChild("debugBtn_uplevel"));
+		this.m_debugBtn_addStageLevel = <TextBtn><any>(this.getChild("debugBtn_addStageLevel"));
+		this.m_debugBtn_trigger = <TextBtn><any>(this.getChild("debugBtn_trigger"));
 		
 		
 	}

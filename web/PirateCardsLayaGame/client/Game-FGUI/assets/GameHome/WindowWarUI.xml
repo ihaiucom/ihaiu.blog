@@ -15,7 +15,7 @@
       <relation target="" sidePair="center-center,bottom-bottom"/>
     </component>
     <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="375,542" size="614,800" locked="true">
-      <relation target="" sidePair="center-center,top-top%"/>
+      <relation target="" sidePair="center-center,middle-middle%"/>
     </component>
     <component id="n16_jak7" name="chectPopupPanel" src="jak7ao" fileName="PanelPopupChest.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
@@ -26,5 +26,17 @@
     <component id="n26_n2s1" name="uplevelPanel" src="n2s1cq" fileName="PanelUplevel.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
+    <component id="n28_9cge" name="debugBtn_uplevel" src="9cgecw" fileName="Btn/TextBtn.xml" xy="50,1184" size="167,89" group="n31_9cge">
+      <Button title="升级"/>
+    </component>
+    <component id="n29_9cge" name="debugBtn_addStageLevel" src="9cgecw" fileName="Btn/TextBtn.xml" xy="237,1182" group="n31_9cge">
+      <Button title="关卡等级+1"/>
+    </component>
+    <component id="n30_9cge" name="debugBtn_trigger" src="9cgecw" fileName="Btn/TextBtn.xml" xy="497,1188" group="n31_9cge">
+      <Button title="触发攻击"/>
+    </component>
+    <group id="n31_9cge" name="n31" xy="50,1182" size="701,95" advanced="true">
+      <relation target="" sidePair="bottom-bottom,center-center"/>
+    </group>
   </displayList>
 </component>

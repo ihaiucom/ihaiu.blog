@@ -890,6 +890,7 @@ export default class Field
     {
         this.field.set(position, card),
         card.setCoordinate(position.getPoint())
+        card.view.debugPos();
     }
 
     // 设置卡牌新位置，并且播放移动动画
@@ -897,6 +898,7 @@ export default class Field
     {
         var point = position.getPoint();
         this.field.set(position, card);
+        card.view.debugPos();
 
         var tweenContainer = TweenContainer.PoolGet();
         tweenContainer.tweens.push(card.moveTo(point, time));
@@ -1242,7 +1244,8 @@ export default class Field
     shootToCard (fromX: number, fromY: number, card:Card, time) 
     {
         var toX = card.getCenterX();
-        var toY = card.getCenterX();
+        var toY = card.getCenterY();
+        // console.log("shootToCard toX=", toX, ", toY=", toY, ", fromX=",fromX , ", fromY", fromY);
 
         var fx = FxShootCannon.PoolGet();
         var tweenContainer = fx.moveTo(fromX,fromY, toX, toY, time);

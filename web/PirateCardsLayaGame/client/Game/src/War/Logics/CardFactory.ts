@@ -347,7 +347,7 @@ export default class CardFactory
     getWarrior(level, score) 
     {
         var step = 0;
-        if( GameStatus.stepCardNum <= 0 && level >= 2)
+        if( GameStatus.stepCardNum <= 0 && GameStatus.gameLevel >= 8)
         {
             step = 3;
         }
@@ -375,7 +375,7 @@ export default class CardFactory
         var score = 8 + GameStatus.gameLevel;
         
         var step = 0;
-        if(GameStatus.gameLevel > 1)
+        if(GameStatus.gameLevel > 8)
         {
             step = 3;
         }

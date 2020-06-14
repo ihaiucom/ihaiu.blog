@@ -83,6 +83,8 @@ import PanelUplevel from "../../Extends/GameHome/PanelUplevel";
 import EquipSelectIcon from "../../Extends/GameHome/EquipSelectIcon";
 import UplevelAlert from "../../Extends/GameHome/UplevelAlert";
 import CardStep from "../../Extends/GameHome/CardStep";
+import TextBtn from "../../Extends/GameHome/TextBtn";
+import EquipTip from "../../Extends/GameHome/EquipTip";
 
 export default class GameHomeBinder
 {
@@ -168,5 +170,7 @@ export default class GameHomeBinder
 		bind(EquipSelectIcon.URL, EquipSelectIcon);
 		bind(UplevelAlert.URL, UplevelAlert);
 		bind(CardStep.URL, CardStep);
+		bind(TextBtn.URL, TextBtn);
+		bind(EquipTip.URL, EquipTip);
 	}
 }

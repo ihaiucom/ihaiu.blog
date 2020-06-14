@@ -7,9 +7,42 @@ import EquipIconStruct from "../../Generates/GameHome/EquipIconStruct";
 import { EquipData, Player } from "../../../War/Datas/Player";
 import { ItemType } from "../../../GameModule/DataEnums/ItemType";
 import TweenHelper from "../../../War/Utils/TweenHelper";
+import EquipTip from "./EquipTip";
 
 export default class EquipIcon extends EquipIconStruct
 {
+    
+	protected constructFromXML(xml: any): void 
+	{
+		super.constructFromXML(xml);
+        
+        this.on(Laya.Event.MOUSE_DOWN, this, this.onMouseDown);
+    }
+
+    onMouseDown()
+    {
+        if(this.data == null || this.data.config == null)
+        {
+            return;
+        }
+        Laya.stage.on(Laya.Event.MOUSE_UP, this, this.onMouseUp);
+        Laya.timer.once(100, this, this.showTip);
+    }
+
+    
+    onMouseUp()
+    {
+        Laya.timer.clear(this, this.showTip);
+        Laya.stage.off(Laya.Event.MOUSE_UP, this, this.onMouseUp);
+        
+        EquipTip.instance.hide();
+    }
+
+    showTip()
+    {
+        EquipTip.instance.Show(this);
+    }
+
     data:EquipData;
     SetData(data:EquipData)
     {
@@ -25,6 +58,24 @@ export default class EquipIcon extends EquipIconStruct
         {
             this.data.sChange.add(this.OnChange, this);
             this.data.sStepChange.add(this.SetStep, this);
+
+            if(this.data.config)
+            {
+                var itemType = 0;
+                switch(this.data.config.type)
+                {
+                    case ItemType.Weapon:
+                        itemType = 0;
+                        break;
+                    case ItemType.Decorate:
+                        itemType = 1;
+                        break;
+                    case ItemType.Consume:
+                        itemType = 2;
+                        break;
+                }
+                this.m_itemType.setSelectedIndex(itemType);
+            }
         }
         this.OnChange();
         this.scaleX = 1;

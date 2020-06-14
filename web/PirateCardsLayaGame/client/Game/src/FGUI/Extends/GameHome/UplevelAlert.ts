@@ -7,6 +7,11 @@ import UplevelAlertStruct from "../../Generates/GameHome/UplevelAlertStruct";
 import PanelUplevel from "./PanelUplevel";
 import { Player } from "../../../War/Datas/Player";
 import TweenHelper from "../../../War/Utils/TweenHelper";
+import EquipSelectIcon from "./EquipSelectIcon";
+import { ItemType } from "../../../GameModule/DataEnums/ItemType";
+import ItemConfig from "../../../Config/ConfigExtends/ItemConfig";
+import GameStatus from "../../../War/Datas/GameStatus";
+import Game from "../../../Game";
 
 export default class UplevelAlert extends UplevelAlertStruct
 {
@@ -30,22 +35,49 @@ export default class UplevelAlert extends UplevelAlertStruct
 
     onClickEquipDecorate()
     {
-        var id = this.m_equipDecorate.equipId;
-        Player.current.equipDecorateData.setId(id);
-        this.panel.Close();
+        this.onSelect(this.m_equipDecorate);
     }
     
     onClickEquipWeapon()
     {
-        var id = this.m_equipWeapon.equipId;
-        Player.current.equipWeaponData.setId(id);
-        this.panel.Close();
+        this.onSelect(this.m_equipWeapon);
     }
 
     onClickEquipConsume()
     {
-        var id = this.m_equipConsume.equipId;
-        Player.current.useEquipConsumeDelay(id);
+        this.onSelect(this.m_equipConsume);
+    }
+
+    onSelect(icon: EquipSelectIcon)
+    {
+        if(icon.config)
+        {
+            var itemConfig:ItemConfig = <any> icon.config;
+            if(itemConfig.coin && itemConfig.coin > 0)
+            {
+                if(GameStatus.goldPerGame < itemConfig.coin)
+                {
+                    Game.system.toastText("金币不够");
+                    return;
+                }
+                GameStatus.goldPerGame -= itemConfig.coin;
+            }
+
+            var id = icon.config.id;
+            switch(icon.config.type)
+            {
+                case ItemType.Weapon:
+                    Player.current.equipWeaponData.setId(id);
+                    break;
+                case ItemType.Decorate:
+                    Player.current.equipDecorateData.setId(id);
+                    break;
+                case ItemType.Consume:
+                    Player.current.useEquipConsumeDelay(id);
+                    break;
+            }
+        }
+
         this.panel.Close();
     }
 }

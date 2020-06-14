@@ -7,6 +7,7 @@ import WindowWarUIStruct from "../../Generates/GameHome/WindowWarUIStruct";
 import WarWindow from "../../../GameModule/ViewWindows/WarWindow";
 import War from "../../../War/War";
 import GameStatus from "../../../War/Datas/GameStatus";
+import { Player } from "../../../War/Datas/Player";
 
 export default class WindowWarUI extends WindowWarUIStruct
 {
@@ -18,7 +19,26 @@ export default class WindowWarUI extends WindowWarUIStruct
     {
         War.init(this);
         this.m_menuTopPanel.m_puaseBtn.onClick(this, this.OnClickPauseBtn);
+        this.m_debugBtn_uplevel.onClick(this, this.onClickDebugBtn_Uplevel);
+        this.m_debugBtn_addStageLevel.onClick(this, this.onClickDebugBtn_addStageLevel);
+        this.m_debugBtn_trigger.onClick(this, this.onClickDebugBtn_trigger);
     }
+
+    onClickDebugBtn_Uplevel()
+    {
+        Player.current.uplevel();
+    }
+
+    onClickDebugBtn_addStageLevel()
+    {
+        GameStatus.addGameLevel();
+    }
+    onClickDebugBtn_trigger()
+    {
+        War.game.debugPlayerTrigger();
+    }
+
+
 
     // 窗口销毁
     onWindowDestory(): boolean

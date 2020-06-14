@@ -165,6 +165,7 @@ export default class FieldItems
 
     get(f: FieldPosition) : Card
     {
+        if(f == null) return null;
         return <Card> this.items[f.column][f.row]
     }
     
@@ -214,9 +215,21 @@ export default class FieldItems
     /** 查找怪物 */
     findEnemy(selfIsNegative: boolean = false)
     {
-        return this.find((card: Card)=>{
+        var list = this.find((card: Card)=>{
             return CardScoreTypeHelper.isEnemyType(card.type, selfIsNegative)
+        });
+        list.sort((a,b)=>{
+            if(a.isHero)
+            {
+               return -1; 
+            }
+            else if(b.isHero)
+            {
+               return 1; 
+            }
+            return a.getScore() - b.getScore();
         })
+        return list;
     }
 
     /** 验证位置是否有效 */

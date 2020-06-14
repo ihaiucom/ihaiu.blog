@@ -190,6 +190,7 @@ declare module excelconfig {
 	    icon?: (string|null);
 	    effectType?: (string|null);
 	    effectArgs?: (number[]|null);
+	    coin?: (number|null);
 	}
 	 class ItemConsume implements IItemConsume {
 	    constructor(properties?: IItemConsume);
@@ -199,6 +200,7 @@ declare module excelconfig {
 	    public icon: string;
 	    public effectType: string;
 	    public effectArgs: number[];
+	    public coin: number;
 	    public static create(properties?: IItemConsume): ItemConsume;
 	    public static encode(message: IItemConsume, writer?: $protobuf.Writer): $protobuf.Writer;
 	    public static encodeDelimited(message: IItemConsume, writer?: $protobuf.Writer): $protobuf.Writer;
