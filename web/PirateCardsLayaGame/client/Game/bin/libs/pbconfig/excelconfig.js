@@ -1047,6 +1047,7 @@ $excelRoot.ItemConsume = (function() {
     ItemConsume.prototype.icon = "";
     ItemConsume.prototype.effectType = "";
     ItemConsume.prototype.effectArgs = $util.emptyArray;
+    ItemConsume.prototype.coin = 0;
     ItemConsume.create = function create(properties) {
         return new ItemConsume(properties);
     };
@@ -1069,6 +1070,8 @@ $excelRoot.ItemConsume = (function() {
                 writer.int32(message.effectArgs[i]);
             writer.ldelim();
         }
+        if (message.coin != null && message.hasOwnProperty("coin"))
+            writer.uint32(/* id 7, wireType 0 =*/56).int32(message.coin);
         return writer;
     };
     ItemConsume.encodeDelimited = function encodeDelimited(message, writer) {
@@ -1105,6 +1108,9 @@ $excelRoot.ItemConsume = (function() {
                         message.effectArgs.push(reader.int32());
                 } else
                     message.effectArgs.push(reader.int32());
+                break;
+            case 7:
+                message.coin = reader.int32();
                 break;
             default:
                 reader.skipType(tag & 7);
@@ -1143,6 +1149,9 @@ $excelRoot.ItemConsume = (function() {
                 if (!$util.isInteger(message.effectArgs[i]))
                     return "effectArgs: integer[] expected";
         }
+        if (message.coin != null && message.hasOwnProperty("coin"))
+            if (!$util.isInteger(message.coin))
+                return "coin: integer expected";
         return null;
     };
     ItemConsume.fromObject = function fromObject(object) {
@@ -1166,6 +1175,8 @@ $excelRoot.ItemConsume = (function() {
             for (var i = 0; i < object.effectArgs.length; ++i)
                 message.effectArgs[i] = object.effectArgs[i] | 0;
         }
+        if (object.coin != null)
+            message.coin = object.coin | 0;
         return message;
     };
     ItemConsume.toObject = function toObject(message, options) {
@@ -1180,6 +1191,7 @@ $excelRoot.ItemConsume = (function() {
             object.zhCnItemDes = "";
             object.icon = "";
             object.effectType = "";
+            object.coin = 0;
         }
         if (message.id != null && message.hasOwnProperty("id"))
             object.id = message.id;
@@ -1196,6 +1208,8 @@ $excelRoot.ItemConsume = (function() {
             for (var j = 0; j < message.effectArgs.length; ++j)
                 object.effectArgs[j] = message.effectArgs[j];
         }
+        if (message.coin != null && message.hasOwnProperty("coin"))
+            object.coin = message.coin;
         return object;
     };
     ItemConsume.prototype.toJSON = function toJSON() {

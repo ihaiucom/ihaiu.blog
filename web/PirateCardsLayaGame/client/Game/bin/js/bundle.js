@@ -1071,3068 +1071,6 @@
         }
     }
 
-    class CardView extends CardViewStruct {
-        constructor() {
-            super();
-            this.preArmor = -1;
-        }
-        static get FrontClassMap() {
-            if (!this._FrontClassMap) {
-                var map = new Map();
-                this._FrontClassMap = map;
-                map.set("CardViewFrontHero", CardViewFrontHero);
-                map.set("CardViewFrontPowerUp", CardViewFrontPowerUp);
-                map.set("CardViewFrontPowerUpBarrel", CardViewFrontPowerUpBarrel);
-                map.set("CardViewFrontPowerUpBomb", CardViewFrontPowerUpBomb);
-                map.set("CardViewFrontPowerUpCannon", CardViewFrontPowerUpCannon);
-                map.set("CardViewFrontPowerUpChest", CardViewFrontPowerUpChest);
-                map.set("CardViewFrontPowerUpSkull", CardViewFrontPowerUpSkull);
-                map.set("CardViewFrontWarriow", CardViewFrontWarriow);
-                map.set("CardViewFrontWarriowBoss", CardViewFrontWarriowBoss);
-                map.set("CardViewFrontWarriowEnemy", CardViewFrontWarriowEnemy);
-                map.set("CardViewFrontWarriowTrap", CardViewFrontWarriowTrap);
-            }
-            return this._FrontClassMap;
-        }
-        static GetFrontClass(key) {
-            if (!this.FrontClassMap.has(key)) {
-                console.error("没有找到卡牌视图组件", key);
-                return CardViewFrontPowerUp;
-            }
-            return this.FrontClassMap.get(key);
-        }
-        static GetFrontView(key) {
-            var cls = CardView.GetFrontClass(key);
-            var item = Pool.getItem(cls.URL);
-            if (!item) {
-                item = cls.createInstance();
-            }
-            return item;
-        }
-        static GetSpriteUrl(name) {
-            return "ui://GameHome" + "/" + name;
-        }
-        static PoolGet() {
-            var item = Pool.getItem(this.URL);
-            if (!item) {
-                item = CardView.createInstance();
-            }
-            return item;
-        }
-        PoolRecover() {
-            this.RecoverFront();
-            this.cardConfig = null;
-            this.cardScoreConfig = null;
-            Pool.recover(CardView.URL, this);
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.InitBg();
-        }
-        InitBg() {
-            this.bg = CardViewFrontBg.createInstance();
-            this.addChild(this.bg);
-            this.bg.setXY(this.width * 0.5, this.height * 0.5);
-        }
-        SetBg(type) {
-            this.bg.m_state.setSelectedIndex(type);
-        }
-        SetFront(frontComponentClassName) {
-            var view = CardView.GetFrontView(frontComponentClassName);
-            view.displayListContainer.mouseThrough = true;
-            view.displayListContainer.mouseEnabled = false;
-            view.cardView = this;
-            this.addChild(view);
-            view.setXY(this.width * 0.5, this.height * 0.5);
-            this.front = view;
-            var fun = this.front['SetConfig'];
-            if (fun) {
-                fun.call(this.front, this.cardConfig);
-            }
-            this.onClick(this, this.OnClickHandler);
-        }
-        RecoverFront() {
-            if (this.front) {
-                this.front.removeFromParent();
-                var fun = this.front['OnRecover'];
-                if (fun) {
-                    fun.call(this.front);
-                }
-                var signal = this.front.constructor.URL;
-                Pool.recover(signal, this.front);
-                this.front = null;
-            }
-            this.offClick(this, this.OnClickHandler);
-        }
-        SetConfig(cardConfig) {
-            this.RecoverFront();
-            this.cardConfig = cardConfig;
-            if (cardConfig) {
-                var cardScoreConfig = this.cardScoreConfig = cardConfig.cardScoreConfig;
-                if (!cardScoreConfig || cardScoreConfig.backgroundType == undefined) {
-                    console.error("!cardScoreConfig || cardScoreConfig.backgroundType == undefined", cardScoreConfig, cardConfig);
-                }
-                this.SetBg(cardScoreConfig.backgroundType);
-                this.SetFront(cardScoreConfig.frontView);
-            }
-            else {
-                this.cardScoreConfig = null;
-                this.SetBg(CardBackgroundType.Default);
-            }
-        }
-        SetCard(card) {
-            this.card = card;
-            if (this.front) {
-                var fun = this.front['SetCard'];
-                if (fun) {
-                    fun.call(this.front, this.card);
-                }
-            }
-        }
-        OnClickHandler() {
-            if (this.card) {
-                this.game.keyboardManager.OnClickCard(this.card);
-            }
-        }
-        setHealthText() {
-            if (this.card.isHero) {
-                var hero = this.card;
-                this.front.m_life.title = hero.currentLife + "/" + hero.totalLife;
-            }
-            else {
-                var card = this.card;
-                if (this.front.m_life) {
-                    this.front.m_life.title = card.lifeAmount.toString();
-                }
-            }
-        }
-        setPowerUpText() {
-            var card = this.card;
-            if (this.front.m_power) {
-                this.front.m_power.title = card.powerUpAmount.toString();
-            }
-        }
-        setStepText() {
-            var card = this.card;
-            if (this.front.m_step) {
-                this.front.m_step.title = card.step.toString();
-                this.front.m_step.visible = card.stepMax > 0;
-            }
-        }
-        setArmor() {
-            if (this.card.isHero) {
-                var hero = this.card;
-                var heroView = this.front;
-                if (hero.armor > 0) {
-                    if (heroView.m_shield.visible == false || this.preArmor != hero.armor) {
-                        heroView.setArmorShowOrChange();
-                        this.preArmor = hero.armor;
-                    }
-                }
-                else {
-                    heroView.setArmorHide();
-                }
-                heroView.m_shield.title = hero.armor.toString();
-            }
-        }
-        tweenLife() {
-            var view = this.front.m_life;
-            if (!view) {
-                view = this.front.m_power;
-            }
-            var tweenContainer = this.card.getScaleTween(view);
-            tweenContainer.onComplete.addOnce(this.setHealthText, this);
-            return tweenContainer;
-        }
-        tweenPowerUp() {
-            var view = this.front.m_power;
-            if (!view) {
-                view = this.front.m_life;
-            }
-            var tweenContainer = this.card.getScaleTween(view);
-            tweenContainer.onComplete.addOnce(this.setPowerUpText, this);
-            return tweenContainer;
-        }
-        useLuck() {
-            if (this.card.isHero) {
-                var hero = this.card;
-                var heroView = this.front;
-                heroView.m_shopBar.useLuck();
-            }
-        }
-        useHeart() {
-            if (this.card.isHero) {
-                var hero = this.card;
-                var heroView = this.front;
-                heroView.m_shopBar.useHeart();
-            }
-        }
-        refreshShopBar() {
-            if (this.card.isHero) {
-                var hero = this.card;
-                var heroView = this.front;
-                heroView.m_shopBar.refresh();
-            }
-        }
-        setOpen() {
-            if (this.card.isTrap) {
-                this.front.SetOpen();
-            }
-        }
-        setClose() {
-            if (this.card.isTrap) {
-                this.front.SetClose();
-            }
-        }
-    }
-
-    class CardConfig extends CardConfigLang {
-        get cardScoreConfig() {
-            return Game.config.cardScoreType.getConfig(this.scoreTypeKey);
-        }
-        get cardScoreType() {
-            var scoreConfig = this.cardScoreConfig;
-            if (scoreConfig) {
-                return scoreConfig.id;
-            }
-            else {
-                console.error("CardConfig.cardScoreType    scoreConfig=null", this.name, this);
-            }
-        }
-        get heroType() {
-            return this.id % 100;
-        }
-        get spriteIndex() {
-            return this.heroType - 1;
-        }
-        get spriteUrl() {
-            if (!this._spriteUrl) {
-                this._spriteUrl = CardView.GetSpriteUrl(this.sprite);
-            }
-            return this._spriteUrl;
-        }
-        static getArmorLevel(score) {
-            var level = 1;
-            if (score <= 3) {
-                level = 1;
-            }
-            else if (score <= 5) {
-                level = 2;
-            }
-            else if (score <= 8) {
-                level = 3;
-            }
-            else if (score <= 10) {
-                level = 4;
-            }
-            else {
-                level = 5;
-            }
-            return level;
-        }
-    }
-
-    class CardScoreTypeConfig extends CardScoreTypeConfigLang {
-    }
-
-    class EffectTypeConfig extends EffectTypeConfigLang {
-    }
-
-    class ItemConfig extends ItemConfigLang {
-        get itemToolType() {
-            return this.id % 100 - 1;
-        }
-        get spriteIndex() {
-            return this.itemToolType;
-        }
-    }
-
-    var ItemType;
-    (function (ItemType) {
-        ItemType[ItemType["Tool"] = 5] = "Tool";
-        ItemType[ItemType["Weapon"] = 12] = "Weapon";
-        ItemType[ItemType["Decorate"] = 13] = "Decorate";
-        ItemType[ItemType["Consume"] = 14] = "Consume";
-    })(ItemType || (ItemType = {}));
-
-    class ItemConsumeConfig extends ItemConsumeConfigLang {
-        constructor() {
-            super(...arguments);
-            this.type = ItemType.Consume;
-        }
-        get effectConfig() {
-            return Game.config.effectType.getConfig(this.effectType);
-        }
-        get effectTypeId() {
-            var typeConfig = this.effectConfig;
-            if (typeConfig) {
-                return typeConfig.id;
-            }
-            else {
-                console.error("ItemConsumeConfig.effectTypeId    effectConfig=null", this.name, this);
-            }
-        }
-    }
-
-    class ItemDecorateConfig extends ItemDecorateConfigLang {
-        constructor() {
-            super(...arguments);
-            this.type = ItemType.Decorate;
-        }
-        get effectConfig() {
-            return Game.config.effectType.getConfig(this.effectType);
-        }
-        get effectTypeId() {
-            var typeConfig = this.effectConfig;
-            if (typeConfig) {
-                return typeConfig.id;
-            }
-            else {
-                console.error("ItemDecorateConfig.effectTypeId    effectConfig=null", this.name, this);
-            }
-        }
-        get triggerConfig() {
-            return Game.config.triggerType.getConfig(this.triggerType);
-        }
-        get triggerTypeId() {
-            var typeConfig = this.triggerConfig;
-            if (typeConfig) {
-                return typeConfig.id;
-            }
-            else {
-                console.error("ItemDecorateConfig.triggerTypeId    triggerConfig=null", this.name, this);
-            }
-        }
-    }
-
-    class ItemWeaponConfig extends ItemWeaponConfigLang {
-        constructor() {
-            super(...arguments);
-            this.type = ItemType.Weapon;
-        }
-        get effectConfig() {
-            return Game.config.effectType.getConfig(this.effectType);
-        }
-        get effectTypeId() {
-            var typeConfig = this.effectConfig;
-            if (typeConfig) {
-                return typeConfig.id;
-            }
-            else {
-                console.error("ItemWeaponConfig.effectTypeId    effectConfig=null", this.name, this);
-            }
-        }
-        get triggerConfig() {
-            return Game.config.triggerType.getConfig(this.triggerType);
-        }
-        get triggerTypeId() {
-            var typeConfig = this.triggerConfig;
-            if (typeConfig) {
-                return typeConfig.id;
-            }
-            else {
-                console.error("ItemWeaponConfig.triggerTypeId    triggerConfig=null", this.name, this);
-            }
-        }
-    }
-
-    class LevelConfig extends LevelConfigLang {
-    }
-
-    class LoaderConfig extends LoaderConfigLang {
-    }
-
-    var MenuId;
-    (function (MenuId) {
-        MenuId[MenuId["Notice"] = 0] = "Notice";
-        MenuId[MenuId["Home"] = 100] = "Home";
-        MenuId[MenuId["War"] = 601] = "War";
-        MenuId[MenuId["Login"] = 101] = "Login";
-        MenuId[MenuId["Plot"] = 102] = "Plot";
-        MenuId[MenuId["Gashapon"] = 200] = "Gashapon";
-        MenuId[MenuId["Hero"] = 201] = "Hero";
-        MenuId[MenuId["Bag"] = 202] = "Bag";
-        MenuId[MenuId["Equip"] = 203] = "Equip";
-        MenuId[MenuId["Draug"] = 204] = "Draug";
-        MenuId[MenuId["Sections"] = 207] = "Sections";
-        MenuId[MenuId["Quest"] = 300] = "Quest";
-        MenuId[MenuId["Team"] = 303] = "Team";
-        MenuId[MenuId["BattlePlan"] = 304] = "BattlePlan";
-        MenuId[MenuId["PVPHall"] = 401] = "PVPHall";
-        MenuId[MenuId["PVEHall"] = 402] = "PVEHall";
-        MenuId[MenuId["SystemSetting"] = 500] = "SystemSetting";
-        MenuId[MenuId["Mail"] = 501] = "Mail";
-        MenuId[MenuId["Rank"] = 502] = "Rank";
-        MenuId[MenuId["PlayerInfo"] = 503] = "PlayerInfo";
-    })(MenuId || (MenuId = {}));
-    window["MenuId"] = MenuId;
-
-    var LoaderId;
-    (function (LoaderId) {
-        LoaderId[LoaderId["None"] = 0] = "None";
-        LoaderId[LoaderId["Circle"] = 1] = "Circle";
-        LoaderId[LoaderId["Launch"] = 2] = "Launch";
-        LoaderId[LoaderId["EnterWar"] = 3] = "EnterWar";
-        LoaderId[LoaderId["EnterModule"] = 4] = "EnterModule";
-    })(LoaderId || (LoaderId = {}));
-
-    class Res {
-        static get res3dzip_manifest() {
-            return this.res3dzip + "manifest.json";
-        }
-        static get res3dzip_manifest_pve01() {
-            return this.res3dzip + "pve_01_manifest.json";
-        }
-        static get res3dzip_zip_pve01() {
-            return this.res3dzip + "pve_01.zip";
-        }
-        static get config() {
-            return Res.root + "config/";
-        }
-        static get PathConfig() {
-            return Res.root + "config/path/";
-        }
-        static get GmConfig() {
-            return Res.root + "config/gm/";
-        }
-        static get shader() {
-            return Res.root + "shader/";
-        }
-        static get particles() {
-            return Res.root + "particles/";
-        }
-        static get spine() {
-            return Res.root + "spine/";
-        }
-        static get spineUI() {
-            return Res.root + "spineUI/";
-        }
-        static getConfigIcon(name) {
-            return Res.fspriteassets + name + '.png';
-        }
-        static get fspriteassets() {
-            return Res.root + "fspriteassets/";
-        }
-        static get actorBodyIcon() {
-            return Res.root + "fspriteassets/ActorBodyIcon/";
-        }
-        static get draugHeroIcon() {
-            return Res.root + "fspriteassets/icon/draugHeroIcon/";
-        }
-        static get draugIcon() {
-            return Res.root + "fspriteassets/icon/draugIcon/";
-        }
-        static get menuIcon() {
-            return Res.root + "fspriteassets/MenuItemIcon/";
-        }
-        static get HeroIcon() {
-            return Res.root + "fspriteassets/icon/heroIcon/";
-        }
-        static getActorBodyIcon(actorName) {
-            return Res.actorBodyIcon + `${actorName}.png`;
-        }
-        static getDraugHeroIcon(heroid) {
-            let ids = Game.channel.serverItem.shieldHero;
-            if (ids.indexOf(heroid) != -1) {
-                heroid = 1001;
-            }
-            return Res.draugHeroIcon + `${heroid}.png`;
-        }
-        static getDraugIcon(draugtype) {
-            return Res.draugIcon + `${draugtype}.png`;
-        }
-        static getMenuIcon(menuid) {
-            return Res.menuIcon + `${menuid}.png`;
-        }
-        static getSpineSKPathF(boneName, skinName) {
-            return Res.spine + `${boneName}_F/${skinName}_F/${skinName}_F.sk`;
-        }
-        static getSpineSKPathB(boneName, skinName) {
-            return Res.spine + `${boneName}_B/${skinName}_B/${skinName}_B.sk`;
-        }
-        static getSpinePngPathF(boneName, skinName) {
-            return Res.spine + `${boneName}_F/${skinName}_F/${skinName}_F.png`;
-        }
-        static getSpinePngPathB(boneName, skinName) {
-            return Res.spine + `${boneName}_B/${skinName}_B/${skinName}_B.png`;
-        }
-        static getSpineUIPngPath(name) {
-            return Res.spineUI + `${name}.png`;
-        }
-        static getSpineUISkPath(name) {
-            return Res.spineUI + `${name}.sk`;
-        }
-        static getSpineSoltPartPath(path) {
-            return Res.spine + "SlotTexture/" + path + ".png";
-        }
-        static getMenuIconUrl(path) {
-            return Res.fspriteassets + "MenuIcon/" + path + ".png";
-        }
-        static getMenuNameIconUrl(path) {
-            return Res.fspriteassets + "MenuNameIcon/" + path + ".png";
-        }
-        static getBgUrl(name) {
-            return Res.fspriteassets + "Background/" + name + ".png";
-        }
-        static getSpritePath(path) {
-            return Res.root + "sprite/" + path + ".png";
-        }
-        static getSpritePathHasExt(path) {
-            return Res.root + "sprite/" + path;
-        }
-        static getShaderVS(filename) {
-            return Res.shader + filename + ".vs";
-        }
-        static getShaderPS(filename) {
-            return Res.shader + filename + ".fs";
-        }
-        static getParticles(filename) {
-            return Res.particles + filename + ".part";
-        }
-        static GetBattleRoleIcon(filename) {
-            return Res.fspriteassets + filename + ".png";
-        }
-        static GetAvatarSource(avatarid) {
-            let config = Game.config.avatar.getConfig(avatarid);
-            return Res.fspriteassets + config.icon + ".png";
-        }
-    }
-    Res.res3dsrc = "";
-    Res.res3dzip = "res3dzip/";
-    Res.root = "res/";
-
-    class TEXT {
-    }
-    TEXT.NET_ERROR = "网络连接失败！请检查网络设备!加油哦！！";
-    TEXT.Login = "登录";
-    TEXT.Auth = "授权";
-    TEXT.LangSelectMsg = "语言需要重启游戏才有效!";
-    TEXT.FunNoOpen = "此功能暂未开放，敬请期待！";
-    TEXT.ButtonSelect = "选择";
-    TEXT.ButtonOk = "确定";
-    TEXT.ButtonCannel = "取消";
-    TEXT.ButtonYes = "是";
-    TEXT.ButtonNo = "否";
-    TEXT.Disable = "内容优化";
-    TEXT.Lock = "无解锁配置！";
-    TEXT.LvUpMax = "等级达到最大";
-    TEXT.LvUpTo = "玩家升级 {0} → {1}";
-    TEXT.Lv = "{0}级";
-    TEXT.LVDot = "等级：{0}";
-    TEXT.PlayerExp = "主公经验：{0}";
-    TEXT.FatigueNotEnough = "体力不足，无法进行挑战";
-    TEXT.cannotRecharge = "游客不能充值";
-    TEXT.cannotRechargeNoIos = "只支持ios内购";
-    TEXT.rechargeError = "充值失败，请稍候重试";
-    TEXT.systemTip = "系统提示";
-    TEXT.TitleTip = "提示";
-    TEXT.ErorNoInitProto = "没有初始化网络";
-    TEXT.ErorRequestServerList = "请求服务器列表失败";
-    TEXT.ErorAccountFrozen = "账号被冻结";
-    TEXT.ErorAccountDropped = "账号被停用";
-    TEXT.TipEnterRoleName = "输入你的名称";
-    TEXT.ErrorNameEmpty = "名字不能是空的";
-    TEXT.ErrorContentEmpty = "内容不能是空的";
-    TEXT.ErrorNameUsed = "名称已经被使用";
-    TEXT.ErrorFormatName = "存在非法字符串，请修改后重试";
-    TEXT.ErrorHttpSendFail = "[Error] 发送请求失败";
-    TEXT.HttpTimeOut = "网络超时! 当前设置的超时时间是{0}";
-    TEXT.AlertTextBuyActor = "是否花费{0}{1}增加艺人数量";
-    TEXT.AlertTextScountActor = "是否花费{0}{1} 探查艺人？";
-    TEXT.ToastTextItemNotEnough = "{0}数量不足";
-    TEXT.ToastTextItemNotEnough2 = "数量不足，需要{0} {1}";
-    TEXT.ChangeNameCost = "本次改名需要 {0}";
-    TEXT.DuelTempLevel = "当前决斗神殿段位：{0}";
-    TEXT.DuelTempMaxLevel = "历史最高决斗神殿段位：{0}";
-    TEXT.DuelTempCurrentPvpLevel = "当前竞技排名：{0}";
-    TEXT.DuelTempMaxPvpLevel = "历史最高竞技排名：{0}";
-    TEXT.BattlePlanTeamHeroNameAndLevel = "{0}  {1}级";
-    TEXT.BagCapacity = "{0}/{1}";
-    TEXT.BagItemCount = "拥有：{0}";
-    TEXT.BagExpiredLimitTip = "{0}后过期";
-    TEXT.BagExpiredPeriodTip = "将在{0}过期";
-    TEXT.BagItemSell = "出售";
-    TEXT.BagItemUse = "使用";
-    TEXT.BagItemSplit = "分解";
-    TEXT.BagItemForge = "锻造";
-    TEXT.BagItemChangeEquip = "穿戴";
-    TEXT.BagItemLevelUp = "使用可增加{0}英雄经验";
-    TEXT.EquipPropDes = "{0}+{1}";
-    TEXT.EquipExclusiveTxtMsg = "{0}专属！只有{1}才可穿戴次装备";
-    TEXT.EquipExclusiveTxt = "{0}专属";
-    TEXT.EquipEatExp = "该装备可提供{0}的强化经验";
-    TEXT.EquipTypeWeapon = "武器";
-    TEXT.EquipTypeHelmet = "头盔";
-    TEXT.EquipTypeArmor = "战甲";
-    TEXT.EquipTypeBoots = "战靴";
-    TEXT.EquipTypePendant = "玉佩";
-    TEXT.EquipTypeGem = "宝物";
-    TEXT.EquipNotEnough = "道具不足，无法选择";
-    TEXT.EquipLevelUpStr1 = "下一级属性";
-    TEXT.EquipLevelUpStr2 = "强化到{0}级时属性增加";
-    TEXT.EquipAtkRange = "系数";
-    TEXT.MailTitle = "邮件";
-    TEXT.DeleteRead = "删除已读";
-    TEXT.ToReader = "致玩家：";
-    TEXT.ReawrdMsg = "奖励内容：";
-    TEXT.Progress = "{0}/{1}";
-    TEXT.N0 = "零";
-    TEXT.N1 = "一";
-    TEXT.N2 = "二";
-    TEXT.N3 = "三";
-    TEXT.N4 = "四";
-    TEXT.N5 = "五";
-    TEXT.N6 = "六";
-    TEXT.N7 = "七";
-    TEXT.N8 = "八";
-    TEXT.N9 = "九";
-    TEXT.N10 = "十";
-    TEXT.N100 = "百";
-    TEXT.N1000 = "千";
-    TEXT.N10000 = "万";
-    TEXT.RewardItemCount = "x{0}";
-    TEXT.DATE_MonthBefore = "{0}个月前";
-    TEXT.DATE_WeekBefore = "{0}周前";
-    TEXT.DATE_DayBefore = "{0}天前";
-    TEXT.DATE_HourBefore = "{0}小时前";
-    TEXT.DATE_MinuteBefore = "{0}分钟前";
-    TEXT.DATE_SecondeBefore = "{0}秒前";
-    TEXT.Hour = "小时";
-    TEXT.Minute = "分";
-    TEXT.Second = "秒";
-    TEXT.MissionNotOpen = "该关卡尚未开启";
-    TEXT.Chapter = "第{0}章";
-    TEXT.ChapterStarTipTitle = "本章累计{0}星可领取";
-    TEXT.ChapterStarNotEnough = "星星数量不足";
-    TEXT.ChapterRewardAlreadyGet = "奖励已经领取过";
-    TEXT.ChapterSpecialTimes = "今日精英剩余次数：{0}";
-    TEXT.ChapterMonsterTimes = "今日剩余次数：{0}";
-    TEXT.SecretBookTimes = "今日剩余次数：{0}";
-    TEXT.SecretBookTimesNotEnough = "该副本今日挑战次数不足";
-    TEXT.SectionSpecialTotalTimes = "每日一共可购买{0}次精英奖励次数";
-    TEXT.SectionMonsterTotalTimes = "每日一共可购买{0}次魔王奖励次数";
-    TEXT.SecretBookTotalTimes = "每日一共可购买{0}次秘闻奖励次数";
-    TEXT.SectionBuyTimesToast = "奖励次数提升";
-    TEXT.SectionCurrentTimes = "今日第{0}次购买";
-    TEXT.SectionTimesNotEnough = "今日次数已用完";
-    TEXT.MissionUnlockCondition = "{0}级开启";
-    TEXT.ChapterCurrentStarNum = "{0}/{1}";
-    TEXT.SecretTimesRemain = "今日剩余次数: {0}";
-    TEXT.MissionMaxTime = "通关时间低于{0}秒";
-    TEXT.MissionKillBoss = "打败首领";
-    TEXT.MissionHPState = "剩余生命超过{0}%";
-    TEXT.MissionStamina = "x{0}";
-    TEXT.SecretMissionTimesRemain = "今日剩余次数：{0}";
-    TEXT.SecretLand_BestScore = "最佳成绩：大秘境{0}";
-    TEXT.SecretLand_CurrentKeyStone = "当前钥石：{0}级";
-    TEXT.SecretLand_Buy_Roll_Tips = "是否消耗{0}点体力兑换Roll币";
-    TEXT.SecretLand_Roll_tips = "当日可兑换次数为{0}，Roll积攒数量上限为{1}";
-    TEXT.SecretLand_Fatigue_Not_Enough = "您没有足够的体力值，需要{0}体力兑换Roll币";
-    TEXT.Keystone_LevelUp_Time_Limit = "{0}分钟";
-    TEXT.SecretLand_Level_Limit = "等级达到{0}后开启{1}层大秘境";
-    TEXT.SecretLand_Time_Cost = "通关时间: {0}";
-    TEXT.SecretLand_New_Keystone = "获取新钥匙：{0}{1}级";
-    TEXT.Gashapon_NextFreeTime = "{0}后免费";
-    TEXT.Gashapon_Rate = "概率 {0}%";
-    TEXT.Gashapon_PropDisplay = "{0} +{1}";
-    TEXT.Gashapon_Times_Remain = "每日可招募{0}次，今日剩余{1}次";
-    TEXT.Gashapon_Times_Not_Enough = "今日剩余次数不足";
-    TEXT.DuelSeasonDuration = "{0} - {1}";
-    TEXT.DuelSeasonRemainDays = "距离赛季结束还有{0}";
-    TEXT.DuelCurrentWinTimes = "本赛季胜场：{0}";
-    TEXT.DuelSelectHeroGroupFirst = "请先选择队伍";
-    TEXT.DuelTempOldSeason = "恭喜您，在上赛季结算时的段位达到了{0}，赛季奖励已经发送 到您的邮箱";
-    TEXT.DuelTempNewSeason = "由于您上赛季的出色表现，您在本赛季的起始段位为{0}";
-    TEXT.DuelTempWinTimes = "胜场：{0}";
-    TEXT.HeroSkillOpenLevel = "英雄等级达到{0}级别后解锁";
-    TEXT.HeroMaxLevel = "已满级";
-    TEXT.HeroInBattle = "当前英雄已在队伍中！！！";
-    TEXT.HeroStarProStr = "成长";
-    TEXT.HeroLevelUpNotEnough = "当前无法升级，请提升战队等级";
-    TEXT.HeroLevelUpItemNotEnough = "物品不足，无法升级";
-    TEXT.HeroLevelUpMax = "已提升当前最高级";
-    TEXT.RankMyAllRank = "我的全区排行：{0}";
-    TEXT.RankNotOnRank = "未上榜";
-    TEXT.RankDanStar = "{0} {1}星";
-    TEXT.HeroSkillLevelNotLevel = "升级条件不足，需英雄{0}级";
-    TEXT.SecretBookHeroLevelNotEnough = "英雄{0}级开启";
-    TEXT.GuideFinish = "现在引导结束了，你可以自由体验了";
-    TEXT.GuideGoToBattle = "guide_go_section";
-    TEXT.GuideBackHome = "guide_go_back_home";
-    TEXT.GuideBack = "guide_go_back";
-
-    class MenuValidate {
-        constructor() {
-            this.dict = new Dictionary();
-        }
-        static getInstance() {
-            var Class = this;
-            if (Class.__instance == null) {
-                Class.__instance = new Class();
-                Class.__instance.install();
-            }
-            return Class.__instance;
-        }
-        validate(menuId) {
-            if (this.dict.hasKey(menuId)) {
-                return this.dict.getValue(menuId).apply(this);
-            }
-            return true;
-        }
-        validateTab(menuIndexId, data) {
-            return true;
-        }
-        openMenu(menuId, parent) {
-        }
-        openTab(menuIndexId, data, parent) {
-        }
-        openItem(menuId, data, parent) {
-        }
-        closeRed(parent) {
-        }
-        add(menuId, fun) {
-            this.dict.add(menuId, fun);
-        }
-        install() {
-        }
-    }
-
-    class MenuValidateEnableOpen extends MenuValidate {
-        install() {
-        }
-        validate(menuId) {
-            return super.validate(menuId);
-        }
-        warEnableOpen() {
-            return true;
-        }
-    }
-
-    class MenuValidateNew extends MenuValidate {
-        install() {
-        }
-        validate(menuId) {
-            if (this.dict.hasKey(menuId)) {
-                return this.dict.getValue(menuId).apply(this);
-            }
-            return false;
-        }
-    }
-
-    class ModuleConfig {
-        constructor(menuId, windowClass) {
-            this.menuId = menuId;
-            this.windowClass = windowClass;
-        }
-    }
-
-    var MenuLayerType;
-    (function (MenuLayerType) {
-        MenuLayerType[MenuLayerType["Home"] = 1] = "Home";
-        MenuLayerType[MenuLayerType["HomeTop"] = 2] = "HomeTop";
-        MenuLayerType[MenuLayerType["WarUI"] = 3] = "WarUI";
-        MenuLayerType[MenuLayerType["Module"] = 4] = "Module";
-        MenuLayerType[MenuLayerType["ModuleTop"] = 5] = "ModuleTop";
-        MenuLayerType[MenuLayerType["MainUI"] = 6] = "MainUI";
-        MenuLayerType[MenuLayerType["Dialog"] = 7] = "Dialog";
-        MenuLayerType[MenuLayerType["Guide"] = 8] = "Guide";
-        MenuLayerType[MenuLayerType["Loader"] = 9] = "Loader";
-        MenuLayerType[MenuLayerType["GM"] = 10] = "GM";
-        MenuLayerType[MenuLayerType["FloatMsg"] = 11] = "FloatMsg";
-    })(MenuLayerType || (MenuLayerType = {}));
-
-    class MenuLayer {
-        static get dialogModel() {
-            if (!MenuLayer._dialogModel) {
-                MenuLayer._dialogModel = new fgui.GComponent();
-            }
-            return MenuLayer._dialogModel;
-        }
-        static showDialogModel() {
-            MenuLayer.dialog.width = Game.screenSetting.screenWidth;
-            MenuLayer.dialog.height = Game.screenSetting.screenHeight;
-            MenuLayer.dialogModel.alpha = 0.8;
-            MenuLayer.dialogModel.width = Game.screenSetting.screenWidth;
-            MenuLayer.dialogModel.height = Game.screenSetting.screenHeight;
-            if (MenuLayer.dialogModel)
-                MenuLayer.dialog.addChildAt(MenuLayer.dialogModel, 0);
-        }
-        static resetDialogModelSize() {
-            MenuLayer.dialog.width = Game.screenSetting.screenWidth;
-            MenuLayer.dialog.height = Game.screenSetting.screenHeight;
-            MenuLayer.dialogModel.width = Game.screenSetting.screenWidth;
-            MenuLayer.dialogModel.height = Game.screenSetting.screenHeight;
-        }
-        static hideDialogModel() {
-            if (MenuLayer.dialogModel)
-                MenuLayer.dialogModel.removeFromParent();
-        }
-        static install() {
-            Laya.stage.addChild(fgui.GRoot.inst.displayObject);
-            MenuLayer.root = fgui.GRoot.inst;
-            MenuLayer.home = MenuLayer.createLayer(MenuLayerType.Home, "MenuLayer-home");
-            MenuLayer.warUI = MenuLayer.createLayer(MenuLayerType.WarUI, "MenuLayer-warUI");
-            MenuLayer.module = MenuLayer.createLayer(MenuLayerType.Module, "MenuLayer-module");
-            MenuLayer.mainUI = MenuLayer.createLayer(MenuLayerType.MainUI, "MenuLayer-mainUI");
-            MenuLayer.dialog = MenuLayer.createLayer(MenuLayerType.Dialog, "MenuLayer-dialog");
-            MenuLayer.guide = MenuLayer.createLayer(MenuLayerType.Guide, "MenuLayer-guide");
-            MenuLayer.loader = MenuLayer.createLayer(MenuLayerType.Loader, "MenuLayer-loader");
-            MenuLayer.gm = MenuLayer.createLayer(MenuLayerType.GM, "MenuLayer-gm");
-            MenuLayer.floatMsg = MenuLayer.createLayer(MenuLayerType.FloatMsg, "MenuLayer-floatMsg");
-            MenuLayer.dict.add(MenuLayerType.Home, MenuLayer.home);
-            MenuLayer.dict.add(MenuLayerType.WarUI, MenuLayer.warUI);
-            MenuLayer.dict.add(MenuLayerType.Module, MenuLayer.module);
-            MenuLayer.dict.add(MenuLayerType.MainUI, MenuLayer.mainUI);
-            MenuLayer.dict.add(MenuLayerType.Dialog, MenuLayer.dialog);
-            MenuLayer.dict.add(MenuLayerType.Guide, MenuLayer.guide);
-            MenuLayer.dict.add(MenuLayerType.Loader, MenuLayer.loader);
-            MenuLayer.dict.add(MenuLayerType.GM, MenuLayer.gm);
-            MenuLayer.dict.add(MenuLayerType.FloatMsg, MenuLayer.floatMsg);
-        }
-        static getLayer(layerType) {
-            return MenuLayer.dict.getValue(layerType);
-        }
-        static createLayer(menuLayer, name) {
-            let root = MenuLayer.root;
-            let v = new fgui.GRoot();
-            v["menuLayer"] = menuLayer;
-            if (name) {
-                v.name = name;
-            }
-            if (Engine.borwer.isLiuHai) {
-                switch (menuLayer) {
-                    case MenuLayerType.Loader:
-                        v.x = 0;
-                        v.y = 0;
-                        v.setSize(root.width, root.height);
-                        break;
-                    default:
-                        if (Game.screenSetting.isLandsape) {
-                            v.x = Game.screenSetting.liuHaiHeightTop;
-                            v.setSize(Game.screenSetting.screenWidthLiuHai, root.height);
-                        }
-                        else {
-                            v.y = Game.screenSetting.liuHaiHeightTop;
-                            v.setSize(root.width, root.height - Game.screenSetting.screenHeightLiuHai);
-                        }
-                }
-            }
-            else {
-                v.setSize(root.width, root.height);
-            }
-            root.addChild(v);
-            return v;
-        }
-        static getLayerHeight(menuLayer) {
-            if (Engine.borwer.isLiuHai) {
-                switch (menuLayer) {
-                    case MenuLayer.loader:
-                        return Game.screenSetting.screenHeight;
-                    default:
-                        return Game.screenSetting.screenHeightLiuHai;
-                }
-            }
-            return Game.screenSetting.screenHeight;
-        }
-        static getLayerWidth(menuLayer) {
-            if (Engine.borwer.isLiuHai) {
-                switch (menuLayer) {
-                    case MenuLayer.loader:
-                        return Game.screenSetting.screenWidth;
-                    default:
-                        return Game.screenSetting.screenWidthLiuHai;
-                }
-            }
-            return Game.screenSetting.screenWidth;
-        }
-    }
-    MenuLayer.dict = new Dictionary();
-    window["MenuLayer"] = MenuLayer;
-
-    class FWindow extends fgui.Window {
-        constructor() {
-            super(...arguments);
-            this.isAddedStage = false;
-        }
-        get isShowed() {
-            if (this.contentPane)
-                return this.parent != null;
-            return false;
-        }
-        onWindowWillShow() {
-            if (this.contentPane) {
-                this.callChildOnWindowWillShow(this.contentPane);
-            }
-            this.setScreenSize();
-            if (this.isAddedStage)
-                return;
-            this.isAddedStage = true;
-            Laya.stage.on(Laya.Event.RESIZE, this, this.setScreenSize);
-        }
-        onWindowWillHide() {
-            if (this.contentPane) {
-                this.callChildOnWindowWillHide(this.contentPane);
-            }
-            this.isAddedStage = false;
-            Laya.stage.off(Laya.Event.RESIZE, this, this.setScreenSize);
-        }
-        setScreenSize() {
-            if (this.contentPane) {
-                if (this.windowContainer && this.windowContainer["menuLayer"] !== undefined) {
-                    if (Game.screenSetting.isLandsape) {
-                        this.width = MenuLayer.getLayerWidth(this.windowContainer["menuLayer"]);
-                        this.height = this.windowContainer.height;
-                        this.contentPane.width = this.width;
-                        this.contentPane.height = this.height;
-                    }
-                    else {
-                        this.width = this.windowContainer.width;
-                        this.height = MenuLayer.getLayerHeight(this.windowContainer["menuLayer"]);
-                        this.contentPane.width = this.width;
-                        this.contentPane.height = this.height;
-                    }
-                }
-                else {
-                    this.width = Game.screenSetting.screenWidth;
-                    this.height = Game.screenSetting.screenHeight;
-                    this.contentPane.width = Game.screenSetting.screenWidth;
-                    this.contentPane.height = Game.screenSetting.screenHeight;
-                }
-                this.callChildOnWindowResize(this.contentPane);
-            }
-        }
-        callChildOnWindowWillShow(com) {
-            if (com) {
-                let fun = com["onWindowWillShow"];
-                if (fun) {
-                    fun.apply(com);
-                }
-                if (com._children) {
-                    for (let i = 0; i < com._children.length; i++) {
-                        this.callChildOnWindowWillShow(com._children[i]);
-                    }
-                }
-            }
-        }
-        callChildOnWindowWillHide(com) {
-            if (com) {
-                let fun = com["onWindowWillHide"];
-                if (fun) {
-                    fun.apply(com);
-                }
-                if (com._children) {
-                    for (let i = 0; i < com._children.length; i++) {
-                        this.callChildOnWindowWillHide(com._children[i]);
-                    }
-                }
-            }
-        }
-        callChildOnWindowResize(com) {
-            if (com) {
-                let fun = com["onWindowResize"];
-                if (fun) {
-                    fun.apply(com);
-                }
-                if (com._children) {
-                    for (let i = 0; i < com._children.length; i++) {
-                        this.callChildOnWindowResize(com._children[i]);
-                    }
-                }
-            }
-        }
-    }
-
-    var AssetItemType;
-    (function (AssetItemType) {
-        AssetItemType[AssetItemType["FguiPackage"] = 0] = "FguiPackage";
-        AssetItemType[AssetItemType["FspritePackage"] = 1] = "FspritePackage";
-        AssetItemType[AssetItemType["Image"] = 2] = "Image";
-        AssetItemType[AssetItemType["TEXTURE2D"] = 3] = "TEXTURE2D";
-        AssetItemType[AssetItemType["Buffer"] = 4] = "Buffer";
-        AssetItemType[AssetItemType["Sound"] = 5] = "Sound";
-        AssetItemType[AssetItemType["Text"] = 6] = "Text";
-        AssetItemType[AssetItemType["Json"] = 7] = "Json";
-        AssetItemType[AssetItemType["Xml"] = 8] = "Xml";
-        AssetItemType[AssetItemType["Font"] = 9] = "Font";
-        AssetItemType[AssetItemType["TTF"] = 10] = "TTF";
-        AssetItemType[AssetItemType["PKM"] = 11] = "PKM";
-    })(AssetItemType || (AssetItemType = {}));
-
-    var Loader = Laya.Loader;
-    class AssetHelper {
-        static get layaLoaderType2AssetItemTypeDict() {
-            if (!AssetHelper._layaLoaderType2AssetItemTypeDict) {
-                let dict = new Dictionary();
-                dict.add(Loader.IMAGE, AssetItemType.Image);
-                dict.add(Loader.TEXTURE2D, AssetItemType.TEXTURE2D);
-                dict.add(Loader.BUFFER, AssetItemType.Buffer);
-                dict.add(Loader.SOUND, AssetItemType.Sound);
-                dict.add(Loader.TEXT, AssetItemType.Text);
-                dict.add(Loader.JSON, AssetItemType.Json);
-                dict.add(Loader.XML, AssetItemType.Xml);
-                dict.add(Loader.FONT, AssetItemType.Font);
-                dict.add(Loader.TTF, AssetItemType.TTF);
-                AssetHelper._layaLoaderType2AssetItemTypeDict = dict;
-            }
-            return AssetHelper._layaLoaderType2AssetItemTypeDict;
-        }
-        static get assetItemType2LayaLoaderTypeDict() {
-            if (!AssetHelper._assetItemType2LayaLoaderTypeDict) {
-                let d = this.layaLoaderType2AssetItemTypeDict.__getDict();
-                let dict = new Dictionary();
-                for (let key in d) {
-                    dict[d[key]] = d;
-                }
-                AssetHelper._assetItemType2LayaLoaderTypeDict = dict;
-            }
-            return AssetHelper._assetItemType2LayaLoaderTypeDict;
-        }
-        static layaLoaderType2AssetItemType(loader) {
-            return AssetHelper.layaLoaderType2AssetItemTypeDict.getValue(loader);
-        }
-        static assetItemType2LayaLoaderType(type) {
-            return AssetHelper.assetItemType2LayaLoaderTypeDict.getValue(type);
-        }
-        static getAssetItemKey(item) {
-            return item.type + " " + item.url;
-        }
-    }
-
-    class GuiPackageNames {
-    }
-    GuiPackageNames.GameHome = "GameHome";
-    GuiPackageNames.GameLaunch = "GameLaunch";
-    GuiPackageNames.ModuleLogin = "ModuleLogin";
-    GuiPackageNames.Sound = "Sound";
-
-    var MenuOpenType;
-    (function (MenuOpenType) {
-        MenuOpenType[MenuOpenType["None"] = 0] = "None";
-        MenuOpenType[MenuOpenType["Tab"] = 2] = "Tab";
-        MenuOpenType[MenuOpenType["Subwindow"] = 3] = "Subwindow";
-    })(MenuOpenType || (MenuOpenType = {}));
-
-    class GameEventKey {
-    }
-    GameEventKey.Test = "Test";
-    GameEventKey.GameBattle_onSyncNormal = "GameFrame_onSyncNormal";
-    GameEventKey.GameBattle_onSyncChasingFrame = "GameBattle_onSyncChasingFrame";
-    GameEventKey.GameBattle_onEntityCreate = "GameBattle_onEntityCreate";
-    GameEventKey.GameBattle_onEntityRemove = "GameFrame_onEntityRemove";
-    GameEventKey.GameBattle_onEntityRollbackBegin = "GameFrame_onEntityRollbackBegin";
-    GameEventKey.GameBattle_onEntityRollbackEnd = "GameBattle_onEntityRollbackEnd";
-    GameEventKey.GameBattle_onShowDamageUI = "GameBattle_onShowDamageUI";
-    GameEventKey.GameBattle_onShowHitUI = "GameFrame_onShowHitUI";
-    GameEventKey.GameBattle_onShakeScreen = "GameFrame_onShakeScreen";
-    GameEventKey.GameBattle_onScreenScale = "GameBattle_onScreenScale";
-    GameEventKey.GameBattle_onScreenMove = "GameBattle_onScreenMove";
-    GameEventKey.GameBattle_onAnimNotify = "GameFrame_onAnimNotify";
-    GameEventKey.GameBattle_onChangeNotify = "GameFrame_onChangeNotify";
-    GameEventKey.GameBattle_onCharacterBorn = "GameBattle_onCharacterBorn";
-    GameEventKey.GameBattle_OnViewAlphaChange = "GameBattle_OnViewAlphaChange";
-    GameEventKey.GameBattle_onPlaySound = "GameFrame_onPlaySound";
-    GameEventKey.GameBattle_onPlaySoundBehit = "GameFrame_onPlaySoundBehit";
-    GameEventKey.GameBattle_onTiggerEffectScreenShow = "GameBattle_onTiggerEffectScreenShow";
-    GameEventKey.GameBattle_onTiggerEffectScreenHide = "GameBattle_onTiggerEffectScreenHide";
-    GameEventKey.GameBattle_onSceneFadeOut = "GameFrame_onSceneFadeOut";
-    GameEventKey.GameBattle_onTiggerUIScreenShow = "GameBattle_onTiggerUIScreenShow";
-    GameEventKey.GameBattle_onTiggerUIScreenHide = "GameBattle_onTiggerUIScreenHide";
-    GameEventKey.GameBattle_onTriggerChangeSceneBg = "GameBattle_onTriggerChangeSceneBg";
-    GameEventKey.GameBattle_onBossAppear = "GameBattle_onBossAppear";
-    GameEventKey.GameBttle_showBossSpecialView = "GameBttle_showBossSpecialView";
-    GameEventKey.GameBattle_onShowGameStart = "GameBattle_onShowGameStart";
-    GameEventKey.GameBattle_onServerError2300 = "GameBattle_onServerError2300";
-    GameEventKey.GameBattle_MonsterCreater = "GameBattle_nextAirWallMonster";
-    GameEventKey.GameBattle_WaveChange = "GameBattle_WaveChange";
-    GameEventKey.GameBattle_MonsterHpChange = "GameBattle_MonsterHpChange";
-    GameEventKey.GameBattle_EntityTeleport = "GameBattle_EntityTeleport";
-    GameEventKey.GameBattle_PlayerRevive = "GameBattle_PlayerRevive";
-    GameEventKey.GameBattle_EntityDead = "GameBattle_EntityDead";
-    GameEventKey.GameFrame_OpenMenu = "GameFrame_OpenMenu";
-    GameEventKey.GameFrame_CloseMenu = "GameFrame_CloseMenu";
-    GameEventKey.GameFrame_ReLoginData_Begin = "GameFrame_ReLoginData_Begin";
-    GameEventKey.GameFrame_ReLoginData_End = "GameFrame_ReLoginData_End";
-    GameEventKey.GameFrame_Everyday_Update = "GameFrame_Everyday_Update";
-    GameEventKey.GameFrame_HideOpenDialog = "GameFrame_HideOpenDialog";
-    GameEventKey.GameFrame_ShowOpenDialog = "GameFrame_ShowOpenDialog";
-    GameEventKey.GameFrame_TeamMemberNetStateChange = "GameFrame_TeamMemberStateChange";
-    GameEventKey.GameFrame_TeamMemberLeave = "GameFrame_TeamMemberLeave";
-    GameEventKey.GameFrame_UseItem = "GameFrame_UseItem";
-    GameEventKey.GameFrame_ConsumeItem = "GameFrame_ConsumeItem";
-    GameEventKey.GameFrame_HeroLevelUp = "GameFrame_HeroLevelUp";
-    GameEventKey.GameFrame_HeroStarUp = "GameFrame_HeroStarUp";
-    GameEventKey.GameFrame_AddHero = "GameFrame_AddHero";
-    GameEventKey.GameFrame_HeroSkillLevel = "GameFrame_HeroSkillLevel";
-    GameEventKey.GameFrame_HeroLeveling = "GameFrame_HeroLeveling";
-    GameEventKey.GameFrame_UpdateEXP = "GameFrame_UpdateEXP";
-    GameEventKey.GameFrame_UpdateProp = "GameFrame_UpdateProp";
-    GameEventKey.GameFrame_BackUpData = "GameFrame_BackUpData";
-    GameEventKey.GameFrame_RestoreData = "GameFrame_RestoreData";
-    GameEventKey.GameFrame_ItemExceedBound = "GameFrame_ItemExceedBound";
-    GameEventKey.GameFrame_LevelExceedBound = "GameFrame_LevelExceedBound";
-    GameEventKey.GameFrame_LevelExceedMaxLevelInLoop = "GameFrame_LevelExceedMaxLevelInLoop";
-    GameEventKey.GameFrame_EquipStarUp = "GameFrame_EquipStarUp";
-    GameEventKey.GameFrame_EquipLevelUp = "GameFrame_EquipLevelUp";
-    GameEventKey.GameFrame_EquipQualitySelect = "GameFrame_EquipQualitySelect";
-    GameEventKey.GameFrame_EquipQualitySort = "GameFrame_EquipQualitySort";
-    GameEventKey.GameFrame_EquipItemSelect = "GameFrame_EquipItemSelect";
-    GameEventKey.GameFrame_HeroSelectEquip = "GameFrame_HeroSelectEquip";
-    GameEventKey.GameFrame_BattlePlanDataUpdate = "GameFrame_BattlePlanDataUpdate";
-    GameEventKey.GameFrame_BattlePlanUnlockNewTeam = "GameFrame_BattlePlanUnlockNewTeam";
-    GameEventKey.GameFrame_BattlePlanChangeTeamName = "GameFrame_BattlePlanChangeTeamName";
-    GameEventKey.GameFrame_BattlePlanChangeHero = "GameFrame_BattlePlanChangeHero";
-    GameEventKey.GameFrame_BattlePlanTeamCentern = "GameFrame_BattlePlanTeamCentern";
-    GameEventKey.GameFrame_BattlePlanUnlockNewHeroChair = "GameFrame_BattlePlanUnlockNewHeroChair";
-    GameEventKey.GameFrame_BattlePlanSelectedTeam = "GameFrame_BattlePlanSelectedTeam";
-    GameEventKey.GameFrame_BattlePlanSecondHero = "GameFrame_BattlePlanSecondHero";
-    GameEventKey.GameFrame_BattlePlanRefreshCommonSkill = "GameFrame_BattlePlanRefreshCommonSkill";
-    GameEventKey.GameFrame_HomeWindowBattleStartBtn = "GameFrame_HomeWindowBattleStartBtn";
-    GameEventKey.GameFrame_HeroWindowEquipPanel = "GameFrame_HeroWindowEquipPanel";
-    GameEventKey.GameFrame_HeroPanelBack = "GameFrame_HeroPanelBack";
-    GameEventKey.Gameframe_HeroEquipClose = "Gameframe_HeroEquipClose";
-    GameEventKey.GameFrame_BattleEnterOnClick = "GameFrame_BattleEnterOnClick";
-    GameEventKey.GameFrame_SectionEnterOnClick = "GameFrame_SectionEnterOnClick";
-    GameEventKey.GameFrame_SectionDeltaEnterOnClick = "GameFrame_SectionDeltaEnterOnClick";
-    GameEventKey.GameFrame_BattlePlanEnter = "GameFrame_BattlePlanEnter";
-    GameEventKey.GameFrame_GuideJoystickFinish = "GameFrame_GuideJoystickFinish";
-    GameEventKey.GameFrame_BattleOneWave = "GameFrame_GuideAttackStart";
-    GameEventKey.GameFrame_GuideAttackFinish = "GameFrame_GuideAttackFinish";
-    GameEventKey.GameFrame_GuideFirSkillStart = "GameFrame_GuideFirSkillStart";
-    GameEventKey.GameFrame_GuideFirSkillEnd = "GameFrame_GuideFirSkillEnd";
-    GameEventKey.GameFrame_GuideBattleEndRemove = "GameFrame_GuideBattleEndRemove";
-    GameEventKey.GameFrame_SectionBackBtnOnClick = "GameFrame_SectionBackBtnOnClick";
-    GameEventKey.GameFrame_HomeHeroBtnOnClick = "GameFrame_HomeHeroBtnOnClick";
-    GameEventKey.GameFrame_HeroPanelChooseHero = "GameFrame_HeroPanelChooseHero";
-    GameEventKey.GameFrame_HeroBattleChooseHero = "GameFrame_HeroBattleChooseHero";
-    GameEventKey.GameFrame_HeroBattleHero = "GameFrame_HeroBattleHero";
-    GameEventKey.GameFrame_HeroInfoShowAddExpPanel = "GameFrame_HeroInfoShowAddExpPanel";
-    GameEventKey.GameFrame_HeroExpIncreaseByItem = "GameFrame_HeroExpIncreaseByItem";
-    GameEventKey.GameFrame_HeroChooseFinish = "GameFrame_HeroChooseFinish";
-    GameEventKey.gameFrame_GuideOpenLevelUpPanel = "gameFrame_GuideOpenLevelUpPanel";
-    GameEventKey.gameFrame_GuideEquipUIFinish = "gameFrame_GuideEquipUIFinish";
-    GameEventKey.gameFrame_GuideEquipList = "gameFrame_GuideEquipUIFinish";
-    GameEventKey.gameFrame_HeroEquip = "gameFrame_HeroEquip";
-    GameEventKey.GameFrame_FinishGuideOpenHeroEquip = "GameFrame_FinishOpenHeroEquip";
-    GameEventKey.GameFrame_OpenHeroEquipList = "GameFrame_OpenHeroEquipList";
-    GameEventKey.GameFrame_gameStart = "GameFrame_onShowGameStart";
-    GameEventKey.GameFrame_SectionFinishSuccess = "GameFrame_SectionFinishSuccess";
-    GameEventKey.GameFrame_HomeEquipBtnOnClick = "GameFrame_HomeEquipBtnOnClick";
-    GameEventKey.GameFrame_EquipSelectFirst = "GameFrame_EquipSelectFirst";
-    GameEventKey.GameFrame_EquipStrengthenBtn = "GameFrame_EquipStrengthenBtn";
-    GameEventKey.GameFrame_EquipStrengthenBtn2 = "GameFrame_EquipStrengthenBtn2";
-    GameEventKey.GameFrame_EquipStrengthenEnterBtn = "GameFrame_EquipStrengthenEnterBtn";
-    GameEventKey.GameFrame_BattleNormalBtn = "GameFrame_BattleNormal";
-    GameEventKey.GameFrame_BattleSpecialBtn = "GameFrame_BattleSpecialBtn";
-    GameEventKey.GameFrame_BattleSpecialList = "GameFrame_BattleSpecialList";
-    GameEventKey.GameFrame_GuideChangeHero = "GameFrame_GuideChangeHero";
-    GameEventKey.GameFrame_BtnBackOnClick = "GameFrame_BtnBackOnClick";
-    GameEventKey.GameFrame_HeroLevelGuideUpClose = "GameFrame_HeroLevelUpClose";
-
-    class FguiHelper {
-        static setChildWindow(com, window) {
-            if (com) {
-                com["moduleWindow"] = window;
-                if (com._children) {
-                    for (let i = 0; i < com._children.length; i++) {
-                        this.setChildWindow(com._children[i], window);
-                    }
-                }
-            }
-        }
-        static callChildOnWindowInited(com) {
-            if (com) {
-                let fun = com["onWindowInited"];
-                if (fun) {
-                    fun.apply(com);
-                }
-                if (com._children) {
-                    for (let i = 0; i < com._children.length; i++) {
-                        this.callChildOnWindowInited(com._children[i]);
-                    }
-                }
-            }
-        }
-        static callChildOnWindowDestory(com) {
-            let container;
-            if (com instanceof fgui.GObject) {
-                container = com.displayObject;
-            }
-            if (com) {
-                let fun = com["onWindowDestory"];
-                if (fun) {
-                    if (fun.apply(com)) {
-                        return;
-                    }
-                }
-                for (let i = container.numChildren - 1; i >= 0; i--) {
-                    let display = container.getChildAt(i);
-                    if (display["$owner"])
-                        this.callChildOnWindowDestory(display["$owner"]);
-                }
-            }
-        }
-        static callChildOnWindowShow(com) {
-            if (com) {
-                let enbaleCall = true;
-                let fun = com["onWindowShow"];
-                if (fun) {
-                    if (com["whenSelfVisiableCallWindowShowAndHide"] !== undefined) {
-                        let whenSelfVisiableCallWindowShowAndHide = com["whenSelfVisiableCallWindowShowAndHide"];
-                        if (whenSelfVisiableCallWindowShowAndHide) {
-                            if (com.visible == false) {
-                                enbaleCall = false;
-                            }
-                        }
-                    }
-                    if (enbaleCall) {
-                        fun.apply(com);
-                    }
-                }
-                if (enbaleCall && com._children) {
-                    for (let i = com._children.length - 1; i >= 0; i--) {
-                        this.callChildOnWindowShow(com._children[i]);
-                    }
-                }
-            }
-        }
-        static callChildOnWindowHide(com) {
-            if (com) {
-                let enbaleCall = true;
-                let fun = com["onWindowHide"];
-                if (fun) {
-                    if (com["whenSelfVisiableCallWindowShowAndHide"] !== undefined) {
-                        let whenSelfVisiableCallWindowShowAndHide = com["whenSelfVisiableCallWindowShowAndHide"];
-                        if (whenSelfVisiableCallWindowShowAndHide) {
-                            if (com.visible == false) {
-                                enbaleCall = false;
-                            }
-                        }
-                    }
-                    if (enbaleCall) {
-                        fun.apply(com);
-                    }
-                }
-                if (enbaleCall && com._children) {
-                    for (let i = 0; i < com._children.length; i++) {
-                        this.callChildOnWindowHide(com._children[i]);
-                    }
-                }
-            }
-        }
-        static callChildOnTabShow(com) {
-            if (com) {
-                let fun = com["onTabShow"];
-                if (fun) {
-                    fun.apply(com);
-                }
-                if (com["_children"]) {
-                    for (let i = 0; i < com["_children"]["length"]; i++) {
-                        this.callChildOnTabShow(com["_children"][i]);
-                    }
-                }
-            }
-        }
-        static callChildOnTabHide(com) {
-            if (com) {
-                let fun = com["onTabHide"];
-                if (fun) {
-                    fun.apply(com);
-                }
-                if (com["_children"]) {
-                    for (let i = 0; i < com["_children"]["length"]; i++) {
-                        this.callChildOnTabHide(com["_children"][i]);
-                    }
-                }
-            }
-        }
-        static autoScreenScaleShrink(content, alignH, alignV) {
-            let rate = Game.screenSetting.screenScaleShrink;
-            content.scaleX = rate;
-            content.scaleY = rate;
-            if (alignH) {
-                let parent = fgui.GRoot.inst;
-                switch (alignH) {
-                    case Laya.Stage.ALIGN_LEFT:
-                        content.x = 0;
-                        break;
-                    case Laya.Stage.ALIGN_CENTER:
-                        content.x = (parent.width - content.width * rate) * 0.5;
-                        break;
-                    case Laya.Stage.ALIGN_RIGHT:
-                        content.x = parent.width - content.width * rate;
-                        break;
-                }
-                switch (alignV) {
-                    case Laya.Stage.ALIGN_TOP:
-                        content.y = 0;
-                        break;
-                    case Laya.Stage.ALIGN_MIDDLE:
-                        content.y = (parent.height - content.height * rate) * 0.5;
-                        break;
-                    case Laya.Stage.ALIGN_BOTTOM:
-                        content.y = parent.height - content.height * rate;
-                        break;
-                }
-            }
-        }
-        static autoScreenScaleShrink2(content, sourceScale = 1) {
-            let rate = Game.screenSetting.screenScaleShrinkMax;
-            content.scaleX = rate * sourceScale;
-            content.scaleY = rate * sourceScale;
-            if (content.parent) {
-                content.x = content.parent.width * 0.5;
-                content.y = content.parent.height * 0.5;
-            }
-        }
-        static autoScreenScale(content, alignH, alignV) {
-            let rate = Game.screenSetting.screenScaleExpand;
-            content.scaleX = rate;
-            content.scaleY = rate;
-            if (alignH) {
-                let parent = fgui.GRoot.inst;
-                switch (alignH) {
-                    case Laya.Stage.ALIGN_LEFT:
-                        content.x = 0;
-                        break;
-                    case Laya.Stage.ALIGN_CENTER:
-                        content.x = (parent.width - content.width * rate) * 0.5;
-                        break;
-                    case Laya.Stage.ALIGN_RIGHT:
-                        content.x = parent.width - content.width * rate;
-                        break;
-                }
-                switch (alignV) {
-                    case Laya.Stage.ALIGN_TOP:
-                        content.y = 0;
-                        break;
-                    case Laya.Stage.ALIGN_MIDDLE:
-                        if (content.parent) {
-                            this.helpPoint.y = (parent.height - content.height * rate) * 0.5;
-                            this.helpPoint = content.parent.globalToLocal(0, this.helpPoint.y, this.helpPoint);
-                            content.y = this.helpPoint.y;
-                        }
-                        else {
-                            content.y = (parent.height - content.height * rate) * 0.5;
-                        }
-                        break;
-                    case Laya.Stage.ALIGN_BOTTOM:
-                        content.y = parent.height - content.height * rate;
-                        break;
-                }
-            }
-        }
-        static autoScreenScale2(content) {
-            let rate = Game.screenSetting.screenScaleExpand;
-            content.scaleX = rate;
-            content.scaleY = rate;
-            if (content.parent) {
-                content.x = content.parent.width * 0.5;
-                content.y = content.parent.height * 0.5;
-            }
-        }
-        static autoScreenScale3(content) {
-            let rate = Game.screenSetting.screenScaleExpand;
-            content.scaleX = rate;
-            content.scaleY = rate;
-        }
-        static autoScreenSize(content, alignH, alignV) {
-            let rate = Game.screenSetting.screenScaleExpand;
-            content.width = content.sourceWidth * rate;
-            content.height = content.sourceHeight * rate;
-            if (alignH) {
-                let parent = fgui.GRoot.inst;
-                switch (alignH) {
-                    case Laya.Stage.ALIGN_LEFT:
-                        content.x = 0;
-                        break;
-                    case Laya.Stage.ALIGN_CENTER:
-                        content.x = (parent.width - content.width) * 0.5;
-                        break;
-                    case Laya.Stage.ALIGN_RIGHT:
-                        content.x = parent.width - content.width;
-                        break;
-                }
-                switch (alignV) {
-                    case Laya.Stage.ALIGN_TOP:
-                        content.y = 0;
-                        break;
-                    case Laya.Stage.ALIGN_MIDDLE:
-                        if (content.parent) {
-                            this.helpPoint.y = (parent.height - content.height) * 0.5;
-                            this.helpPoint = content.parent.globalToLocal(0, this.helpPoint.y, this.helpPoint);
-                            content.y = this.helpPoint.y;
-                        }
-                        else {
-                            content.y = (parent.height - content.height) * 0.5;
-                        }
-                        break;
-                    case Laya.Stage.ALIGN_BOTTOM:
-                        content.y = parent.height - content.height;
-                        break;
-                }
-            }
-        }
-        static autoParentSize(content, alignH, alignV) {
-            let rate = Game.screenSetting.screenScaleExpand;
-            content.width = content.sourceWidth * rate;
-            content.height = content.sourceHeight * rate;
-            if (alignH) {
-                let parent = fgui.GRoot.inst;
-                switch (alignH) {
-                    case Laya.Stage.ALIGN_LEFT:
-                        content.x = 0;
-                        break;
-                    case Laya.Stage.ALIGN_CENTER:
-                        content.x = (parent.width - content.width) * 0.5;
-                        break;
-                    case Laya.Stage.ALIGN_RIGHT:
-                        content.x = parent.width - content.width;
-                        break;
-                }
-                switch (alignV) {
-                    case Laya.Stage.ALIGN_TOP:
-                        content.y = 0;
-                        break;
-                    case Laya.Stage.ALIGN_MIDDLE:
-                        content.y = (parent.height - content.height) * 0.5;
-                        break;
-                    case Laya.Stage.ALIGN_BOTTOM:
-                        content.y = parent.height - content.height;
-                        break;
-                }
-            }
-        }
-        static centerScreen(content) {
-            content.x = (Game.screenSetting.screenWidth - content.width) * 0.5;
-            content.y = (Game.screenSetting.screenHeight - content.height) * 0.5;
-        }
-        static centerScreenForCenter(content) {
-            content.x = Game.screenSetting.screenWidth * 0.5;
-            content.y = Game.screenSetting.screenHeight * 0.5;
-        }
-        static setScreenSize(content) {
-            content.width = Game.screenSetting.screenWidth;
-            content.height = Game.screenSetting.screenHeight;
-        }
-        static getValueForPath(path, content, ...args) {
-            if (path.endsWith("()")) {
-                return FguiHelper.getFunResultForPath(path, content, ...args);
-            }
-            else {
-                return FguiHelper.getFieldValueForPath(path, content);
-            }
-        }
-        static getFunResultForPath(path, content, ...args) {
-            if (path.endsWith("()")) {
-                path = path.replace("()", "");
-                let fun = FguiHelper.getFieldValueForPath(path, content);
-                if (fun) {
-                    let paths = path.split(/[\.\/]/);
-                    if (paths.length == 1) {
-                        if (args.length == 1) {
-                            return fun.apply(content, args[0]);
-                        }
-                        return fun.apply(content, args);
-                    }
-                    else {
-                        let objPath = "";
-                        let gap = "";
-                        for (let i = 0; i < paths.length - 1; i++) {
-                            objPath += gap + paths[i];
-                            gap = ".";
-                        }
-                        let obj = FguiHelper.getFieldValueForPath(objPath, content);
-                        if (args.length == 1) {
-                            return fun.apply(obj, args[0]);
-                        }
-                        return fun.apply(obj, args);
-                    }
-                }
-            }
-            else {
-                return FguiHelper.getFieldValueForPath(path, content);
-            }
-        }
-        static getFieldValueForPath(path, content) {
-            if (!content) {
-                content = window;
-                if (!content) {
-                    content = this;
-                }
-            }
-            let paths = path.split(/[\.\/]/);
-            let val = content;
-            for (let i = 0; i < paths.length; i++) {
-                if (val[paths[i]]) {
-                    val = val[paths[i]];
-                }
-                else {
-                    return null;
-                }
-            }
-            return val;
-        }
-        static setStringsSource(lang) {
-            let txtmap = fgui.TranslationHelper["strings"] = {};
-            let list = lang.getConfigList();
-            for (let i = 0; i < list.length; i++) {
-                let config = list[i];
-                let name = config.dict.getValue("name");
-                let value = config.dict.getValue("value");
-                let index = name.indexOf("-");
-                if (value === undefined || value === null)
-                    continue;
-                if (index == -1)
-                    continue;
-                var uiUrl = name.substr(0, index);
-                var uiNodeName = name.substr(index + 1);
-                var col = txtmap[uiUrl];
-                if (!col) {
-                    col = {};
-                    txtmap[uiUrl] = col;
-                }
-                col[uiNodeName] = value;
-            }
-        }
-        static setGray(component) {
-            if (!component)
-                return;
-            if (!FguiHelper.grayscaleFilters) {
-                var grayscaleFilter = new Laya.ColorFilter(FguiHelper.grayscaleMat);
-                FguiHelper.grayscaleFilters = [grayscaleFilter];
-            }
-            component.displayObject.filters = FguiHelper.grayscaleFilters;
-        }
-        static clearFilters(component) {
-            if (!component)
-                return;
-            component.displayObject.filters = null;
-        }
-        static get saturationFilters() {
-            if (!FguiHelper._saturationFilters) {
-                FguiHelper._saturationFilters = [new Laya.ColorFilter(FguiHelper.saturation)];
-            }
-            return FguiHelper._saturationFilters;
-        }
-        static get saturationFilters2() {
-            if (!FguiHelper._saturationFilters2) {
-                FguiHelper._saturationFilters2 = [new Laya.ColorFilter(FguiHelper.saturation2)];
-            }
-            return FguiHelper._saturationFilters2;
-        }
-        static get saturationFilters3() {
-            if (!FguiHelper._saturationFilters3) {
-                FguiHelper._saturationFilters3 = [new Laya.ColorFilter().adjustColor(0, -50, -100, 0)];
-            }
-            return FguiHelper._saturationFilters3;
-        }
-        static halfStaturation(obj) {
-            if (!obj)
-                return;
-            obj.displayObject.filters = FguiHelper.saturationFilters;
-        }
-        static half2Staturation(obj) {
-            if (!obj)
-                return;
-            obj.displayObject.filters = FguiHelper.saturationFilters2;
-        }
-        static half3Staturation(obj) {
-            if (!obj)
-                return;
-            obj.displayObject.filters = FguiHelper.saturationFilters3;
-        }
-        static boundEffect(target, duration = 1000) {
-            target.setPivot(0.5, 0.5);
-            target.setScale(0.5, 0.5);
-            Laya.Tween.to(target, { scaleX: 1, scaleY: 1 }, duration, Laya.Ease.backOut, Laya.Handler.create(null, () => {
-            }), 0, true, true);
-        }
-    }
-    FguiHelper.helpPoint = new Laya.Point();
-    FguiHelper.grayscaleMat = [0.3086, 0.6094, 0.0820, 0, 0, 0.3086, 0.6094, 0.0820, 0, 0, 0.3086, 0.6094, 0.0820, 0, 0, 0, 0, 0, 1, 0];
-    FguiHelper.grayscaleFilters = null;
-    FguiHelper.normalFilters = null;
-    FguiHelper.saturation = [
-        0.5, 0, 0, 0, 0,
-        0, 0.5, 0, 0, 0,
-        0, 0, 0.5, 0, 0,
-        0, 0, 0, 1, 0,
-    ];
-    FguiHelper.saturation2 = [
-        0.25, 0, 0, 0, 0,
-        0, 0.25, 0, 0, 0,
-        0, 0, 0.25, 0, 0,
-        0, 0, 0, 1, 0,
-    ];
-
-    var Point = Laya.Point;
-    var Handler$1 = Laya.Handler;
-    class MWindow extends FWindow {
-        constructor() {
-            super(...arguments);
-            this.sShowComplete = new Signal();
-            this.sHideComplete = new Signal();
-            this.menuIsCreated = false;
-            this.isDestoryed = false;
-            this.enableShowAnimation = true;
-            this.enableShowSignal = true;
-            this.enableHideSignal = true;
-            this._loadAssets = [];
-            this._dynamicAssetsList = [];
-            this.toPoint = new Point();
-            this.srcPoint = new Point();
-            this.sShowSubwindowComplete = new Signal();
-            this.sHideSubwindowComplete = new Signal();
-            this.subwindowDict = new Dictionary();
-            this.subwindowStack = [];
-            this.tabDict = new Dictionary();
-            this.tabHistorys = [];
-            this.tabCtrlViewsMap = new Map();
-            this.sOpenTab = new Typed2Signal();
-        }
-        static async AsyncEnableOpen() {
-            return Promise.resolve(true);
-        }
-        isOpenSubOrTab(index) {
-            return this.menuParameter.openIndex == index;
-        }
-        addAssetForFguiPackagename(packagename) {
-            this._loadAssets.push({ url: packagename, type: AssetItemType.FguiPackage });
-        }
-        addAssetForFguiComponent(fguiCom) {
-            let names = fguiCom["DependPackages"];
-            for (let i = 0; i < names.length; i++) {
-                this.addAssetForFguiPackagename(names[i]);
-            }
-        }
-        getLoadAssets(list, dict) {
-            let assets = this._loadAssets;
-            for (let i = 0; i < assets.length; i++) {
-                let key = AssetHelper.getAssetItemKey(assets[i]);
-                if (!dict.hasKey(key)) {
-                    list.push(assets[i]);
-                    dict.add(key, assets[i]);
-                }
-            }
-            return list;
-        }
-        unloadAssetForFguiPackagename(packagename) {
-            switch (packagename) {
-                case GuiPackageNames._ResImageUIV1:
-                case GuiPackageNames.__ResFont:
-                case GuiPackageNames.CommonBase:
-                case GuiPackageNames.CommonGame:
-                case GuiPackageNames.CommonFx:
-                case GuiPackageNames.SystemModuleDialog:
-                    return;
-            }
-            Game.asset.unloadFgui(packagename);
-        }
-        unloadAssetForFguiComponent(fguiCom) {
-            let names = fguiCom["DependPackages"];
-            for (let i = 0; i < names.length; i++) {
-                this.unloadAssetForFguiPackagename(names[i]);
-            }
-        }
-        unloadAssetFroAssetList() {
-            for (let i = 0; i < this._loadAssets.length; i++) {
-                this.unloadAssetForFguiPackagename(this._loadAssets[i].url);
-            }
-        }
-        addDynamicAsset(assetItem) {
-            if (assetItem)
-                this._dynamicAssetsList.push(assetItem);
-        }
-        addDynmicAssetForAvatarAll(avatarConfig) {
-            avatarConfig.getAllAssset(this._dynamicAssetsList);
-        }
-        generateAssetsForDynmic() {
-            this._dynamicAssetsList = [];
-        }
-        getLoadAssetsForDynamic(list, dict) {
-            let assets = this._dynamicAssetsList;
-            for (let i = 0; i < assets.length; i++) {
-                let key = AssetHelper.getAssetItemKey(assets[i]);
-                if (!dict.hasKey(key)) {
-                    list.push(assets[i]);
-                    dict.add(key, assets[i]);
-                }
-            }
-            let subwindows = this.subwindowDict.getValues();
-            for (let i = 0; i < subwindows.length; i++) {
-                subwindows[i].getLoadAssetsForDynamic(list, dict);
-            }
-            return list;
-        }
-        onInit() {
-            this.onMenuCreate();
-            super.onInit();
-        }
-        onMenuCreate() {
-            this.setChildWindow(this.contentPane);
-            this.callChildOnWindowInited(this.contentPane);
-            this.menuIsCreated = true;
-            this.onMenuOpen(this.menuParameter);
-        }
-        setCloseBtnEvent() {
-            if (this.contentPane && this.contentPane["m_frame"] && this.contentPane["m_frame"].getChild("closeBtn")) {
-                this.contentPane["m_frame"].getChild("closeBtn").onClick(this, this.menuClose);
-            }
-        }
-        setBackBtnEvent() {
-            if (this.contentPane && this.contentPane["m_frame"] && this.contentPane["m_frame"].getChild("closeBtn")) {
-                this.contentPane["m_frame"].getChild("closeBtn").onClick(this, this.menuBack);
-            }
-        }
-        onMenuOpen(parameter) {
-            this.enableShowSignal = true;
-            this.enableShowAnimation = true;
-            this.menuParameter = parameter;
-            switch (parameter.openType) {
-                case MenuOpenType.Subwindow:
-                    this.enableShowSignal = false;
-                    this.enableShowAnimation = false;
-                    this.openSubwindowByIndex(parameter.openIndex, false, ...parameter.args);
-                    break;
-                case MenuOpenType.Tab:
-                    this.openTab(parameter.openIndex);
-                    break;
-                default:
-                    Game.event.dispatch(GameEventKey.GameFrame_OpenMenu, this.menuId, parameter.openType);
-                    break;
-            }
-        }
-        windowShow() {
-            if (this.windowContainer)
-                this.showOn(this.windowContainer);
-            else
-                this.show();
-        }
-        menuShow(root) {
-            switch (this.menuParameter.openType) {
-                case MenuOpenType.Subwindow:
-                    if (!this.contentPane)
-                        this.onInit();
-                    break;
-                default:
-                    this.showOn(root);
-                    break;
-            }
-        }
-        menuClose() {
-            Game.menu.close(this.menuId);
-        }
-        menuBack() {
-            Game.menu.back(this.menuId);
-        }
-        destory() {
-            this.callChildOnWindowDestory(this.contentPane);
-            this.onMenuDestory();
-            this.sShowComplete.removeAll();
-            this.sHideComplete.removeAll();
-            this.sShowSubwindowComplete.removeAll();
-            this.sHideSubwindowComplete.removeAll();
-            this.tabDict.clear();
-            let list = this.subwindowDict.getValues();
-            for (let i = 0; i < list.length; i++) {
-                let item = list[i];
-                item.destory();
-            }
-            this.subwindowDict.clear();
-            if (this.contentPane) {
-                this.contentPane.dispose();
-                this.contentPane = null;
-            }
-            this.unloadAssetFroAssetList();
-            super.dispose();
-            this.isDestoryed = true;
-        }
-        onMenuDestory() {
-        }
-        doShowAnimation() {
-            this.onWindowWillShow();
-            if (this.openAnimation == 1) {
-                this.srcPoint.x = this.panel.x;
-                this.srcPoint.y = this.panel.y;
-                this.panel.setScale(0.1, 0.1);
-                this.calBuutonPos();
-                this.panel.setXY(this.toPoint.x, this.toPoint.y);
-                Laya.Tween.to(this.panel, { scaleX: 1, scaleY: 1, x: this.srcPoint.x, y: this.srcPoint.y }, 300, Laya.Ease.quadOut, Handler$1.create(this, () => {
-                    this.onShown();
-                }));
-            }
-            else {
-                super.doShowAnimation();
-            }
-        }
-        get panel() {
-            if (this.contentPane["m_panel"]) {
-                return this.contentPane["m_panel"];
-            }
-            return this.contentPane;
-        }
-        doHideAnimation() {
-            this.onWindowWillHide();
-            if (this.closeAnimation == 1) {
-                this.panel.setScale(1, 1);
-                this.calBuutonPos();
-                Laya.Tween.to(this.panel, { scaleX: 0.1, scaleY: 0.1, x: this.toPoint.x, y: this.toPoint.y }, 300, Laya.Ease.quadOut, Handler$1.create(this, () => {
-                    this.panel.x = this.srcPoint.x;
-                    this.panel.y = this.srcPoint.y;
-                    this.hideImmediately();
-                }));
-            }
-            else {
-                super.doHideAnimation();
-            }
-        }
-        get openAnimation() {
-            if (this.menuConfig == null) {
-                return 0;
-            }
-            return this.menuConfig.openAnimation;
-        }
-        get closeAnimation() {
-            if (this.menuConfig == null) {
-                return 0;
-            }
-            return this.menuConfig.closeAnimation;
-        }
-        get menuConfig() {
-            if (this.menuId > 0) {
-                return Game.config.menu.getConfig(this.menuId);
-            }
-            return null;
-        }
-        calBuutonPos() {
-        }
-        onShown() {
-            this.enableHideSignal = true;
-            this.onShowComplete();
-            if (this.contentPane) {
-                this.callChildOnWindowShow(this.contentPane);
-            }
-        }
-        onMenuClose() {
-            this.hide();
-            let list = this.subwindowDict.getValues();
-            for (let i = 0; i < list.length; i++) {
-                let item = list[i];
-                item.hide();
-            }
-        }
-        onHide() {
-            this.enableShowSignal = true;
-            this.onHideComplete();
-            this.clearTabHistorys();
-            if (this.contentPane) {
-                this.callChildOnWindowHide(this.contentPane);
-            }
-        }
-        onShowComplete() {
-            if (this.enableShowSignal) {
-                this.sShowComplete.dispatch();
-            }
-        }
-        onHideComplete() {
-            if (this.enableHideSignal) {
-                this.sHideComplete.dispatch();
-            }
-        }
-        getSubwindow(subwindowIndex) {
-            return this.subwindowDict.getValue(subwindowIndex);
-        }
-        registerSubwindow(subwindow) {
-            this.subwindowDict.add(subwindow.subwindowIndex, subwindow);
-        }
-        __onSubWindowClose(subwindow) {
-            for (let i = this.subwindowStack.length - 1; i >= 0; i--) {
-                if (this.subwindowStack[i] == subwindow)
-                    this.subwindowStack.splice(i, 1);
-            }
-        }
-        __getLastOpenSubWindow(excludeSubwindow) {
-            for (let i = this.subwindowStack.length - 1; i >= 0; i--) {
-                let ctl = this.subwindowStack[i];
-                if (excludeSubwindow && excludeSubwindow.indexOf(ctl) != -1) {
-                    continue;
-                }
-                return ctl;
-            }
-            return null;
-        }
-        closeAllSubwindowSelf(excludeSubwindow) {
-            let list = [];
-            for (let i = this.subwindowStack.length - 1; i >= 0; i--) {
-                list.push(this.subwindowStack[i]);
-            }
-            for (let i = 0; i < list.length; i++) {
-                let ctl = list[i];
-                if (excludeSubwindow && excludeSubwindow.indexOf(ctl) != -1) {
-                    continue;
-                }
-                ctl.closeSelf();
-            }
-        }
-        closeLastSubwindowSelf() {
-            let subWindow = this.__getLastOpenSubWindow();
-            if (subWindow) {
-                subWindow.closeSelf();
-            }
-        }
-        getLastMenuParameter() {
-            let subWindow = this.__getLastOpenSubWindow();
-            if (subWindow) {
-                return subWindow.menuParameter;
-            }
-            else {
-                return this.menuParameter;
-            }
-        }
-        openSubwindow(subwindow, dontCloseOther = false, ...args) {
-            subwindow.__backSubWindow = this.__getLastOpenSubWindow([subwindow]);
-            this.menuParameter.openType = MenuOpenType.Subwindow;
-            this.menuParameter.openIndex = subwindow.subwindowIndex;
-            this.menuParameter.args = args;
-            let menuParmeter = {
-                openType: this.menuParameter.openType,
-                openIndex: this.menuParameter.openIndex,
-                args: args,
-                dontCloseOther: dontCloseOther
-            };
-            if (!dontCloseOther) {
-                let caller = {
-                    on: () => {
-                        if (subwindow.whenOpenCloseMainwindow) {
-                            this.enableHideSignal = false;
-                            this.hideImmediately();
-                        }
-                        if (subwindow.whenOpenCloseOthersubwindow) {
-                            let list = this.subwindowDict.getValues;
-                            for (let i = 0; i < list.length; i++) {
-                                let item = list[i];
-                                if (item != subwindow) {
-                                    item.hideImmediately();
-                                    this.__onSubWindowClose(item);
-                                }
-                            }
-                        }
-                        this.sShowSubwindowComplete.dispatch();
-                    }
-                };
-                subwindow.sShowComplete.addOnce(caller.on, caller);
-            }
-            let index = this.subwindowStack.indexOf(subwindow);
-            if (index != -1)
-                this.subwindowStack.splice(index, 1);
-            this.subwindowStack.push(subwindow);
-            if (subwindow.menuIsCreated) {
-                subwindow.onMenuOpen(menuParmeter);
-            }
-            else {
-                subwindow.menuParameter = menuParmeter;
-            }
-            subwindow.showOn(this.windowContainer);
-            Game.event.dispatch(GameEventKey.GameFrame_OpenMenu, this.menuId, menuParmeter.openType, menuParmeter.openIndex);
-        }
-        openSubwindowByIndex(subwindowIndex, dontCloseOther = false, ...args) {
-            let subwindow = this.getSubwindow(subwindowIndex);
-            this.openSubwindow(subwindow, dontCloseOther, ...args);
-        }
-        onSubwindowBack(subwindow) {
-            this.menuParameter.openType = MenuOpenType.None;
-            this.menuParameter.openIndex = 0;
-            this.sShowComplete.addOnce(() => {
-                subwindow.hide();
-            }, subwindow);
-            if (this.windowContainer.parent) {
-                subwindow.hide();
-            }
-            this.showOn(this.windowContainer);
-            this.subwindowStack = [];
-        }
-        getTabDispyaObjects(tabIndex) {
-            if (this.tabDict.hasKey(tabIndex)) {
-                return this.tabDict.getValue(tabIndex);
-            }
-            let list = [];
-            this.tabDict.add(tabIndex, list);
-            return list;
-        }
-        registerControllerTabViews(tabCtrl, contentPane = null) {
-            if (!contentPane)
-                contentPane = this.contentPane;
-            let count = contentPane.numChildren;
-            for (let i = 0; i < count; i++) {
-                let obj = contentPane.getChildAt(i);
-                if (obj._gears && obj._gears.length > 0) {
-                    for (let gear of obj._gears) {
-                        if (gear && gear.controller == tabCtrl) {
-                            if (gear instanceof fgui.GearDisplay) {
-                                if (gear.pages && gear.pages.length > 0) {
-                                    for (let pageIndexStr of gear.pages) {
-                                        let tabIndex = toInt(pageIndexStr);
-                                        this.registerTab(tabIndex, obj);
-                                        var list;
-                                        if (this.tabCtrlViewsMap.has(tabIndex)) {
-                                            list = this.tabCtrlViewsMap.get(tabIndex);
-                                        }
-                                        else {
-                                            list = [];
-                                            this.tabCtrlViewsMap.set(tabIndex, list);
-                                        }
-                                        list.push(obj);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        registerControllerTab(tabCtrl, contentPane = null) {
-            if (!contentPane)
-                contentPane = this.contentPane;
-            let count = contentPane.numChildren;
-            for (let i = 0; i < count; i++) {
-                let obj = contentPane.getChildAt(i);
-                if (obj._gears && obj._gears.length > 0) {
-                    for (let gear of obj._gears) {
-                        if (gear && gear.controller == tabCtrl) {
-                            if (gear instanceof fgui.GearDisplay) {
-                                if (gear.pages && gear.pages.length > 0) {
-                                    for (let pageIndexStr of gear.pages) {
-                                        let tabIndex = toInt(pageIndexStr);
-                                        this.registerTab(tabIndex, obj);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        registerTab(tabIndex, displayObject) {
-            let list = this.getTabDispyaObjects(tabIndex);
-            list.push(displayObject);
-        }
-        setTabVisiable(tabIndex, visiable) {
-            let list;
-            if (tabIndex instanceof Array) {
-                list = tabIndex;
-            }
-            else {
-                list = this.getTabDispyaObjects(tabIndex);
-            }
-            for (let i = 0; i < list.length; i++) {
-                if (visiable) {
-                    this.callChildOnTabShow(list[i]);
-                }
-                else if (list[i].visible) {
-                    this.callChildOnTabHide(list[i]);
-                }
-                list[i].visible = visiable;
-            }
-        }
-        setOpenTab(tabIndex) {
-            this.menuParameter.openIndex = tabIndex;
-            let keys = this.tabDict.getKeys();
-            for (let i = 0; i < keys.length; i++) {
-                if (keys[i] != tabIndex) {
-                    this.setTabVisiable(keys[i], false);
-                }
-            }
-            this.tabCtrlViewsMap.forEach((viewList, tabKey) => {
-                if (tabKey != tabIndex) {
-                    this.setTabVisiable(viewList, false);
-                }
-            });
-            var viewList = this.tabCtrlViewsMap.get(tabIndex);
-            if (viewList) {
-                this.setTabVisiable(viewList, true);
-            }
-            this.setTabVisiable(tabIndex, true);
-            this.onOpenTab(tabIndex);
-        }
-        openTab(tabIndex) {
-            this.tabHistorys.push(tabIndex);
-            this.setOpenTab(tabIndex);
-            this.sOpenTab.dispatch(tabIndex, this);
-            Game.event.dispatch(GameEventKey.GameFrame_OpenMenu, this.menuId, MenuOpenType.Tab, tabIndex);
-        }
-        onOpenTab(tabIndex) {
-        }
-        backTab() {
-            if (this.tabHistorys.length > 0) {
-                let lastIndex;
-                for (let i = this.tabHistorys.length - 1; i >= 0; i--) {
-                    if (this.tabHistorys[i] == this.menuParameter.openIndex) {
-                        if (i > 0) {
-                            if (this.tabHistorys[i - 1] != this.menuParameter.openIndex) {
-                                lastIndex = this.tabHistorys[i - 1];
-                            }
-                        }
-                    }
-                }
-                if (lastIndex === undefined) {
-                    this.menuBack();
-                }
-                else {
-                    this.openTab(lastIndex);
-                }
-            }
-        }
-        clearTabHistorys() {
-            this.tabHistorys = [];
-        }
-        setChildWindow(com) {
-            FguiHelper.setChildWindow(com, this);
-        }
-        callChildOnWindowInited(com) {
-            FguiHelper.callChildOnWindowInited(com);
-        }
-        callChildOnWindowDestory(com) {
-            FguiHelper.callChildOnWindowDestory(com);
-        }
-        callChildOnWindowShow(com) {
-            FguiHelper.callChildOnWindowShow(com);
-        }
-        callChildOnWindowHide(com) {
-            FguiHelper.callChildOnWindowHide(com);
-        }
-        callChildOnTabShow(com) {
-            FguiHelper.callChildOnTabShow(com);
-        }
-        callChildOnTabHide(com) {
-            FguiHelper.callChildOnTabHide(com);
-        }
-    }
-
-    class LoginWindowUIStruct extends fgui.GComponent {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("ModuleLogin", "LoginWindowUI"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_Show = this.getController("Show");
-            this.m_txt_resVer = (this.getChild("txt_resVer"));
-            this.m_txt_gamever = (this.getChild("txt_gamever"));
-            this.m_screenBG = (this.getChild("screenBG"));
-            this.m_loginPanel = (this.getChild("loginPanel"));
-            this.m_wxPanel = (this.getChild("wxPanel"));
-            this.m_cdkPanel = (this.getChild("cdkPanel"));
-            this.m_panelCheckID = (this.getChild("panelCheckID"));
-            this.m_btnBulletin = (this.getChild("btnBulletin"));
-            this.m_panelBulletin = (this.getChild("panelBulletin"));
-            this.m_panelServer = (this.getChild("panelServer"));
-        }
-    }
-    LoginWindowUIStruct.URL = "ui://4698ugpknz0c0";
-    LoginWindowUIStruct.DependPackages = ["ModuleLogin", "GameLaunch"];
-
-    var eSex;
-    (function (eSex) {
-        eSex[eSex["None"] = 0] = "None";
-        eSex[eSex["Man"] = 1] = "Man";
-        eSex[eSex["Woman"] = 2] = "Woman";
-    })(eSex || (eSex = {}));
-    class SdkUserInfo {
-        constructor() {
-            this.isAuthed = false;
-            this.language = "";
-            this.nickName = "";
-            this.avatarUrl = "";
-            this.gender = eSex.None;
-            this.country = "";
-            this.province = "";
-            this.city = "";
-            this.unionId = "";
-            this.openId = "";
-            this.sessionId = "";
-            this.sign = "";
-        }
-        ToString() {
-            return " UserInfo::<br/>NickName:" + this.nickName
-                + ",<br/>AvatarUrl:" + this.avatarUrl
-                + ",<br/>OpenID:" + this.openId
-                + ",<br/>City:" + this.city
-                + ",<br/>SessionID:" + this.sessionId;
-        }
-    }
-    class SdkLoginInfo {
-        constructor() {
-            this.code = "";
-        }
-    }
-    class SystemInfo {
-    }
-    var MsgType;
-    (function (MsgType) {
-        MsgType[MsgType["RemoveRankList"] = 0] = "RemoveRankList";
-        MsgType[MsgType["FetchFriendRankList"] = 1] = "FetchFriendRankList";
-        MsgType[MsgType["SubmitScore"] = 3] = "SubmitScore";
-        MsgType[MsgType["GameOverRank"] = 4] = "GameOverRank";
-        MsgType[MsgType["FetchGroupFriendRankList"] = 5] = "FetchGroupFriendRankList";
-        MsgType[MsgType["NotifyTime"] = 6] = "NotifyTime";
-    })(MsgType || (MsgType = {}));
-    class AntPlatformBase {
-        constructor() {
-            this.m_stSystemInfo = null;
-            this.m_stSdkUserInfo = null;
-            this.m_stSdkLoginInfo = null;
-            this.m_stSystemInfo = new SystemInfo();
-            this.m_stSdkUserInfo = new SdkUserInfo();
-            this.m_stSdkLoginInfo = new SdkLoginInfo();
-        }
-        static get platformWX() {
-            return Engine.borwer.isWXGame;
-        }
-        get userInfo() {
-            return this.m_stSdkUserInfo;
-        }
-        get systemInfo() {
-            return this.m_stSystemInfo;
-        }
-        async Login(userName = null, password = "", server = 1, roletype = 1) {
-            return null;
-        }
-        async Login2(userName = null, password = "") {
-            return null;
-        }
-        async CheckCdk(session, cdk) {
-            return null;
-        }
-        async CheckIDCard(session, name, idCard) {
-            return null;
-        }
-        async Areas() {
-            return null;
-        }
-        async newAndUseRole(session, name, server) {
-            return null;
-        }
-        async useRole(session, id) {
-            return null;
-        }
-        async FastLogin(name, channel, openid) {
-            return null;
-        }
-        async GameDoSdkAuthAsync() {
-            return null;
-        }
-        async GameDoSdkLoginAsync() {
-            return new Promise(resolve => {
-                resolve(this.m_stSdkLoginInfo);
-            });
-        }
-        GetLaunchOptions() {
-            return {};
-        }
-        async UserCheck() {
-            return new Promise(resolve => {
-                resolve(true);
-            });
-        }
-        async Share(title, imgUrl, query) {
-            return null;
-        }
-    }
-    AntPlatformBase.sGetUserInfoBtnVisiable = new TypedSignal();
-
-    class AntPlatformMine extends AntPlatformBase {
-        constructor() {
-            super();
-        }
-        async Login(userName = null, password = "", server = 1, roletype = 1) {
-            net.config.channel = "mine";
-            let name = userName;
-            if (isNullOrEmpty(name))
-                name = AntFrame.LocationUrlParam("name") || AntFrame.RandName(2, 7);
-            return new Promise(resolve => {
-                net.auth.mineLogin(name, password, name, roletype, server, function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        net.logic.connect();
-                        let callback = function (e) {
-                            net.logic.gamerLoginS2C.off(callback);
-                            resolve(e);
-                        };
-                        net.logic.gamerLoginS2C.on(callback);
-                    }
-                });
-            });
-        }
-        async Login2(userName = null, password = "") {
-            net.config.channel = "mine";
-            let name = userName;
-            if (isNullOrEmpty(name))
-                name = AntFrame.LocationUrlParam("name") || AntFrame.RandName(2, 7);
-            return new Promise(resolve => {
-                net.auth.mineLogin2(name, password, function (ok, json) {
-                    resolve(json);
-                });
-            });
-        }
-        async CheckCdk(session, cdk) {
-            return new Promise(resolve => {
-                net.auth.checkcdk(session, cdk, function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        resolve({});
-                    }
-                });
-            });
-        }
-        async CheckIDCard(session, name, idCard) {
-            return new Promise(resolve => {
-                net.auth.checkIDCard(session, name, idCard, function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        resolve({});
-                    }
-                });
-            });
-        }
-        async Areas() {
-            return new Promise(resolve => {
-                net.auth.areas(function (ok, json) {
-                    if (!ok) {
-                        this.Areas();
-                    }
-                    else {
-                        resolve(json);
-                    }
-                });
-            });
-        }
-        async newAndUseRole(session, name, server) {
-            return new Promise(resolve => {
-                net.auth.newAndUseRole(session, name, 1, server, "", function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        net.logic.connect();
-                        let callback = function (e) {
-                            net.logic.gamerLoginS2C.off(callback);
-                            resolve(e);
-                        };
-                        net.logic.gamerLoginS2C.on(callback);
-                    }
-                });
-            });
-        }
-        async useRole(session, id) {
-            return new Promise(resolve => {
-                net.auth.useRole(session, id, function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        net.logic.connect();
-                        let callback = function (e) {
-                            net.logic.gamerLoginS2C.off(callback);
-                            resolve(e);
-                        };
-                        net.logic.gamerLoginS2C.on(callback);
-                    }
-                });
-            });
-        }
-        async FastLogin(name, channel, openid) {
-            net.config.channel = channel;
-            return new Promise(resolve => {
-                net.auth.fastLogin(name, channel, openid, function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        net.logic.connect();
-                        let callback = function (e) {
-                            net.logic.gamerLoginS2C.off(callback);
-                            resolve(e);
-                        };
-                        net.logic.gamerLoginS2C.on(callback);
-                    }
-                });
-            });
-        }
-        async GameDoSdkAuthAsync() {
-            this.m_stSdkUserInfo.nickName = "ANTMINE-NICKNAME";
-            this.m_stSdkUserInfo.avatarUrl = "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKpmpnxfYeeUqFOlwK9x260xibs866I7NpmuHjgerLXgUk1B77HpIo2oZP0wAbnib4Lkc30N7yibYoww/132";
-            this.m_stSdkUserInfo.gender = eSex.Man;
-            this.m_stSdkUserInfo.city = "上海";
-            this.m_stSdkUserInfo.country = "中国";
-            this.m_stSdkUserInfo.language = "zh_CN";
-            this.m_stSdkUserInfo.province = "上海";
-            return new Promise(resolve => {
-                resolve(this.m_stSdkUserInfo);
-            });
-        }
-        GetLaunchOptions() {
-            return {
-                key1: AntFrame.LocationUrlParam("key1"),
-                key2: AntFrame.LocationUrlParam("key2"),
-            };
-        }
-    }
-
-    class AntPlatformWX extends AntPlatformBase {
-        constructor() {
-            super();
-            this.GetSystemInfo();
-            wx.setKeepScreenOn && wx.setKeepScreenOn({
-                keepScreenOn: true,
-                success: function () {
-                    console.log("常亮设置成功！");
-                }
-            });
-        }
-        async WXGetSdkAuthSetting() {
-            return new Promise(resolve => {
-                wx.getSetting({
-                    success: function (res) {
-                        console.info("success: wx.getSetting", res);
-                        resolve(res.authSetting['scope.userInfo']);
-                    },
-                    fail: function (res) {
-                        console.log("fail: wx.getSetting", res.errMsg);
-                        resolve(false);
-                    },
-                });
-            });
-        }
-        async UserCheck() {
-            return await this.WXGetSdkAuthSetting();
-        }
-        async WXGetSdkUserInfo() {
-            return new Promise(resolve => {
-                console.log("发起向微信获取用户信息");
-                wx.getUserInfo({
-                    success: res => {
-                        console.info("success: wx.getUserInfo", res);
-                        resolve(res.userInfo);
-                    },
-                    fail: res => {
-                        console.log("fail: wx.getUserInfo", res.errMsg);
-                        resolve(null);
-                    }
-                });
-            });
-        }
-        async WXAuth() {
-            let sdkInfo = await this.GameDoSdkAuthAsync();
-            while (!sdkInfo) {
-                sdkInfo = await this.GameDoSdkAuthAsync();
-            }
-            return sdkInfo;
-        }
-        async Login(userName = null, password = "", server = 1, roletype = 1) {
-            let loginInfo = await this.GameDoSdkLoginAsync();
-            while (!loginInfo) {
-                loginInfo = await this.GameDoSdkLoginAsync();
-            }
-            let code = this.m_stSdkLoginInfo.code;
-            net.config.channel = "wechat";
-            return new Promise(resolve => {
-                net.auth.sdkLogin(code, "", this.m_stSdkUserInfo.nickName, roletype, server, null, function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        net.logic.connect();
-                        let callback = function (e) {
-                            net.logic.gamerLoginS2C.off(callback);
-                            resolve(e);
-                        };
-                        net.logic.gamerLoginS2C.on(callback);
-                    }
-                });
-            });
-        }
-        async Login2(userName = null, password = "") {
-            let loginInfo = await this.GameDoSdkLoginAsync();
-            while (!loginInfo) {
-                loginInfo = await this.GameDoSdkLoginAsync();
-            }
-            let code = this.m_stSdkLoginInfo.code;
-            net.config.channel = "wechat";
-            return new Promise(resolve => {
-                net.auth.sdkLogin2(code, "", function (ok, json) {
-                    resolve(json);
-                });
-            });
-        }
-        async CheckCdk(session, cdk) {
-            return new Promise(resolve => {
-                net.auth.checkcdk(session, cdk, function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        resolve({});
-                    }
-                });
-            });
-        }
-        async CheckIDCard(session, name, idCard) {
-            return new Promise(resolve => {
-                net.auth.checkIDCard(session, name, idCard, function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        resolve({});
-                    }
-                });
-            });
-        }
-        async Areas() {
-            return new Promise(resolve => {
-                net.auth.areas(function (ok, json) {
-                    if (!ok) {
-                        this.Areas();
-                    }
-                    else {
-                        resolve(json);
-                    }
-                });
-            });
-        }
-        async newAndUseRole(session, name, server) {
-            name = this.m_stSdkLoginInfo.code;
-            return new Promise(resolve => {
-                net.auth.newAndUseRole(session, name, 1, server, "", function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        net.logic.connect();
-                        let callback = function (e) {
-                            net.logic.gamerLoginS2C.off(callback);
-                            resolve(e);
-                        };
-                        net.logic.gamerLoginS2C.on(callback);
-                    }
-                });
-            });
-        }
-        async useRole(session, id) {
-            return new Promise(resolve => {
-                net.auth.useRole(session, id, function (ok, json) {
-                    if (!ok) {
-                        resolve(json);
-                    }
-                    else {
-                        net.logic.connect();
-                        let callback = function (e) {
-                            net.logic.gamerLoginS2C.off(callback);
-                            resolve(e);
-                        };
-                        net.logic.gamerLoginS2C.on(callback);
-                    }
-                });
-            });
-        }
-        async GameDoSdkAuthAsync() {
-            let flag = await this.WXGetSdkAuthSetting();
-            let info = flag ? await this.WXGetSdkUserInfo() : await this.WXCreateWXUserButton();
-            if (info) {
-                this.SetUserInfo(info);
-                return new Promise(resolve => {
-                    resolve(this.m_stSdkUserInfo);
-                });
-            }
-            else {
-                console.error("GameDoSdkAuthAsync 获取授权 获取用户信息 失败");
-                return new Promise(resolve => {
-                    resolve(null);
-                });
-            }
-        }
-        async GameDoSdkLoginAsync() {
-            console.log("发起登录微信 wx.login");
-            return new Promise(resolve => {
-                wx.login({
-                    success: res => {
-                        console.info("success: wx.login", res);
-                        this.m_stSdkLoginInfo.code = res.code;
-                        resolve(this.m_stSdkLoginInfo);
-                    },
-                    fail: res => {
-                        console.info("fail: wx.login", res);
-                        resolve(null);
-                    },
-                });
-            });
-        }
-        async WXCreateWXUserButton() {
-            let button = wx.createUserInfoButton({
-                type: 'text',
-                lang: "zh_CN",
-                text: '',
-                style: {
-                    left: 0,
-                    top: 0,
-                    width: 2000,
-                    height: 2000,
-                    lineHeight: 40,
-                    textAlign: 'center',
-                    fontSize: 16,
-                    borderRadius: 4
-                }
-            });
-            button.show();
-            AntPlatformBase.sGetUserInfoBtnVisiable.dispatch(true);
-            return new Promise(resolve => {
-                button.onTap(function (res) {
-                    if (res.userInfo) {
-                        console.log("按钮获取用户信息成功", "wxLogin auth success");
-                        button.hide();
-                        AntPlatformBase.sGetUserInfoBtnVisiable.dispatch(false);
-                        resolve(res.userInfo);
-                    }
-                    else {
-                        console.error("按钮获取用户信息失败");
-                        resolve(null);
-                    }
-                });
-            });
-        }
-        SetUserInfo(info) {
-            console.info("用户信息", info);
-            this.m_stSdkUserInfo.isAuthed = true;
-            this.m_stSdkUserInfo.language = info.language;
-            this.m_stSdkUserInfo.nickName = info.nickName;
-            this.m_stSdkUserInfo.avatarUrl = info.avatarUrl;
-            this.m_stSdkUserInfo.gender = info.gender;
-            this.m_stSdkUserInfo.country = info.country;
-            this.m_stSdkUserInfo.province = info.province;
-            this.m_stSdkUserInfo.city = info.city;
-        }
-        GetSystemInfo() {
-            let info = wx.getSystemInfoSync();
-            console.info("wx.getSystemInfoSync:", info);
-            this.m_stSystemInfo.benchmarkLevel = info.benchmarkLevel;
-            this.m_stSystemInfo.model = info.model;
-            this.m_stSystemInfo.pixelRatio = info.pixelRatio;
-            this.m_stSystemInfo.platform = info.platform;
-            this.m_stSystemInfo.screenHeight = info.screenHeight;
-            this.m_stSystemInfo.screenWidth = info.screenWidth;
-            this.m_stSystemInfo.system = info.system;
-            this.m_stSystemInfo.version = info.version;
-            this.m_stSystemInfo.windowHeight = info.windowHeight;
-            this.m_stSystemInfo.windowWidth = info.windowWidth;
-            this.m_stSystemInfo.SDKVersion = info.SDKVersion;
-            return this.m_stSystemInfo;
-        }
-        async Share(title, imgUrl, query) {
-            return new Promise(resolve => {
-                wx.shareAppMessage({
-                    title: title,
-                    imageUrl: imgUrl,
-                    query: query,
-                    success: function () {
-                        console.error("share success!");
-                        resolve(true);
-                    },
-                    fail: function () {
-                        console.error("share fail!");
-                        resolve(false);
-                    }
-                });
-            });
-        }
-        GetLaunchOptions() {
-            return wx.getLaunchOptionsSync().query;
-        }
-    }
-
-    class AntFrame {
-        static LocationUrlParam(name) {
-            if (Engine.borwer.isWXGame) {
-                return null;
-            }
-            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-            var r = window.location.search.substr(1).match(reg);
-            if (r != null) {
-                return unescape(r[2]);
-            }
-            return null;
-        }
-        static RandName(min, max, randomFlag = true) {
-            let str = "";
-            let range = min;
-            let arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-            if (randomFlag) {
-                range = Math.round(Math.random() * (max - min)) + min;
-            }
-            for (var i = 0; i < range; i++) {
-                let pos = Math.round(Math.random() * (arr.length - 1));
-                str += arr[pos];
-            }
-            return str;
-        }
-        static get platform() {
-            if (!AntFrame._insPlatform) {
-                if (Engine.borwer.isWXGame && AntFrame.enableWXLogin) {
-                    AntFrame._insPlatform = new AntPlatformWX();
-                }
-                else {
-                    AntFrame._insPlatform = new AntPlatformMine();
-                }
-            }
-            return AntFrame._insPlatform;
-        }
-    }
-    AntFrame.enableWXLogin = VersionConfig.IsEnableWx;
-    AntFrame._insPlatform = null;
-    window['AntFrame'] = AntFrame;
-
-    class LoginWindowUI extends LoginWindowUIStruct {
-        onWindowShow() {
-            this.m_panelBulletin.m_bg.m_btn_Close.onClick(this, this.onCloseBulletin);
-            this.m_panelServer.m_btnChange.onClick(this, this.onChangeServer);
-            this.m_panelServer.m_btnStart.onClick(this, this.onStartGame);
-            this.m_panelServer.m_bg.m_btn_Close.onClick(this, this.onReturnServer);
-            this.m_panelCheckID.m_btnClose.onClick(this, this.onCloseCheckID);
-            this.m_panelCheckID.m_btnClose.visible = false;
-            this.m_panelCheckID.m_btnMake.onClick(this, this.onMakeCheckID);
-            this.m_loginPanel.m_btn_login.onClick(this, this.onClickLogin);
-            this.m_loginPanel.m_btn_randomLogin.onClick(this, this.onClickRandomLogin);
-            this.m_cdkPanel.m_btn_cdk.onClick(this, this.onClickCdk);
-            Game.net.gamerLoginS2C.on(this.GamerLoginS2C, this);
-            Game.event.add("SUCCESS_LOGIN", this.LoginSuccess, this);
-            Game.event.add("LOGIN_CDK", this.LoginCdk, this);
-            Game.event.add("ERROR_CDK", this.ErrorCdk, this);
-            Game.event.add("ERROR_IDCARD", this.ErrorIdCard, this);
-            Game.event.add("ERROR_AREAS", this.ErrorAreas, this);
-            Game.event.add("SUCCESS_AREAS", this.SucessAreas, this);
-            Game.event.add("INDULGE_END", this.IndulgeEnd, this);
-            this.Init();
-        }
-        onWindowHide() {
-            this.m_panelBulletin.m_bg.m_btn_Close.offClick(this, this.onCloseBulletin);
-            this.m_panelServer.m_btnChange.offClick(this, this.onChangeServer);
-            this.m_panelServer.m_btnStart.offClick(this, this.onStartGame);
-            this.m_panelServer.m_bg.m_btn_Close.offClick(this, this.onReturnServer);
-            this.m_panelCheckID.m_btnClose.onClick(this, this.onCloseCheckID);
-            this.m_panelCheckID.m_btnMake.onClick(this, this.onMakeCheckID);
-            this.m_loginPanel.m_btn_login.offClick(this, this.onClickLogin);
-            this.m_loginPanel.m_btn_randomLogin.offClick(this, this.onClickRandomLogin);
-            this.m_cdkPanel.m_btn_cdk.offClick(this, this.onClickCdk);
-            Game.net.gamerLoginS2C.off(this.GamerLoginS2C, this);
-            Game.event.remove("SUCCESS_LOGIN", this.LoginSuccess, this);
-            Game.event.remove("LOGIN_CDK", this.LoginCdk, this);
-            Game.event.remove("ERROR_CDK", this.ErrorCdk, this);
-            Game.event.remove("ERROR_IDCARD", this.ErrorIdCard, this);
-            Game.event.remove("ERROR_AREAS", this.ErrorAreas, this);
-            Game.event.remove("SUCCESS_AREAS", this.SucessAreas, this);
-            Game.event.remove("INDULGE_END", this.IndulgeEnd, this);
-            this.Reset();
-        }
-        onCloseBulletin() {
-            this.m_Show.selectedIndex = 3;
-        }
-        onChangeServer() {
-            this.m_panelServer.m_Server.selectedIndex = 1;
-        }
-        onReturnServer() {
-            this.m_panelServer.m_Server.selectedIndex = 0;
-        }
-        onCloseCheckID() {
-            this.GetServer();
-        }
-        onMakeCheckID() {
-            let index = this.m_panelCheckID.m_Type.selectedIndex;
-            switch (index) {
-                case 3:
-                    if (Game.moduleModel.login.isIndulge) {
-                        this.m_Show.selectedIndex = 0;
-                    }
-                    else {
-                        this.GetServer();
-                    }
-                    break;
-                case 1:
-                    this.SendIDCard();
-                    break;
-            }
-        }
-        onStartGame() {
-            let server = this.m_panelServer.lastServer;
-            if (!server) {
-                Game.system.toastText("尚未获取服务器列表！");
-                return;
-            }
-            Game.localStorage.server = server.id;
-            let role = this.m_panelServer.GetRole(server.id);
-            if (role) {
-                Game.sender.login.useRole(this.login_session, role.id);
-            }
-            else {
-                Game.sender.login.newAndUseRole(this.login_session, this.m_loginPanel.account, server.id);
-            }
-        }
-        onClickLogin() {
-            this.m_loginPanel.password = "123";
-            if (!Boolean(this.m_loginPanel.account) || !Boolean(this.m_loginPanel.password)) {
-                Game.system.toastText("请输入账号和密码！");
-                return;
-            }
-            Game.sender.login.login(this.m_loginPanel.account, this.m_loginPanel.password, true);
-        }
-        onClickRandomLogin() {
-            this.m_loginPanel.account = AntFrame.RandName(2, 7);
-            Game.sender.login.login(this.m_loginPanel.account, "123", true);
-        }
-        onClickCancel() {
-            this.m_Show.selectedIndex = 0;
-        }
-        onClickCdk() {
-            let session = this.login_session;
-            let cdk = this.m_cdkPanel.cdk;
-            let userName = this.m_loginPanel.account;
-            let password = this.m_loginPanel.password;
-            Game.sender.login.check(session, cdk, userName, password);
-        }
-        GamerLoginS2C(msg) {
-            if (msg.error) {
-                return;
-            }
-        }
-        LoginSuccess(session, roles) {
-            this.login_session = session;
-            this.m_panelServer.SetRoles(roles);
-            let nocheck = ["jjsg1", "jjsg2", "jjsg3", "jjsg4", "jjsg5", "jjsg6"];
-            let name = this.m_loginPanel.account;
-            if (VersionConfig.IsOpenIDCard && nocheck.indexOf(name) == -1) {
-                this.SendIDCard();
-            }
-            else {
-                this.GetServer();
-            }
-            this.m_Show.selectedIndex = 1;
-        }
-        LoginCdk(session) {
-            this.login_session = session;
-            this.m_Show.selectedIndex = 4;
-        }
-        ErrorCdk(error) {
-            switch (error) {
-                case 1017:
-                    Game.system.toastText("验证码错误！");
-                    break;
-                case 1001:
-                    Game.system.toastText("验证时间超时！");
-                    this.onStartGame();
-                    break;
-                default:
-                    break;
-            }
-        }
-        ErrorIdCard(error) {
-            switch (error) {
-                case 0:
-                case 1023:
-                    if (this.m_panelCheckID.m_labName.text != "" && this.m_panelCheckID.m_labID.text != "") {
-                        Game.system.toastText("实名制验证成功！");
-                    }
-                    this.GetServer();
-                    break;
-                case 1021:
-                case 1022:
-                case 1026:
-                    Game.system.toastText("实名制验证失败！");
-                case 1025:
-                    this.m_Show.selectedIndex = 5;
-                    this.m_panelCheckID.m_Type.selectedIndex = 1;
-                    break;
-                case 1024:
-                    this.m_Show.selectedIndex = 5;
-                    this.m_panelCheckID.m_Type.selectedIndex = 3;
-                    break;
-                default:
-                    break;
-            }
-        }
-        ErrorAreas() {
-            Game.system.toastText("拉取服务器错误！");
-        }
-        SucessAreas(areas) {
-            areas.sort((a, b) => {
-                return a.id - b.id;
-            });
-            this.m_panelServer.Open(areas);
-        }
-        IndulgeEnd() {
-            if (this.m_Show.selectedIndex != 5) {
-                let model = Game.moduleModel.login;
-                switch (model.error) {
-                    case 1024:
-                        this.m_panelCheckID.m_Type.selectedIndex = 0;
-                        break;
-                    default:
-                        this.m_panelCheckID.m_Type.selectedIndex = 3;
-                        break;
-                }
-            }
-        }
-        Init() {
-            this.m_txt_gamever.text = "GameVersion:" + Game.version.localAppVersionData.toString();
-            this.m_txt_resVer.text = "ResVersion:" + Game.version.localResVersionData.toString();
-            this.StartGame();
-        }
-        Reset() {
-            this.m_txt_gamever.text = "";
-            this.m_txt_resVer.text = "";
-            this.m_Show.selectedIndex = 0;
-        }
-        GetServer() {
-            Game.sender.login.areas();
-        }
-        StartGame() {
-            if (AntFrame.platform instanceof AntPlatformWX && VersionConfig.IsEnableWx) {
-                Game.sender.login.login("", "");
-                this.m_Show.selectedIndex = 3;
-            }
-            else {
-                this.m_Show.selectedIndex = 0;
-            }
-        }
-        SendIDCard() {
-            let session = this.login_session;
-            let name = this.m_panelCheckID.m_labName.text;
-            let idcard = this.m_panelCheckID.m_labID.text;
-            Game.sender.login.CheckIDCard(session, name, idcard);
-        }
-    }
-
-    var LoginTabType;
-    (function (LoginTabType) {
-        LoginTabType[LoginTabType["Login"] = 0] = "Login";
-        LoginTabType[LoginTabType["LoginGuest"] = 1] = "LoginGuest";
-        LoginTabType[LoginTabType["Register"] = 2] = "Register";
-        LoginTabType[LoginTabType["Agreement"] = 3] = "Agreement";
-    })(LoginTabType || (LoginTabType = {}));
-    class LoginWindow extends MWindow {
-        constructor() {
-            super();
-            this.addAssetForFguiComponent(LoginWindowUI);
-        }
-        generateAssetsForDynmic() {
-            super.generateAssetsForDynmic();
-        }
-        onMenuCreate() {
-            let windowUI = LoginWindowUI.createInstance();
-            this.conent = windowUI;
-            this.contentPane = windowUI;
-            super.onMenuCreate();
-        }
-        onShowComplete() {
-            super.onShowComplete();
-        }
-        onHideComplete() {
-            super.onHideComplete();
-        }
-    }
-
-    class WindowHomeUIStruct extends fgui.GComponent {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "WindowHomeUI"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_Tab = this.getController("Tab");
-            this.m_bg = (this.getChild("bg"));
-            this.m_mainMenu = (this.getChild("mainMenu"));
-            this.m_chooseHero = (this.getChild("chooseHero"));
-            this.m_shop = (this.getChild("shop"));
-            this.m_chooseGameFormat = (this.getChild("chooseGameFormat"));
-            this.m_result = (this.getChild("result"));
-            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
-            this.m_shareBtnBar = (this.getChild("shareBtnBar"));
-        }
-    }
-    WindowHomeUIStruct.URL = "ui://moe42ygrsqzy8a";
-    WindowHomeUIStruct.DependPackages = ["GameHome", "GameLaunch"];
-
-    class WindowHomeUI extends WindowHomeUIStruct {
-    }
-
-    var HomeTabType;
-    (function (HomeTabType) {
-        HomeTabType[HomeTabType["MenuMenu"] = 0] = "MenuMenu";
-        HomeTabType[HomeTabType["ChooseHero"] = 1] = "ChooseHero";
-        HomeTabType[HomeTabType["Shop"] = 2] = "Shop";
-        HomeTabType[HomeTabType["ChooseGameFormat"] = 3] = "ChooseGameFormat";
-        HomeTabType[HomeTabType["Result"] = 4] = "Result";
-    })(HomeTabType || (HomeTabType = {}));
-    window['HomeTabType'] = HomeTabType;
-    class HomeWindow extends MWindow {
-        constructor() {
-            super();
-            this.addAssetForFguiComponent(WindowHomeUI);
-        }
-        generateAssetsForDynmic() {
-            super.generateAssetsForDynmic();
-        }
-        onMenuCreate() {
-            let windowUI = WindowHomeUI.createInstance();
-            this.conent = windowUI;
-            this.contentPane = windowUI;
-            this.registerControllerTabViews(this.conent.m_Tab);
-            super.onMenuCreate();
-            SoundController.instance.playMusic();
-        }
-        openTab(tabIndex) {
-            if (this.conent) {
-                this.conent.m_Tab.setSelectedIndex(tabIndex);
-            }
-            super.openTab(tabIndex);
-        }
-        onShowComplete() {
-            super.onShowComplete();
-        }
-        onHideComplete() {
-            super.onHideComplete();
-        }
-    }
-
-    class WindowWarUIStruct extends fgui.GComponent {
-        constructor() {
-            super();
-        }
-        static createInstance() {
-            return (fgui.UIPackage.createObject("GameHome", "WindowWarUI"));
-        }
-        constructFromXML(xml) {
-            super.constructFromXML(xml);
-            this.m_bg = (this.getChild("bg"));
-            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
-            this.m_shareBtnBar = (this.getChild("shareBtnBar"));
-            this.m_playerLevelBar = (this.getChild("playerLevelBar"));
-            this.m_container = (this.getChild("container"));
-            this.m_chectPopupPanel = (this.getChild("chectPopupPanel"));
-            this.m_pausePanel = (this.getChild("pausePanel"));
-            this.m_uplevelPanel = (this.getChild("uplevelPanel"));
-        }
-    }
-    WindowWarUIStruct.URL = "ui://moe42ygrsqzy9c";
-    WindowWarUIStruct.DependPackages = ["GameHome", "GameLaunch"];
-
     var CardScoreType;
     (function (CardScoreType) {
         CardScoreType[CardScoreType["None"] = 0] = "None";
@@ -5365,7 +2303,7 @@
         MoveType[MoveType["Up"] = 4] = "Up";
     })(MoveType || (MoveType = {}));
 
-    class Point$1 {
+    class Point {
         constructor(x, y) {
             this.x = 0;
             this.y = 0;
@@ -5399,7 +2337,7 @@
             return fieldPosition;
         }
         getPoint() {
-            return new Point$1(this.pointX, this.pointY);
+            return new Point(this.pointX, this.pointY);
         }
         get pointX() {
             return this.column * Consts.CardWidth + Consts.CardWidth / 2 + this.column * Consts.CardSpaceBetweenWidth;
@@ -5518,6 +2456,8 @@
             return list;
         }
         get(f) {
+            if (f == null)
+                return null;
             return this.items[f.column][f.row];
         }
         set(f, card) {
@@ -5548,9 +2488,19 @@
             return arr;
         }
         findEnemy(selfIsNegative = false) {
-            return this.find((card) => {
+            var list = this.find((card) => {
                 return CardScoreTypeHelper.isEnemyType(card.type, selfIsNegative);
             });
+            list.sort((a, b) => {
+                if (a.isHero) {
+                    return -1;
+                }
+                else if (b.isHero) {
+                    return 1;
+                }
+                return a.getScore() - b.getScore();
+            });
+            return list;
         }
         isPositionValid(f) {
             return f.column >= 0 && f.column < this.columnCount && f.row >= 0 && f.row < this.rowCount;
@@ -5633,6 +2583,596 @@
     ReportMonitorKeyName.GoldBest = "GoldBest";
     ReportMonitorKeyName.BuyHero = "BuyHero";
     ReportMonitorKeyName.BuyShop = "BuyShop";
+
+    var MenuId;
+    (function (MenuId) {
+        MenuId[MenuId["Notice"] = 0] = "Notice";
+        MenuId[MenuId["Home"] = 100] = "Home";
+        MenuId[MenuId["War"] = 601] = "War";
+        MenuId[MenuId["Login"] = 101] = "Login";
+        MenuId[MenuId["Plot"] = 102] = "Plot";
+        MenuId[MenuId["Gashapon"] = 200] = "Gashapon";
+        MenuId[MenuId["Hero"] = 201] = "Hero";
+        MenuId[MenuId["Bag"] = 202] = "Bag";
+        MenuId[MenuId["Equip"] = 203] = "Equip";
+        MenuId[MenuId["Draug"] = 204] = "Draug";
+        MenuId[MenuId["Sections"] = 207] = "Sections";
+        MenuId[MenuId["Quest"] = 300] = "Quest";
+        MenuId[MenuId["Team"] = 303] = "Team";
+        MenuId[MenuId["BattlePlan"] = 304] = "BattlePlan";
+        MenuId[MenuId["PVPHall"] = 401] = "PVPHall";
+        MenuId[MenuId["PVEHall"] = 402] = "PVEHall";
+        MenuId[MenuId["SystemSetting"] = 500] = "SystemSetting";
+        MenuId[MenuId["Mail"] = 501] = "Mail";
+        MenuId[MenuId["Rank"] = 502] = "Rank";
+        MenuId[MenuId["PlayerInfo"] = 503] = "PlayerInfo";
+    })(MenuId || (MenuId = {}));
+    window["MenuId"] = MenuId;
+
+    var eSex;
+    (function (eSex) {
+        eSex[eSex["None"] = 0] = "None";
+        eSex[eSex["Man"] = 1] = "Man";
+        eSex[eSex["Woman"] = 2] = "Woman";
+    })(eSex || (eSex = {}));
+    class SdkUserInfo {
+        constructor() {
+            this.isAuthed = false;
+            this.language = "";
+            this.nickName = "";
+            this.avatarUrl = "";
+            this.gender = eSex.None;
+            this.country = "";
+            this.province = "";
+            this.city = "";
+            this.unionId = "";
+            this.openId = "";
+            this.sessionId = "";
+            this.sign = "";
+        }
+        ToString() {
+            return " UserInfo::<br/>NickName:" + this.nickName
+                + ",<br/>AvatarUrl:" + this.avatarUrl
+                + ",<br/>OpenID:" + this.openId
+                + ",<br/>City:" + this.city
+                + ",<br/>SessionID:" + this.sessionId;
+        }
+    }
+    class SdkLoginInfo {
+        constructor() {
+            this.code = "";
+        }
+    }
+    class SystemInfo {
+    }
+    var MsgType;
+    (function (MsgType) {
+        MsgType[MsgType["RemoveRankList"] = 0] = "RemoveRankList";
+        MsgType[MsgType["FetchFriendRankList"] = 1] = "FetchFriendRankList";
+        MsgType[MsgType["SubmitScore"] = 3] = "SubmitScore";
+        MsgType[MsgType["GameOverRank"] = 4] = "GameOverRank";
+        MsgType[MsgType["FetchGroupFriendRankList"] = 5] = "FetchGroupFriendRankList";
+        MsgType[MsgType["NotifyTime"] = 6] = "NotifyTime";
+    })(MsgType || (MsgType = {}));
+    class AntPlatformBase {
+        constructor() {
+            this.m_stSystemInfo = null;
+            this.m_stSdkUserInfo = null;
+            this.m_stSdkLoginInfo = null;
+            this.m_stSystemInfo = new SystemInfo();
+            this.m_stSdkUserInfo = new SdkUserInfo();
+            this.m_stSdkLoginInfo = new SdkLoginInfo();
+        }
+        static get platformWX() {
+            return Engine.borwer.isWXGame;
+        }
+        get userInfo() {
+            return this.m_stSdkUserInfo;
+        }
+        get systemInfo() {
+            return this.m_stSystemInfo;
+        }
+        async Login(userName = null, password = "", server = 1, roletype = 1) {
+            return null;
+        }
+        async Login2(userName = null, password = "") {
+            return null;
+        }
+        async CheckCdk(session, cdk) {
+            return null;
+        }
+        async CheckIDCard(session, name, idCard) {
+            return null;
+        }
+        async Areas() {
+            return null;
+        }
+        async newAndUseRole(session, name, server) {
+            return null;
+        }
+        async useRole(session, id) {
+            return null;
+        }
+        async FastLogin(name, channel, openid) {
+            return null;
+        }
+        async GameDoSdkAuthAsync() {
+            return null;
+        }
+        async GameDoSdkLoginAsync() {
+            return new Promise(resolve => {
+                resolve(this.m_stSdkLoginInfo);
+            });
+        }
+        GetLaunchOptions() {
+            return {};
+        }
+        async UserCheck() {
+            return new Promise(resolve => {
+                resolve(true);
+            });
+        }
+        async Share(title, imgUrl, query) {
+            return null;
+        }
+    }
+    AntPlatformBase.sGetUserInfoBtnVisiable = new TypedSignal();
+
+    class AntPlatformMine extends AntPlatformBase {
+        constructor() {
+            super();
+        }
+        async Login(userName = null, password = "", server = 1, roletype = 1) {
+            net.config.channel = "mine";
+            let name = userName;
+            if (isNullOrEmpty(name))
+                name = AntFrame.LocationUrlParam("name") || AntFrame.RandName(2, 7);
+            return new Promise(resolve => {
+                net.auth.mineLogin(name, password, name, roletype, server, function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        net.logic.connect();
+                        let callback = function (e) {
+                            net.logic.gamerLoginS2C.off(callback);
+                            resolve(e);
+                        };
+                        net.logic.gamerLoginS2C.on(callback);
+                    }
+                });
+            });
+        }
+        async Login2(userName = null, password = "") {
+            net.config.channel = "mine";
+            let name = userName;
+            if (isNullOrEmpty(name))
+                name = AntFrame.LocationUrlParam("name") || AntFrame.RandName(2, 7);
+            return new Promise(resolve => {
+                net.auth.mineLogin2(name, password, function (ok, json) {
+                    resolve(json);
+                });
+            });
+        }
+        async CheckCdk(session, cdk) {
+            return new Promise(resolve => {
+                net.auth.checkcdk(session, cdk, function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        resolve({});
+                    }
+                });
+            });
+        }
+        async CheckIDCard(session, name, idCard) {
+            return new Promise(resolve => {
+                net.auth.checkIDCard(session, name, idCard, function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        resolve({});
+                    }
+                });
+            });
+        }
+        async Areas() {
+            return new Promise(resolve => {
+                net.auth.areas(function (ok, json) {
+                    if (!ok) {
+                        this.Areas();
+                    }
+                    else {
+                        resolve(json);
+                    }
+                });
+            });
+        }
+        async newAndUseRole(session, name, server) {
+            return new Promise(resolve => {
+                net.auth.newAndUseRole(session, name, 1, server, "", function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        net.logic.connect();
+                        let callback = function (e) {
+                            net.logic.gamerLoginS2C.off(callback);
+                            resolve(e);
+                        };
+                        net.logic.gamerLoginS2C.on(callback);
+                    }
+                });
+            });
+        }
+        async useRole(session, id) {
+            return new Promise(resolve => {
+                net.auth.useRole(session, id, function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        net.logic.connect();
+                        let callback = function (e) {
+                            net.logic.gamerLoginS2C.off(callback);
+                            resolve(e);
+                        };
+                        net.logic.gamerLoginS2C.on(callback);
+                    }
+                });
+            });
+        }
+        async FastLogin(name, channel, openid) {
+            net.config.channel = channel;
+            return new Promise(resolve => {
+                net.auth.fastLogin(name, channel, openid, function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        net.logic.connect();
+                        let callback = function (e) {
+                            net.logic.gamerLoginS2C.off(callback);
+                            resolve(e);
+                        };
+                        net.logic.gamerLoginS2C.on(callback);
+                    }
+                });
+            });
+        }
+        async GameDoSdkAuthAsync() {
+            this.m_stSdkUserInfo.nickName = "ANTMINE-NICKNAME";
+            this.m_stSdkUserInfo.avatarUrl = "https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKpmpnxfYeeUqFOlwK9x260xibs866I7NpmuHjgerLXgUk1B77HpIo2oZP0wAbnib4Lkc30N7yibYoww/132";
+            this.m_stSdkUserInfo.gender = eSex.Man;
+            this.m_stSdkUserInfo.city = "上海";
+            this.m_stSdkUserInfo.country = "中国";
+            this.m_stSdkUserInfo.language = "zh_CN";
+            this.m_stSdkUserInfo.province = "上海";
+            return new Promise(resolve => {
+                resolve(this.m_stSdkUserInfo);
+            });
+        }
+        GetLaunchOptions() {
+            return {
+                key1: AntFrame.LocationUrlParam("key1"),
+                key2: AntFrame.LocationUrlParam("key2"),
+            };
+        }
+    }
+
+    class AntPlatformWX extends AntPlatformBase {
+        constructor() {
+            super();
+            this.GetSystemInfo();
+            wx.setKeepScreenOn && wx.setKeepScreenOn({
+                keepScreenOn: true,
+                success: function () {
+                    console.log("常亮设置成功！");
+                }
+            });
+        }
+        async WXGetSdkAuthSetting() {
+            return new Promise(resolve => {
+                wx.getSetting({
+                    success: function (res) {
+                        console.info("success: wx.getSetting", res);
+                        resolve(res.authSetting['scope.userInfo']);
+                    },
+                    fail: function (res) {
+                        console.log("fail: wx.getSetting", res.errMsg);
+                        resolve(false);
+                    },
+                });
+            });
+        }
+        async UserCheck() {
+            return await this.WXGetSdkAuthSetting();
+        }
+        async WXGetSdkUserInfo() {
+            return new Promise(resolve => {
+                console.log("发起向微信获取用户信息");
+                wx.getUserInfo({
+                    success: res => {
+                        console.info("success: wx.getUserInfo", res);
+                        resolve(res.userInfo);
+                    },
+                    fail: res => {
+                        console.log("fail: wx.getUserInfo", res.errMsg);
+                        resolve(null);
+                    }
+                });
+            });
+        }
+        async WXAuth() {
+            let sdkInfo = await this.GameDoSdkAuthAsync();
+            while (!sdkInfo) {
+                sdkInfo = await this.GameDoSdkAuthAsync();
+            }
+            return sdkInfo;
+        }
+        async Login(userName = null, password = "", server = 1, roletype = 1) {
+            let loginInfo = await this.GameDoSdkLoginAsync();
+            while (!loginInfo) {
+                loginInfo = await this.GameDoSdkLoginAsync();
+            }
+            let code = this.m_stSdkLoginInfo.code;
+            net.config.channel = "wechat";
+            return new Promise(resolve => {
+                net.auth.sdkLogin(code, "", this.m_stSdkUserInfo.nickName, roletype, server, null, function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        net.logic.connect();
+                        let callback = function (e) {
+                            net.logic.gamerLoginS2C.off(callback);
+                            resolve(e);
+                        };
+                        net.logic.gamerLoginS2C.on(callback);
+                    }
+                });
+            });
+        }
+        async Login2(userName = null, password = "") {
+            let loginInfo = await this.GameDoSdkLoginAsync();
+            while (!loginInfo) {
+                loginInfo = await this.GameDoSdkLoginAsync();
+            }
+            let code = this.m_stSdkLoginInfo.code;
+            net.config.channel = "wechat";
+            return new Promise(resolve => {
+                net.auth.sdkLogin2(code, "", function (ok, json) {
+                    resolve(json);
+                });
+            });
+        }
+        async CheckCdk(session, cdk) {
+            return new Promise(resolve => {
+                net.auth.checkcdk(session, cdk, function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        resolve({});
+                    }
+                });
+            });
+        }
+        async CheckIDCard(session, name, idCard) {
+            return new Promise(resolve => {
+                net.auth.checkIDCard(session, name, idCard, function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        resolve({});
+                    }
+                });
+            });
+        }
+        async Areas() {
+            return new Promise(resolve => {
+                net.auth.areas(function (ok, json) {
+                    if (!ok) {
+                        this.Areas();
+                    }
+                    else {
+                        resolve(json);
+                    }
+                });
+            });
+        }
+        async newAndUseRole(session, name, server) {
+            name = this.m_stSdkLoginInfo.code;
+            return new Promise(resolve => {
+                net.auth.newAndUseRole(session, name, 1, server, "", function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        net.logic.connect();
+                        let callback = function (e) {
+                            net.logic.gamerLoginS2C.off(callback);
+                            resolve(e);
+                        };
+                        net.logic.gamerLoginS2C.on(callback);
+                    }
+                });
+            });
+        }
+        async useRole(session, id) {
+            return new Promise(resolve => {
+                net.auth.useRole(session, id, function (ok, json) {
+                    if (!ok) {
+                        resolve(json);
+                    }
+                    else {
+                        net.logic.connect();
+                        let callback = function (e) {
+                            net.logic.gamerLoginS2C.off(callback);
+                            resolve(e);
+                        };
+                        net.logic.gamerLoginS2C.on(callback);
+                    }
+                });
+            });
+        }
+        async GameDoSdkAuthAsync() {
+            let flag = await this.WXGetSdkAuthSetting();
+            let info = flag ? await this.WXGetSdkUserInfo() : await this.WXCreateWXUserButton();
+            if (info) {
+                this.SetUserInfo(info);
+                return new Promise(resolve => {
+                    resolve(this.m_stSdkUserInfo);
+                });
+            }
+            else {
+                console.error("GameDoSdkAuthAsync 获取授权 获取用户信息 失败");
+                return new Promise(resolve => {
+                    resolve(null);
+                });
+            }
+        }
+        async GameDoSdkLoginAsync() {
+            console.log("发起登录微信 wx.login");
+            return new Promise(resolve => {
+                wx.login({
+                    success: res => {
+                        console.info("success: wx.login", res);
+                        this.m_stSdkLoginInfo.code = res.code;
+                        resolve(this.m_stSdkLoginInfo);
+                    },
+                    fail: res => {
+                        console.info("fail: wx.login", res);
+                        resolve(null);
+                    },
+                });
+            });
+        }
+        async WXCreateWXUserButton() {
+            let button = wx.createUserInfoButton({
+                type: 'text',
+                lang: "zh_CN",
+                text: '',
+                style: {
+                    left: 0,
+                    top: 0,
+                    width: 2000,
+                    height: 2000,
+                    lineHeight: 40,
+                    textAlign: 'center',
+                    fontSize: 16,
+                    borderRadius: 4
+                }
+            });
+            button.show();
+            AntPlatformBase.sGetUserInfoBtnVisiable.dispatch(true);
+            return new Promise(resolve => {
+                button.onTap(function (res) {
+                    if (res.userInfo) {
+                        console.log("按钮获取用户信息成功", "wxLogin auth success");
+                        button.hide();
+                        AntPlatformBase.sGetUserInfoBtnVisiable.dispatch(false);
+                        resolve(res.userInfo);
+                    }
+                    else {
+                        console.error("按钮获取用户信息失败");
+                        resolve(null);
+                    }
+                });
+            });
+        }
+        SetUserInfo(info) {
+            console.info("用户信息", info);
+            this.m_stSdkUserInfo.isAuthed = true;
+            this.m_stSdkUserInfo.language = info.language;
+            this.m_stSdkUserInfo.nickName = info.nickName;
+            this.m_stSdkUserInfo.avatarUrl = info.avatarUrl;
+            this.m_stSdkUserInfo.gender = info.gender;
+            this.m_stSdkUserInfo.country = info.country;
+            this.m_stSdkUserInfo.province = info.province;
+            this.m_stSdkUserInfo.city = info.city;
+        }
+        GetSystemInfo() {
+            let info = wx.getSystemInfoSync();
+            console.info("wx.getSystemInfoSync:", info);
+            this.m_stSystemInfo.benchmarkLevel = info.benchmarkLevel;
+            this.m_stSystemInfo.model = info.model;
+            this.m_stSystemInfo.pixelRatio = info.pixelRatio;
+            this.m_stSystemInfo.platform = info.platform;
+            this.m_stSystemInfo.screenHeight = info.screenHeight;
+            this.m_stSystemInfo.screenWidth = info.screenWidth;
+            this.m_stSystemInfo.system = info.system;
+            this.m_stSystemInfo.version = info.version;
+            this.m_stSystemInfo.windowHeight = info.windowHeight;
+            this.m_stSystemInfo.windowWidth = info.windowWidth;
+            this.m_stSystemInfo.SDKVersion = info.SDKVersion;
+            return this.m_stSystemInfo;
+        }
+        async Share(title, imgUrl, query) {
+            return new Promise(resolve => {
+                wx.shareAppMessage({
+                    title: title,
+                    imageUrl: imgUrl,
+                    query: query,
+                    success: function () {
+                        console.error("share success!");
+                        resolve(true);
+                    },
+                    fail: function () {
+                        console.error("share fail!");
+                        resolve(false);
+                    }
+                });
+            });
+        }
+        GetLaunchOptions() {
+            return wx.getLaunchOptionsSync().query;
+        }
+    }
+
+    class AntFrame {
+        static LocationUrlParam(name) {
+            if (Engine.borwer.isWXGame) {
+                return null;
+            }
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+        static RandName(min, max, randomFlag = true) {
+            let str = "";
+            let range = min;
+            let arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+            if (randomFlag) {
+                range = Math.round(Math.random() * (max - min)) + min;
+            }
+            for (var i = 0; i < range; i++) {
+                let pos = Math.round(Math.random() * (arr.length - 1));
+                str += arr[pos];
+            }
+            return str;
+        }
+        static get platform() {
+            if (!AntFrame._insPlatform) {
+                if (Engine.borwer.isWXGame && AntFrame.enableWXLogin) {
+                    AntFrame._insPlatform = new AntPlatformWX();
+                }
+                else {
+                    AntFrame._insPlatform = new AntPlatformMine();
+                }
+            }
+            return AntFrame._insPlatform;
+        }
+    }
+    AntFrame.enableWXLogin = VersionConfig.IsEnableWx;
+    AntFrame._insPlatform = null;
+    window['AntFrame'] = AntFrame;
 
     class ReportMonitor {
         static Send(name, value) {
@@ -5858,6 +3398,14 @@
         EffectType[EffectType["AutoUnlockChest"] = 14] = "AutoUnlockChest";
     })(EffectType || (EffectType = {}));
 
+    var ItemType;
+    (function (ItemType) {
+        ItemType[ItemType["Tool"] = 5] = "Tool";
+        ItemType[ItemType["Weapon"] = 12] = "Weapon";
+        ItemType[ItemType["Decorate"] = 13] = "Decorate";
+        ItemType[ItemType["Consume"] = 14] = "Consume";
+    })(ItemType || (ItemType = {}));
+
     class EquipData {
         constructor() {
             this.sChange = new Signal();
@@ -5874,7 +3422,7 @@
             }
             else {
                 this.config = Game.config.item.getConfig(id);
-                if (this.config.triggerArgs.length > 0) {
+                if (this.config.triggerArgs && this.config.triggerArgs.length > 0) {
                     this.stepMax = this.config.triggerArgs[0];
                     this.step = 0;
                 }
@@ -5965,6 +3513,7 @@
             this.equipDecorateData = new EquipData();
             this.equipWeaponData = new EquipData();
             this.equips = [];
+            this.randomEquipIgnoreList = [];
             this.equips.push(this.equipDecorateData);
             this.equips.push(this.equipWeaponData);
         }
@@ -5974,25 +3523,55 @@
             }
             return this._current;
         }
+        getRandomList(itemType, ignoreList) {
+            var list = [];
+            var arr = this.levelConfig.randomWeaponList;
+            for (var id of arr) {
+                var config = Game.config.item.getConfig(id);
+                if (config.type == itemType) {
+                    if (ignoreList && ignoreList.indexOf(id) != -1) {
+                        continue;
+                    }
+                    list.push(id);
+                }
+            }
+            if (list.length == 0)
+                list = arr;
+            return list;
+        }
         randomEquipDecorateId() {
-            var list = this.levelConfig.randomDecorateList;
-            return this.randomEquip(list, this.equipDecorateData.id);
+            var ignoreList = this.randomEquipIgnoreList;
+            ignoreList.length = 0;
+            ignoreList.push(this.equipDecorateData.id);
+            ignoreList.push(this.equipWeaponData.id);
+            var list = this.getRandomList(ItemType.Decorate, ignoreList);
+            var i = Random.rangeBoth(0, list.length - 1);
+            var id = list[i];
+            ignoreList.push(id);
+            return id;
         }
         randomEquipWeaponId() {
-            var list = this.levelConfig.randomWeaponList;
-            return this.randomEquip(list, this.equipWeaponData.id);
+            var ignoreList = this.randomEquipIgnoreList;
+            var list = this.getRandomList(ItemType.Weapon, ignoreList);
+            var i = Random.rangeBoth(0, list.length - 1);
+            var id = list[i];
+            ignoreList.push(id);
+            return id;
         }
         randomEquipConsumeId() {
-            var list = this.levelConfig.randomConsumeList;
+            var ignoreList = this.randomEquipIgnoreList;
+            var list = this.getRandomList(ItemType.Consume, ignoreList);
             var i = Random.rangeBoth(0, list.length - 1);
-            return list[i];
+            var id = list[i];
+            ignoreList.push(id);
+            return id;
         }
         randomEquip(list, igroonId) {
             list = list.slice(0);
             if (list.length > 1) {
                 var i = list.indexOf(igroonId);
                 if (i != -1) {
-                    list = list.splice(i, 1);
+                    list.splice(i, 1);
                 }
             }
             var i = Random.rangeBoth(0, list.length - 1);
@@ -6118,7 +3697,18 @@
                 }
             }
         }
+        debugCheckTrigger() {
+            for (var item of this.equips) {
+                switch (item.effectTypeId) {
+                    case EffectType.TiggerCannonOne:
+                    case EffectType.TiggerLightning:
+                    case EffectType.TiggerBomb:
+                        return this.game.field.equipTrigger(item);
+                }
+            }
+        }
     }
+    window['Player'] = Player;
 
     class Hero extends AbstractCard {
         constructor() {
@@ -7166,10 +4756,12 @@
         moveAndSet(position, card) {
             this.field.set(position, card),
                 card.setCoordinate(position.getPoint());
+            card.view.debugPos();
         }
         moveAndSetWithAnimation(position, card, time) {
             var point = position.getPoint();
             this.field.set(position, card);
+            card.view.debugPos();
             var tweenContainer = TweenContainer.PoolGet();
             tweenContainer.tweens.push(card.moveTo(point, time));
             return tweenContainer;
@@ -7406,7 +4998,7 @@
         }
         shootToCard(fromX, fromY, card, time) {
             var toX = card.getCenterX();
-            var toY = card.getCenterX();
+            var toY = card.getCenterY();
             var fx = FxShootCannon.PoolGet();
             var tweenContainer = fx.moveTo(fromX, fromY, toX, toY, time);
             this.game.container.addChild(fx);
@@ -7525,6 +5117,136 @@
             return list;
         }
     }
+
+    var MenuLayerType;
+    (function (MenuLayerType) {
+        MenuLayerType[MenuLayerType["Home"] = 1] = "Home";
+        MenuLayerType[MenuLayerType["HomeTop"] = 2] = "HomeTop";
+        MenuLayerType[MenuLayerType["WarUI"] = 3] = "WarUI";
+        MenuLayerType[MenuLayerType["Module"] = 4] = "Module";
+        MenuLayerType[MenuLayerType["ModuleTop"] = 5] = "ModuleTop";
+        MenuLayerType[MenuLayerType["MainUI"] = 6] = "MainUI";
+        MenuLayerType[MenuLayerType["Dialog"] = 7] = "Dialog";
+        MenuLayerType[MenuLayerType["Guide"] = 8] = "Guide";
+        MenuLayerType[MenuLayerType["Loader"] = 9] = "Loader";
+        MenuLayerType[MenuLayerType["GM"] = 10] = "GM";
+        MenuLayerType[MenuLayerType["FloatMsg"] = 11] = "FloatMsg";
+    })(MenuLayerType || (MenuLayerType = {}));
+
+    class MenuLayer {
+        static get dialogModel() {
+            if (!MenuLayer._dialogModel) {
+                MenuLayer._dialogModel = new fgui.GComponent();
+            }
+            return MenuLayer._dialogModel;
+        }
+        static showDialogModel() {
+            MenuLayer.dialog.width = Game.screenSetting.screenWidth;
+            MenuLayer.dialog.height = Game.screenSetting.screenHeight;
+            MenuLayer.dialogModel.alpha = 0.8;
+            MenuLayer.dialogModel.width = Game.screenSetting.screenWidth;
+            MenuLayer.dialogModel.height = Game.screenSetting.screenHeight;
+            if (MenuLayer.dialogModel)
+                MenuLayer.dialog.addChildAt(MenuLayer.dialogModel, 0);
+        }
+        static resetDialogModelSize() {
+            MenuLayer.dialog.width = Game.screenSetting.screenWidth;
+            MenuLayer.dialog.height = Game.screenSetting.screenHeight;
+            MenuLayer.dialogModel.width = Game.screenSetting.screenWidth;
+            MenuLayer.dialogModel.height = Game.screenSetting.screenHeight;
+        }
+        static hideDialogModel() {
+            if (MenuLayer.dialogModel)
+                MenuLayer.dialogModel.removeFromParent();
+        }
+        static install() {
+            Laya.stage.addChild(fgui.GRoot.inst.displayObject);
+            MenuLayer.root = fgui.GRoot.inst;
+            MenuLayer.home = MenuLayer.createLayer(MenuLayerType.Home, "MenuLayer-home");
+            MenuLayer.warUI = MenuLayer.createLayer(MenuLayerType.WarUI, "MenuLayer-warUI");
+            MenuLayer.module = MenuLayer.createLayer(MenuLayerType.Module, "MenuLayer-module");
+            MenuLayer.mainUI = MenuLayer.createLayer(MenuLayerType.MainUI, "MenuLayer-mainUI");
+            MenuLayer.dialog = MenuLayer.createLayer(MenuLayerType.Dialog, "MenuLayer-dialog");
+            MenuLayer.guide = MenuLayer.createLayer(MenuLayerType.Guide, "MenuLayer-guide");
+            MenuLayer.loader = MenuLayer.createLayer(MenuLayerType.Loader, "MenuLayer-loader");
+            MenuLayer.gm = MenuLayer.createLayer(MenuLayerType.GM, "MenuLayer-gm");
+            MenuLayer.floatMsg = MenuLayer.createLayer(MenuLayerType.FloatMsg, "MenuLayer-floatMsg");
+            MenuLayer.dict.add(MenuLayerType.Home, MenuLayer.home);
+            MenuLayer.dict.add(MenuLayerType.WarUI, MenuLayer.warUI);
+            MenuLayer.dict.add(MenuLayerType.Module, MenuLayer.module);
+            MenuLayer.dict.add(MenuLayerType.MainUI, MenuLayer.mainUI);
+            MenuLayer.dict.add(MenuLayerType.Dialog, MenuLayer.dialog);
+            MenuLayer.dict.add(MenuLayerType.Guide, MenuLayer.guide);
+            MenuLayer.dict.add(MenuLayerType.Loader, MenuLayer.loader);
+            MenuLayer.dict.add(MenuLayerType.GM, MenuLayer.gm);
+            MenuLayer.dict.add(MenuLayerType.FloatMsg, MenuLayer.floatMsg);
+        }
+        static getLayer(layerType) {
+            return MenuLayer.dict.getValue(layerType);
+        }
+        static createLayer(menuLayer, name) {
+            let root = MenuLayer.root;
+            let v = new fgui.GRoot();
+            v["menuLayer"] = menuLayer;
+            if (name) {
+                v.name = name;
+            }
+            if (Engine.borwer.isLiuHai) {
+                switch (menuLayer) {
+                    case MenuLayerType.Loader:
+                        v.x = 0;
+                        v.y = 0;
+                        v.setSize(root.width, root.height);
+                        break;
+                    default:
+                        if (Game.screenSetting.isLandsape) {
+                            v.x = Game.screenSetting.liuHaiHeightTop;
+                            v.setSize(Game.screenSetting.screenWidthLiuHai, root.height);
+                        }
+                        else {
+                            v.y = Game.screenSetting.liuHaiHeightTop;
+                            v.setSize(root.width, root.height - Game.screenSetting.screenHeightLiuHai);
+                        }
+                }
+            }
+            else {
+                v.setSize(root.width, root.height);
+            }
+            root.addChild(v);
+            return v;
+        }
+        static getLayerHeight(menuLayer) {
+            if (Engine.borwer.isLiuHai) {
+                switch (menuLayer) {
+                    case MenuLayer.loader:
+                        return Game.screenSetting.screenHeight;
+                    default:
+                        return Game.screenSetting.screenHeightLiuHai;
+                }
+            }
+            return Game.screenSetting.screenHeight;
+        }
+        static getLayerWidth(menuLayer) {
+            if (Engine.borwer.isLiuHai) {
+                switch (menuLayer) {
+                    case MenuLayer.loader:
+                        return Game.screenSetting.screenWidth;
+                    default:
+                        return Game.screenSetting.screenWidthLiuHai;
+                }
+            }
+            return Game.screenSetting.screenWidth;
+        }
+    }
+    MenuLayer.dict = new Dictionary();
+    window["MenuLayer"] = MenuLayer;
+
+    class GuiPackageNames {
+    }
+    GuiPackageNames.GameHome = "GameHome";
+    GuiPackageNames.GameLaunch = "GameLaunch";
+    GuiPackageNames.ModuleLogin = "ModuleLogin";
+    GuiPackageNames.Sound = "Sound";
 
     class FxMovieClipKey {
     }
@@ -7950,7 +5672,7 @@
         }
         getWarrior(level, score) {
             var step = 0;
-            if (GameStatus.stepCardNum <= 0 && level >= 2) {
+            if (GameStatus.stepCardNum <= 0 && GameStatus.gameLevel >= 8) {
                 step = 3;
             }
             return Card.GetNew(this.game, CardScoreType.Enemy, level, score, step);
@@ -7967,7 +5689,7 @@
             var level = CardFactory.generateBossPower();
             var score = 8 + GameStatus.gameLevel;
             var step = 0;
-            if (GameStatus.gameLevel > 1) {
+            if (GameStatus.gameLevel > 8) {
                 step = 3;
             }
             return Card.GetNew(this.game, CardScoreType.Boss, level, score, step);
@@ -8339,7 +6061,7 @@
                 var child = this.container.getChildAt(i);
                 var fun = child['PoolRecover'];
                 if (fun) {
-                    fun.call(this);
+                    fun.call(child);
                 }
                 if (child.parent) {
                     child.removeFromParent();
@@ -8382,9 +6104,20 @@
             this.isAnimationing = false;
             this.keyboardManager.reset();
         }
+        debugPlayerTrigger() {
+            var twees = Player.current.debugCheckTrigger();
+            if (twees && twees.length > 0) {
+                this.addToAnimationQueue(twees);
+                return;
+            }
+        }
         fillQueue() {
             if (GameStatus.isHeroAlive) {
                 var hero = this.field.getHero();
+                if (hero == null) {
+                    this.setGameOver();
+                    return;
+                }
                 if (hero.currentLife > 0) {
                     if (this.checkCardStep()) {
                         return;
@@ -8627,6 +6360,1323 @@
         }
     }
 
+    class FWindow extends fgui.Window {
+        constructor() {
+            super(...arguments);
+            this.isAddedStage = false;
+        }
+        get isShowed() {
+            if (this.contentPane)
+                return this.parent != null;
+            return false;
+        }
+        onWindowWillShow() {
+            if (this.contentPane) {
+                this.callChildOnWindowWillShow(this.contentPane);
+            }
+            this.setScreenSize();
+            if (this.isAddedStage)
+                return;
+            this.isAddedStage = true;
+            Laya.stage.on(Laya.Event.RESIZE, this, this.setScreenSize);
+        }
+        onWindowWillHide() {
+            if (this.contentPane) {
+                this.callChildOnWindowWillHide(this.contentPane);
+            }
+            this.isAddedStage = false;
+            Laya.stage.off(Laya.Event.RESIZE, this, this.setScreenSize);
+        }
+        setScreenSize() {
+            if (this.contentPane) {
+                if (this.windowContainer && this.windowContainer["menuLayer"] !== undefined) {
+                    if (Game.screenSetting.isLandsape) {
+                        this.width = MenuLayer.getLayerWidth(this.windowContainer["menuLayer"]);
+                        this.height = this.windowContainer.height;
+                        this.contentPane.width = this.width;
+                        this.contentPane.height = this.height;
+                    }
+                    else {
+                        this.width = this.windowContainer.width;
+                        this.height = MenuLayer.getLayerHeight(this.windowContainer["menuLayer"]);
+                        this.contentPane.width = this.width;
+                        this.contentPane.height = this.height;
+                    }
+                }
+                else {
+                    this.width = Game.screenSetting.screenWidth;
+                    this.height = Game.screenSetting.screenHeight;
+                    this.contentPane.width = Game.screenSetting.screenWidth;
+                    this.contentPane.height = Game.screenSetting.screenHeight;
+                }
+                this.callChildOnWindowResize(this.contentPane);
+            }
+        }
+        callChildOnWindowWillShow(com) {
+            if (com) {
+                let fun = com["onWindowWillShow"];
+                if (fun) {
+                    fun.apply(com);
+                }
+                if (com._children) {
+                    for (let i = 0; i < com._children.length; i++) {
+                        this.callChildOnWindowWillShow(com._children[i]);
+                    }
+                }
+            }
+        }
+        callChildOnWindowWillHide(com) {
+            if (com) {
+                let fun = com["onWindowWillHide"];
+                if (fun) {
+                    fun.apply(com);
+                }
+                if (com._children) {
+                    for (let i = 0; i < com._children.length; i++) {
+                        this.callChildOnWindowWillHide(com._children[i]);
+                    }
+                }
+            }
+        }
+        callChildOnWindowResize(com) {
+            if (com) {
+                let fun = com["onWindowResize"];
+                if (fun) {
+                    fun.apply(com);
+                }
+                if (com._children) {
+                    for (let i = 0; i < com._children.length; i++) {
+                        this.callChildOnWindowResize(com._children[i]);
+                    }
+                }
+            }
+        }
+    }
+
+    var AssetItemType;
+    (function (AssetItemType) {
+        AssetItemType[AssetItemType["FguiPackage"] = 0] = "FguiPackage";
+        AssetItemType[AssetItemType["FspritePackage"] = 1] = "FspritePackage";
+        AssetItemType[AssetItemType["Image"] = 2] = "Image";
+        AssetItemType[AssetItemType["TEXTURE2D"] = 3] = "TEXTURE2D";
+        AssetItemType[AssetItemType["Buffer"] = 4] = "Buffer";
+        AssetItemType[AssetItemType["Sound"] = 5] = "Sound";
+        AssetItemType[AssetItemType["Text"] = 6] = "Text";
+        AssetItemType[AssetItemType["Json"] = 7] = "Json";
+        AssetItemType[AssetItemType["Xml"] = 8] = "Xml";
+        AssetItemType[AssetItemType["Font"] = 9] = "Font";
+        AssetItemType[AssetItemType["TTF"] = 10] = "TTF";
+        AssetItemType[AssetItemType["PKM"] = 11] = "PKM";
+    })(AssetItemType || (AssetItemType = {}));
+
+    var Loader = Laya.Loader;
+    class AssetHelper {
+        static get layaLoaderType2AssetItemTypeDict() {
+            if (!AssetHelper._layaLoaderType2AssetItemTypeDict) {
+                let dict = new Dictionary();
+                dict.add(Loader.IMAGE, AssetItemType.Image);
+                dict.add(Loader.TEXTURE2D, AssetItemType.TEXTURE2D);
+                dict.add(Loader.BUFFER, AssetItemType.Buffer);
+                dict.add(Loader.SOUND, AssetItemType.Sound);
+                dict.add(Loader.TEXT, AssetItemType.Text);
+                dict.add(Loader.JSON, AssetItemType.Json);
+                dict.add(Loader.XML, AssetItemType.Xml);
+                dict.add(Loader.FONT, AssetItemType.Font);
+                dict.add(Loader.TTF, AssetItemType.TTF);
+                AssetHelper._layaLoaderType2AssetItemTypeDict = dict;
+            }
+            return AssetHelper._layaLoaderType2AssetItemTypeDict;
+        }
+        static get assetItemType2LayaLoaderTypeDict() {
+            if (!AssetHelper._assetItemType2LayaLoaderTypeDict) {
+                let d = this.layaLoaderType2AssetItemTypeDict.__getDict();
+                let dict = new Dictionary();
+                for (let key in d) {
+                    dict[d[key]] = d;
+                }
+                AssetHelper._assetItemType2LayaLoaderTypeDict = dict;
+            }
+            return AssetHelper._assetItemType2LayaLoaderTypeDict;
+        }
+        static layaLoaderType2AssetItemType(loader) {
+            return AssetHelper.layaLoaderType2AssetItemTypeDict.getValue(loader);
+        }
+        static assetItemType2LayaLoaderType(type) {
+            return AssetHelper.assetItemType2LayaLoaderTypeDict.getValue(type);
+        }
+        static getAssetItemKey(item) {
+            return item.type + " " + item.url;
+        }
+    }
+
+    var MenuOpenType;
+    (function (MenuOpenType) {
+        MenuOpenType[MenuOpenType["None"] = 0] = "None";
+        MenuOpenType[MenuOpenType["Tab"] = 2] = "Tab";
+        MenuOpenType[MenuOpenType["Subwindow"] = 3] = "Subwindow";
+    })(MenuOpenType || (MenuOpenType = {}));
+
+    class GameEventKey {
+    }
+    GameEventKey.Test = "Test";
+    GameEventKey.GameBattle_onSyncNormal = "GameFrame_onSyncNormal";
+    GameEventKey.GameBattle_onSyncChasingFrame = "GameBattle_onSyncChasingFrame";
+    GameEventKey.GameBattle_onEntityCreate = "GameBattle_onEntityCreate";
+    GameEventKey.GameBattle_onEntityRemove = "GameFrame_onEntityRemove";
+    GameEventKey.GameBattle_onEntityRollbackBegin = "GameFrame_onEntityRollbackBegin";
+    GameEventKey.GameBattle_onEntityRollbackEnd = "GameBattle_onEntityRollbackEnd";
+    GameEventKey.GameBattle_onShowDamageUI = "GameBattle_onShowDamageUI";
+    GameEventKey.GameBattle_onShowHitUI = "GameFrame_onShowHitUI";
+    GameEventKey.GameBattle_onShakeScreen = "GameFrame_onShakeScreen";
+    GameEventKey.GameBattle_onScreenScale = "GameBattle_onScreenScale";
+    GameEventKey.GameBattle_onScreenMove = "GameBattle_onScreenMove";
+    GameEventKey.GameBattle_onAnimNotify = "GameFrame_onAnimNotify";
+    GameEventKey.GameBattle_onChangeNotify = "GameFrame_onChangeNotify";
+    GameEventKey.GameBattle_onCharacterBorn = "GameBattle_onCharacterBorn";
+    GameEventKey.GameBattle_OnViewAlphaChange = "GameBattle_OnViewAlphaChange";
+    GameEventKey.GameBattle_onPlaySound = "GameFrame_onPlaySound";
+    GameEventKey.GameBattle_onPlaySoundBehit = "GameFrame_onPlaySoundBehit";
+    GameEventKey.GameBattle_onTiggerEffectScreenShow = "GameBattle_onTiggerEffectScreenShow";
+    GameEventKey.GameBattle_onTiggerEffectScreenHide = "GameBattle_onTiggerEffectScreenHide";
+    GameEventKey.GameBattle_onSceneFadeOut = "GameFrame_onSceneFadeOut";
+    GameEventKey.GameBattle_onTiggerUIScreenShow = "GameBattle_onTiggerUIScreenShow";
+    GameEventKey.GameBattle_onTiggerUIScreenHide = "GameBattle_onTiggerUIScreenHide";
+    GameEventKey.GameBattle_onTriggerChangeSceneBg = "GameBattle_onTriggerChangeSceneBg";
+    GameEventKey.GameBattle_onBossAppear = "GameBattle_onBossAppear";
+    GameEventKey.GameBttle_showBossSpecialView = "GameBttle_showBossSpecialView";
+    GameEventKey.GameBattle_onShowGameStart = "GameBattle_onShowGameStart";
+    GameEventKey.GameBattle_onServerError2300 = "GameBattle_onServerError2300";
+    GameEventKey.GameBattle_MonsterCreater = "GameBattle_nextAirWallMonster";
+    GameEventKey.GameBattle_WaveChange = "GameBattle_WaveChange";
+    GameEventKey.GameBattle_MonsterHpChange = "GameBattle_MonsterHpChange";
+    GameEventKey.GameBattle_EntityTeleport = "GameBattle_EntityTeleport";
+    GameEventKey.GameBattle_PlayerRevive = "GameBattle_PlayerRevive";
+    GameEventKey.GameBattle_EntityDead = "GameBattle_EntityDead";
+    GameEventKey.GameFrame_OpenMenu = "GameFrame_OpenMenu";
+    GameEventKey.GameFrame_CloseMenu = "GameFrame_CloseMenu";
+    GameEventKey.GameFrame_ReLoginData_Begin = "GameFrame_ReLoginData_Begin";
+    GameEventKey.GameFrame_ReLoginData_End = "GameFrame_ReLoginData_End";
+    GameEventKey.GameFrame_Everyday_Update = "GameFrame_Everyday_Update";
+    GameEventKey.GameFrame_HideOpenDialog = "GameFrame_HideOpenDialog";
+    GameEventKey.GameFrame_ShowOpenDialog = "GameFrame_ShowOpenDialog";
+    GameEventKey.GameFrame_TeamMemberNetStateChange = "GameFrame_TeamMemberStateChange";
+    GameEventKey.GameFrame_TeamMemberLeave = "GameFrame_TeamMemberLeave";
+    GameEventKey.GameFrame_UseItem = "GameFrame_UseItem";
+    GameEventKey.GameFrame_ConsumeItem = "GameFrame_ConsumeItem";
+    GameEventKey.GameFrame_HeroLevelUp = "GameFrame_HeroLevelUp";
+    GameEventKey.GameFrame_HeroStarUp = "GameFrame_HeroStarUp";
+    GameEventKey.GameFrame_AddHero = "GameFrame_AddHero";
+    GameEventKey.GameFrame_HeroSkillLevel = "GameFrame_HeroSkillLevel";
+    GameEventKey.GameFrame_HeroLeveling = "GameFrame_HeroLeveling";
+    GameEventKey.GameFrame_UpdateEXP = "GameFrame_UpdateEXP";
+    GameEventKey.GameFrame_UpdateProp = "GameFrame_UpdateProp";
+    GameEventKey.GameFrame_BackUpData = "GameFrame_BackUpData";
+    GameEventKey.GameFrame_RestoreData = "GameFrame_RestoreData";
+    GameEventKey.GameFrame_ItemExceedBound = "GameFrame_ItemExceedBound";
+    GameEventKey.GameFrame_LevelExceedBound = "GameFrame_LevelExceedBound";
+    GameEventKey.GameFrame_LevelExceedMaxLevelInLoop = "GameFrame_LevelExceedMaxLevelInLoop";
+    GameEventKey.GameFrame_EquipStarUp = "GameFrame_EquipStarUp";
+    GameEventKey.GameFrame_EquipLevelUp = "GameFrame_EquipLevelUp";
+    GameEventKey.GameFrame_EquipQualitySelect = "GameFrame_EquipQualitySelect";
+    GameEventKey.GameFrame_EquipQualitySort = "GameFrame_EquipQualitySort";
+    GameEventKey.GameFrame_EquipItemSelect = "GameFrame_EquipItemSelect";
+    GameEventKey.GameFrame_HeroSelectEquip = "GameFrame_HeroSelectEquip";
+    GameEventKey.GameFrame_BattlePlanDataUpdate = "GameFrame_BattlePlanDataUpdate";
+    GameEventKey.GameFrame_BattlePlanUnlockNewTeam = "GameFrame_BattlePlanUnlockNewTeam";
+    GameEventKey.GameFrame_BattlePlanChangeTeamName = "GameFrame_BattlePlanChangeTeamName";
+    GameEventKey.GameFrame_BattlePlanChangeHero = "GameFrame_BattlePlanChangeHero";
+    GameEventKey.GameFrame_BattlePlanTeamCentern = "GameFrame_BattlePlanTeamCentern";
+    GameEventKey.GameFrame_BattlePlanUnlockNewHeroChair = "GameFrame_BattlePlanUnlockNewHeroChair";
+    GameEventKey.GameFrame_BattlePlanSelectedTeam = "GameFrame_BattlePlanSelectedTeam";
+    GameEventKey.GameFrame_BattlePlanSecondHero = "GameFrame_BattlePlanSecondHero";
+    GameEventKey.GameFrame_BattlePlanRefreshCommonSkill = "GameFrame_BattlePlanRefreshCommonSkill";
+    GameEventKey.GameFrame_HomeWindowBattleStartBtn = "GameFrame_HomeWindowBattleStartBtn";
+    GameEventKey.GameFrame_HeroWindowEquipPanel = "GameFrame_HeroWindowEquipPanel";
+    GameEventKey.GameFrame_HeroPanelBack = "GameFrame_HeroPanelBack";
+    GameEventKey.Gameframe_HeroEquipClose = "Gameframe_HeroEquipClose";
+    GameEventKey.GameFrame_BattleEnterOnClick = "GameFrame_BattleEnterOnClick";
+    GameEventKey.GameFrame_SectionEnterOnClick = "GameFrame_SectionEnterOnClick";
+    GameEventKey.GameFrame_SectionDeltaEnterOnClick = "GameFrame_SectionDeltaEnterOnClick";
+    GameEventKey.GameFrame_BattlePlanEnter = "GameFrame_BattlePlanEnter";
+    GameEventKey.GameFrame_GuideJoystickFinish = "GameFrame_GuideJoystickFinish";
+    GameEventKey.GameFrame_BattleOneWave = "GameFrame_GuideAttackStart";
+    GameEventKey.GameFrame_GuideAttackFinish = "GameFrame_GuideAttackFinish";
+    GameEventKey.GameFrame_GuideFirSkillStart = "GameFrame_GuideFirSkillStart";
+    GameEventKey.GameFrame_GuideFirSkillEnd = "GameFrame_GuideFirSkillEnd";
+    GameEventKey.GameFrame_GuideBattleEndRemove = "GameFrame_GuideBattleEndRemove";
+    GameEventKey.GameFrame_SectionBackBtnOnClick = "GameFrame_SectionBackBtnOnClick";
+    GameEventKey.GameFrame_HomeHeroBtnOnClick = "GameFrame_HomeHeroBtnOnClick";
+    GameEventKey.GameFrame_HeroPanelChooseHero = "GameFrame_HeroPanelChooseHero";
+    GameEventKey.GameFrame_HeroBattleChooseHero = "GameFrame_HeroBattleChooseHero";
+    GameEventKey.GameFrame_HeroBattleHero = "GameFrame_HeroBattleHero";
+    GameEventKey.GameFrame_HeroInfoShowAddExpPanel = "GameFrame_HeroInfoShowAddExpPanel";
+    GameEventKey.GameFrame_HeroExpIncreaseByItem = "GameFrame_HeroExpIncreaseByItem";
+    GameEventKey.GameFrame_HeroChooseFinish = "GameFrame_HeroChooseFinish";
+    GameEventKey.gameFrame_GuideOpenLevelUpPanel = "gameFrame_GuideOpenLevelUpPanel";
+    GameEventKey.gameFrame_GuideEquipUIFinish = "gameFrame_GuideEquipUIFinish";
+    GameEventKey.gameFrame_GuideEquipList = "gameFrame_GuideEquipUIFinish";
+    GameEventKey.gameFrame_HeroEquip = "gameFrame_HeroEquip";
+    GameEventKey.GameFrame_FinishGuideOpenHeroEquip = "GameFrame_FinishOpenHeroEquip";
+    GameEventKey.GameFrame_OpenHeroEquipList = "GameFrame_OpenHeroEquipList";
+    GameEventKey.GameFrame_gameStart = "GameFrame_onShowGameStart";
+    GameEventKey.GameFrame_SectionFinishSuccess = "GameFrame_SectionFinishSuccess";
+    GameEventKey.GameFrame_HomeEquipBtnOnClick = "GameFrame_HomeEquipBtnOnClick";
+    GameEventKey.GameFrame_EquipSelectFirst = "GameFrame_EquipSelectFirst";
+    GameEventKey.GameFrame_EquipStrengthenBtn = "GameFrame_EquipStrengthenBtn";
+    GameEventKey.GameFrame_EquipStrengthenBtn2 = "GameFrame_EquipStrengthenBtn2";
+    GameEventKey.GameFrame_EquipStrengthenEnterBtn = "GameFrame_EquipStrengthenEnterBtn";
+    GameEventKey.GameFrame_BattleNormalBtn = "GameFrame_BattleNormal";
+    GameEventKey.GameFrame_BattleSpecialBtn = "GameFrame_BattleSpecialBtn";
+    GameEventKey.GameFrame_BattleSpecialList = "GameFrame_BattleSpecialList";
+    GameEventKey.GameFrame_GuideChangeHero = "GameFrame_GuideChangeHero";
+    GameEventKey.GameFrame_BtnBackOnClick = "GameFrame_BtnBackOnClick";
+    GameEventKey.GameFrame_HeroLevelGuideUpClose = "GameFrame_HeroLevelUpClose";
+
+    class FguiHelper {
+        static setChildWindow(com, window) {
+            if (com) {
+                com["moduleWindow"] = window;
+                if (com._children) {
+                    for (let i = 0; i < com._children.length; i++) {
+                        this.setChildWindow(com._children[i], window);
+                    }
+                }
+            }
+        }
+        static callChildOnWindowInited(com) {
+            if (com) {
+                let fun = com["onWindowInited"];
+                if (fun) {
+                    fun.apply(com);
+                }
+                if (com._children) {
+                    for (let i = 0; i < com._children.length; i++) {
+                        this.callChildOnWindowInited(com._children[i]);
+                    }
+                }
+            }
+        }
+        static callChildOnWindowDestory(com) {
+            let container;
+            if (com instanceof fgui.GObject) {
+                container = com.displayObject;
+            }
+            if (com) {
+                let fun = com["onWindowDestory"];
+                if (fun) {
+                    if (fun.apply(com)) {
+                        return;
+                    }
+                }
+                for (let i = container.numChildren - 1; i >= 0; i--) {
+                    let display = container.getChildAt(i);
+                    if (display["$owner"])
+                        this.callChildOnWindowDestory(display["$owner"]);
+                }
+            }
+        }
+        static callChildOnWindowShow(com) {
+            if (com) {
+                let enbaleCall = true;
+                let fun = com["onWindowShow"];
+                if (fun) {
+                    if (com["whenSelfVisiableCallWindowShowAndHide"] !== undefined) {
+                        let whenSelfVisiableCallWindowShowAndHide = com["whenSelfVisiableCallWindowShowAndHide"];
+                        if (whenSelfVisiableCallWindowShowAndHide) {
+                            if (com.visible == false) {
+                                enbaleCall = false;
+                            }
+                        }
+                    }
+                    if (enbaleCall) {
+                        fun.apply(com);
+                    }
+                }
+                if (enbaleCall && com._children) {
+                    for (let i = com._children.length - 1; i >= 0; i--) {
+                        this.callChildOnWindowShow(com._children[i]);
+                    }
+                }
+            }
+        }
+        static callChildOnWindowHide(com) {
+            if (com) {
+                let enbaleCall = true;
+                let fun = com["onWindowHide"];
+                if (fun) {
+                    if (com["whenSelfVisiableCallWindowShowAndHide"] !== undefined) {
+                        let whenSelfVisiableCallWindowShowAndHide = com["whenSelfVisiableCallWindowShowAndHide"];
+                        if (whenSelfVisiableCallWindowShowAndHide) {
+                            if (com.visible == false) {
+                                enbaleCall = false;
+                            }
+                        }
+                    }
+                    if (enbaleCall) {
+                        fun.apply(com);
+                    }
+                }
+                if (enbaleCall && com._children) {
+                    for (let i = 0; i < com._children.length; i++) {
+                        this.callChildOnWindowHide(com._children[i]);
+                    }
+                }
+            }
+        }
+        static callChildOnTabShow(com) {
+            if (com) {
+                let fun = com["onTabShow"];
+                if (fun) {
+                    fun.apply(com);
+                }
+                if (com["_children"]) {
+                    for (let i = 0; i < com["_children"]["length"]; i++) {
+                        this.callChildOnTabShow(com["_children"][i]);
+                    }
+                }
+            }
+        }
+        static callChildOnTabHide(com) {
+            if (com) {
+                let fun = com["onTabHide"];
+                if (fun) {
+                    fun.apply(com);
+                }
+                if (com["_children"]) {
+                    for (let i = 0; i < com["_children"]["length"]; i++) {
+                        this.callChildOnTabHide(com["_children"][i]);
+                    }
+                }
+            }
+        }
+        static autoScreenScaleShrink(content, alignH, alignV) {
+            let rate = Game.screenSetting.screenScaleShrink;
+            content.scaleX = rate;
+            content.scaleY = rate;
+            if (alignH) {
+                let parent = fgui.GRoot.inst;
+                switch (alignH) {
+                    case Laya.Stage.ALIGN_LEFT:
+                        content.x = 0;
+                        break;
+                    case Laya.Stage.ALIGN_CENTER:
+                        content.x = (parent.width - content.width * rate) * 0.5;
+                        break;
+                    case Laya.Stage.ALIGN_RIGHT:
+                        content.x = parent.width - content.width * rate;
+                        break;
+                }
+                switch (alignV) {
+                    case Laya.Stage.ALIGN_TOP:
+                        content.y = 0;
+                        break;
+                    case Laya.Stage.ALIGN_MIDDLE:
+                        content.y = (parent.height - content.height * rate) * 0.5;
+                        break;
+                    case Laya.Stage.ALIGN_BOTTOM:
+                        content.y = parent.height - content.height * rate;
+                        break;
+                }
+            }
+        }
+        static autoScreenScaleShrink2(content, sourceScale = 1) {
+            let rate = Game.screenSetting.screenScaleShrinkMax;
+            content.scaleX = rate * sourceScale;
+            content.scaleY = rate * sourceScale;
+            if (content.parent) {
+                content.x = content.parent.width * 0.5;
+                content.y = content.parent.height * 0.5;
+            }
+        }
+        static autoScreenScale(content, alignH, alignV) {
+            let rate = Game.screenSetting.screenScaleExpand;
+            content.scaleX = rate;
+            content.scaleY = rate;
+            if (alignH) {
+                let parent = fgui.GRoot.inst;
+                switch (alignH) {
+                    case Laya.Stage.ALIGN_LEFT:
+                        content.x = 0;
+                        break;
+                    case Laya.Stage.ALIGN_CENTER:
+                        content.x = (parent.width - content.width * rate) * 0.5;
+                        break;
+                    case Laya.Stage.ALIGN_RIGHT:
+                        content.x = parent.width - content.width * rate;
+                        break;
+                }
+                switch (alignV) {
+                    case Laya.Stage.ALIGN_TOP:
+                        content.y = 0;
+                        break;
+                    case Laya.Stage.ALIGN_MIDDLE:
+                        if (content.parent) {
+                            this.helpPoint.y = (parent.height - content.height * rate) * 0.5;
+                            this.helpPoint = content.parent.globalToLocal(0, this.helpPoint.y, this.helpPoint);
+                            content.y = this.helpPoint.y;
+                        }
+                        else {
+                            content.y = (parent.height - content.height * rate) * 0.5;
+                        }
+                        break;
+                    case Laya.Stage.ALIGN_BOTTOM:
+                        content.y = parent.height - content.height * rate;
+                        break;
+                }
+            }
+        }
+        static autoScreenScale2(content) {
+            let rate = Game.screenSetting.screenScaleExpand;
+            content.scaleX = rate;
+            content.scaleY = rate;
+            if (content.parent) {
+                content.x = content.parent.width * 0.5;
+                content.y = content.parent.height * 0.5;
+            }
+        }
+        static autoScreenScale3(content) {
+            let rate = Game.screenSetting.screenScaleExpand;
+            content.scaleX = rate;
+            content.scaleY = rate;
+        }
+        static autoScreenSize(content, alignH, alignV) {
+            let rate = Game.screenSetting.screenScaleExpand;
+            content.width = content.sourceWidth * rate;
+            content.height = content.sourceHeight * rate;
+            if (alignH) {
+                let parent = fgui.GRoot.inst;
+                switch (alignH) {
+                    case Laya.Stage.ALIGN_LEFT:
+                        content.x = 0;
+                        break;
+                    case Laya.Stage.ALIGN_CENTER:
+                        content.x = (parent.width - content.width) * 0.5;
+                        break;
+                    case Laya.Stage.ALIGN_RIGHT:
+                        content.x = parent.width - content.width;
+                        break;
+                }
+                switch (alignV) {
+                    case Laya.Stage.ALIGN_TOP:
+                        content.y = 0;
+                        break;
+                    case Laya.Stage.ALIGN_MIDDLE:
+                        if (content.parent) {
+                            this.helpPoint.y = (parent.height - content.height) * 0.5;
+                            this.helpPoint = content.parent.globalToLocal(0, this.helpPoint.y, this.helpPoint);
+                            content.y = this.helpPoint.y;
+                        }
+                        else {
+                            content.y = (parent.height - content.height) * 0.5;
+                        }
+                        break;
+                    case Laya.Stage.ALIGN_BOTTOM:
+                        content.y = parent.height - content.height;
+                        break;
+                }
+            }
+        }
+        static autoParentSize(content, alignH, alignV) {
+            let rate = Game.screenSetting.screenScaleExpand;
+            content.width = content.sourceWidth * rate;
+            content.height = content.sourceHeight * rate;
+            if (alignH) {
+                let parent = fgui.GRoot.inst;
+                switch (alignH) {
+                    case Laya.Stage.ALIGN_LEFT:
+                        content.x = 0;
+                        break;
+                    case Laya.Stage.ALIGN_CENTER:
+                        content.x = (parent.width - content.width) * 0.5;
+                        break;
+                    case Laya.Stage.ALIGN_RIGHT:
+                        content.x = parent.width - content.width;
+                        break;
+                }
+                switch (alignV) {
+                    case Laya.Stage.ALIGN_TOP:
+                        content.y = 0;
+                        break;
+                    case Laya.Stage.ALIGN_MIDDLE:
+                        content.y = (parent.height - content.height) * 0.5;
+                        break;
+                    case Laya.Stage.ALIGN_BOTTOM:
+                        content.y = parent.height - content.height;
+                        break;
+                }
+            }
+        }
+        static centerScreen(content) {
+            content.x = (Game.screenSetting.screenWidth - content.width) * 0.5;
+            content.y = (Game.screenSetting.screenHeight - content.height) * 0.5;
+        }
+        static centerScreenForCenter(content) {
+            content.x = Game.screenSetting.screenWidth * 0.5;
+            content.y = Game.screenSetting.screenHeight * 0.5;
+        }
+        static setScreenSize(content) {
+            content.width = Game.screenSetting.screenWidth;
+            content.height = Game.screenSetting.screenHeight;
+        }
+        static getValueForPath(path, content, ...args) {
+            if (path.endsWith("()")) {
+                return FguiHelper.getFunResultForPath(path, content, ...args);
+            }
+            else {
+                return FguiHelper.getFieldValueForPath(path, content);
+            }
+        }
+        static getFunResultForPath(path, content, ...args) {
+            if (path.endsWith("()")) {
+                path = path.replace("()", "");
+                let fun = FguiHelper.getFieldValueForPath(path, content);
+                if (fun) {
+                    let paths = path.split(/[\.\/]/);
+                    if (paths.length == 1) {
+                        if (args.length == 1) {
+                            return fun.apply(content, args[0]);
+                        }
+                        return fun.apply(content, args);
+                    }
+                    else {
+                        let objPath = "";
+                        let gap = "";
+                        for (let i = 0; i < paths.length - 1; i++) {
+                            objPath += gap + paths[i];
+                            gap = ".";
+                        }
+                        let obj = FguiHelper.getFieldValueForPath(objPath, content);
+                        if (args.length == 1) {
+                            return fun.apply(obj, args[0]);
+                        }
+                        return fun.apply(obj, args);
+                    }
+                }
+            }
+            else {
+                return FguiHelper.getFieldValueForPath(path, content);
+            }
+        }
+        static getFieldValueForPath(path, content) {
+            if (!content) {
+                content = window;
+                if (!content) {
+                    content = this;
+                }
+            }
+            let paths = path.split(/[\.\/]/);
+            let val = content;
+            for (let i = 0; i < paths.length; i++) {
+                if (val[paths[i]]) {
+                    val = val[paths[i]];
+                }
+                else {
+                    return null;
+                }
+            }
+            return val;
+        }
+        static setStringsSource(lang) {
+            let txtmap = fgui.TranslationHelper["strings"] = {};
+            let list = lang.getConfigList();
+            for (let i = 0; i < list.length; i++) {
+                let config = list[i];
+                let name = config.dict.getValue("name");
+                let value = config.dict.getValue("value");
+                let index = name.indexOf("-");
+                if (value === undefined || value === null)
+                    continue;
+                if (index == -1)
+                    continue;
+                var uiUrl = name.substr(0, index);
+                var uiNodeName = name.substr(index + 1);
+                var col = txtmap[uiUrl];
+                if (!col) {
+                    col = {};
+                    txtmap[uiUrl] = col;
+                }
+                col[uiNodeName] = value;
+            }
+        }
+        static setGray(component) {
+            if (!component)
+                return;
+            if (!FguiHelper.grayscaleFilters) {
+                var grayscaleFilter = new Laya.ColorFilter(FguiHelper.grayscaleMat);
+                FguiHelper.grayscaleFilters = [grayscaleFilter];
+            }
+            component.displayObject.filters = FguiHelper.grayscaleFilters;
+        }
+        static clearFilters(component) {
+            if (!component)
+                return;
+            component.displayObject.filters = null;
+        }
+        static get saturationFilters() {
+            if (!FguiHelper._saturationFilters) {
+                FguiHelper._saturationFilters = [new Laya.ColorFilter(FguiHelper.saturation)];
+            }
+            return FguiHelper._saturationFilters;
+        }
+        static get saturationFilters2() {
+            if (!FguiHelper._saturationFilters2) {
+                FguiHelper._saturationFilters2 = [new Laya.ColorFilter(FguiHelper.saturation2)];
+            }
+            return FguiHelper._saturationFilters2;
+        }
+        static get saturationFilters3() {
+            if (!FguiHelper._saturationFilters3) {
+                FguiHelper._saturationFilters3 = [new Laya.ColorFilter().adjustColor(0, -50, -100, 0)];
+            }
+            return FguiHelper._saturationFilters3;
+        }
+        static halfStaturation(obj) {
+            if (!obj)
+                return;
+            obj.displayObject.filters = FguiHelper.saturationFilters;
+        }
+        static half2Staturation(obj) {
+            if (!obj)
+                return;
+            obj.displayObject.filters = FguiHelper.saturationFilters2;
+        }
+        static half3Staturation(obj) {
+            if (!obj)
+                return;
+            obj.displayObject.filters = FguiHelper.saturationFilters3;
+        }
+        static boundEffect(target, duration = 1000) {
+            target.setPivot(0.5, 0.5);
+            target.setScale(0.5, 0.5);
+            Laya.Tween.to(target, { scaleX: 1, scaleY: 1 }, duration, Laya.Ease.backOut, Laya.Handler.create(null, () => {
+            }), 0, true, true);
+        }
+    }
+    FguiHelper.helpPoint = new Laya.Point();
+    FguiHelper.grayscaleMat = [0.3086, 0.6094, 0.0820, 0, 0, 0.3086, 0.6094, 0.0820, 0, 0, 0.3086, 0.6094, 0.0820, 0, 0, 0, 0, 0, 1, 0];
+    FguiHelper.grayscaleFilters = null;
+    FguiHelper.normalFilters = null;
+    FguiHelper.saturation = [
+        0.5, 0, 0, 0, 0,
+        0, 0.5, 0, 0, 0,
+        0, 0, 0.5, 0, 0,
+        0, 0, 0, 1, 0,
+    ];
+    FguiHelper.saturation2 = [
+        0.25, 0, 0, 0, 0,
+        0, 0.25, 0, 0, 0,
+        0, 0, 0.25, 0, 0,
+        0, 0, 0, 1, 0,
+    ];
+
+    var Point$1 = Laya.Point;
+    var Handler$1 = Laya.Handler;
+    class MWindow extends FWindow {
+        constructor() {
+            super(...arguments);
+            this.sShowComplete = new Signal();
+            this.sHideComplete = new Signal();
+            this.menuIsCreated = false;
+            this.isDestoryed = false;
+            this.enableShowAnimation = true;
+            this.enableShowSignal = true;
+            this.enableHideSignal = true;
+            this._loadAssets = [];
+            this._dynamicAssetsList = [];
+            this.toPoint = new Point$1();
+            this.srcPoint = new Point$1();
+            this.sShowSubwindowComplete = new Signal();
+            this.sHideSubwindowComplete = new Signal();
+            this.subwindowDict = new Dictionary();
+            this.subwindowStack = [];
+            this.tabDict = new Dictionary();
+            this.tabHistorys = [];
+            this.tabCtrlViewsMap = new Map();
+            this.sOpenTab = new Typed2Signal();
+        }
+        static async AsyncEnableOpen() {
+            return Promise.resolve(true);
+        }
+        isOpenSubOrTab(index) {
+            return this.menuParameter.openIndex == index;
+        }
+        addAssetForFguiPackagename(packagename) {
+            this._loadAssets.push({ url: packagename, type: AssetItemType.FguiPackage });
+        }
+        addAssetForFguiComponent(fguiCom) {
+            let names = fguiCom["DependPackages"];
+            for (let i = 0; i < names.length; i++) {
+                this.addAssetForFguiPackagename(names[i]);
+            }
+        }
+        getLoadAssets(list, dict) {
+            let assets = this._loadAssets;
+            for (let i = 0; i < assets.length; i++) {
+                let key = AssetHelper.getAssetItemKey(assets[i]);
+                if (!dict.hasKey(key)) {
+                    list.push(assets[i]);
+                    dict.add(key, assets[i]);
+                }
+            }
+            return list;
+        }
+        unloadAssetForFguiPackagename(packagename) {
+            switch (packagename) {
+                case GuiPackageNames._ResImageUIV1:
+                case GuiPackageNames.__ResFont:
+                case GuiPackageNames.CommonBase:
+                case GuiPackageNames.CommonGame:
+                case GuiPackageNames.CommonFx:
+                case GuiPackageNames.SystemModuleDialog:
+                    return;
+            }
+            Game.asset.unloadFgui(packagename);
+        }
+        unloadAssetForFguiComponent(fguiCom) {
+            let names = fguiCom["DependPackages"];
+            for (let i = 0; i < names.length; i++) {
+                this.unloadAssetForFguiPackagename(names[i]);
+            }
+        }
+        unloadAssetFroAssetList() {
+            for (let i = 0; i < this._loadAssets.length; i++) {
+                this.unloadAssetForFguiPackagename(this._loadAssets[i].url);
+            }
+        }
+        addDynamicAsset(assetItem) {
+            if (assetItem)
+                this._dynamicAssetsList.push(assetItem);
+        }
+        addDynmicAssetForAvatarAll(avatarConfig) {
+            avatarConfig.getAllAssset(this._dynamicAssetsList);
+        }
+        generateAssetsForDynmic() {
+            this._dynamicAssetsList = [];
+        }
+        getLoadAssetsForDynamic(list, dict) {
+            let assets = this._dynamicAssetsList;
+            for (let i = 0; i < assets.length; i++) {
+                let key = AssetHelper.getAssetItemKey(assets[i]);
+                if (!dict.hasKey(key)) {
+                    list.push(assets[i]);
+                    dict.add(key, assets[i]);
+                }
+            }
+            let subwindows = this.subwindowDict.getValues();
+            for (let i = 0; i < subwindows.length; i++) {
+                subwindows[i].getLoadAssetsForDynamic(list, dict);
+            }
+            return list;
+        }
+        onInit() {
+            this.onMenuCreate();
+            super.onInit();
+        }
+        onMenuCreate() {
+            this.setChildWindow(this.contentPane);
+            this.callChildOnWindowInited(this.contentPane);
+            this.menuIsCreated = true;
+            this.onMenuOpen(this.menuParameter);
+        }
+        setCloseBtnEvent() {
+            if (this.contentPane && this.contentPane["m_frame"] && this.contentPane["m_frame"].getChild("closeBtn")) {
+                this.contentPane["m_frame"].getChild("closeBtn").onClick(this, this.menuClose);
+            }
+        }
+        setBackBtnEvent() {
+            if (this.contentPane && this.contentPane["m_frame"] && this.contentPane["m_frame"].getChild("closeBtn")) {
+                this.contentPane["m_frame"].getChild("closeBtn").onClick(this, this.menuBack);
+            }
+        }
+        onMenuOpen(parameter) {
+            this.enableShowSignal = true;
+            this.enableShowAnimation = true;
+            this.menuParameter = parameter;
+            switch (parameter.openType) {
+                case MenuOpenType.Subwindow:
+                    this.enableShowSignal = false;
+                    this.enableShowAnimation = false;
+                    this.openSubwindowByIndex(parameter.openIndex, false, ...parameter.args);
+                    break;
+                case MenuOpenType.Tab:
+                    this.openTab(parameter.openIndex);
+                    break;
+                default:
+                    Game.event.dispatch(GameEventKey.GameFrame_OpenMenu, this.menuId, parameter.openType);
+                    break;
+            }
+        }
+        windowShow() {
+            if (this.windowContainer)
+                this.showOn(this.windowContainer);
+            else
+                this.show();
+        }
+        menuShow(root) {
+            switch (this.menuParameter.openType) {
+                case MenuOpenType.Subwindow:
+                    if (!this.contentPane)
+                        this.onInit();
+                    break;
+                default:
+                    this.showOn(root);
+                    break;
+            }
+        }
+        menuClose() {
+            Game.menu.close(this.menuId);
+        }
+        menuBack() {
+            Game.menu.back(this.menuId);
+        }
+        destory() {
+            this.callChildOnWindowDestory(this.contentPane);
+            this.onMenuDestory();
+            this.sShowComplete.removeAll();
+            this.sHideComplete.removeAll();
+            this.sShowSubwindowComplete.removeAll();
+            this.sHideSubwindowComplete.removeAll();
+            this.tabDict.clear();
+            let list = this.subwindowDict.getValues();
+            for (let i = 0; i < list.length; i++) {
+                let item = list[i];
+                item.destory();
+            }
+            this.subwindowDict.clear();
+            if (this.contentPane) {
+                this.contentPane.dispose();
+                this.contentPane = null;
+            }
+            this.unloadAssetFroAssetList();
+            super.dispose();
+            this.isDestoryed = true;
+        }
+        onMenuDestory() {
+        }
+        doShowAnimation() {
+            this.onWindowWillShow();
+            if (this.openAnimation == 1) {
+                this.srcPoint.x = this.panel.x;
+                this.srcPoint.y = this.panel.y;
+                this.panel.setScale(0.1, 0.1);
+                this.calBuutonPos();
+                this.panel.setXY(this.toPoint.x, this.toPoint.y);
+                Laya.Tween.to(this.panel, { scaleX: 1, scaleY: 1, x: this.srcPoint.x, y: this.srcPoint.y }, 300, Laya.Ease.quadOut, Handler$1.create(this, () => {
+                    this.onShown();
+                }));
+            }
+            else {
+                super.doShowAnimation();
+            }
+        }
+        get panel() {
+            if (this.contentPane["m_panel"]) {
+                return this.contentPane["m_panel"];
+            }
+            return this.contentPane;
+        }
+        doHideAnimation() {
+            this.onWindowWillHide();
+            if (this.closeAnimation == 1) {
+                this.panel.setScale(1, 1);
+                this.calBuutonPos();
+                Laya.Tween.to(this.panel, { scaleX: 0.1, scaleY: 0.1, x: this.toPoint.x, y: this.toPoint.y }, 300, Laya.Ease.quadOut, Handler$1.create(this, () => {
+                    this.panel.x = this.srcPoint.x;
+                    this.panel.y = this.srcPoint.y;
+                    this.hideImmediately();
+                }));
+            }
+            else {
+                super.doHideAnimation();
+            }
+        }
+        get openAnimation() {
+            if (this.menuConfig == null) {
+                return 0;
+            }
+            return this.menuConfig.openAnimation;
+        }
+        get closeAnimation() {
+            if (this.menuConfig == null) {
+                return 0;
+            }
+            return this.menuConfig.closeAnimation;
+        }
+        get menuConfig() {
+            if (this.menuId > 0) {
+                return Game.config.menu.getConfig(this.menuId);
+            }
+            return null;
+        }
+        calBuutonPos() {
+        }
+        onShown() {
+            this.enableHideSignal = true;
+            this.onShowComplete();
+            if (this.contentPane) {
+                this.callChildOnWindowShow(this.contentPane);
+            }
+        }
+        onMenuClose() {
+            this.hide();
+            let list = this.subwindowDict.getValues();
+            for (let i = 0; i < list.length; i++) {
+                let item = list[i];
+                item.hide();
+            }
+        }
+        onHide() {
+            this.enableShowSignal = true;
+            this.onHideComplete();
+            this.clearTabHistorys();
+            if (this.contentPane) {
+                this.callChildOnWindowHide(this.contentPane);
+            }
+        }
+        onShowComplete() {
+            if (this.enableShowSignal) {
+                this.sShowComplete.dispatch();
+            }
+        }
+        onHideComplete() {
+            if (this.enableHideSignal) {
+                this.sHideComplete.dispatch();
+            }
+        }
+        getSubwindow(subwindowIndex) {
+            return this.subwindowDict.getValue(subwindowIndex);
+        }
+        registerSubwindow(subwindow) {
+            this.subwindowDict.add(subwindow.subwindowIndex, subwindow);
+        }
+        __onSubWindowClose(subwindow) {
+            for (let i = this.subwindowStack.length - 1; i >= 0; i--) {
+                if (this.subwindowStack[i] == subwindow)
+                    this.subwindowStack.splice(i, 1);
+            }
+        }
+        __getLastOpenSubWindow(excludeSubwindow) {
+            for (let i = this.subwindowStack.length - 1; i >= 0; i--) {
+                let ctl = this.subwindowStack[i];
+                if (excludeSubwindow && excludeSubwindow.indexOf(ctl) != -1) {
+                    continue;
+                }
+                return ctl;
+            }
+            return null;
+        }
+        closeAllSubwindowSelf(excludeSubwindow) {
+            let list = [];
+            for (let i = this.subwindowStack.length - 1; i >= 0; i--) {
+                list.push(this.subwindowStack[i]);
+            }
+            for (let i = 0; i < list.length; i++) {
+                let ctl = list[i];
+                if (excludeSubwindow && excludeSubwindow.indexOf(ctl) != -1) {
+                    continue;
+                }
+                ctl.closeSelf();
+            }
+        }
+        closeLastSubwindowSelf() {
+            let subWindow = this.__getLastOpenSubWindow();
+            if (subWindow) {
+                subWindow.closeSelf();
+            }
+        }
+        getLastMenuParameter() {
+            let subWindow = this.__getLastOpenSubWindow();
+            if (subWindow) {
+                return subWindow.menuParameter;
+            }
+            else {
+                return this.menuParameter;
+            }
+        }
+        openSubwindow(subwindow, dontCloseOther = false, ...args) {
+            subwindow.__backSubWindow = this.__getLastOpenSubWindow([subwindow]);
+            this.menuParameter.openType = MenuOpenType.Subwindow;
+            this.menuParameter.openIndex = subwindow.subwindowIndex;
+            this.menuParameter.args = args;
+            let menuParmeter = {
+                openType: this.menuParameter.openType,
+                openIndex: this.menuParameter.openIndex,
+                args: args,
+                dontCloseOther: dontCloseOther
+            };
+            if (!dontCloseOther) {
+                let caller = {
+                    on: () => {
+                        if (subwindow.whenOpenCloseMainwindow) {
+                            this.enableHideSignal = false;
+                            this.hideImmediately();
+                        }
+                        if (subwindow.whenOpenCloseOthersubwindow) {
+                            let list = this.subwindowDict.getValues;
+                            for (let i = 0; i < list.length; i++) {
+                                let item = list[i];
+                                if (item != subwindow) {
+                                    item.hideImmediately();
+                                    this.__onSubWindowClose(item);
+                                }
+                            }
+                        }
+                        this.sShowSubwindowComplete.dispatch();
+                    }
+                };
+                subwindow.sShowComplete.addOnce(caller.on, caller);
+            }
+            let index = this.subwindowStack.indexOf(subwindow);
+            if (index != -1)
+                this.subwindowStack.splice(index, 1);
+            this.subwindowStack.push(subwindow);
+            if (subwindow.menuIsCreated) {
+                subwindow.onMenuOpen(menuParmeter);
+            }
+            else {
+                subwindow.menuParameter = menuParmeter;
+            }
+            subwindow.showOn(this.windowContainer);
+            Game.event.dispatch(GameEventKey.GameFrame_OpenMenu, this.menuId, menuParmeter.openType, menuParmeter.openIndex);
+        }
+        openSubwindowByIndex(subwindowIndex, dontCloseOther = false, ...args) {
+            let subwindow = this.getSubwindow(subwindowIndex);
+            this.openSubwindow(subwindow, dontCloseOther, ...args);
+        }
+        onSubwindowBack(subwindow) {
+            this.menuParameter.openType = MenuOpenType.None;
+            this.menuParameter.openIndex = 0;
+            this.sShowComplete.addOnce(() => {
+                subwindow.hide();
+            }, subwindow);
+            if (this.windowContainer.parent) {
+                subwindow.hide();
+            }
+            this.showOn(this.windowContainer);
+            this.subwindowStack = [];
+        }
+        getTabDispyaObjects(tabIndex) {
+            if (this.tabDict.hasKey(tabIndex)) {
+                return this.tabDict.getValue(tabIndex);
+            }
+            let list = [];
+            this.tabDict.add(tabIndex, list);
+            return list;
+        }
+        registerControllerTabViews(tabCtrl, contentPane = null) {
+            if (!contentPane)
+                contentPane = this.contentPane;
+            let count = contentPane.numChildren;
+            for (let i = 0; i < count; i++) {
+                let obj = contentPane.getChildAt(i);
+                if (obj._gears && obj._gears.length > 0) {
+                    for (let gear of obj._gears) {
+                        if (gear && gear.controller == tabCtrl) {
+                            if (gear instanceof fgui.GearDisplay) {
+                                if (gear.pages && gear.pages.length > 0) {
+                                    for (let pageIndexStr of gear.pages) {
+                                        let tabIndex = toInt(pageIndexStr);
+                                        this.registerTab(tabIndex, obj);
+                                        var list;
+                                        if (this.tabCtrlViewsMap.has(tabIndex)) {
+                                            list = this.tabCtrlViewsMap.get(tabIndex);
+                                        }
+                                        else {
+                                            list = [];
+                                            this.tabCtrlViewsMap.set(tabIndex, list);
+                                        }
+                                        list.push(obj);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        registerControllerTab(tabCtrl, contentPane = null) {
+            if (!contentPane)
+                contentPane = this.contentPane;
+            let count = contentPane.numChildren;
+            for (let i = 0; i < count; i++) {
+                let obj = contentPane.getChildAt(i);
+                if (obj._gears && obj._gears.length > 0) {
+                    for (let gear of obj._gears) {
+                        if (gear && gear.controller == tabCtrl) {
+                            if (gear instanceof fgui.GearDisplay) {
+                                if (gear.pages && gear.pages.length > 0) {
+                                    for (let pageIndexStr of gear.pages) {
+                                        let tabIndex = toInt(pageIndexStr);
+                                        this.registerTab(tabIndex, obj);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        registerTab(tabIndex, displayObject) {
+            let list = this.getTabDispyaObjects(tabIndex);
+            list.push(displayObject);
+        }
+        setTabVisiable(tabIndex, visiable) {
+            let list;
+            if (tabIndex instanceof Array) {
+                list = tabIndex;
+            }
+            else {
+                list = this.getTabDispyaObjects(tabIndex);
+            }
+            for (let i = 0; i < list.length; i++) {
+                if (visiable) {
+                    this.callChildOnTabShow(list[i]);
+                }
+                else if (list[i].visible) {
+                    this.callChildOnTabHide(list[i]);
+                }
+                list[i].visible = visiable;
+            }
+        }
+        setOpenTab(tabIndex) {
+            this.menuParameter.openIndex = tabIndex;
+            let keys = this.tabDict.getKeys();
+            for (let i = 0; i < keys.length; i++) {
+                if (keys[i] != tabIndex) {
+                    this.setTabVisiable(keys[i], false);
+                }
+            }
+            this.tabCtrlViewsMap.forEach((viewList, tabKey) => {
+                if (tabKey != tabIndex) {
+                    this.setTabVisiable(viewList, false);
+                }
+            });
+            var viewList = this.tabCtrlViewsMap.get(tabIndex);
+            if (viewList) {
+                this.setTabVisiable(viewList, true);
+            }
+            this.setTabVisiable(tabIndex, true);
+            this.onOpenTab(tabIndex);
+        }
+        openTab(tabIndex) {
+            this.tabHistorys.push(tabIndex);
+            this.setOpenTab(tabIndex);
+            this.sOpenTab.dispatch(tabIndex, this);
+            Game.event.dispatch(GameEventKey.GameFrame_OpenMenu, this.menuId, MenuOpenType.Tab, tabIndex);
+        }
+        onOpenTab(tabIndex) {
+        }
+        backTab() {
+            if (this.tabHistorys.length > 0) {
+                let lastIndex;
+                for (let i = this.tabHistorys.length - 1; i >= 0; i--) {
+                    if (this.tabHistorys[i] == this.menuParameter.openIndex) {
+                        if (i > 0) {
+                            if (this.tabHistorys[i - 1] != this.menuParameter.openIndex) {
+                                lastIndex = this.tabHistorys[i - 1];
+                            }
+                        }
+                    }
+                }
+                if (lastIndex === undefined) {
+                    this.menuBack();
+                }
+                else {
+                    this.openTab(lastIndex);
+                }
+            }
+        }
+        clearTabHistorys() {
+            this.tabHistorys = [];
+        }
+        setChildWindow(com) {
+            FguiHelper.setChildWindow(com, this);
+        }
+        callChildOnWindowInited(com) {
+            FguiHelper.callChildOnWindowInited(com);
+        }
+        callChildOnWindowDestory(com) {
+            FguiHelper.callChildOnWindowDestory(com);
+        }
+        callChildOnWindowShow(com) {
+            FguiHelper.callChildOnWindowShow(com);
+        }
+        callChildOnWindowHide(com) {
+            FguiHelper.callChildOnWindowHide(com);
+        }
+        callChildOnTabShow(com) {
+            FguiHelper.callChildOnTabShow(com);
+        }
+        callChildOnTabHide(com) {
+            FguiHelper.callChildOnTabHide(com);
+        }
+    }
+
+    class WindowHomeUIStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "WindowHomeUI"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_Tab = this.getController("Tab");
+            this.m_bg = (this.getChild("bg"));
+            this.m_mainMenu = (this.getChild("mainMenu"));
+            this.m_chooseHero = (this.getChild("chooseHero"));
+            this.m_shop = (this.getChild("shop"));
+            this.m_chooseGameFormat = (this.getChild("chooseGameFormat"));
+            this.m_result = (this.getChild("result"));
+            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
+            this.m_shareBtnBar = (this.getChild("shareBtnBar"));
+        }
+    }
+    WindowHomeUIStruct.URL = "ui://moe42ygrsqzy8a";
+    WindowHomeUIStruct.DependPackages = ["GameHome", "GameLaunch"];
+
+    class WindowHomeUI extends WindowHomeUIStruct {
+    }
+
+    var HomeTabType;
+    (function (HomeTabType) {
+        HomeTabType[HomeTabType["MenuMenu"] = 0] = "MenuMenu";
+        HomeTabType[HomeTabType["ChooseHero"] = 1] = "ChooseHero";
+        HomeTabType[HomeTabType["Shop"] = 2] = "Shop";
+        HomeTabType[HomeTabType["ChooseGameFormat"] = 3] = "ChooseGameFormat";
+        HomeTabType[HomeTabType["Result"] = 4] = "Result";
+    })(HomeTabType || (HomeTabType = {}));
+    window['HomeTabType'] = HomeTabType;
+    class HomeWindow extends MWindow {
+        constructor() {
+            super();
+            this.addAssetForFguiComponent(WindowHomeUI);
+        }
+        generateAssetsForDynmic() {
+            super.generateAssetsForDynmic();
+        }
+        onMenuCreate() {
+            let windowUI = WindowHomeUI.createInstance();
+            this.conent = windowUI;
+            this.contentPane = windowUI;
+            this.registerControllerTabViews(this.conent.m_Tab);
+            super.onMenuCreate();
+            SoundController.instance.playMusic();
+        }
+        openTab(tabIndex) {
+            if (this.conent) {
+                this.conent.m_Tab.setSelectedIndex(tabIndex);
+            }
+            super.openTab(tabIndex);
+        }
+        onShowComplete() {
+            super.onShowComplete();
+        }
+        onHideComplete() {
+            super.onHideComplete();
+        }
+    }
+
     class War {
         static init(windowUI) {
             if (this.isInited)
@@ -8659,6 +7709,1045 @@
     War.launchtimestamp = 0;
     window['War'] = War;
 
+    class CardView extends CardViewStruct {
+        constructor() {
+            super();
+            this.preArmor = -1;
+        }
+        static get FrontClassMap() {
+            if (!this._FrontClassMap) {
+                var map = new Map();
+                this._FrontClassMap = map;
+                map.set("CardViewFrontHero", CardViewFrontHero);
+                map.set("CardViewFrontPowerUp", CardViewFrontPowerUp);
+                map.set("CardViewFrontPowerUpBarrel", CardViewFrontPowerUpBarrel);
+                map.set("CardViewFrontPowerUpBomb", CardViewFrontPowerUpBomb);
+                map.set("CardViewFrontPowerUpCannon", CardViewFrontPowerUpCannon);
+                map.set("CardViewFrontPowerUpChest", CardViewFrontPowerUpChest);
+                map.set("CardViewFrontPowerUpSkull", CardViewFrontPowerUpSkull);
+                map.set("CardViewFrontWarriow", CardViewFrontWarriow);
+                map.set("CardViewFrontWarriowBoss", CardViewFrontWarriowBoss);
+                map.set("CardViewFrontWarriowEnemy", CardViewFrontWarriowEnemy);
+                map.set("CardViewFrontWarriowTrap", CardViewFrontWarriowTrap);
+            }
+            return this._FrontClassMap;
+        }
+        static GetFrontClass(key) {
+            if (!this.FrontClassMap.has(key)) {
+                console.error("没有找到卡牌视图组件", key);
+                return CardViewFrontPowerUp;
+            }
+            return this.FrontClassMap.get(key);
+        }
+        static GetFrontView(key) {
+            var cls = CardView.GetFrontClass(key);
+            var item = Pool.getItem(cls.URL);
+            if (!item) {
+                item = cls.createInstance();
+            }
+            return item;
+        }
+        static GetSpriteUrl(name) {
+            return "ui://GameHome" + "/" + name;
+        }
+        static PoolGet() {
+            var item = Pool.getItem(this.URL);
+            if (!item) {
+                item = CardView.createInstance();
+            }
+            return item;
+        }
+        PoolRecover() {
+            this.RecoverFront();
+            this.cardConfig = null;
+            this.cardScoreConfig = null;
+            Pool.recover(CardView.URL, this);
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.InitBg();
+            this.debugText = new Laya.Text();
+            this.debugText.fontSize = 30;
+            this.debugText.color = "#ffFF00";
+            this.debugText.bgColor = "#00000055";
+            this.debugText.x = 10;
+            this.debugText.y = 50;
+        }
+        InitBg() {
+            this.bg = CardViewFrontBg.createInstance();
+            this.addChild(this.bg);
+            this.bg.setXY(this.width * 0.5, this.height * 0.5);
+        }
+        SetBg(type) {
+            this.bg.m_state.setSelectedIndex(type);
+        }
+        SetFront(frontComponentClassName) {
+            var view = CardView.GetFrontView(frontComponentClassName);
+            view.displayListContainer.mouseThrough = true;
+            view.displayListContainer.mouseEnabled = false;
+            view.cardView = this;
+            this.addChild(view);
+            view.setXY(this.width * 0.5, this.height * 0.5);
+            this.front = view;
+            var fun = this.front['SetConfig'];
+            if (fun) {
+                fun.call(this.front, this.cardConfig);
+            }
+            this.onClick(this, this.OnClickHandler);
+        }
+        RecoverFront() {
+            if (this.front) {
+                this.front.removeFromParent();
+                var fun = this.front['OnRecover'];
+                if (fun) {
+                    fun.call(this.front);
+                }
+                var signal = this.front.constructor.URL;
+                Pool.recover(signal, this.front);
+                this.front = null;
+            }
+            this.offClick(this, this.OnClickHandler);
+        }
+        SetConfig(cardConfig) {
+            this.RecoverFront();
+            this.cardConfig = cardConfig;
+            if (cardConfig) {
+                var cardScoreConfig = this.cardScoreConfig = cardConfig.cardScoreConfig;
+                if (!cardScoreConfig || cardScoreConfig.backgroundType == undefined) {
+                    console.error("!cardScoreConfig || cardScoreConfig.backgroundType == undefined", cardScoreConfig, cardConfig);
+                }
+                this.SetBg(cardScoreConfig.backgroundType);
+                this.SetFront(cardScoreConfig.frontView);
+            }
+            else {
+                this.cardScoreConfig = null;
+                this.SetBg(CardBackgroundType.Default);
+            }
+        }
+        SetCard(card) {
+            this.card = card;
+            if (this.front) {
+                var fun = this.front['SetCard'];
+                if (fun) {
+                    fun.call(this.front, this.card);
+                }
+            }
+        }
+        debugPos() {
+            return;
+            var card = this.card;
+            if (card && !card.isEmpty) {
+                var pos = War.game.field.field.findPosition(card);
+                if (pos) {
+                    this.debugText.text = pos.row + "," + pos.column + "  &  " + pos.pointX + ", " + pos.pointY;
+                }
+                else {
+                    this.debugText.text = "no pos";
+                }
+            }
+        }
+        OnClickHandler() {
+            if (this.card) {
+                this.game.keyboardManager.OnClickCard(this.card);
+            }
+        }
+        setHealthText() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                this.front.m_life.title = hero.currentLife + "/" + hero.totalLife;
+            }
+            else {
+                var card = this.card;
+                if (this.front.m_life) {
+                    this.front.m_life.title = card.lifeAmount.toString();
+                }
+            }
+        }
+        setPowerUpText() {
+            var card = this.card;
+            if (this.front.m_power) {
+                this.front.m_power.title = card.powerUpAmount.toString();
+            }
+        }
+        setStepText() {
+            var card = this.card;
+            if (this.front.m_step) {
+                this.front.m_step.title = card.step.toString();
+                this.front.m_step.visible = card.stepMax > 0;
+            }
+        }
+        setArmor() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                var heroView = this.front;
+                if (hero.armor > 0) {
+                    if (heroView.m_shield.visible == false || this.preArmor != hero.armor) {
+                        heroView.setArmorShowOrChange();
+                        this.preArmor = hero.armor;
+                    }
+                }
+                else {
+                    heroView.setArmorHide();
+                }
+                heroView.m_shield.title = hero.armor.toString();
+            }
+        }
+        tweenLife() {
+            var view = this.front.m_life;
+            if (!view) {
+                view = this.front.m_power;
+            }
+            var tweenContainer = this.card.getScaleTween(view);
+            tweenContainer.onComplete.addOnce(this.setHealthText, this);
+            return tweenContainer;
+        }
+        tweenPowerUp() {
+            var view = this.front.m_power;
+            if (!view) {
+                view = this.front.m_life;
+            }
+            var tweenContainer = this.card.getScaleTween(view);
+            tweenContainer.onComplete.addOnce(this.setPowerUpText, this);
+            return tweenContainer;
+        }
+        useLuck() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                var heroView = this.front;
+                heroView.m_shopBar.useLuck();
+            }
+        }
+        useHeart() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                var heroView = this.front;
+                heroView.m_shopBar.useHeart();
+            }
+        }
+        refreshShopBar() {
+            if (this.card.isHero) {
+                var hero = this.card;
+                var heroView = this.front;
+                heroView.m_shopBar.refresh();
+            }
+        }
+        setOpen() {
+            if (this.card.isTrap) {
+                this.front.SetOpen();
+            }
+        }
+        setClose() {
+            if (this.card.isTrap) {
+                this.front.SetClose();
+            }
+        }
+    }
+
+    class CardConfig extends CardConfigLang {
+        get cardScoreConfig() {
+            return Game.config.cardScoreType.getConfig(this.scoreTypeKey);
+        }
+        get cardScoreType() {
+            var scoreConfig = this.cardScoreConfig;
+            if (scoreConfig) {
+                return scoreConfig.id;
+            }
+            else {
+                console.error("CardConfig.cardScoreType    scoreConfig=null", this.name, this);
+            }
+        }
+        get heroType() {
+            return this.id % 100;
+        }
+        get spriteIndex() {
+            return this.heroType - 1;
+        }
+        get spriteUrl() {
+            if (!this._spriteUrl) {
+                this._spriteUrl = CardView.GetSpriteUrl(this.sprite);
+            }
+            return this._spriteUrl;
+        }
+        static getArmorLevel(score) {
+            var level = 1;
+            if (score <= 3) {
+                level = 1;
+            }
+            else if (score <= 5) {
+                level = 2;
+            }
+            else if (score <= 8) {
+                level = 3;
+            }
+            else if (score <= 10) {
+                level = 4;
+            }
+            else {
+                level = 5;
+            }
+            return level;
+        }
+    }
+
+    class CardScoreTypeConfig extends CardScoreTypeConfigLang {
+    }
+
+    class EffectTypeConfig extends EffectTypeConfigLang {
+    }
+
+    class ItemConfig extends ItemConfigLang {
+        get itemToolType() {
+            return this.id % 100 - 1;
+        }
+        get spriteIndex() {
+            return this.itemToolType;
+        }
+    }
+
+    class ItemConsumeConfig extends ItemConsumeConfigLang {
+        constructor() {
+            super(...arguments);
+            this.type = ItemType.Consume;
+        }
+        get effectConfig() {
+            return Game.config.effectType.getConfig(this.effectType);
+        }
+        get effectTypeId() {
+            var typeConfig = this.effectConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemConsumeConfig.effectTypeId    effectConfig=null", this.name, this);
+            }
+        }
+    }
+
+    class ItemDecorateConfig extends ItemDecorateConfigLang {
+        constructor() {
+            super(...arguments);
+            this.type = ItemType.Decorate;
+        }
+        get effectConfig() {
+            return Game.config.effectType.getConfig(this.effectType);
+        }
+        get effectTypeId() {
+            var typeConfig = this.effectConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemDecorateConfig.effectTypeId    effectConfig=null", this.name, this);
+            }
+        }
+        get triggerConfig() {
+            return Game.config.triggerType.getConfig(this.triggerType);
+        }
+        get triggerTypeId() {
+            var typeConfig = this.triggerConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemDecorateConfig.triggerTypeId    triggerConfig=null", this.name, this);
+            }
+        }
+    }
+
+    class ItemWeaponConfig extends ItemWeaponConfigLang {
+        constructor() {
+            super(...arguments);
+            this.type = ItemType.Weapon;
+        }
+        get effectConfig() {
+            return Game.config.effectType.getConfig(this.effectType);
+        }
+        get effectTypeId() {
+            var typeConfig = this.effectConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemWeaponConfig.effectTypeId    effectConfig=null", this.name, this);
+            }
+        }
+        get triggerConfig() {
+            return Game.config.triggerType.getConfig(this.triggerType);
+        }
+        get triggerTypeId() {
+            var typeConfig = this.triggerConfig;
+            if (typeConfig) {
+                return typeConfig.id;
+            }
+            else {
+                console.error("ItemWeaponConfig.triggerTypeId    triggerConfig=null", this.name, this);
+            }
+        }
+    }
+
+    class LevelConfig extends LevelConfigLang {
+    }
+
+    class LoaderConfig extends LoaderConfigLang {
+    }
+
+    var LoaderId;
+    (function (LoaderId) {
+        LoaderId[LoaderId["None"] = 0] = "None";
+        LoaderId[LoaderId["Circle"] = 1] = "Circle";
+        LoaderId[LoaderId["Launch"] = 2] = "Launch";
+        LoaderId[LoaderId["EnterWar"] = 3] = "EnterWar";
+        LoaderId[LoaderId["EnterModule"] = 4] = "EnterModule";
+    })(LoaderId || (LoaderId = {}));
+
+    class Res {
+        static get res3dzip_manifest() {
+            return this.res3dzip + "manifest.json";
+        }
+        static get res3dzip_manifest_pve01() {
+            return this.res3dzip + "pve_01_manifest.json";
+        }
+        static get res3dzip_zip_pve01() {
+            return this.res3dzip + "pve_01.zip";
+        }
+        static get config() {
+            return Res.root + "config/";
+        }
+        static get PathConfig() {
+            return Res.root + "config/path/";
+        }
+        static get GmConfig() {
+            return Res.root + "config/gm/";
+        }
+        static get shader() {
+            return Res.root + "shader/";
+        }
+        static get particles() {
+            return Res.root + "particles/";
+        }
+        static get spine() {
+            return Res.root + "spine/";
+        }
+        static get spineUI() {
+            return Res.root + "spineUI/";
+        }
+        static getConfigIcon(name) {
+            return Res.fspriteassets + name + '.png';
+        }
+        static get fspriteassets() {
+            return Res.root + "fspriteassets/";
+        }
+        static get actorBodyIcon() {
+            return Res.root + "fspriteassets/ActorBodyIcon/";
+        }
+        static get draugHeroIcon() {
+            return Res.root + "fspriteassets/icon/draugHeroIcon/";
+        }
+        static get draugIcon() {
+            return Res.root + "fspriteassets/icon/draugIcon/";
+        }
+        static get menuIcon() {
+            return Res.root + "fspriteassets/MenuItemIcon/";
+        }
+        static get HeroIcon() {
+            return Res.root + "fspriteassets/icon/heroIcon/";
+        }
+        static getActorBodyIcon(actorName) {
+            return Res.actorBodyIcon + `${actorName}.png`;
+        }
+        static getDraugHeroIcon(heroid) {
+            let ids = Game.channel.serverItem.shieldHero;
+            if (ids.indexOf(heroid) != -1) {
+                heroid = 1001;
+            }
+            return Res.draugHeroIcon + `${heroid}.png`;
+        }
+        static getDraugIcon(draugtype) {
+            return Res.draugIcon + `${draugtype}.png`;
+        }
+        static getMenuIcon(menuid) {
+            return Res.menuIcon + `${menuid}.png`;
+        }
+        static getSpineSKPathF(boneName, skinName) {
+            return Res.spine + `${boneName}_F/${skinName}_F/${skinName}_F.sk`;
+        }
+        static getSpineSKPathB(boneName, skinName) {
+            return Res.spine + `${boneName}_B/${skinName}_B/${skinName}_B.sk`;
+        }
+        static getSpinePngPathF(boneName, skinName) {
+            return Res.spine + `${boneName}_F/${skinName}_F/${skinName}_F.png`;
+        }
+        static getSpinePngPathB(boneName, skinName) {
+            return Res.spine + `${boneName}_B/${skinName}_B/${skinName}_B.png`;
+        }
+        static getSpineUIPngPath(name) {
+            return Res.spineUI + `${name}.png`;
+        }
+        static getSpineUISkPath(name) {
+            return Res.spineUI + `${name}.sk`;
+        }
+        static getSpineSoltPartPath(path) {
+            return Res.spine + "SlotTexture/" + path + ".png";
+        }
+        static getMenuIconUrl(path) {
+            return Res.fspriteassets + "MenuIcon/" + path + ".png";
+        }
+        static getMenuNameIconUrl(path) {
+            return Res.fspriteassets + "MenuNameIcon/" + path + ".png";
+        }
+        static getBgUrl(name) {
+            return Res.fspriteassets + "Background/" + name + ".png";
+        }
+        static getSpritePath(path) {
+            return Res.root + "sprite/" + path + ".png";
+        }
+        static getSpritePathHasExt(path) {
+            return Res.root + "sprite/" + path;
+        }
+        static getShaderVS(filename) {
+            return Res.shader + filename + ".vs";
+        }
+        static getShaderPS(filename) {
+            return Res.shader + filename + ".fs";
+        }
+        static getParticles(filename) {
+            return Res.particles + filename + ".part";
+        }
+        static GetBattleRoleIcon(filename) {
+            return Res.fspriteassets + filename + ".png";
+        }
+        static GetAvatarSource(avatarid) {
+            let config = Game.config.avatar.getConfig(avatarid);
+            return Res.fspriteassets + config.icon + ".png";
+        }
+    }
+    Res.res3dsrc = "";
+    Res.res3dzip = "res3dzip/";
+    Res.root = "res/";
+
+    class TEXT {
+    }
+    TEXT.NET_ERROR = "网络连接失败！请检查网络设备!加油哦！！";
+    TEXT.Login = "登录";
+    TEXT.Auth = "授权";
+    TEXT.LangSelectMsg = "语言需要重启游戏才有效!";
+    TEXT.FunNoOpen = "此功能暂未开放，敬请期待！";
+    TEXT.ButtonSelect = "选择";
+    TEXT.ButtonOk = "确定";
+    TEXT.ButtonCannel = "取消";
+    TEXT.ButtonYes = "是";
+    TEXT.ButtonNo = "否";
+    TEXT.Disable = "内容优化";
+    TEXT.Lock = "无解锁配置！";
+    TEXT.LvUpMax = "等级达到最大";
+    TEXT.LvUpTo = "玩家升级 {0} → {1}";
+    TEXT.Lv = "{0}级";
+    TEXT.LVDot = "等级：{0}";
+    TEXT.PlayerExp = "主公经验：{0}";
+    TEXT.FatigueNotEnough = "体力不足，无法进行挑战";
+    TEXT.cannotRecharge = "游客不能充值";
+    TEXT.cannotRechargeNoIos = "只支持ios内购";
+    TEXT.rechargeError = "充值失败，请稍候重试";
+    TEXT.systemTip = "系统提示";
+    TEXT.TitleTip = "提示";
+    TEXT.ErorNoInitProto = "没有初始化网络";
+    TEXT.ErorRequestServerList = "请求服务器列表失败";
+    TEXT.ErorAccountFrozen = "账号被冻结";
+    TEXT.ErorAccountDropped = "账号被停用";
+    TEXT.TipEnterRoleName = "输入你的名称";
+    TEXT.ErrorNameEmpty = "名字不能是空的";
+    TEXT.ErrorContentEmpty = "内容不能是空的";
+    TEXT.ErrorNameUsed = "名称已经被使用";
+    TEXT.ErrorFormatName = "存在非法字符串，请修改后重试";
+    TEXT.ErrorHttpSendFail = "[Error] 发送请求失败";
+    TEXT.HttpTimeOut = "网络超时! 当前设置的超时时间是{0}";
+    TEXT.AlertTextBuyActor = "是否花费{0}{1}增加艺人数量";
+    TEXT.AlertTextScountActor = "是否花费{0}{1} 探查艺人？";
+    TEXT.ToastTextItemNotEnough = "{0}数量不足";
+    TEXT.ToastTextItemNotEnough2 = "数量不足，需要{0} {1}";
+    TEXT.ChangeNameCost = "本次改名需要 {0}";
+    TEXT.DuelTempLevel = "当前决斗神殿段位：{0}";
+    TEXT.DuelTempMaxLevel = "历史最高决斗神殿段位：{0}";
+    TEXT.DuelTempCurrentPvpLevel = "当前竞技排名：{0}";
+    TEXT.DuelTempMaxPvpLevel = "历史最高竞技排名：{0}";
+    TEXT.BattlePlanTeamHeroNameAndLevel = "{0}  {1}级";
+    TEXT.BagCapacity = "{0}/{1}";
+    TEXT.BagItemCount = "拥有：{0}";
+    TEXT.BagExpiredLimitTip = "{0}后过期";
+    TEXT.BagExpiredPeriodTip = "将在{0}过期";
+    TEXT.BagItemSell = "出售";
+    TEXT.BagItemUse = "使用";
+    TEXT.BagItemSplit = "分解";
+    TEXT.BagItemForge = "锻造";
+    TEXT.BagItemChangeEquip = "穿戴";
+    TEXT.BagItemLevelUp = "使用可增加{0}英雄经验";
+    TEXT.EquipPropDes = "{0}+{1}";
+    TEXT.EquipExclusiveTxtMsg = "{0}专属！只有{1}才可穿戴次装备";
+    TEXT.EquipExclusiveTxt = "{0}专属";
+    TEXT.EquipEatExp = "该装备可提供{0}的强化经验";
+    TEXT.EquipTypeWeapon = "武器";
+    TEXT.EquipTypeHelmet = "头盔";
+    TEXT.EquipTypeArmor = "战甲";
+    TEXT.EquipTypeBoots = "战靴";
+    TEXT.EquipTypePendant = "玉佩";
+    TEXT.EquipTypeGem = "宝物";
+    TEXT.EquipNotEnough = "道具不足，无法选择";
+    TEXT.EquipLevelUpStr1 = "下一级属性";
+    TEXT.EquipLevelUpStr2 = "强化到{0}级时属性增加";
+    TEXT.EquipAtkRange = "系数";
+    TEXT.MailTitle = "邮件";
+    TEXT.DeleteRead = "删除已读";
+    TEXT.ToReader = "致玩家：";
+    TEXT.ReawrdMsg = "奖励内容：";
+    TEXT.Progress = "{0}/{1}";
+    TEXT.N0 = "零";
+    TEXT.N1 = "一";
+    TEXT.N2 = "二";
+    TEXT.N3 = "三";
+    TEXT.N4 = "四";
+    TEXT.N5 = "五";
+    TEXT.N6 = "六";
+    TEXT.N7 = "七";
+    TEXT.N8 = "八";
+    TEXT.N9 = "九";
+    TEXT.N10 = "十";
+    TEXT.N100 = "百";
+    TEXT.N1000 = "千";
+    TEXT.N10000 = "万";
+    TEXT.RewardItemCount = "x{0}";
+    TEXT.DATE_MonthBefore = "{0}个月前";
+    TEXT.DATE_WeekBefore = "{0}周前";
+    TEXT.DATE_DayBefore = "{0}天前";
+    TEXT.DATE_HourBefore = "{0}小时前";
+    TEXT.DATE_MinuteBefore = "{0}分钟前";
+    TEXT.DATE_SecondeBefore = "{0}秒前";
+    TEXT.Hour = "小时";
+    TEXT.Minute = "分";
+    TEXT.Second = "秒";
+    TEXT.MissionNotOpen = "该关卡尚未开启";
+    TEXT.Chapter = "第{0}章";
+    TEXT.ChapterStarTipTitle = "本章累计{0}星可领取";
+    TEXT.ChapterStarNotEnough = "星星数量不足";
+    TEXT.ChapterRewardAlreadyGet = "奖励已经领取过";
+    TEXT.ChapterSpecialTimes = "今日精英剩余次数：{0}";
+    TEXT.ChapterMonsterTimes = "今日剩余次数：{0}";
+    TEXT.SecretBookTimes = "今日剩余次数：{0}";
+    TEXT.SecretBookTimesNotEnough = "该副本今日挑战次数不足";
+    TEXT.SectionSpecialTotalTimes = "每日一共可购买{0}次精英奖励次数";
+    TEXT.SectionMonsterTotalTimes = "每日一共可购买{0}次魔王奖励次数";
+    TEXT.SecretBookTotalTimes = "每日一共可购买{0}次秘闻奖励次数";
+    TEXT.SectionBuyTimesToast = "奖励次数提升";
+    TEXT.SectionCurrentTimes = "今日第{0}次购买";
+    TEXT.SectionTimesNotEnough = "今日次数已用完";
+    TEXT.MissionUnlockCondition = "{0}级开启";
+    TEXT.ChapterCurrentStarNum = "{0}/{1}";
+    TEXT.SecretTimesRemain = "今日剩余次数: {0}";
+    TEXT.MissionMaxTime = "通关时间低于{0}秒";
+    TEXT.MissionKillBoss = "打败首领";
+    TEXT.MissionHPState = "剩余生命超过{0}%";
+    TEXT.MissionStamina = "x{0}";
+    TEXT.SecretMissionTimesRemain = "今日剩余次数：{0}";
+    TEXT.SecretLand_BestScore = "最佳成绩：大秘境{0}";
+    TEXT.SecretLand_CurrentKeyStone = "当前钥石：{0}级";
+    TEXT.SecretLand_Buy_Roll_Tips = "是否消耗{0}点体力兑换Roll币";
+    TEXT.SecretLand_Roll_tips = "当日可兑换次数为{0}，Roll积攒数量上限为{1}";
+    TEXT.SecretLand_Fatigue_Not_Enough = "您没有足够的体力值，需要{0}体力兑换Roll币";
+    TEXT.Keystone_LevelUp_Time_Limit = "{0}分钟";
+    TEXT.SecretLand_Level_Limit = "等级达到{0}后开启{1}层大秘境";
+    TEXT.SecretLand_Time_Cost = "通关时间: {0}";
+    TEXT.SecretLand_New_Keystone = "获取新钥匙：{0}{1}级";
+    TEXT.Gashapon_NextFreeTime = "{0}后免费";
+    TEXT.Gashapon_Rate = "概率 {0}%";
+    TEXT.Gashapon_PropDisplay = "{0} +{1}";
+    TEXT.Gashapon_Times_Remain = "每日可招募{0}次，今日剩余{1}次";
+    TEXT.Gashapon_Times_Not_Enough = "今日剩余次数不足";
+    TEXT.DuelSeasonDuration = "{0} - {1}";
+    TEXT.DuelSeasonRemainDays = "距离赛季结束还有{0}";
+    TEXT.DuelCurrentWinTimes = "本赛季胜场：{0}";
+    TEXT.DuelSelectHeroGroupFirst = "请先选择队伍";
+    TEXT.DuelTempOldSeason = "恭喜您，在上赛季结算时的段位达到了{0}，赛季奖励已经发送 到您的邮箱";
+    TEXT.DuelTempNewSeason = "由于您上赛季的出色表现，您在本赛季的起始段位为{0}";
+    TEXT.DuelTempWinTimes = "胜场：{0}";
+    TEXT.HeroSkillOpenLevel = "英雄等级达到{0}级别后解锁";
+    TEXT.HeroMaxLevel = "已满级";
+    TEXT.HeroInBattle = "当前英雄已在队伍中！！！";
+    TEXT.HeroStarProStr = "成长";
+    TEXT.HeroLevelUpNotEnough = "当前无法升级，请提升战队等级";
+    TEXT.HeroLevelUpItemNotEnough = "物品不足，无法升级";
+    TEXT.HeroLevelUpMax = "已提升当前最高级";
+    TEXT.RankMyAllRank = "我的全区排行：{0}";
+    TEXT.RankNotOnRank = "未上榜";
+    TEXT.RankDanStar = "{0} {1}星";
+    TEXT.HeroSkillLevelNotLevel = "升级条件不足，需英雄{0}级";
+    TEXT.SecretBookHeroLevelNotEnough = "英雄{0}级开启";
+    TEXT.GuideFinish = "现在引导结束了，你可以自由体验了";
+    TEXT.GuideGoToBattle = "guide_go_section";
+    TEXT.GuideBackHome = "guide_go_back_home";
+    TEXT.GuideBack = "guide_go_back";
+
+    class MenuValidate {
+        constructor() {
+            this.dict = new Dictionary();
+        }
+        static getInstance() {
+            var Class = this;
+            if (Class.__instance == null) {
+                Class.__instance = new Class();
+                Class.__instance.install();
+            }
+            return Class.__instance;
+        }
+        validate(menuId) {
+            if (this.dict.hasKey(menuId)) {
+                return this.dict.getValue(menuId).apply(this);
+            }
+            return true;
+        }
+        validateTab(menuIndexId, data) {
+            return true;
+        }
+        openMenu(menuId, parent) {
+        }
+        openTab(menuIndexId, data, parent) {
+        }
+        openItem(menuId, data, parent) {
+        }
+        closeRed(parent) {
+        }
+        add(menuId, fun) {
+            this.dict.add(menuId, fun);
+        }
+        install() {
+        }
+    }
+
+    class MenuValidateEnableOpen extends MenuValidate {
+        install() {
+        }
+        validate(menuId) {
+            return super.validate(menuId);
+        }
+        warEnableOpen() {
+            return true;
+        }
+    }
+
+    class MenuValidateNew extends MenuValidate {
+        install() {
+        }
+        validate(menuId) {
+            if (this.dict.hasKey(menuId)) {
+                return this.dict.getValue(menuId).apply(this);
+            }
+            return false;
+        }
+    }
+
+    class ModuleConfig {
+        constructor(menuId, windowClass) {
+            this.menuId = menuId;
+            this.windowClass = windowClass;
+        }
+    }
+
+    class LoginWindowUIStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("ModuleLogin", "LoginWindowUI"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_Show = this.getController("Show");
+            this.m_txt_resVer = (this.getChild("txt_resVer"));
+            this.m_txt_gamever = (this.getChild("txt_gamever"));
+            this.m_screenBG = (this.getChild("screenBG"));
+            this.m_loginPanel = (this.getChild("loginPanel"));
+            this.m_wxPanel = (this.getChild("wxPanel"));
+            this.m_cdkPanel = (this.getChild("cdkPanel"));
+            this.m_panelCheckID = (this.getChild("panelCheckID"));
+            this.m_btnBulletin = (this.getChild("btnBulletin"));
+            this.m_panelBulletin = (this.getChild("panelBulletin"));
+            this.m_panelServer = (this.getChild("panelServer"));
+        }
+    }
+    LoginWindowUIStruct.URL = "ui://4698ugpknz0c0";
+    LoginWindowUIStruct.DependPackages = ["ModuleLogin", "GameLaunch"];
+
+    class LoginWindowUI extends LoginWindowUIStruct {
+        onWindowShow() {
+            this.m_panelBulletin.m_bg.m_btn_Close.onClick(this, this.onCloseBulletin);
+            this.m_panelServer.m_btnChange.onClick(this, this.onChangeServer);
+            this.m_panelServer.m_btnStart.onClick(this, this.onStartGame);
+            this.m_panelServer.m_bg.m_btn_Close.onClick(this, this.onReturnServer);
+            this.m_panelCheckID.m_btnClose.onClick(this, this.onCloseCheckID);
+            this.m_panelCheckID.m_btnClose.visible = false;
+            this.m_panelCheckID.m_btnMake.onClick(this, this.onMakeCheckID);
+            this.m_loginPanel.m_btn_login.onClick(this, this.onClickLogin);
+            this.m_loginPanel.m_btn_randomLogin.onClick(this, this.onClickRandomLogin);
+            this.m_cdkPanel.m_btn_cdk.onClick(this, this.onClickCdk);
+            Game.net.gamerLoginS2C.on(this.GamerLoginS2C, this);
+            Game.event.add("SUCCESS_LOGIN", this.LoginSuccess, this);
+            Game.event.add("LOGIN_CDK", this.LoginCdk, this);
+            Game.event.add("ERROR_CDK", this.ErrorCdk, this);
+            Game.event.add("ERROR_IDCARD", this.ErrorIdCard, this);
+            Game.event.add("ERROR_AREAS", this.ErrorAreas, this);
+            Game.event.add("SUCCESS_AREAS", this.SucessAreas, this);
+            Game.event.add("INDULGE_END", this.IndulgeEnd, this);
+            this.Init();
+        }
+        onWindowHide() {
+            this.m_panelBulletin.m_bg.m_btn_Close.offClick(this, this.onCloseBulletin);
+            this.m_panelServer.m_btnChange.offClick(this, this.onChangeServer);
+            this.m_panelServer.m_btnStart.offClick(this, this.onStartGame);
+            this.m_panelServer.m_bg.m_btn_Close.offClick(this, this.onReturnServer);
+            this.m_panelCheckID.m_btnClose.onClick(this, this.onCloseCheckID);
+            this.m_panelCheckID.m_btnMake.onClick(this, this.onMakeCheckID);
+            this.m_loginPanel.m_btn_login.offClick(this, this.onClickLogin);
+            this.m_loginPanel.m_btn_randomLogin.offClick(this, this.onClickRandomLogin);
+            this.m_cdkPanel.m_btn_cdk.offClick(this, this.onClickCdk);
+            Game.net.gamerLoginS2C.off(this.GamerLoginS2C, this);
+            Game.event.remove("SUCCESS_LOGIN", this.LoginSuccess, this);
+            Game.event.remove("LOGIN_CDK", this.LoginCdk, this);
+            Game.event.remove("ERROR_CDK", this.ErrorCdk, this);
+            Game.event.remove("ERROR_IDCARD", this.ErrorIdCard, this);
+            Game.event.remove("ERROR_AREAS", this.ErrorAreas, this);
+            Game.event.remove("SUCCESS_AREAS", this.SucessAreas, this);
+            Game.event.remove("INDULGE_END", this.IndulgeEnd, this);
+            this.Reset();
+        }
+        onCloseBulletin() {
+            this.m_Show.selectedIndex = 3;
+        }
+        onChangeServer() {
+            this.m_panelServer.m_Server.selectedIndex = 1;
+        }
+        onReturnServer() {
+            this.m_panelServer.m_Server.selectedIndex = 0;
+        }
+        onCloseCheckID() {
+            this.GetServer();
+        }
+        onMakeCheckID() {
+            let index = this.m_panelCheckID.m_Type.selectedIndex;
+            switch (index) {
+                case 3:
+                    if (Game.moduleModel.login.isIndulge) {
+                        this.m_Show.selectedIndex = 0;
+                    }
+                    else {
+                        this.GetServer();
+                    }
+                    break;
+                case 1:
+                    this.SendIDCard();
+                    break;
+            }
+        }
+        onStartGame() {
+            let server = this.m_panelServer.lastServer;
+            if (!server) {
+                Game.system.toastText("尚未获取服务器列表！");
+                return;
+            }
+            Game.localStorage.server = server.id;
+            let role = this.m_panelServer.GetRole(server.id);
+            if (role) {
+                Game.sender.login.useRole(this.login_session, role.id);
+            }
+            else {
+                Game.sender.login.newAndUseRole(this.login_session, this.m_loginPanel.account, server.id);
+            }
+        }
+        onClickLogin() {
+            this.m_loginPanel.password = "123";
+            if (!Boolean(this.m_loginPanel.account) || !Boolean(this.m_loginPanel.password)) {
+                Game.system.toastText("请输入账号和密码！");
+                return;
+            }
+            Game.sender.login.login(this.m_loginPanel.account, this.m_loginPanel.password, true);
+        }
+        onClickRandomLogin() {
+            this.m_loginPanel.account = AntFrame.RandName(2, 7);
+            Game.sender.login.login(this.m_loginPanel.account, "123", true);
+        }
+        onClickCancel() {
+            this.m_Show.selectedIndex = 0;
+        }
+        onClickCdk() {
+            let session = this.login_session;
+            let cdk = this.m_cdkPanel.cdk;
+            let userName = this.m_loginPanel.account;
+            let password = this.m_loginPanel.password;
+            Game.sender.login.check(session, cdk, userName, password);
+        }
+        GamerLoginS2C(msg) {
+            if (msg.error) {
+                return;
+            }
+        }
+        LoginSuccess(session, roles) {
+            this.login_session = session;
+            this.m_panelServer.SetRoles(roles);
+            let nocheck = ["jjsg1", "jjsg2", "jjsg3", "jjsg4", "jjsg5", "jjsg6"];
+            let name = this.m_loginPanel.account;
+            if (VersionConfig.IsOpenIDCard && nocheck.indexOf(name) == -1) {
+                this.SendIDCard();
+            }
+            else {
+                this.GetServer();
+            }
+            this.m_Show.selectedIndex = 1;
+        }
+        LoginCdk(session) {
+            this.login_session = session;
+            this.m_Show.selectedIndex = 4;
+        }
+        ErrorCdk(error) {
+            switch (error) {
+                case 1017:
+                    Game.system.toastText("验证码错误！");
+                    break;
+                case 1001:
+                    Game.system.toastText("验证时间超时！");
+                    this.onStartGame();
+                    break;
+                default:
+                    break;
+            }
+        }
+        ErrorIdCard(error) {
+            switch (error) {
+                case 0:
+                case 1023:
+                    if (this.m_panelCheckID.m_labName.text != "" && this.m_panelCheckID.m_labID.text != "") {
+                        Game.system.toastText("实名制验证成功！");
+                    }
+                    this.GetServer();
+                    break;
+                case 1021:
+                case 1022:
+                case 1026:
+                    Game.system.toastText("实名制验证失败！");
+                case 1025:
+                    this.m_Show.selectedIndex = 5;
+                    this.m_panelCheckID.m_Type.selectedIndex = 1;
+                    break;
+                case 1024:
+                    this.m_Show.selectedIndex = 5;
+                    this.m_panelCheckID.m_Type.selectedIndex = 3;
+                    break;
+                default:
+                    break;
+            }
+        }
+        ErrorAreas() {
+            Game.system.toastText("拉取服务器错误！");
+        }
+        SucessAreas(areas) {
+            areas.sort((a, b) => {
+                return a.id - b.id;
+            });
+            this.m_panelServer.Open(areas);
+        }
+        IndulgeEnd() {
+            if (this.m_Show.selectedIndex != 5) {
+                let model = Game.moduleModel.login;
+                switch (model.error) {
+                    case 1024:
+                        this.m_panelCheckID.m_Type.selectedIndex = 0;
+                        break;
+                    default:
+                        this.m_panelCheckID.m_Type.selectedIndex = 3;
+                        break;
+                }
+            }
+        }
+        Init() {
+            this.m_txt_gamever.text = "GameVersion:" + Game.version.localAppVersionData.toString();
+            this.m_txt_resVer.text = "ResVersion:" + Game.version.localResVersionData.toString();
+            this.StartGame();
+        }
+        Reset() {
+            this.m_txt_gamever.text = "";
+            this.m_txt_resVer.text = "";
+            this.m_Show.selectedIndex = 0;
+        }
+        GetServer() {
+            Game.sender.login.areas();
+        }
+        StartGame() {
+            if (AntFrame.platform instanceof AntPlatformWX && VersionConfig.IsEnableWx) {
+                Game.sender.login.login("", "");
+                this.m_Show.selectedIndex = 3;
+            }
+            else {
+                this.m_Show.selectedIndex = 0;
+            }
+        }
+        SendIDCard() {
+            let session = this.login_session;
+            let name = this.m_panelCheckID.m_labName.text;
+            let idcard = this.m_panelCheckID.m_labID.text;
+            Game.sender.login.CheckIDCard(session, name, idcard);
+        }
+    }
+
+    var LoginTabType;
+    (function (LoginTabType) {
+        LoginTabType[LoginTabType["Login"] = 0] = "Login";
+        LoginTabType[LoginTabType["LoginGuest"] = 1] = "LoginGuest";
+        LoginTabType[LoginTabType["Register"] = 2] = "Register";
+        LoginTabType[LoginTabType["Agreement"] = 3] = "Agreement";
+    })(LoginTabType || (LoginTabType = {}));
+    class LoginWindow extends MWindow {
+        constructor() {
+            super();
+            this.addAssetForFguiComponent(LoginWindowUI);
+        }
+        generateAssetsForDynmic() {
+            super.generateAssetsForDynmic();
+        }
+        onMenuCreate() {
+            let windowUI = LoginWindowUI.createInstance();
+            this.conent = windowUI;
+            this.contentPane = windowUI;
+            super.onMenuCreate();
+        }
+        onShowComplete() {
+            super.onShowComplete();
+        }
+        onHideComplete() {
+            super.onHideComplete();
+        }
+    }
+
+    class WindowWarUIStruct extends fgui.GComponent {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "WindowWarUI"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_bg = (this.getChild("bg"));
+            this.m_menuTopPanel = (this.getChild("menuTopPanel"));
+            this.m_shareBtnBar = (this.getChild("shareBtnBar"));
+            this.m_playerLevelBar = (this.getChild("playerLevelBar"));
+            this.m_container = (this.getChild("container"));
+            this.m_chectPopupPanel = (this.getChild("chectPopupPanel"));
+            this.m_pausePanel = (this.getChild("pausePanel"));
+            this.m_uplevelPanel = (this.getChild("uplevelPanel"));
+            this.m_debugBtn_uplevel = (this.getChild("debugBtn_uplevel"));
+            this.m_debugBtn_addStageLevel = (this.getChild("debugBtn_addStageLevel"));
+            this.m_debugBtn_trigger = (this.getChild("debugBtn_trigger"));
+        }
+    }
+    WindowWarUIStruct.URL = "ui://moe42ygrsqzy9c";
+    WindowWarUIStruct.DependPackages = ["GameHome", "GameLaunch"];
+
     class WindowWarUI extends WindowWarUIStruct {
         constructor() {
             super(...arguments);
@@ -8667,6 +8756,18 @@
         onWindowInited() {
             War.init(this);
             this.m_menuTopPanel.m_puaseBtn.onClick(this, this.OnClickPauseBtn);
+            this.m_debugBtn_uplevel.onClick(this, this.onClickDebugBtn_Uplevel);
+            this.m_debugBtn_addStageLevel.onClick(this, this.onClickDebugBtn_addStageLevel);
+            this.m_debugBtn_trigger.onClick(this, this.onClickDebugBtn_trigger);
+        }
+        onClickDebugBtn_Uplevel() {
+            Player.current.uplevel();
+        }
+        onClickDebugBtn_addStageLevel() {
+            GameStatus.addGameLevel();
+        }
+        onClickDebugBtn_trigger() {
+            War.game.debugPlayerTrigger();
         }
         onWindowDestory() {
             return false;
@@ -18067,7 +18168,78 @@
     EquipIconStruct.URL = "ui://moe42ygrn2s1cp";
     EquipIconStruct.DependPackages = ["GameHome"];
 
+    class EquipTipStruct extends fgui.GLabel {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "EquipTip"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_title = (this.getChild("title"));
+        }
+    }
+    EquipTipStruct.URL = "ui://moe42ygr9cgecx";
+    EquipTipStruct.DependPackages = ["GameHome"];
+
+    class EquipTip extends EquipTipStruct {
+        static get instance() {
+            if (!this._instance) {
+                this._instance = EquipTip.createInstance();
+                this._instance.init();
+            }
+            return this._instance;
+        }
+        init() {
+            Laya.stage.on(Laya.Event.MOUSE_DOWN, this, this.onStageMouseDown);
+        }
+        onStageMouseDown(event) {
+            this.hide();
+        }
+        Show(icon) {
+            if (icon) {
+                if (icon instanceof EquipIcon) {
+                    if (icon.data && icon.data.config) {
+                        this.title = icon.data.config.zhCnItemDes;
+                    }
+                }
+                else {
+                    if (icon.config) {
+                        this.title = icon.config.zhCnItemDes;
+                    }
+                }
+            }
+            var pos = icon.localToGlobal(0, 0);
+            this.x = pos.x - this.width * 0.5;
+            this.y = pos.y - icon.height * 0.5 - this.height;
+            fgui.GRoot.inst.addChild(this);
+        }
+        hide() {
+            this.removeFromParent();
+        }
+    }
+
     class EquipIcon extends EquipIconStruct {
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.on(Laya.Event.MOUSE_DOWN, this, this.onMouseDown);
+        }
+        onMouseDown() {
+            if (this.data == null || this.data.config == null) {
+                return;
+            }
+            Laya.stage.on(Laya.Event.MOUSE_UP, this, this.onMouseUp);
+            Laya.timer.once(100, this, this.showTip);
+        }
+        onMouseUp() {
+            Laya.timer.clear(this, this.showTip);
+            Laya.stage.off(Laya.Event.MOUSE_UP, this, this.onMouseUp);
+            EquipTip.instance.hide();
+        }
+        showTip() {
+            EquipTip.instance.Show(this);
+        }
         SetData(data) {
             data.view = this;
             if (this.data) {
@@ -18078,6 +18250,21 @@
             if (data) {
                 this.data.sChange.add(this.OnChange, this);
                 this.data.sStepChange.add(this.SetStep, this);
+                if (this.data.config) {
+                    var itemType = 0;
+                    switch (this.data.config.type) {
+                        case ItemType.Weapon:
+                            itemType = 0;
+                            break;
+                        case ItemType.Decorate:
+                            itemType = 1;
+                            break;
+                        case ItemType.Consume:
+                            itemType = 2;
+                            break;
+                    }
+                    this.m_itemType.setSelectedIndex(itemType);
+                }
             }
             this.OnChange();
             this.scaleX = 1;
@@ -18160,6 +18347,8 @@
             this.m_bg = (this.getChild("bg"));
             this.m_icon = (this.getChild("icon"));
             this.m_title = (this.getChild("title"));
+            this.m_iconCoin = (this.getChild("iconCoin"));
+            this.m_coinText = (this.getChild("coinText"));
         }
     }
     EquipSelectIconStruct.URL = "ui://moe42ygrn2s1cr";
@@ -18172,6 +18361,38 @@
             this.equipId = id;
             this.m_icon.url = "res/sprite/icon/" + config.icon + ".png";
             this.m_title.text = config.name;
+            var itemType = 0;
+            switch (config.type) {
+                case ItemType.Weapon:
+                    itemType = 0;
+                    break;
+                case ItemType.Decorate:
+                    itemType = 1;
+                    break;
+                case ItemType.Consume:
+                    itemType = 2;
+                    break;
+            }
+            if (config.coin && config.coin > 0) {
+                this.m_coinText.text = config.coin + "";
+            }
+            this.m_itemType.setSelectedIndex(itemType);
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.on(Laya.Event.MOUSE_DOWN, this, this.onMouseDown);
+        }
+        onMouseDown() {
+            Laya.stage.on(Laya.Event.MOUSE_UP, this, this.onMouseUp);
+            Laya.timer.once(500, this, this.showTip);
+        }
+        onMouseUp() {
+            Laya.timer.clear(this, this.showTip);
+            Laya.stage.off(Laya.Event.MOUSE_UP, this, this.onMouseUp);
+            EquipTip.instance.hide();
+        }
+        showTip() {
+            EquipTip.instance.Show(this);
         }
     }
 
@@ -18206,18 +18427,37 @@
             TweenHelper.spriteShow2(this);
         }
         onClickEquipDecorate() {
-            var id = this.m_equipDecorate.equipId;
-            Player.current.equipDecorateData.setId(id);
-            this.panel.Close();
+            this.onSelect(this.m_equipDecorate);
         }
         onClickEquipWeapon() {
-            var id = this.m_equipWeapon.equipId;
-            Player.current.equipWeaponData.setId(id);
-            this.panel.Close();
+            this.onSelect(this.m_equipWeapon);
         }
         onClickEquipConsume() {
-            var id = this.m_equipConsume.equipId;
-            Player.current.useEquipConsumeDelay(id);
+            this.onSelect(this.m_equipConsume);
+        }
+        onSelect(icon) {
+            if (icon.config) {
+                var itemConfig = icon.config;
+                if (itemConfig.coin && itemConfig.coin > 0) {
+                    if (GameStatus.goldPerGame < itemConfig.coin) {
+                        Game.system.toastText("金币不够");
+                        return;
+                    }
+                    GameStatus.goldPerGame -= itemConfig.coin;
+                }
+                var id = icon.config.id;
+                switch (icon.config.type) {
+                    case ItemType.Weapon:
+                        Player.current.equipWeaponData.setId(id);
+                        break;
+                    case ItemType.Decorate:
+                        Player.current.equipDecorateData.setId(id);
+                        break;
+                    case ItemType.Consume:
+                        Player.current.useEquipConsumeDelay(id);
+                        break;
+                }
+            }
             this.panel.Close();
         }
     }
@@ -18238,6 +18478,24 @@
     CardStepStruct.DependPackages = ["GameHome"];
 
     class CardStep extends CardStepStruct {
+    }
+
+    class TextBtnStruct extends fgui.GButton {
+        constructor() {
+            super();
+        }
+        static createInstance() {
+            return (fgui.UIPackage.createObject("GameHome", "TextBtn"));
+        }
+        constructFromXML(xml) {
+            super.constructFromXML(xml);
+            this.m_title = (this.getChild("title"));
+        }
+    }
+    TextBtnStruct.URL = "ui://moe42ygr9cgecw";
+    TextBtnStruct.DependPackages = ["GameHome"];
+
+    class TextBtn extends TextBtnStruct {
     }
 
     class GameHomeBinder {
@@ -18322,6 +18580,8 @@
             bind(EquipSelectIcon.URL, EquipSelectIcon);
             bind(UplevelAlert.URL, UplevelAlert);
             bind(CardStep.URL, CardStep);
+            bind(TextBtn.URL, TextBtn);
+            bind(EquipTip.URL, EquipTip);
         }
     }
 

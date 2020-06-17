@@ -89,16 +89,16 @@
 		"504":{"id":504,"zh_cn_name":"钥匙","icon":"key40000","typeKey":"Key","type":5,"coin":125}
 	},
 	"ItemConsume":{
-		"1401":{"id":1401,"zh_cn_name":"恢复少量生命","icon":"Buff_00001","effectType":"AddHPPer","effectArgs":[10,20]},
-		"1402":{"id":1402,"zh_cn_name":"恢复部分生命","icon":"Buff_00002","effectType":"AddHPPer","effectArgs":[20,30]},
-		"1403":{"id":1403,"zh_cn_name":"恢复大量生命","icon":"Buff_00003","effectType":"AddHPPer","effectArgs":[30,40]},
-		"1404":{"id":1404,"zh_cn_name":"生命之力","icon":"Buff_00004","effectType":"AddHPMax","effectArgs":[1]},
-		"1405":{"id":1405,"zh_cn_name":"生命祝福","icon":"Buff_00005","effectType":"AddHPMax","effectArgs":[2]},
-		"1406":{"id":1406,"zh_cn_name":"生命礼赞","icon":"Buff_00006","effectType":"AddHPMax","effectArgs":[3]},
-		"1407":{"id":1407,"zh_cn_name":"守护1","icon":"Buff_00007","effectType":"AddArmor","effectArgs":[1,2]},
-		"1408":{"id":1408,"zh_cn_name":"守护2","icon":"Buff_00008","effectType":"AddArmor","effectArgs":[1,3]},
-		"1409":{"id":1409,"zh_cn_name":"守护3","icon":"Buff_00009","effectType":"AddArmor","effectArgs":[2,4]},
-		"1410":{"id":1410,"zh_cn_name":"守护4","icon":"Buff_00010","effectType":"AddArmor","effectArgs":[3,5]}
+		"1401":{"id":1401,"zh_cn_name":"恢复少量生命","icon":"Buff_00001","effectType":"AddHPPer","effectArgs":[10,20],"coin":10},
+		"1402":{"id":1402,"zh_cn_name":"恢复部分生命","icon":"Buff_00002","effectType":"AddHPPer","effectArgs":[20,30],"coin":10},
+		"1403":{"id":1403,"zh_cn_name":"恢复大量生命","icon":"Buff_00003","effectType":"AddHPPer","effectArgs":[30,40],"coin":10},
+		"1404":{"id":1404,"zh_cn_name":"生命之力","icon":"Buff_00004","effectType":"AddHPMax","effectArgs":[1],"coin":10},
+		"1405":{"id":1405,"zh_cn_name":"生命祝福","icon":"Buff_00005","effectType":"AddHPMax","effectArgs":[2],"coin":10},
+		"1406":{"id":1406,"zh_cn_name":"生命礼赞","icon":"Buff_00006","effectType":"AddHPMax","effectArgs":[3],"coin":10},
+		"1407":{"id":1407,"zh_cn_name":"守护1","icon":"Buff_00007","effectType":"AddArmor","effectArgs":[1,2],"coin":10},
+		"1408":{"id":1408,"zh_cn_name":"守护2","icon":"Buff_00008","effectType":"AddArmor","effectArgs":[1,3],"coin":10},
+		"1409":{"id":1409,"zh_cn_name":"守护3","icon":"Buff_00009","effectType":"AddArmor","effectArgs":[2,4],"coin":10},
+		"1410":{"id":1410,"zh_cn_name":"守护4","icon":"Buff_00010","effectType":"AddArmor","effectArgs":[3,5],"coin":10}
 	},
 	"ItemDecorate":{
 		"1301":{"id":1301,"zh_cn_name":"精打细算","icon":"Accessorie_00001","effectType":"GoldMultiplier","effectArgs":[2],"triggerType":"EatCardEnemy","triggerArgs":[1]},

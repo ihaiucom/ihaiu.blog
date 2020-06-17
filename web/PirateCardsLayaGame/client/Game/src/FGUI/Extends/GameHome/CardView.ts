@@ -25,6 +25,7 @@ import Hero from "../../../War/Logics/Hero";
 import Game from "../../../Game";
 import AbstractCard from "../../../War/Logics/AbstractCard";
 import { CardScoreType } from "../../../War/Enums/CardScoreType";
+import War from "../../../War/War";
 
 export default class CardView extends CardViewStruct
 {
@@ -115,12 +116,20 @@ export default class CardView extends CardViewStruct
         super();
     }
 
-    
+    private debugText:Laya.Text;
 	protected constructFromXML(xml: any): void 
 	{
 		super.constructFromXML(xml);
 		
         this.InitBg();
+
+        this.debugText = new Laya.Text();
+        this.debugText.fontSize = 30;
+        this.debugText.color = "#ffFF00";
+        this.debugText.bgColor = "#00000055";
+        this.debugText.x = 10;
+        this.debugText.y = 50;
+
     }
     
     InitBg()
@@ -156,6 +165,7 @@ export default class CardView extends CardViewStruct
         }
         
         this.onClick(this, this.OnClickHandler);
+        // this.displayListContainer.addChild(this.debugText);
     }
 
     
@@ -211,6 +221,26 @@ export default class CardView extends CardViewStruct
             if(fun)
             {
                 fun.call(this.front, this.card);
+            }
+        }
+
+    }
+
+    debugPos()
+    {
+        return;
+        var card = this.card;
+        if(card && !card.isEmpty)
+        {
+            var pos = War.game.field.field.findPosition(<Card>card)
+            if(pos)
+            {
+                this.debugText.text = pos.row + "," + pos.column + "  &  " + pos.pointX + ", "+ pos.pointY
+
+            }
+            else
+            {
+                this.debugText.text = "no pos";
             }
         }
     }

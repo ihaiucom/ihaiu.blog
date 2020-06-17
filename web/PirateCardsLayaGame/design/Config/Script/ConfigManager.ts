@@ -63,6 +63,7 @@ namespace configs{
 		public icon : string = "";
 		public effectType : string = "";
 		public effectArgs :  Array < number >  = null;
+		public coin : number = 0;
 	}
 	export class ConfigItemDecorate {
 		public id : number = 0;

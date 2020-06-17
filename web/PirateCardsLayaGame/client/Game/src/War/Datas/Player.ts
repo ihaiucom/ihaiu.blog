@@ -8,6 +8,7 @@ import ItemConsumeConfig from "../../Config/ConfigExtends/ItemConsumeConfig";
 import WarGame from "../WarGame";
 import { EffectType } from "../Enums/EffectType";
 import EquipIcon from "../../FGUI/Extends/GameHome/EquipIcon";
+import { ItemType } from "../../GameModule/DataEnums/ItemType";
 
 export class EquipData
 {
@@ -34,7 +35,7 @@ export class EquipData
         else
         {
             this.config = <any> Game.config.item.getConfig(id);
-            if(this.config.triggerArgs.length > 0)
+            if(this.config.triggerArgs && this.config.triggerArgs.length > 0)
             {
                 this.stepMax = this.config.triggerArgs[0];
                 this.step = 0;
@@ -201,23 +202,61 @@ export class Player
         this.equips.push(this.equipWeaponData);
     }
 
+    getRandomList(itemType: ItemType, ignoreList:number[])
+    {
+        var list = [];
+        var arr = this.levelConfig.randomWeaponList;
+        for(var id of arr)
+        {
+            var config = Game.config.item.getConfig(id);
+            if(config.type == itemType)
+            {
+                if(ignoreList && ignoreList.indexOf(id) != -1)
+                {
+                    continue;
+                }
+                list.push(id);
+            }
+        }
+        if(list.length == 0) list = arr;
+        return list;
+    }
+
+    randomEquipIgnoreList = [];
+
     randomEquipDecorateId()
     {
-        var list = this.levelConfig.randomDecorateList;
-        return this.randomEquip(list, this.equipDecorateData.id);
+        var ignoreList = this.randomEquipIgnoreList;
+        ignoreList.length = 0;
+        ignoreList.push(this.equipDecorateData.id);
+        ignoreList.push(this.equipWeaponData.id);
+        var list = this.getRandomList(ItemType.Decorate, ignoreList);
+        var i = Random.rangeBoth(0, list.length - 1);
+        var id = list[i];
+        ignoreList.push(id);
+        return id;
     }
 
     randomEquipWeaponId()
     {
-        var list = this.levelConfig.randomWeaponList;
-        return this.randomEquip(list, this.equipWeaponData.id);
+        
+        var ignoreList = this.randomEquipIgnoreList;
+        var list = this.getRandomList(ItemType.Weapon, ignoreList);
+        var i = Random.rangeBoth(0, list.length - 1);
+        var id = list[i];
+        ignoreList.push(id);
+        return id;
+        
     }
 
     randomEquipConsumeId()
     {
-        var list = this.levelConfig.randomConsumeList;
+        var ignoreList = this.randomEquipIgnoreList;
+        var list = this.getRandomList(ItemType.Consume, ignoreList);
         var i = Random.rangeBoth(0, list.length - 1);
-        return list[i];
+        var id = list[i];
+        ignoreList.push(id);
+        return id;
     }
 
     randomEquip(list: number[], igroonId: number)
@@ -228,7 +267,7 @@ export class Player
             var i = list.indexOf(igroonId);
             if(i != -1)
             {
-                list = list.splice(i, 1);
+                list.splice(i, 1);
             }
         }
 
@@ -418,7 +457,24 @@ export class Player
         }
     }
 
+    
+    debugCheckTrigger()
+    {
+        for(var item of this.equips)
+        {
+            switch(item.effectTypeId)
+            {
+                case EffectType.TiggerCannonOne:
+                case EffectType.TiggerLightning:
+                case EffectType.TiggerBomb:
+                    return this.game.field.equipTrigger(item);
+            }
+        }
+    }
+
 
 
 
 }
+
+window['Player'] = Player;

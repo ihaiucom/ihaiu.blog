@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="400,100" extention="Label">
+  <displayList>
+    <image id="n0_9cge" name="n0" src="jak7aq" fileName="sprite/bg_color_back.png" xy="0,0" size="400,100" alpha="0.81">
+      <relation target="" sidePair="width-width,height-height"/>
+    </image>
+    <text id="n1_9cge" name="title" xy="30,33" size="341,34" fontSize="30" color="#cccccc" autoSize="height" text="黄金之剑"/>
+  </displayList>
+  <relation target="n1_9cge" sidePair="height-height"/>
+</component>

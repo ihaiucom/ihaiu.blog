@@ -134,7 +134,7 @@ export default class WarGame
             var fun : Function= child['PoolRecover'];
             if(fun)
             {
-                fun.call(this);
+                fun.call(child);
             }
             
             if(child.parent)
@@ -204,12 +204,29 @@ export default class WarGame
         this.keyboardManager.reset()
     }
 
+    debugPlayerTrigger()
+    {
+            
+        var twees = Player.current.debugCheckTrigger()
+        if(twees && twees.length > 0)
+        {
+            this.addToAnimationQueue(twees);
+            return;
+        }
+    }
+
     
     fillQueue()
     {
         if (GameStatus.isHeroAlive) 
         {
             var hero = this.field.getHero();
+            if(hero == null)
+            {
+                this.setGameOver();
+                return;
+            }
+            
             if(hero.currentLife > 0)
             {
                 if(this.checkCardStep())

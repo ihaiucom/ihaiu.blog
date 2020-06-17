@@ -446,6 +446,9 @@
     <component id="n2s1cs" name="UplevelAlert.xml" path="/PlayerLevel/" exported="true"/>
     <component id="n2s1cu" name="CardStep.xml" path="/Card/" exported="true"/>
     <image id="n2s1cv" name="cardStep.png" path="/sprite/game1/"/>
+    <component id="9cgecw" name="TextBtn.xml" path="/Btn/"/>
+    <component id="9cgecx" name="EquipTip.xml" path="/PlayerLevel/" exported="true"/>
+    <image id="9cgecy" name="消耗品底框.png" path="/sprite/等级UI/"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

@@ -79,6 +79,7 @@ message ItemConsume
 	string icon = 4;
 	string effectType = 5;
 	repeated int32 effectArgs = 6;
+	int32 coin = 7;
 }
 
 message ItemDecorate 
