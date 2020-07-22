@@ -3,7 +3,7 @@
   <controller name="ShopType" exported="true" pages="0,Heart,1,Horseshoe,2,Luck,3,Key" selected="0"/>
   <displayList>
     <image id="n7_sqzy" name="bg" src="sqzy72" fileName="sprite/game1/shopItemBackground0000.png" xy="0,0" locked="true"/>
-    <component id="n8_sqzy" name="infoBtn" src="sqzy8g" fileName="Btn/SamallInfoBtn.xml" xy="-38,216" locked="true">
+    <component id="n8_sqzy" name="infoBtn" src="sqzy8g" fileName="Btn~NCode/SamallInfoBtn.xml" xy="-38,216" locked="true">
       <relation target="" sidePair="left-left,bottom-bottom"/>
     </component>
     <image id="n12_sqzy" name="coinIcon" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="66,46" group="n14_sqzy"/>
@@ -17,6 +17,6 @@
       <Label icon="ui://moe42ygrsqzy3o"/>
     </component>
     <image id="n16_sqzy" name="hasFlag" src="sqzy2y" fileName="sprite/game1/check0000.png" xy="179,215"/>
-    <component id="n19_sqzy" name="plusBtn" src="sqzy8i" fileName="Btn/SamallPlusBtn.xml" xy="218,219"/>
+    <component id="n19_sqzy" name="plusBtn" src="sqzy8i" fileName="Btn~NCode/SamallPlusBtn.xml" xy="218,219"/>
   </displayList>
 </component>

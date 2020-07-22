@@ -2,6 +2,6 @@
 <component size="64,62" pivot="0.5,0.5" anchor="true" extention="Label">
   <displayList>
     <image id="n2_sqzy" name="n2" src="sqzy2w" fileName="sprite/game1/cardPowerUpCircle0000.png" xy="0,0"/>
-    <text id="n3_sqzy" name="title" xy="11,18" size="40,26" fontSize="22" color="#ffffff" align="center" vAlign="middle" autoSize="none" strokeColor="#1f1717" text="11"/>
+    <text id="n3_sqzy" name="title" xy="8,26" size="40,26" fontSize="26" color="#ffffff" align="center" vAlign="middle" autoSize="none" strokeColor="#1f1717" text="11"/>
   </displayList>
 </component>

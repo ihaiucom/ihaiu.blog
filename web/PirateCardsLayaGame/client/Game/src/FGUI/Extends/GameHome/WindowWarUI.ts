@@ -22,6 +22,34 @@ export default class WindowWarUI extends WindowWarUIStruct
         this.m_debugBtn_uplevel.onClick(this, this.onClickDebugBtn_Uplevel);
         this.m_debugBtn_addStageLevel.onClick(this, this.onClickDebugBtn_addStageLevel);
         this.m_debugBtn_trigger.onClick(this, this.onClickDebugBtn_trigger);
+        this.m_debugBtn_music.onClick(this, this.onClickDebugBtn_music);
+        this.initGMBtn();
+    }
+
+    /** 初始化GM按钮 */
+    initGMBtn()
+    {
+        
+        let gm = this.m_gmBtn;
+
+        
+
+        gm.draggable  = true;
+        gm.dragBounds = new Laya.Rectangle(-50, -50, Laya.stage.width + 100, Laya.stage.height + 100);
+        gm.visible    = true;
+        window["gmButton"] = gm;
+        gm.onClick(this, this.onClickGMBtn);
+
+    }
+
+    onClickGMBtn()
+    {
+        this.m_debugBar.visible = !this.m_debugBar.visible;
+    }
+
+    onClickDebugBtn_music()
+    {
+        Laya.SoundManager.musicMuted = !Laya.SoundManager.musicMuted;
     }
 
     onClickDebugBtn_Uplevel()

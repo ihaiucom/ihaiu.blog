@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="64,62" pivot="0.5,0.5" anchor="true" extention="Label">
+  <controller name="dir" exported="true" pages="0,TopLeft,1,BottomLeft" selected="1"/>
   <displayList>
-    <image id="n2_sqzy" name="n2" src="sqzy2u" fileName="sprite/game1/cardLifeCircle0000.png" xy="0,0"/>
-    <text id="n3_sqzy" name="title" xy="11,18" size="40,26" fontSize="22" color="#ffffff" align="center" vAlign="middle" autoSize="none" strokeColor="#1f1717" text="11"/>
+    <image id="n2_sqzy" name="n2" src="sqzy2u" fileName="sprite/game1/cardLifeCircle0000.png" xy="0,64" scale="1,-1">
+      <gearXY controller="dir" pages="1" values="0,64" default="0,-4"/>
+      <gearSize controller="dir" pages="1" values="62,67,1,-1" default="62,67,1,1"/>
+    </image>
+    <text id="n3_sqzy" name="title" xy="8,23" size="40,26" fontSize="26" color="#ffffff" align="center" vAlign="middle" autoSize="none" strokeColor="#1f1717" text="11">
+      <gearXY controller="dir" pages="1" values="8,23" default="8,11"/>
+    </text>
   </displayList>
 </component>

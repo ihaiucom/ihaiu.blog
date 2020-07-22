@@ -7,10 +7,10 @@
     <component id="n4_sqzy" name="homeBtn" src="sqzy8c" fileName="Btn~NCode/SamallHomeBtn.xml" xy="412,0">
       <relation target="" sidePair="right-right"/>
     </component>
-    <image id="n0_sqzy" name="n0" src="sqzy3e" fileName="sprite/game1/coinPanel0000.png" xy="123,0" group="n9_sqzy"/>
-    <image id="n1_sqzy" name="n1" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="163,23" group="n9_sqzy"/>
-    <text id="n5_sqzy" name="coinText" xy="203,29" size="123,26" group="n9_sqzy" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
-    <group id="n9_sqzy" name="coinBar" xy="123,0" size="254,89" advanced="true">
+    <image id="n0_sqzy" name="n0" src="sqzy3e" fileName="sprite/game1/coinPanel0000.png" xy="120,0" group="n9_sqzy"/>
+    <image id="n1_sqzy" name="n1" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="160,13" group="n9_sqzy"/>
+    <text id="n5_sqzy" name="coinText" xy="257,29" size="123,26" group="n9_sqzy" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
+    <group id="n9_sqzy" name="coinBar" xy="120,0" size="260,89" advanced="true">
       <relation target="" sidePair="center-center"/>
     </group>
   </displayList>

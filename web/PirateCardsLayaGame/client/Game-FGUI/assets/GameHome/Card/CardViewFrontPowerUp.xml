@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="209,229" pivot="0.5,0.5" anchor="true">
   <displayList>
-    <loader id="n3_sqzy" name="icon" xy="104,114" pivot="0.5,0.5" anchor="true" size="38,38" url="ui://moe42ygrsqzy33" align="center" vAlign="middle" autoSize="true"/>
-    <component id="n2_sqzy" name="power" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="36,204"/>
+    <loader id="n3_sqzy" name="icon" xy="104,114" pivot="0.5,0.5" anchor="true" size="55,57" url="ui://moe42ygrsqzy33" align="center" vAlign="middle" autoSize="true"/>
+    <component id="n2_sqzy" name="power" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="31,192"/>
   </displayList>
 </component>

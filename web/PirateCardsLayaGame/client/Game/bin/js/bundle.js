@@ -8732,6 +8732,7 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
+            this.m_debugBar = (this.getChild("debugBar"));
             this.m_bg = (this.getChild("bg"));
             this.m_menuTopPanel = (this.getChild("menuTopPanel"));
             this.m_shareBtnBar = (this.getChild("shareBtnBar"));
@@ -8743,6 +8744,8 @@
             this.m_debugBtn_uplevel = (this.getChild("debugBtn_uplevel"));
             this.m_debugBtn_addStageLevel = (this.getChild("debugBtn_addStageLevel"));
             this.m_debugBtn_trigger = (this.getChild("debugBtn_trigger"));
+            this.m_debugBtn_music = (this.getChild("debugBtn_music"));
+            this.m_gmBtn = (this.getChild("gmBtn"));
         }
     }
     WindowWarUIStruct.URL = "ui://moe42ygrsqzy9c";
@@ -8759,6 +8762,22 @@
             this.m_debugBtn_uplevel.onClick(this, this.onClickDebugBtn_Uplevel);
             this.m_debugBtn_addStageLevel.onClick(this, this.onClickDebugBtn_addStageLevel);
             this.m_debugBtn_trigger.onClick(this, this.onClickDebugBtn_trigger);
+            this.m_debugBtn_music.onClick(this, this.onClickDebugBtn_music);
+            this.initGMBtn();
+        }
+        initGMBtn() {
+            let gm = this.m_gmBtn;
+            gm.draggable = true;
+            gm.dragBounds = new Laya.Rectangle(-50, -50, Laya.stage.width + 100, Laya.stage.height + 100);
+            gm.visible = true;
+            window["gmButton"] = gm;
+            gm.onClick(this, this.onClickGMBtn);
+        }
+        onClickGMBtn() {
+            this.m_debugBar.visible = !this.m_debugBar.visible;
+        }
+        onClickDebugBtn_music() {
+            Laya.SoundManager.musicMuted = !Laya.SoundManager.musicMuted;
         }
         onClickDebugBtn_Uplevel() {
             Player.current.uplevel();
@@ -17075,7 +17094,7 @@
             this.m_coinText = (this.getChild("coinText"));
             this.m_countText = (this.getChild("countText"));
             this.m_levelTex = (this.getChild("levelTex"));
-            this.m_levelKey = (this.getChild("levelKey"));
+            this.m_leveltex = (this.getChild("leveltex"));
             this.m_fxCoin = (this.getChild("fxCoin"));
             this.m_puaseBtn = (this.getChild("puaseBtn"));
         }
@@ -17143,6 +17162,7 @@
         }
         constructFromXML(xml) {
             super.constructFromXML(xml);
+            this.m_dir = this.getController("dir");
             this.m_title = (this.getChild("title"));
         }
     }

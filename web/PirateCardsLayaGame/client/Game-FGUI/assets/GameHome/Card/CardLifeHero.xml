@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component size="107,62" pivot="0.5,0.5" anchor="true" extention="Label">
+<component size="176,62" pivot="0.5,0.5" anchor="true" extention="Label">
   <displayList>
-    <image id="n2_sqzy" name="n2" src="sqzy2v" fileName="sprite/game1/cardLifeCircle0001.png" xy="0,0" size="107,62">
+    <image id="n2_sqzy" name="n2" src="sqzy2v" fileName="sprite/game1/cardLifeCircle0001.png" xy="0,0" size="176,62">
       <relation target="" sidePair="width-width,height-height"/>
     </image>
-    <text id="n3_sqzy" name="title" xy="16,18" size="74,26" fontSize="22" color="#ffffff" align="center" vAlign="middle" autoSize="none" strokeColor="#1f1717" text="11/22">
+    <text id="n3_sqzy" name="title" xy="66,18" size="81,30" fontSize="26" color="#ffffff" align="center" vAlign="middle" autoSize="none" strokeColor="#1f1717" text="11/22">
       <relation target="" sidePair="center-center,middle-middle"/>
     </text>
   </displayList>

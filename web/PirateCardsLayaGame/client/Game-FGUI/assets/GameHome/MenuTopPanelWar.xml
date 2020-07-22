@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<component size="620,87">
+<component size="663,95">
   <displayList>
-    <image id="n6_sqzy" name="n6" src="sqzy5x" fileName="sprite/game1/menuPanel0000.png" xy="90,0"/>
-    <image id="n7_sqzy" name="n7" src="sqzy7o" fileName="sprite/game1/turnsToBoss0000.png" xy="133,14"/>
-    <image id="n8_sqzy" name="iconCoin" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="431,23"/>
-    <text id="n9_sqzy" name="coinText" xy="471,29" size="96,26" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
-    <text id="n10_sqzy" name="countText" xy="193,29" size="50,26" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
-    <text id="n12_sqzy" name="levelTex" xy="336,29" size="70,26" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
-    <text id="n13_sqzy" name="levelKey" xy="312,29" size="19,26" fontSize="22" color="#fe5656" autoSize="none" strokeColor="#000000" text="X"/>
-    <component id="n15_sqzy" name="puaseBtn" src="sqzy8k" fileName="Btn~NCode/SamallPauseBtn.xml" xy="0,-1"/>
+    <image id="n17_12md9" name="n17" src="12md9d0" fileName="sprite/game1/menuPanel0001.png" xy="306,10"/>
+    <image id="n6_sqzy" name="n6" src="sqzy5x" fileName="sprite/game1/menuPanel0000.png" xy="115,8"/>
+    <image id="n7_sqzy" name="n7" src="sqzy7o" fileName="sprite/game1/turnsToBoss0000.png" xy="306,9"/>
+    <image id="n8_sqzy" name="iconCoin" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="118,11"/>
+    <text id="n9_sqzy" name="coinText" xy="195,26" size="96,26" fontSize="26" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
+    <text id="n10_sqzy" name="countText" xy="395,27" size="50,26" fontSize="26" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
+    <text id="n12_sqzy" name="levelTex" xy="543,26" size="70,26" fontSize="26" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
+    <image id="n18_12md9" name="leveltex" src="12md9d1" fileName="sprite/game1/turnsToBoss0001.png" xy="466,12"/>
+    <component id="n15_sqzy" name="puaseBtn" src="sqzy8k" fileName="Btn~NCode/SamallPauseBtn.xml" xy="12,3"/>
     <movieclip id="n16_jak7" name="fxCoin" src="sqzy9m" fileName="Fx/MVCoin.jta" xy="416,8" hideByEditor="true" visible="false" playing="false"/>
   </displayList>
 </component>

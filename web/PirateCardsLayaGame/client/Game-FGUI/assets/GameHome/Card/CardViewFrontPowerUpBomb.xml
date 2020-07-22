@@ -3,7 +3,7 @@
   <displayList>
     <image id="n6_sqzy" name="icon" src="sqzy23" fileName="sprite/game1/bomb0000.png" xy="64,80"/>
     <movieclip id="n7_sqzy" name="fx" src="sqzy9q" fileName="Fx/MVBombFlame.jta" xy="140,73"/>
-    <component id="n2_sqzy" name="power" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="36,204"/>
-    <component id="n8_l1v2" name="life" src="sqzy9x" fileName="Card/CardLifeWarriow.xml" xy="35,32"/>
+    <component id="n2_sqzy" name="power" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="32,192"/>
+    <component id="n8_l1v2" name="life" src="sqzy9x" fileName="Card/CardLifeWarriow.xml" xy="32,29"/>
   </displayList>
 </component>

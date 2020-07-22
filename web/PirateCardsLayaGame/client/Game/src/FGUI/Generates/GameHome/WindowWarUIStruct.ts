@@ -12,10 +12,12 @@ import PanelPopupChest from "../../Extends/GameHome/PanelPopupChest";
 import PanelPause from "../../Extends/GameHome/PanelPause";
 import PanelUplevel from "../../Extends/GameHome/PanelUplevel";
 import TextBtn from "../../Extends/GameHome/TextBtn";
+import GMButton from "../../Extends/GameLaunch/GMButton";
 import WindowWarUI from "../../Extends/GameHome/WindowWarUI";
 
 export default class WindowWarUIStruct extends fgui.GComponent
 {
+	public m_debugBar : fgui.GGroup;
 	public m_bg : ScreenBG;
 	public m_menuTopPanel : MenuTopPanelWar;
 	public m_shareBtnBar : ShareBtnBar;
@@ -27,6 +29,8 @@ export default class WindowWarUIStruct extends fgui.GComponent
 	public m_debugBtn_uplevel : TextBtn;
 	public m_debugBtn_addStageLevel : TextBtn;
 	public m_debugBtn_trigger : TextBtn;
+	public m_debugBtn_music : TextBtn;
+	public m_gmBtn : GMButton;
 
 	
 	public static URL:string = "ui://moe42ygrsqzy9c";
@@ -51,6 +55,7 @@ export default class WindowWarUIStruct extends fgui.GComponent
 		
 
 		
+		this.m_debugBar = <fgui.GGroup><any>(this.getChild("debugBar"));
 		this.m_bg = <ScreenBG><any>(this.getChild("bg"));
 		this.m_menuTopPanel = <MenuTopPanelWar><any>(this.getChild("menuTopPanel"));
 		this.m_shareBtnBar = <ShareBtnBar><any>(this.getChild("shareBtnBar"));
@@ -62,6 +67,8 @@ export default class WindowWarUIStruct extends fgui.GComponent
 		this.m_debugBtn_uplevel = <TextBtn><any>(this.getChild("debugBtn_uplevel"));
 		this.m_debugBtn_addStageLevel = <TextBtn><any>(this.getChild("debugBtn_addStageLevel"));
 		this.m_debugBtn_trigger = <TextBtn><any>(this.getChild("debugBtn_trigger"));
+		this.m_debugBtn_music = <TextBtn><any>(this.getChild("debugBtn_music"));
+		this.m_gmBtn = <GMButton><any>(this.getChild("gmBtn"));
 		
 		
 	}

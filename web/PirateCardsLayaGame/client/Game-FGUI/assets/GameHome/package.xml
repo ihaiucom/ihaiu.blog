@@ -101,7 +101,7 @@
     <image id="sqzy2r" name="cardBackrounds0001.png" path="/sprite/game1/"/>
     <image id="sqzy2s" name="cardBackrounds0002.png" path="/sprite/game1/"/>
     <image id="sqzy2t" name="cardBackrounds0003.png" path="/sprite/game1/"/>
-    <image id="sqzy2u" name="cardLifeCircle0000.png" path="/sprite/game1/"/>
+    <image id="sqzy2u" name="cardLifeCircle0000.png" path="/sprite/game1/" scale=""/>
     <image id="sqzy2v" name="cardLifeCircle0001.png" path="/sprite/game1/" scale="" scale9grid="27,16,54,32"/>
     <image id="sqzy2w" name="cardPowerUpCircle0000.png" path="/sprite/game1/"/>
     <image id="sqzy2x" name="cardPowerUpCircle0001.png" path="/sprite/game1/"/>
@@ -212,7 +212,7 @@
     <image id="sqzy5u" name="luckSmall0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy5v" name="medal0000.png" path="/sprite/game1/"/>
     <image id="sqzy5w" name="medal0001.png" path="/sprite/game1/"/>
-    <image id="sqzy5x" name="menuPanel0000.png" path="/sprite/game1/" scale="9grid" scale9grid="130,22,260,44"/>
+    <image id="sqzy5x" name="menuPanel0000.png" path="/sprite/game1/" scale="9grid" scale9grid="27,16,113,19"/>
     <image id="sqzy5y" name="menuStar0000.png" path="/sprite/game1/" exported="true"/>
     <image id="sqzy5z" name="mouse_click0000.png" path="/sprite/game1/"/>
     <image id="sqzy60" name="mouse_click0001.png" path="/sprite/game1/"/>
@@ -231,7 +231,7 @@
     <image id="sqzy6d" name="noAccess0004.png" path="/sprite/game1/"/>
     <image id="sqzy6e" name="noAccess0005.png" path="/sprite/game1/"/>
     <image id="sqzy6f" name="noIcon0000.png" path="/sprite/game1/"/>
-    <image id="sqzy6g" name="pauseBtn0000.png" path="/sprite/game1/"/>
+    <image id="sqzy6g" name="pauseBtn0000.png" path="/sprite/game1/" scale=""/>
     <image id="sqzy6h" name="pauseBtn0001.png" path="/sprite/game1/"/>
     <image id="sqzy6i" name="playBtn0000.png" path="/sprite/game1/"/>
     <image id="sqzy6j" name="playBtn0001.png" path="/sprite/game1/"/>
@@ -261,8 +261,8 @@
     <image id="sqzy77" name="skull0003.png" path="/sprite/game1/"/>
     <image id="sqzy78" name="skull0004.png" path="/sprite/game1/"/>
     <image id="sqzy79" name="skull_light0000.png" path="/sprite/game1/"/>
-    <image id="sqzy7a" name="smallBtnBackground0000.png" path="/sprite/game1/"/>
-    <image id="sqzy7b" name="smallBtnBackground0001.png" path="/sprite/game1/"/>
+    <image id="sqzy7a" name="smallBtnBackground0000.png" path="/sprite/game1/" scale=""/>
+    <image id="sqzy7b" name="smallBtnBackground0001.png" path="/sprite/game1/" scale=""/>
     <image id="sqzy7c" name="smallRing0000.png" path="/sprite/game1/"/>
     <image id="sqzy7d" name="smile0000.png" path="/sprite/game1/"/>
     <image id="sqzy7e" name="smoke_10000.png" path="/sprite/game1/"/>
@@ -399,7 +399,7 @@
     <movieclip id="m3nqbh" name="MVSkull2.jta" path="/Fx/"/>
     <image id="n2s1bi" name="广告位.png" path="/sprite/等级UI/"/>
     <image id="n2s1bj" name="武器底框.png" path="/sprite/等级UI/"/>
-    <image id="n2s1bk" name="等级.png" path="/sprite/等级UI/"/>
+    <image id="n2s1bk" name="等级.png" path="/sprite/等级UI/" scale=""/>
     <image id="n2s1bl" name="等级底.png" path="/sprite/等级UI/"/>
     <image id="n2s1bm" name="经验框.png" path="/sprite/等级UI/"/>
     <image id="n2s1bn" name="经验能量.png" path="/sprite/等级UI/"/>
@@ -445,10 +445,19 @@
     <component id="n2s1cr" name="EquipSelectIcon.xml" path="/PlayerLevel/" exported="true"/>
     <component id="n2s1cs" name="UplevelAlert.xml" path="/PlayerLevel/" exported="true"/>
     <component id="n2s1cu" name="CardStep.xml" path="/Card/" exported="true"/>
-    <image id="n2s1cv" name="cardStep.png" path="/sprite/game1/"/>
+    <image id="n2s1cv" name="cardStep.png" path="/sprite/game1/" scale=""/>
     <component id="9cgecw" name="TextBtn.xml" path="/Btn/"/>
     <component id="9cgecx" name="EquipTip.xml" path="/PlayerLevel/" exported="true"/>
     <image id="9cgecy" name="消耗品底框.png" path="/sprite/等级UI/"/>
+    <image id="12md9d0" name="menuPanel0001.png" path="/sprite/game1/"/>
+    <image id="12md9d1" name="turnsToBoss0001.png" path="/sprite/game1/"/>
+    <component id="12md9d5" name="TestCard.xml" path="/Card/"/>
+    <image id="12md9d6" name="cardLifeCircle00001.png" path="/sprite/game1/"/>
+    <component id="12md9d7" name="CardLifeWarriow_back.xml" path="/Card/"/>
+    <image id="12md9da" name="cardLifeCircle00001(1).png" path="/sprite/game1/"/>
+    <misc id="hacs9db" name="sprite.rar" path="/"/>
+    <component id="hacs9dd" name="TestCard.xml" path="/sprite/等级UI/"/>
+    <image id="hacs9de" name="cardPowertime.png" path="/sprite/game1/"/>
   </resources>
   <publish name="GameHome" genCode="true"/>
 </packageDescription>

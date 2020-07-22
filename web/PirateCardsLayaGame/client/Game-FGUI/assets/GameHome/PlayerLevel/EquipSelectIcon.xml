@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="150,150" pivot="0.5,0.5" anchor="true" extention="Button">
-  <controller name="itemType" exported="true" pages="0,Weapon,1,Decorate,2,Consume" selected="0">
+  <controller name="itemType" exported="true" pages="0,Weapon,1,Decorate,2,Consume" selected="2">
     <remark page="0" value="武器"/>
     <remark page="1" value="饰品"/>
     <remark page="2" value="消耗品"/>
   </controller>
   <displayList>
-    <loader id="n24_n2s1" name="bg" xy="0,0" size="150,150" url="ui://moe42ygrn2s1bj">
+    <loader id="n24_n2s1" name="bg" xy="0,0" size="150,150" url="ui://moe42ygr9cgecy">
       <gearIcon controller="itemType" pages="0,2" values="ui://moe42ygrn2s1bj|ui://moe42ygr9cgecy" default="ui://moe42ygrn2s1bo"/>
     </loader>
     <loader id="n26_n2s1" name="icon" xy="11,12" size="128,128" url="ui://moe42ygrn2s1bp"/>
-    <text id="n29_n2s1" name="title" xy="8,156" size="125,34" fontSize="30" color="#cccccc" align="center" text="黄金之剑"/>
-    <image id="n30_9cge" name="iconCoin" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="30,207">
+    <text id="n29_n2s1" name="title" xy="8,156" size="125,34" visible="false" fontSize="30" color="#cccccc" align="center" text="黄金之剑"/>
+    <image id="n30_9cge" name="iconCoin" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="30,162">
       <gearDisplay controller="itemType" pages="2"/>
     </image>
-    <text id="n31_9cge" name="coinText" xy="70,213" size="96,26" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100">
+    <text id="n31_9cge" name="coinText" xy="93,178" size="96,26" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="100">
       <gearDisplay controller="itemType" pages="2"/>
     </text>
   </displayList>

@@ -7,6 +7,7 @@ import CardLifeWarriow from "../../Extends/GameHome/CardLifeWarriow";
 
 export default class CardLifeWarriowStruct extends fgui.GLabel
 {
+	public m_dir : fgui.Controller;
 	public m_title : fgui.GTextField;
 
 	
@@ -30,6 +31,7 @@ export default class CardLifeWarriowStruct extends fgui.GLabel
 	{
 		super.constructFromXML(xml);
 		
+		this.m_dir = this.getController("dir");
 
 		
 		this.m_title = <fgui.GTextField><any>(this.getChild("title"));

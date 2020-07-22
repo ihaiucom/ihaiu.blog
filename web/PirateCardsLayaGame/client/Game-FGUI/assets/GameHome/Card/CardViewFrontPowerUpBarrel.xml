@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="209,229" pivot="0.5,0.5" anchor="true">
   <displayList>
-    <loader id="n3_sqzy" name="icon" xy="104,114" pivot="0.5,0.5" anchor="true" size="101,122" url="ui://moe42ygrsqzy1f" autoSize="true"/>
+    <loader id="n3_sqzy" name="icon" xy="104,114" pivot="0.5,0.5" anchor="true" size="104,123" url="ui://moe42ygrsqzy1f" autoSize="true"/>
     <component id="n4_sqzy" name="openFx" src="sqzy9g" fileName="Fx/FxBarrel.xml" xy="104,112" hideByEditor="true" visible="false"/>
-    <component id="n2_sqzy" name="power" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="36,204"/>
+    <component id="n2_sqzy" name="power" src="sqzy9z" fileName="Card/CardLifePowerUp.xml" xy="32,193"/>
   </displayList>
 </component>

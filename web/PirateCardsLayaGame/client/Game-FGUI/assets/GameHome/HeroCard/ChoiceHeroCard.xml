@@ -11,9 +11,9 @@
     <component id="n3_sqzy" name="lock" src="sqzy8o" fileName="Btn~NCode/Lock.xml" xy="231,292" controller="state,0">
       <relation target="" sidePair="right-right,bottom-bottom"/>
     </component>
-    <image id="n4_sqzy" name="coinIcon" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="88,52" group="n6_sqzy"/>
-    <text id="n5_sqzy" name="coinText" xy="134,55" size="100,26" group="n6_sqzy" fontSize="22" color="#ffffff" autoSize="none" strokeColor="#000000" text="1000"/>
-    <group id="n6_sqzy" name="coinGroup" xy="87,52" size="147,38" advanced="true">
+    <image id="n4_sqzy" name="coinIcon" src="sqzy33" fileName="sprite/game1/coin0000.png" xy="61,39" group="n6_sqzy"/>
+    <text id="n5_sqzy" name="coinText" xy="132,55" size="100,26" group="n6_sqzy" fontSize="26" color="#ffffff" autoSize="none" strokeColor="#000000" text="1000"/>
+    <group id="n6_sqzy" name="coinGroup" xy="61,39" size="171,57" advanced="true">
       <relation target="" sidePair="center-center,top-top"/>
     </group>
   </displayList>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="209,229" pivot="0.5,0.5" anchor="true">
+  <displayList>
+    <component id="n2_oq18" name="bg" src="sqzya8" fileName="Card/CardViewFrontBg.xml" xy="104,114" controller="state,3"/>
+    <component id="n4_oq18" name="icon" src="sqzya3" fileName="Card/CardViewFrontWarriowEnemy.xml" xy="104,114"/>
+    <component id="n5_hacs" name="n5" src="sqzya6" fileName="Card/CardViewFrontWarriowBoss.xml" xy="104,114"/>
+  </displayList>
+</component>

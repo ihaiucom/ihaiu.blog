@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="750,1334" restrictSize="0,0,1000,0">
   <displayList>
-    <component id="n0_sqzy" name="bg" src="f84s1" fileName="ScreenBG.xml" pkg="47qsdr42" xy="-74,-133" size="899,1600" locked="true" aspect="true">
+    <component id="n0_sqzy" name="bg" src="f84s1" fileName="ScreenBG.xml" pkg="47qsdr42" xy="-724,-204" size="2198,1672">
       <relation target="" sidePair="center-center,middle-middle"/>
       <Label icon="ui://moe42ygrsqzy0"/>
     </component>
-    <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="130,0" locked="true">
-      <relation target="" sidePair="center-center,top-top%"/>
-    </component>
-    <component id="n18_p1wh" name="shareBtnBar" src="p1whbe" fileName="Btn/ShareBtnBar.xml" xy="0,-16">
+    <component id="n6_sqzy" name="menuTopPanel" src="sqzy9e" fileName="MenuTopPanelWar.xml" xy="43,99">
       <relation target="" sidePair="center-center,top-top"/>
     </component>
-    <component id="n19_n2s1" name="playerLevelBar" src="n2s1cm" fileName="PlayerLevelBar.xml" xy="0,947" size="750,203">
+    <component id="n18_p1wh" name="shareBtnBar" src="p1whbe" fileName="Btn/ShareBtnBar.xml" xy="0,-16" visible="false">
+      <relation target="" sidePair="center-center,top-top"/>
+    </component>
+    <component id="n19_n2s1" name="playerLevelBar" src="n2s1cm" fileName="PlayerLevelBar.xml" xy="0,1015" size="750,203">
       <relation target="" sidePair="center-center,bottom-bottom"/>
     </component>
-    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="375,542" size="614,800" locked="true">
+    <component id="n15_sqzy" name="container" src="sqzya7" fileName="Container.xml" xy="375,615" size="614,800" locked="true">
       <relation target="" sidePair="center-center,middle-middle%"/>
     </component>
     <component id="n16_jak7" name="chectPopupPanel" src="jak7ao" fileName="PanelPopupChest.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
@@ -26,17 +26,21 @@
     <component id="n26_n2s1" name="uplevelPanel" src="n2s1cq" fileName="PanelUplevel.xml" xy="0,0" size="750,1334" locked="true" hideByEditor="true" visible="false">
       <relation target="" sidePair="width-width,height-height"/>
     </component>
-    <component id="n28_9cge" name="debugBtn_uplevel" src="9cgecw" fileName="Btn/TextBtn.xml" xy="50,1184" size="167,89" group="n31_9cge">
+    <component id="n28_9cge" name="debugBtn_uplevel" src="9cgecw" fileName="Btn/TextBtn.xml" xy="144,1225" size="167,89" group="n31_9cge">
       <Button title="升级"/>
     </component>
-    <component id="n29_9cge" name="debugBtn_addStageLevel" src="9cgecw" fileName="Btn/TextBtn.xml" xy="237,1182" group="n31_9cge">
+    <component id="n29_9cge" name="debugBtn_addStageLevel" src="9cgecw" fileName="Btn/TextBtn.xml" xy="311,1227" size="198,89" group="n31_9cge">
       <Button title="关卡等级+1"/>
     </component>
-    <component id="n30_9cge" name="debugBtn_trigger" src="9cgecw" fileName="Btn/TextBtn.xml" xy="497,1188" group="n31_9cge">
+    <component id="n30_9cge" name="debugBtn_trigger" src="9cgecw" fileName="Btn/TextBtn.xml" xy="507,1230" group="n31_9cge">
       <Button title="触发攻击"/>
     </component>
-    <group id="n31_9cge" name="n31" xy="50,1182" size="701,95" advanced="true">
+    <component id="n33_hacs" name="debugBtn_music" src="9cgecw" fileName="Btn/TextBtn.xml" xy="-10,1225" size="167,89" group="n31_9cge">
+      <Button title="音乐"/>
+    </component>
+    <group id="n31_9cge" name="debugBar" xy="-10,1225" size="771,94" visible="false" advanced="true">
       <relation target="" sidePair="bottom-bottom,center-center"/>
     </group>
+    <component id="n32_hacs" name="gmBtn" src="uohx13" fileName="GMButton.xml" pkg="47qsdr42" xy="374,41"/>
   </displayList>
 </component>
