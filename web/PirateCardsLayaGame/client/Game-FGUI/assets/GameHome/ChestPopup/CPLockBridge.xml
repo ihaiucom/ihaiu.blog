@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <component size="322,1" pivot="0.5,1" anchor="true">
-  <controller name="state" exported="true" pages="0,close,1,open" selected="1"/>
+  <controller name="state" exported="true" pages="0,close,1,open" selected="0"/>
   <displayList>
     <image id="n245_jak7" name="n245" src="sqzy5l" fileName="sprite/game1/lockBridge0000.png" xy="161,0" pivot="0.5,1" anchor="true">
-      <gearDisplay controller="state" pages="1"/>
+      <gearDisplay controller="state" pages="0"/>
     </image>
     <image id="n246_jak7" name="n246" src="sqzy5m" fileName="sprite/game1/lockBridge0001.png" xy="161,0" pivot="0.5,1" anchor="true">
-      <gearDisplay controller="state" pages="0"/>
+      <gearDisplay controller="state" pages="1"/>
     </image>
   </displayList>
 </component>

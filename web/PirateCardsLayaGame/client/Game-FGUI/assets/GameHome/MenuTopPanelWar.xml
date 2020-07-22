@@ -10,6 +10,6 @@
     <text id="n12_sqzy" name="levelTex" xy="543,26" size="70,26" fontSize="26" color="#ffffff" autoSize="none" strokeColor="#000000" text="100"/>
     <image id="n18_12md9" name="leveltex" src="12md9d1" fileName="sprite/game1/turnsToBoss0001.png" xy="466,12"/>
     <component id="n15_sqzy" name="puaseBtn" src="sqzy8k" fileName="Btn~NCode/SamallPauseBtn.xml" xy="12,3"/>
-    <movieclip id="n16_jak7" name="fxCoin" src="sqzy9m" fileName="Fx/MVCoin.jta" xy="416,8" hideByEditor="true" visible="false" playing="false"/>
+    <movieclip id="n16_jak7" name="fxCoin" src="sqzy9m" fileName="Fx/MVCoin.jta" xy="115,8" visible="false" playing="false"/>
   </displayList>
 </component>

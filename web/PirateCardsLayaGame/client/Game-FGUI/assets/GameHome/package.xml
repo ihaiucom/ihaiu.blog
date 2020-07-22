@@ -453,9 +453,6 @@
     <image id="12md9d1" name="turnsToBoss0001.png" path="/sprite/game1/"/>
     <component id="12md9d5" name="TestCard.xml" path="/Card/"/>
     <image id="12md9d6" name="cardLifeCircle00001.png" path="/sprite/game1/"/>
-    <component id="12md9d7" name="CardLifeWarriow_back.xml" path="/Card/"/>
-    <image id="12md9da" name="cardLifeCircle00001(1).png" path="/sprite/game1/"/>
-    <misc id="hacs9db" name="sprite.rar" path="/"/>
     <component id="hacs9dd" name="TestCard.xml" path="/sprite/等级UI/"/>
     <image id="hacs9de" name="cardPowertime.png" path="/sprite/game1/"/>
   </resources>
