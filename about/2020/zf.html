@@ -1,0 +1,816 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="ihaiu" />
+
+    <style> 
+        * {
+            box-sizing: border-box;
+        }
+
+        html,body,div,p{margin:0;padding:0}
+
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #606c71;
+            display: block;
+        }
+       
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+
+        td, th {
+            padding: 0;
+        }
+        
+        .main-content, .jd, .xmjy
+        {
+            padding: 0 1rem;
+            margin: 0 auto;
+            
+        }
+
+        .main-content table {
+            display: block;
+            width: 100%;
+            overflow: auto;
+            word-break: normal;
+            word-break: keep-all;
+            table-layout: fixed;
+        }
+
+
+
+        .main-content table th {
+            font-weight: bold;
+        }
+
+        .main-content table th, .main-content table td {
+            padding: 0.5rem 1rem;
+            border: 1px solid #e9ebec;
+            /* width: 50%; */
+        }
+
+        .main-content table .td_key
+        {
+            width: 20rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e9ebec;
+        }
+
+
+        .main-content table .td_value
+        {
+            width: 70%;
+            padding: 0.5rem 1rem;
+            border: 1px solid #e9ebec;
+        }
+
+        hr
+        {
+            border: 1px solid #e9ebec;
+        }
+
+        .jd > table
+        {
+            margin-bottom: 3rem;
+            width: 100%;
+        }
+
+
+        .jd table th, .jd table td, .xmjy td {
+            line-height: 2rem;
+            border: 0px solid #e9ebec;
+        }
+        .jd table table th, .jd table table td {
+            line-height: 1.7rem;
+            border: 0px solid #e9ebec;
+        }
+
+        .jd .time, .xmjy  .time
+        {
+            width: 200px;
+        }
+
+        .jd .tb1 .keys, .xmjy  .keys
+        {
+            width: 100px;
+        }
+        
+                
+        .grid > ol {
+        list-style: none;
+        /*margin: -10px auto 50px;*/
+        max-width: 1160px;
+        overflow: hidden;
+        width: calc(100% - 2 * 40px);
+        /*border: 1px #d8d8d8 solid;
+        box-sizing: border-box;*/
+        }
+
+
+
+        .grid > ol > li {
+        float: left;
+        height: 125px;
+        margin: 10px 20px;
+        position: relative;
+        }
+
+        .grid > ol > li > a {
+        color: #3c3c3c;
+        display: block;
+        height: 100%;
+        text-decoration: none;
+        width: 100%;
+        }
+
+        .grid > ol > li > a > .thumb {
+        background: no-repeat white;
+        display: block;
+        height: 100px;
+        width: 100%;
+        /*border: 1px #d8d8d8 solid;
+        box-sizing: border-box;*/
+        }
+
+
+
+        .gzgdgs li
+        {
+            margin: 30px;
+            width: 200px;
+        }
+        
+        .gzgdgs > ol > li > a {
+            width: 100%;
+        }
+
+        .zpzs div
+        {
+            margin: 20px 20px;
+            padding: 2rem;
+            text-align: center;
+            
+        }
+        
+    </style>
+</head>
+
+
+<body>
+
+    <!-- main-content begin -->
+    <section class="main-content">
+        
+        <!-- 基本信息 begin -->
+        <h1>基本信息</h1>
+    
+        <table>
+            <thead>
+                <tr>
+                    <th class="td_key" >姓名：</th>
+                    <th class="td_value" >曾峰</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="td_key">性别：</td>
+                    <td class="td_value">男</td>
+                </tr>
+                <tr>
+                    <td class="td_key">出生日期：</td>
+                    <td class="td_value">1988年4月26日</td>
+                </tr>
+                <tr>
+                    <td class="td_key">籍贯</td>
+                    <td class="td_value">江西</td>
+                </tr>
+                <tr>
+                    <td class="td_key">职业：</td>
+                    <td class="td_value">游戏开发，客户端主程。游戏行业10多年</td>
+                </tr>
+                <tr>
+                    <td class="td_key">个人主页：</td>
+                    <td class="td_value"><a href="http://blog.ihaiu.com" rel="nofollow">爱海游 http://blog.ihaiu.com</a></td>
+                </tr>
+                <tr>
+                    <td class="td_key">Email：</td>
+                    <td class="td_value"><a href="mailto:zengfeng75@qq.com">zengfeng75@qq.com</a></td>
+                </tr>
+                <tr>
+                    <td class="td_key">电话：</td>
+                    <td class="td_value">15216627821</td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- 基本信息 end -->
+
+        <!-- 技术方面 begin -->
+        <h1>技术方面</h1>
+        <ol>
+            <li>写过ECS战斗框架</li>
+            <li>用帧同步方案做过ACT游戏</li>
+            <li>做过游戏类型有mmorpg,act,slg,模拟经营</li>
+            <li>做过核心战斗：框架搭建、角色、技能、AI、关卡、寻路等开发</li>
+            <li>开发过关卡编辑器、技能编辑器、行为树编辑器</li>
+            <li>做过渲染开发：GPU骨骼动画、GPU特效、卡通渲染</li>
+            <li>掌握基本的shader开发，能看懂shader代码，如果知道原来就能开发。这方面需要做很多效果积累，目前在这方面花的时间不多</li>
+            <li>做过热更新开发、资源管理器等</li>
+            <li>目前在学习golang游戏服务器开发</li>
+        </ol>
+
+        <!-- 管理方面 begin -->
+        <h1>管理方面</h1>
+        <ul>
+            <li>5年客户端主程</li>
+            <li>心得：项目人少时，很多活可以亲历亲为。人多了时一定要分发下去，不然没精力去做管理。如果时间都占用在具体实现上，就没时间去组织代码review、技术探索等。</li>
+        </ul>
+
+        <!-- 参与过的游戏项目 begin -->
+        <h1>作品展示</h1>
+
+        <div  class="zpzs">
+            <div>
+                <a href="https://ihaiu.gitee.io/gameweb/gpuskingtest/web/" target="_blank" >
+                    <p><img src="https://ihaiu.gitee.io/gameweb/gpuskingtest/web/pic.png" width="100%" /></p>
+                    <p>gpusking html5展示, 100个角色同屏，帧率保持还是蛮高的</p>
+                    <p>点击打开</p>
+                </a>
+                
+            </div>
+
+
+            <div>
+                <a href="https://ihaiu.gitee.io/gameweb/PirateCardsLayaGame/index.html" target="_blank" >
+                    <p><img src="https://ihaiu.gitee.io/gameweb/PirateCardsLayaGame/pic.png" /></p>
+                    <p>和一个同事山寨的H5小游戏</p>
+                    <p>点击打开</p>
+                </a>
+                
+            </div>
+
+            <div>
+                <a href="https://www.iqiyi.com/v_o45kierji0.html" target="_blank" >
+                    <p><img src="https://ihaiu.gitee.io/gameweb/pic5.png" /></p>
+                    <p>街机三国H5 展示视频, 密码：123</p>
+                    <p>点击打开</p>
+                </a>
+            </div>
+            
+            <div>
+                <a href="https://www.iqiyi.com/w_19s3xcb7a9.html" target="_blank" >
+                    <p><img src="https://ihaiu.gitee.io/gameweb/pic3.png" /></p>
+                    <p>JustOutlaws 展示视频</p>
+                    <p>点击打开</p>
+                </a>
+            </div>
+
+            
+
+
+        </div>
+
+        <!-- 参与过的游戏项目 begin -->
+        <h1>参与过的游戏项目</h1>
+
+        <div class="grid">
+            <ol>
+    
+                <li data-fid="1" data-index="1" draggable="true">
+                    <a contextmenu="thumb-menu" href="http://gideamovie.ihaiu.com" target="_blank" draggable="false">
+                        <p><img src="http://www.ihaiu.com/othericons/movie2.png" class="thumb" width="100" height="100"> </p>
+                        <p> Movie Inc. </p>
+                    </a>
+                </li>
+    
+                <li data-fid="1" data-index="1" draggable="true">
+                    <a contextmenu="thumb-menu" href="http://blog.ihaiu.com/game_JustOutlaws" target="_blank" draggable="false">
+                        <p><img src="http://www.ihaiu.com/othericons/jo.png" class="thumb" width="100" height="100"> </p>
+                        <p> Just Outlaws </p>
+                    </a>
+                </li>
+    
+                <li data-fid="1" data-index="1" draggable="true">
+                    <td> 
+                        <a contextmenu="thumb-menu" href="http://blog.ihaiu.com/game_CR" target="_blank" draggable="false">
+                            <p><img src="http://www.ihaiu.com/othericons/kcj.png" class="thumb" width="100" height="100"> </p>
+                            <p> 小小空城计 </p>
+                        </a>
+                    </td>
+                </li>
+    
+                <li data-fid="1" data-index="1" draggable="true">
+                    <td> 
+                        <a contextmenu="thumb-menu" href="http://hs.xd.com/" target="_blank" draggable="false">
+                            <p><img src="http://www.ihaiu.com/othericons/hsqj.png" class="thumb" width="100" height="100"> </p>
+                            <p> 横扫千军 </p>
+                        </a>
+                    </td>
+                </li>
+    
+                <li data-fid="1" data-index="1" draggable="true">
+                    <td> 
+                        <a contextmenu="thumb-menu" href="http://kt.xd.com/" target="_blank" draggable="false">
+                            <p><img src="http://www.ihaiu.com/othericons/kt.png" class="thumb" width="100" height="100"> </p>
+                            <p> 开天辟地 </p>
+                        </a>
+                    </td>
+                </li>
+    
+                <li data-fid="1" data-index="1" draggable="true">
+                    <td> 
+                        <a contextmenu="thumb-menu" href="http://td.xd.com/" target="_blank" draggable="false">
+                            <p><img src="https://web.xdcdn.net/game/td/img/mobile_icon/icon-120.png?1488955179" class="thumb" width="100" height="100"> </p>
+                            <p> 天地英雄 </p>
+                        </a>
+                    </td>
+                </li>
+    
+    
+            </ol>
+        </div>
+        <!-- 参与过的游戏项目 end -->
+
+        <hr>
+
+        <!-- 工作过的公司 begin -->
+        <h1>工作过的公司</h1>
+
+        <div class="grid gzgdgs">
+            <ol>
+    
+                <li data-fid="1" data-index="1" draggable="true">
+                    <a contextmenu="thumb-menu" href="https://www.huanle.com/" target="_blank" draggable="false">
+                        <p><img src="https://www.huanle.com/html/topbar/images/TopNavbar_logo2.gif" class="thumb" width="150" height="60"> </p>
+                    </a>
+                </li>
+                
+                <li data-fid="1" data-index="1" draggable="true">
+                    <a contextmenu="thumb-menu" href="https://www.shinezone.com/" target="_blank" draggable="false">
+                        <p><img src="http://www.ihaiu.com/othericons/shinezone.png" class="thumb" width="150" height="60"> </p>
+                    </a>
+                </li>
+    
+                <li data-fid="1" data-index="1" draggable="true">
+                    <a contextmenu="thumb-menu" href="https://www.xd.com/" target="_blank" draggable="false">
+                        <p><img src="http://www.ihaiu.com/othericons/xd.png" class="thumb" width="150" height="100"> </p>
+                    </a>
+                </li>
+    
+            </ol>
+        </div>
+        <!-- 工作过的公司 end -->
+
+
+        
+
+
+    </section>
+    <!-- main-content end -->
+
+
+    <!-- jd begin -->
+    <section class="jd">
+
+        
+        <!-- 欢乐互娱 begin -->
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+                <tr>
+                    <td valign="top" class="time">2019/1-至今</td>
+                    <td valign="top" class="rtbox">
+                        <strong class="txt3">客户端主程</strong><span class="p5">|</span><span>ACT</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="phd tb1" colspan="2">
+                        <span>欢乐互娱</span><span class="gray">&nbsp;[2年]</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="phd tb1 gray2" colspan="2">网络游戏<span class="p5">|</span>民营公司</td>
+                </tr>
+
+                <tr>
+                    <td class="tb1" colspan="2">
+                        <table cellspacing="0" cellpadding="0" border="0">
+                            <tbody>
+                                <tr>
+                                    <td valign="top" class="keys">工作描述：</td>
+                                    <td valign="top" class="txt1">
+                                        负责客户端框架和游戏开发<br>
+                                        负责工具开发<br>负责安排任务计划<br>
+                                        负责制定美术资源规格，程序规范<br>
+                                        负责组织客户端程序学习和交流活动，带领新人
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <!-- 欢乐互娱 end -->
+
+
+        <!-- 上海炫踪网络信息科技有限公司 begin -->
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+                <tr>
+                    <td valign="top" class="time">2017/7-2018/12</td>
+                    <td valign="top" class="rtbox">
+                        <strong class="txt3">Unity3d主程</strong><span class="p5">|</span><span>Gidea</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="phd tb1" colspan="2">
+                        <span>上海炫踪网络信息科技有限公司</span><span class="gray">&nbsp;[1年5个月]</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="phd tb1 gray2" colspan="2">网络游戏<span class="p5">|</span>民营公司</td>
+                </tr>
+
+                <tr>
+                    <td class="tb1" colspan="2">
+                        <table cellspacing="0" cellpadding="0" border="0">
+                            <tbody>
+                                <tr>
+                                    <td valign="top" class="keys">工作描述：</td>
+                                    <td valign="top" class="txt1">
+                                        负责客户端框架和游戏开发<br>
+                                        负责工具开发<br>负责安排任务计划<br>
+                                        负责制定美术资源规格，程序规范<br>
+                                        负责组织客户端程序学习和交流活动，带领新人</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <!-- 上海炫踪网络信息科技有限公司 end -->
+
+        
+
+        <!-- 上海萌豹网络 begin -->
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+                <tr>
+                    <td valign="top" class="time">2015/3-2017/7</td>
+                    <td valign="top" class="rtbox">
+                        <strong class="txt3">Unity3d主程</strong><span class="p5">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="phd tb1" colspan="2">
+                        <span>上海萌豹网络</span><span class="gray">&nbsp;[2年4个月]</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="phd tb1 gray2" colspan="2">网络游戏<span class="p5">|</span>民营公司</td>
+                </tr>
+
+                <tr>
+                    <td class="tb1" colspan="2">
+                        <table cellspacing="0" cellpadding="0" border="0">
+                            <tbody>
+                                <tr>
+                                    <td valign="top" class="keys">工作描述：</td>
+                                    <td valign="top" class="txt1">
+                                        负责游戏客户端架构、编辑工具以及其他模块；<br>
+                                        负责游戏战斗系统（客户端和服务器）；<br>
+                                        负责渠道sdk、分享sdk对接；<br>
+                                        负责对策划案进行系统设计以及工作量分析，安排日常开发工作；<br>
+                                        负责带领新人熟悉项目；<br>
+                                        协同策划和美术优化改善游戏；
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <!-- 上海萌豹网络 end -->
+
+
+        
+
+        <!-- 心动网络股份有限公司 begin -->
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+                <tr>
+                    <td valign="top" class="time">2011/5-2014/9</td>
+                    <td valign="top" class="rtbox">
+                        <strong class="txt3">Unity3d AS3开发工程师</strong><span class="p5">
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="phd tb1" colspan="2">
+                        <span>心动网络股份有限公司</span><span class="gray">&nbsp;[3年4个月]</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="phd tb1 gray2" colspan="2">网络游戏<span class="p5">|</span>上市公司</td>
+                </tr>
+
+                <tr>
+                    <td class="tb1" colspan="2">
+                        <table cellspacing="0" cellpadding="0" border="0">
+                            <tbody>
+                                <tr>
+                                    <td valign="top" class="keys">工作描述：</td>
+                                    <td valign="top" class="txt1">
+                                        《横扫千军》负责武将系统开发。<br>
+                                        《开天辟地》负责游戏核心World（地图、单位）开发。以及很多的模块开发，估计超过20个（聊天、签到、好友、副本、国战、家族战、跨服战、秘境寻宝等） ps:感觉可以组成一个独立游戏 ^_^<br>
+                                        《天地英雄》负责战斗维护、成就开发以及海外版本换皮。
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        <!-- 心动网络股份有限公司 end -->
+    </section>
+    <!-- jd end -->
+
+    <hr>
+        
+    <!-- xmjy begin -->
+    <section class="xmjy">
+        <!-- 项目经验 begin -->
+        <h1>项目经验</h1>
+
+        
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td valign="top" class="time">2018/7-至今</td>
+                <td valign="top" class="rtbox"><strong>街机三国H5</strong></td>
+            </tr>
+            <tr>
+                <td valign="top" class="keys">所属公司：</td>
+                <td valign="top" class="txt1">欢乐互娱</td>
+            </tr>
+        </table>
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td valign="top" class="keys">项目描述：</td>
+                <td valign="top" class="txt1">
+        
+                    游戏类型：3D横版动作、格斗<br>
+                    游戏引擎：Laya2.x、 Unity2018<br>
+                    开发语言：TypeScript、C#、Golang<br>
+                    游戏UI : FairyGUI<br>
+                    战斗：ECS，可预测帧同步（第一版），可预测状态同步（第二版）<br>
+                    渲染：1.改造引擎GPU骨骼动画渲染方案，支持采用30帧播出60帧的流程度。支持骨骼挂点，支持换装。<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.改造引擎GPU特效方案。<br>
+                </td>
+            </tr>
+        </table>
+        <hr>
+
+
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td valign="top" class="time">2018/7-2018/12</td>
+                <td valign="top" class="rtbox"><strong>Movie Inc.</strong></td>
+            </tr>
+            <tr>
+                <td valign="top" class="keys">所属公司：</td>
+                <td valign="top" class="txt1">上海炫踪网络信息科技有限公司</td>
+            </tr>
+        </table>
+        
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td valign="top" class="keys">项目描述：</td>
+                <td valign="top" class="txt1">
+                    在线体验：<a href="http://gideamovie.ihaiu.com" target="_blank">http://gideamovie.ihaiu.com </a> (放在自己网站网络可能比较慢)<br>
+                    游戏类型：模拟经营<br>
+                    类似游戏：《票房大卖王》<br>
+                    游戏引擎：LayaAir1.7<br>
+                    开发语言：TypeScript、JavaScript<br>
+                    游戏UI : FairyGUI<br>
+                    支持发布: Android App, iOS App, PC浏览器(Chrome、Safari、Fiefox)，手机浏览器（包括微信浏览）<br>
+                    应用版支持热更新<br><br>
+                    
+                    因为发布应用LayaNative在Android上的运行效率实在太低，而且官方维护很慢。所以我们采用自己用原生应用嵌套浏览器的方式Crosswalk，这方面的工作有以下:<br>
+                    1. 嵌套浏览器：Crosswalk<br>
+                    2. 实现Java和javascript通信: 借鉴WebViewJavascriptBridge，实现Objec之间对接<br>
+                    3. 实现app事件和信息获取<br>
+                    4. 修改SDK调用入口(数据统计，异常上报，支付)<br>
+                    5. 添加多线程断点续传下载文件<br>
+                    6. 添加线程操作文件: 解压ZIP, 拷贝文件，初始化资源<br>
+                    7. 实现热更新<br>
+                    8. 实现应用大版本更新，支持下载方式： DownloadManager、应用内多线程断点续传、跳转浏览器。下载完成应用内有服务监听调安装接收器<br>
+                    9. 版本管理工具：版本对比资源文件打包,、推送、修改版本号、发布<br><br><br>
+                    
+                    
+                    
+                    #工具开发：<br>
+                    配置生成工具：生成csv / json, 生成代码数据结构、解析器。<br>
+                    <a href="http://blog.ihaiu.com/tool-ExportXlsx/#content" target="_blank"> http://blog.ihaiu.com/tool-ExportXlsx/#content </a>
+                    <br><br>
+                    UI代码生成工具: 根据UI生成代码视图控制器<br>
+                    <a href="http://blog.ihaiu.com/tool-ExportFairyGUICode/#content" target="_blank"> http://blog.ihaiu.com/tool-ExportFairyGUICode/#content </a>
+                    <br><br><br>
+                    多语言工具： 约定配置表里的多语言字段前缀，生成多语言编辑Excel。再导出对应语言包<br>
+                    协议生成工具： 生成协议数据结构代码，生成处理器、发送器<br>
+                    版本发布工具：自定义选项去做不同的处理，如: 平台、渠道、GM等<br><br>
+                    #配置生成的代码目录结构:<br>
+                    Config<br>
+                    |--ConfigExtends //配置文件Class，逻辑扩展<br>
+                    |--ConfigStructs //配置文件数据结构，不可手动编辑。重新生成会被替换<br>
+                    |--ReaderExtends //配置获取逻辑扩展<br>
+                    |--RenderStructs  //配置读取、解析器。也是配置的容器类。重新生成会被替换<br><br>
+                    
+                    #UI代码目录<br>
+                    fgui<br>
+                    |--Extend  //自定义组件逻辑<br>
+                    |--Generates //根据UI组件的结构xml文件生成的代码字段数据结构<br><br>
+                    
+                    #协议<br>
+                    proto<br>
+                    |--controller // 消息请求和对应的接收目录<br>
+                    |&nbsp;&nbsp;&nbsp;&nbsp;|--AccountHandler //消息接收处理器<br>
+                    |&nbsp;&nbsp;&nbsp;&nbsp;|--AccountSender   //消息发送器<br>
+                    |<br>
+                    |--oobhandler //数据结构消息处理器目录<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;|--ItemDataHandler//物品数据处理器<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;|--MailDataHandler//邮件数据处理器<br><br>
+                    
+                    
+                </td>
+            
+            </tr>
+        </table>
+        <hr>
+
+
+
+
+        
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td valign="top" class="time">2017/1-2018/8</td>
+                <td valign="top" class="rtbox"><strong>Just Outlaws</strong></td>
+            </tr>
+            <tr>
+                <td valign="top" class="keys">所属公司：</td>
+                <td valign="top" class="txt1">上海炫踪网络信息科技有限公司</td>
+            </tr>
+        </table>
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td valign="top" class="keys">项目描述：</td>
+                <td valign="top" class="txt1">游戏视频：
+                    <a href="http://blog.ihaiu.com/game_JustOutlaws" target="_blank"> http://blog.ihaiu.com/game_JustOutlaws </a> <br>
+        
+                    游戏类型：动作、生存、塔防<br>
+                    类似游戏： 魔兽争霸3里的《守卫剑阁》、《亡者之夜》<br>
+                    游戏引擎：Unity 5.6、 XLua<br>
+                    开发语言：C#、Lua<br>
+                    游戏音效 ：FMOD<br>
+                    游戏UI     :  UGUI、XLua<br>
+                    支持发布： Android、iOS<br><br>
+                    战斗：<br>
+                    角色操作模式：借鉴《王者荣耀》<br>
+                    网络同步方式：帧同步<br>
+                    网络--Demo期间    ：使用的Photon TRUESYNC<br> 
+                    网络--正式开发期间：借鉴了 Photon TRUESYNC、ForgeNetworkingRemastered、ET、王者荣耀<br><br
+                    >框架：采用ECS方式<br>
+                    寻路：AstarPathfinding<br>
+                    Shader: ShaderForge (项目中使用到的不多，也就几个材质球)<br><br>
+                    AI   ：基于分数系统, 行为树 （PS: 正式版没来得及使用行为树，研究了一段时间想应用到游戏，结果公司上层冻结该项目，开新项目去了。）<br><br>
+                    行为树参考：http://www.aisharing.com, 腾讯behaviac，FlowCanvas, NodeCanvas
+                </td>
+            </tr>
+        </table>
+        <hr>
+
+
+
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td valign="top" class="time">2015/3-2017/7</td>
+                <td valign="top" class="rtbox"><strong>小小空城计</strong></td>
+            </tr>
+            <tr>
+                    
+                <td valign="top" class="keys">所属公司：</td>
+                <td valign="top" class="txt1">上海萌豹网络</td>
+            </tr>
+        </table>
+
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tr>
+                <td valign="top" class="keys">项目描述：</td>
+                <td valign="top" class="txt1">游戏视频：<a href="http://blog.ihaiu.com/game_CR" target="_blank"> http://blog.ihaiu.com/game_CR </a> <br>
+            
+                    游戏类型：对战、塔防、策略<br>
+                    类似游戏： 《蘑菇战争》<br>
+                    游戏引擎：Unity 5.4、 uLua<br>
+                    开发语言：C#、Lua<br>
+                    游戏UI : UGUI、uLua<br>
+                    支持发布： Android、iOS</td>
+            </tr>
+        </table>
+        <hr>
+
+
+        <table cellspacing="0" cellpadding="0" border="0"><tbody>
+            <tr>
+            <td valign="top" class="time">2014/6-2014/9</td>
+            <td valign="top" class="rtbox"><strong>横扫千军</strong></td>
+            </tr>
+            <tr><td class="tb1" colspan="2"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+            <td valign="top" class="keys">所属公司：</td>
+            <td valign="top" class="txt1">心动网络股份有限公司</td>
+            </tr></tbody></table></td></tr>
+            <tr><td class="tb1" colspan="2"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+            <td valign="top" class="keys">项目描述：</td>
+            <td valign="top" class="txt1">游戏主页：<a href="http://hs.xd.com/" target="_blank"> http://hs.xd.com/ </a> <br>
+            游戏类型：卡牌、回合<br>游戏引擎：Unity 4.2<br>开发语言：C#<br>游戏UI : NGUI<br>支持发布： Android、iOS<br>唐国强代言</td>
+            </tr></tbody></table></td></tr>
+            <tr><td class="tb1" colspan="2"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+            <td valign="top" class="keys">责任描述：</td>
+            <td valign="top" class="txt1">负责武将系统开发</td>
+            </tr></tbody></table></td></tr>
+            </tbody>
+        </table>
+
+        <hr>
+
+        <table cellspacing="0" cellpadding="0" border="0"><tbody>
+            <tr>
+            <td valign="top" class="time">2012/1-2014/6</td>
+            <td valign="top" class="rtbox"><strong>开天辟地</strong></td>
+            </tr>
+            <tr><td class="tb1" colspan="2"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+            <td valign="top" class="keys">所属公司：</td>
+            <td valign="top" class="txt1">心动网络股份有限公司</td>
+            </tr></tbody></table></td></tr>
+            <tr><td class="tb1" colspan="2"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+            <td valign="top" class="keys">项目描述：</td>
+            <td valign="top" class="txt1">游戏主页：<a href="http://kt.xd.com/" target="_blank">http://kt.xd.com/ </a> <br> 游戏类型：角色扮演、回合、页游<br>游戏引擎：Flash<br>开发语言：AS3<br>爱情公寓代言</td>
+            </tr></tbody></table></td></tr>
+            <tr><td class="tb1" colspan="2"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+            <td valign="top" class="keys">责任描述：</td>
+            <td valign="top" class="txt1">负责游戏核心World（地图、单位）开发。以及很多的模块开发，估计超过20个（聊天、签到、好友、副本、国战、家族战、跨服战、秘境寻宝等）</td>
+            </tr></tbody></table></td></tr>
+            </tbody>
+        </table>
+
+        <hr>
+        <table cellspacing="0" cellpadding="0" border="0"><tbody>
+            <tr>
+            <td valign="top" class="time">2011/5-2012/1</td>
+            <td valign="top" class="rtbox"><strong>天地英雄</strong></td>
+            </tr>
+            <tr><td class="tb1" colspan="2"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+            <td valign="top" class="keys">所属公司：</td>
+            <td valign="top" class="txt1">心动网络股份有限公司</td>
+            </tr></tbody></table></td></tr>
+            <tr><td class="tb1" colspan="2"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+            <td valign="top" class="keys">项目描述：</td>
+            <td valign="top" class="txt1">游戏主页：<a href="http://td.xd.com/" target="_blank"> http://td.xd.com/ </a>  <br>游戏类型：角色扮演、回合、页游<br>游戏引擎：Flash<br>开发语言：AS3<br><br>2010--2011年RPG网页游戏巨作</td>
+            </tr></tbody></table></td></tr>
+            <tr><td class="tb1" colspan="2"><table cellspacing="0" cellpadding="0" border="0"><tbody><tr>
+            <td valign="top" class="keys">责任描述：</td>
+            <td valign="top" class="txt1">负责战斗维护、成就开发以及海外版本换皮。</td>
+            </tr></tbody></table></td></tr>
+            </tbody>
+        </table>
+
+
+    </section>
+    <!-- xmjy end -->
+</body>
+
+</html>

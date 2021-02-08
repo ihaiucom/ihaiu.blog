@@ -1,0 +1,33 @@
+⏰ 个人工作清单
+技术团队工作 
+技术框架选型 
+1. Tools
+  [ ] IOS CI
+  [ ] Lightmass Swarm
+  [ ] Crash Report
+  [ ] CI 继续增强
+2. Framework
+  [x] 整合 EventSystem：https://github.com/getnamo/global-event-system-ue4
+    [ ] 重构成 Subsystem 实现
+  [x] 整合虚拟摇杆：https://www.unrealengine.com/marketplace/zh-CN/product/custom-touch-controls
+    [ ] C++化
+  [ ] AssetManage
+3. Server
+  [x] Tars 框架流程搭建
+  [x] Tars 整合 UE4 客户端
+  [ ] UE4 DS 架构流程搭建
+  [ ] DCache 对接
+  [ ] Gateway 对接
+4. Rendering
+  [ ] 实现 Mobile 2SH VLM
+  [ ] 实现 ShaderCache 自动化
+  [ ] RTX GI 流程预研
+5. 技术债务
+  [ ] 阅读 Niagara 源码
+  [ ] 阅读 Chaos 源码
+  [ ] 阅读 RigControl 源码
+  [ ] 研究 Mixer 使用
+6. 其他
+  [x] 整理 Epic 近期的插件
+  [x] 整理 Tars 源码
+  [x] 整理 UMG 入门文档
