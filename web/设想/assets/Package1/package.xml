@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<packageDescription id="bd5wohb9" jpegQuality="80" compressPNG="true">
+  <resources>
+    <component id="c23x0" name="Component1.xml" path="/"/>
+    <component id="c23x1" name="Component2.xml" path="/"/>
+    <image id="c23x2" name="u=1064449662,1409898661&amp;fm=26&amp;gp=0.jpg" path="/"/>
+    <image id="c23x3" name="jiantou.png" path="/"/>
+    <image id="c23x4" name="jiantou2.png" path="/" scale="9grid" scale9grid="86,1,36,94"/>
+    <component id="c23x5" name="Component3.xml" path="/"/>
+    <image id="c23x6" name="n0.png" path="/"/>
+  </resources>
+  <publish name=""/>
+</packageDescription>

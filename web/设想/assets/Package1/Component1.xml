@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="531,444">
+  <displayList>
+    <graph id="n18_c23x" name="n18" xy="76,40" size="162,134" type="rect" lineSize="2" fillColor="#038aa376"/>
+    <component id="n0_c23x" name="n0" src="c23x1" fileName="Component2.xml" xy="87,48" controller="c1,0"/>
+    <component id="n14_c23x" name="n14" src="c23x1" fileName="Component2.xml" xy="87,108" controller="c1,1"/>
+    <component id="n15_c23x" name="n15" src="c23x1" fileName="Component2.xml" xy="89,239" controller="c1,2"/>
+    <component id="n19_c23x" name="n19" src="c23x1" fileName="Component2.xml" xy="319,206" controller="c1,3"/>
+    <image id="n20_c23x" name="n20" src="c23x4" fileName="jiantou2.png" xy="175,185" size="47,28" alpha="0.35" rotation="90" color="#333333"/>
+    <image id="n21_c23x" name="n21" src="c23x4" fileName="jiantou2.png" xy="241,254" size="47,28" alpha="0.35" color="#333333"/>
+    <component id="n22_c23x" name="n22" src="c23x1" fileName="Component2.xml" xy="321,269" controller="c1,4"/>
+    <component id="n23_c23x" name="n23" src="c23x1" fileName="Component2.xml" xy="98,358" controller="c1,5"/>
+    <image id="n24_c23x" name="n24" src="c23x4" fileName="jiantou2.png" xy="176,304" size="47,28" alpha="0.35" rotation="90" color="#333333"/>
+    <image id="n25_c23x" name="n25" src="c23x4" fileName="jiantou2.png" xy="278,349" pivot="0.5,0.5" anchor="true" size="47,28" alpha="0.35" rotation="-36.4" color="#333333"/>
+    <graph id="n26_c23x" name="n26" xy="308,200" size="171,135" type="rect" lineSize="2" fillColor="#038aa376"/>
+  </displayList>
+</component>

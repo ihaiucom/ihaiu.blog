@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<component size="143,58">
+  <controller name="c1" exported="true" pages="0,知识体系,1,交流圈,2,人才库,3,职位,4,远程职位,5,远程协作办公系统" selected="2"/>
+  <displayList>
+    <graph id="n0_c23x" name="bg" xy="0,0" size="142,58" type="rect" fillColor="#ffa17599" corner="10">
+      <gearColor controller="c1" pages="2,3,4,5" values="#a17599|#9ca175|#9ea175|#7599a1" default="#8aa376"/>
+    </graph>
+    <text id="n1_c23x" name="title" xy="0,16" size="143,25" font="STHupo" fontSize="20" color="#ffffff" align="center" vAlign="middle" autoSize="none" text="人才库">
+      <gearText controller="c1" pages="1,2,3,4,5" values="交流圈|人才库|职位|远程职位|远程协作办公体系" default="知识体系"/>
+    </text>
+  </displayList>
+</component>
