@@ -87,7 +87,6 @@ sh_csharp: true
                 str = str.replace('<photoshop:LayerText>',"").replace('</photoshop:LayerText>', "");
                 var output = document.getElementById('content');
                 output.textContent = str;//(result);
-                str += "集市";
                 psText = str;
                 if(result.length > 0) {
                     check(str);
