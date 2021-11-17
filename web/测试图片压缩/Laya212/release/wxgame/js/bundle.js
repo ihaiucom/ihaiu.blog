@@ -1,0 +1,190 @@
+(function () {
+    'use strict';
+
+    var Scene = Laya.Scene;
+    var REG = Laya.ClassUtils.regClass;
+    var ui;
+    (function (ui) {
+        var test;
+        (function (test) {
+            class TestSceneUI extends Scene {
+                constructor() { super(); }
+                createChildren() {
+                    super.createChildren();
+                    this.loadScene("test/TestScene");
+                }
+            }
+            test.TestSceneUI = TestSceneUI;
+            REG("ui.test.TestSceneUI", TestSceneUI);
+        })(test = ui.test || (ui.test = {}));
+    })(ui || (ui = {}));
+
+    class GameUI extends ui.test.TestSceneUI {
+        constructor() {
+            super();
+            var scene = Laya.stage.addChild(new Laya.Scene3D());
+            var camera = (scene.addChild(new Laya.Camera(0, 0.1, 100)));
+            camera.transform.translate(new Laya.Vector3(0, 3, 3));
+            camera.transform.rotate(new Laya.Vector3(-30, 0, 0), true, false);
+            var directionLight = scene.addChild(new Laya.DirectionLight());
+            directionLight.color = new Laya.Vector3(0.6, 0.6, 0.6);
+            directionLight.transform.worldMatrix.setForward(new Laya.Vector3(1, -1, 0));
+            var box = scene.addChild(new Laya.MeshSprite3D(Laya.PrimitiveMesh.createBox(1, 1, 1)));
+            box.transform.rotate(new Laya.Vector3(0, 45, 0), false, false);
+            var material = new Laya.BlinnPhongMaterial();
+            Laya.Texture2D.load("res/layabox.png", Laya.Handler.create(null, function (tex) {
+                material.albedoTexture = tex;
+            }));
+            box.meshRenderer.material = material;
+        }
+    }
+
+    class GameConfig {
+        constructor() { }
+        static init() {
+            var reg = Laya.ClassUtils.regClass;
+            reg("script/GameUI.ts", GameUI);
+        }
+    }
+    GameConfig.width = 640;
+    GameConfig.height = 1136;
+    GameConfig.scaleMode = "fixedwidth";
+    GameConfig.screenMode = "none";
+    GameConfig.alignV = "top";
+    GameConfig.alignH = "left";
+    GameConfig.startScene = "test/TestScene.scene";
+    GameConfig.sceneRoot = "";
+    GameConfig.debug = false;
+    GameConfig.stat = true;
+    GameConfig.physicsDebug = false;
+    GameConfig.exportSceneToJson = true;
+    GameConfig.init();
+
+    var Vector3 = Laya.Vector3;
+    class TestScene extends Laya.Scene3D {
+        static create() {
+            let node = new TestScene();
+            node.name = "WarScene";
+            let scene = node;
+            scene.init();
+            return scene;
+        }
+        init() {
+            window['warScene'] = this;
+            this.initCamera();
+        }
+        initCamera() {
+            var cameraRootNode = new Laya.Sprite3D("CameraRoot");
+            var cameraRotationXNode = new Laya.Sprite3D("CameraRotationX");
+            var camera = new Laya.Camera(0, 0.1, 1000);
+            var screenLayer = new Laya.Sprite3D("ScreenLayer");
+            cameraRootNode.addChild(cameraRotationXNode);
+            cameraRotationXNode.addChild(camera);
+            camera.addChild(screenLayer);
+            cameraRotationXNode.transform.localRotationEulerX = -20;
+            camera.transform.localPosition = new Vector3(0, 0, 10);
+            camera.clearColor = new Laya.Vector4(0.2, 0.5, 0.8, 1);
+            camera.orthographic = true;
+            camera.orthographicVerticalSize = 2.6;
+            camera.farPlane = 2000;
+            this.camera = camera;
+            this.cameraNode = cameraRootNode;
+            this.screen3DLayer = screenLayer;
+            let directionLight = this.addChild(new Laya.DirectionLight());
+            directionLight.color = new Laya.Vector3(1, 1.0, 1.0);
+            this.lightRotaitonSrc = directionLight.transform.localRotationEuler = new Laya.Vector3(-45, 80, 0);
+            this.directionLight = directionLight;
+            directionLight.transform.rotationEuler = new Laya.Vector3(-20, 20, 0);
+            this.addChild(cameraRootNode);
+            this.addChild(directionLight);
+        }
+        RotationTarget(rotationTarget) {
+            this.rotationTarget = rotationTarget;
+            this.lightRotaitonStop();
+            this.lightRotaitonStart();
+        }
+        lightRotaitonStart() {
+            this.lightRotaiton = this.rotationTarget.transform.localRotationEuler;
+            Laya.timer.frameLoop(1, this, this.onLightRotaitonLoop);
+        }
+        lightRotaitonStop() {
+            this.rotationTarget.transform.localRotationEuler = this.lightRotaitonSrc;
+            Laya.timer.clear(this, this.onLightRotaitonLoop);
+        }
+        onLightRotaitonLoop() {
+            this.lightRotaiton.x += 1;
+            this.lightRotaiton.y += 2;
+            this.lightRotaiton.z += 2;
+            this.rotationTarget.transform.localRotationEuler = this.lightRotaiton;
+        }
+    }
+
+    class Main {
+        constructor() {
+            if (window["Laya3D"])
+                Laya3D.init(GameConfig.width, GameConfig.height);
+            else
+                Laya.init(GameConfig.width, GameConfig.height, Laya["WebGL"]);
+            Laya["Physics"] && Laya["Physics"].enable();
+            Laya["DebugPanel"] && Laya["DebugPanel"].enable();
+            Laya.stage.scaleMode = GameConfig.scaleMode;
+            Laya.stage.screenMode = GameConfig.screenMode;
+            Laya.stage.alignV = GameConfig.alignV;
+            Laya.stage.alignH = GameConfig.alignH;
+            Laya.URL.exportSceneToJson = GameConfig.exportSceneToJson;
+            if (Laya.MiniAdpter)
+                Laya.MiniAdpter.autoCacheFile = false;
+            if (GameConfig.debug || Laya.Utils.getQueryString("debug") == "true")
+                Laya.enableDebugPanel();
+            if (GameConfig.physicsDebug && Laya["PhysicsDebugDraw"])
+                Laya["PhysicsDebugDraw"].enable();
+            if (GameConfig.stat)
+                Laya.Stat.show();
+            Laya.alertGlobalError(true);
+            this.scene = TestScene.create();
+            Laya.stage.addChild(this.scene);
+            var box = new Laya.MeshSprite3D(Laya.PrimitiveMesh.createQuad(2, 2), "box");
+            let material = new Laya.UnlitMaterial();
+            material.renderMode = Laya.UnlitMaterial.RENDERMODE_TRANSPARENT;
+            box.meshRenderer.material = material;
+            this.scene.addChild(box);
+            var gl = Laya['LayaGL'].instance;
+            var availableExtensions = gl.getSupportedExtensions();
+            var str = availableExtensions.join('\n');
+            str += "\nLaya.WebGL._isWebGL2=" + Laya.WebGL._isWebGL2 + "\n";
+            var availableExtensions = gl.getSupportedExtensions();
+            for (var i = 0; i < availableExtensions.length; i++) {
+                if (availableExtensions[i].indexOf('texture') >= 0
+                    && availableExtensions[i].indexOf('compressed') >= 0) {
+                    console.log(availableExtensions[i]);
+                    str += availableExtensions[i] + "\n";
+                    var tc = gl.getExtension(availableExtensions[i]);
+                    for (var key in tc) {
+                        var itemStr = key + "=0x" + tc[key].toString(16) + "(" + tc[key] + ")\n";
+                        str += itemStr;
+                        console.log(itemStr);
+                    }
+                }
+            }
+            var txt = new Laya.TextArea();
+            txt.text = str;
+            txt.width = Laya.stage.width - 40;
+            txt.height = Laya.stage.height - 40;
+            txt.x = 20;
+            txt.y = 20;
+            txt.color = "#ff0000";
+            Laya.stage.addChild(txt);
+            Laya.loader.load("http://192.168.15.39:8901/bin/2_8x8_yflip.astc", Laya.Handler.create(null, (tex) => {
+                material.albedoTexture = tex;
+            }));
+        }
+        onVersionLoaded() {
+            Laya.AtlasInfoManager.enable("fileconfig.json", Laya.Handler.create(this, this.onConfigLoaded));
+        }
+        onConfigLoaded() {
+            GameConfig.startScene && Laya.Scene.open(GameConfig.startScene);
+        }
+    }
+    new Main();
+
+}());
