@@ -134,3 +134,37 @@ function Delete(list: LinkList, index: int) {
 
     return result;
 }
+
+function Clear(list: LinkList) {
+    var node: Node | undefined = list.head;
+    while (node) {
+        var p: Node | undefined = node.next;
+        node.next = undefined;
+        node.data = undefined;
+        node = p;
+    }
+    list.last = list.head;
+    list.length = 0;
+}
+
+function SetLength(list: LinkList, length: int) {
+    if (list.length <= length) {
+        return;
+    }
+
+    var i = 0;
+    var node = list.head.next
+    while (node) {
+        i++;
+        var p = node.next;
+        if (i == length) {
+            list.last = node;
+        }
+        if (i > length) {
+            node.next = undefined;
+            node.data = undefined;
+        }
+        node = p;
+    }
+    list.length = length;
+}
