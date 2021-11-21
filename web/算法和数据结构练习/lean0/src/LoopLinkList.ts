@@ -1,6 +1,9 @@
+import { type } from "os";
 
+type ElemTypeT = number;
+type int = number;
 class LoopLinkNode {
-    data?: ElemType;
+    data?: ElemTypeT;
     next!: LoopLinkNode;
 }
 
@@ -10,7 +13,7 @@ class LoopLinkList {
     constructor() {
     }
 
-    static Init(list: LoopLinkList, ...elems: ElemType[]) {
+    static Init(list: LoopLinkList, ...elems: ElemTypeT[]) {
         for (var elem of elems) {
             var node = new LoopLinkNode();
             node.data = elem;
@@ -33,7 +36,7 @@ class LoopLinkList {
 
     }
 
-    static Insert(list: LoopLinkList, index: int, elem: ElemType) {
+    static Insert(list: LoopLinkList, index: int, elem: ElemTypeT) {
 
         if (!list.head) {
             throw new Error("没有初始化链表");
@@ -112,7 +115,7 @@ class LoopLinkList {
         }
     }
 
-    static GetIndex(list: LoopLinkList, elem: ElemType) {
+    static GetIndex(list: LoopLinkList, elem: ElemTypeT) {
         if (!list.head) {
             throw new Error("没有初始化链表");
             return;
@@ -130,7 +133,7 @@ class LoopLinkList {
     }
 
 
-    static GetIndex2(list: LoopLinkList, elem: ElemType) {
+    static GetIndex2(list: LoopLinkList, elem: ElemTypeT) {
         if (!list.head) {
             throw new Error("没有初始化链表");
             return;
@@ -153,4 +156,74 @@ class LoopLinkList {
         }
         return i;
     }
+
+    static Print(list: LoopLinkList) {
+
+        if (!list.head) {
+            throw new Error("没有初始化链表");
+            return;
+        }
+
+
+        var i = 1;
+        var node = list.head
+        var arr = [];
+        while (true) {
+            // console.log(`[${i}]=${node.data}`);
+            arr.push(node.data);
+            i++;
+            node = node.next;
+            if (node == list.head) {
+                break;
+            }
+        }
+        console.log(arr.join(', '));
+
+    }
+
+    static YSF(list: LoopLinkList, mode: int = 3) {
+        if (!list.head) {
+            throw new Error("没有初始化链表");
+            return;
+        }
+        var length = 1;
+        var node = list.head;
+        for (; node.next != list.head; node = node.next, length++) {
+
+        }
+
+        var m = mode;
+        var d = 0;
+        var node = list.head;
+        while (1) {
+            for (var j = 1; j < m - 1; j++) {
+                node = node.next;
+            }
+            var t = node.next;
+            node.next = t.next;
+            if (t == list.head) {
+                list.head = t.next;
+            }
+            d++;
+            console.log(d + "=>" + t.data);
+            this.Print(list);
+            node = node.next;
+
+
+            if (d == length) {
+                break;
+            }
+        }
+    }
 }
+
+var list = new LoopLinkList();
+var elems: ElemTypeT[] = [];
+for (var i = 1; i <= 41; i++) {
+    elems.push(i);
+}
+
+LoopLinkList.Init(list, ...elems);
+
+LoopLinkList.Print(list);
+LoopLinkList.YSF(list, 3);
