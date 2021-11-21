@@ -192,7 +192,7 @@ class LoopLinkList {
 
         }
 
-        var m = mode;
+        var m = mode / length;
         var d = 0;
         var node = list.head;
         while (1) {
@@ -215,6 +215,7 @@ class LoopLinkList {
             }
         }
     }
+
 }
 
 var list = new LoopLinkList();
