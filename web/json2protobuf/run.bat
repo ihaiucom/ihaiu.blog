@@ -1,0 +1,1 @@
+node ./bin/index.js --port=3000 --outdir="./_out"
