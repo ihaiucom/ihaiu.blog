@@ -3,3 +3,5 @@ package-lock.json
 unload
 outdir
 _out
+bin/excelconfig.bin
+bin/excelconfig.json
