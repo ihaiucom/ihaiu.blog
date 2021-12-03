@@ -1,8 +1,0 @@
-syntax = "proto3";
-
-package example;
-
-message Hello {
-  string name = 1;
-  int32 times = 2;
-}

@@ -10,6 +10,7 @@ commander
     .option("-p, --protoPath <protoPath>", "proto文件路径")
     .option("-j, --jsonPath <jsonPath>", "json文件路径")
     .option("-b, --bytesPath <bytesPath>", "导出的bytes文件路径")
+    .option("-o, --outPath2 <outPath2>", "导出的bytes文件路径2")
     .parse(process.argv);
 
 const options = commander.opts();
@@ -19,6 +20,7 @@ var cwdPath = cwd();
 var protoPath = options.protoPath ? options.protoPath : "./bin/excel.proto";
 var jsonPath = options.jsonPath ? options.jsonPath : "./bin/excelconfig.json";
 var bytesPath = options.bytesPath ? options.bytesPath : "./bin/excelconfig.bin";
+var outPath2 = options.outPath2;
 
 if (!path.isAbsolute(protoPath)) {
     protoPath = path.join(cwdPath, protoPath)
@@ -30,6 +32,10 @@ if (!path.isAbsolute(jsonPath)) {
 
 if (!path.isAbsolute(bytesPath)) {
     bytesPath = path.join(cwdPath, bytesPath)
+}
+
+if (outPath2 && !path.isAbsolute(outPath2)) {
+    outPath2 = path.join(cwdPath, outPath2)
 }
 
 
@@ -59,6 +65,13 @@ ProtoBuf.load(protoPath, (err, root?: ProtoBuf.Root) => {
     // const destination = StructType.decode(buffer);
 
     checkDir(bytesPath);
+    console.log(bytesPath);
 
     fs.writeFileSync(bytesPath, buffer, { encoding: 'binary', flag: "w" });
+
+    if (outPath2) {
+        checkDir(outPath2);
+        console.log(outPath2);
+        fs.writeFileSync(outPath2, buffer, { encoding: 'binary', flag: "w" });
+    }
 });
