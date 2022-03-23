@@ -1,2 +1,4 @@
-﻿.jekyll-cache
+.jekyll-cache
 _site
+web/json2protobuf/bin/excelconfig.bin
+web/json2protobuf/bin/excelconfig.json
