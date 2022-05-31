@@ -83,6 +83,27 @@ var Find;
             this.graph.setData(g);
         };
         FindWindow.prototype.testData_0 = function () {
+
+            let g = new GraphData();
+            g.x = [0,0,1,2,3,3,4]
+            g.y =[1,2,3,4,4,5,5]
+            g.w =[2,5,3,4,3,4,1]
+            g.nodeNum = 6;
+            g.edegeNum = g.x.length;
+            this.setData(g);
+            
+            // let g = new GraphData();
+            // g.x = [0, 0, 2, 2, 2, 3, 5, 1, 7, 6, 8];
+            // g.y = [2, 6, 5, 3, 4, 7, 1, 8, 8, 7, 9];
+            // g.w = [3, 5, 2, 2, 3, 2, 1, 4, 1, 1, 2];
+            // g.nodeNum = 10;
+            // g.edegeNum = g.x.length;
+            // this.setData(g);
+
+            // var json = '{"nodeNum":10,"edegeNum":11,"nodes":[{"pos":{"x":89,"y":77},"index":0},{"pos":{"x":276,"y":121},"index":1},{"pos":{"x":171,"y":119},"index":2},{"pos":{"x":176,"y":183},"index":3},{"pos":{"x":237,"y":168},"index":4},{"pos":{"x":241,"y":84},"index":5},{"pos":{"x":139,"y":229},"index":6},{"pos":{"x":226,"y":217},"index":7},{"pos":{"x":285,"y":176},"index":8},{"pos":{"x":342,"y":218},"index":9}],"x":[0,0,2,2,2,3,5,1,7,6,8],"y":[2,6,5,3,4,7,1,8,8,7,9],"w":[3,5,2,2,3,2,1,4,1,1,2]}';
+            // this.setJsonData(json);
+
+
             // let g = new GraphData();
             // g.x = [0, 1, 1, 2, 3];
             // g.y = [1, 2, 3, 4, 4];
@@ -90,8 +111,8 @@ var Find;
             // g.nodeNum = 4;
             // g.edegeNum = g.x.length;
             // this.setData(g);
-            var json = '{"nodeNum":5,"edegeNum":5,"nodes":[{"pos":{"x":143,"y":50},"index":0},{"pos":{"x":138,"y":133},"index":1},{"pos":{"x":104,"y":191},"index":2},{"pos":{"x":197,"y":242},"index":3},{"pos":{"x":140,"y":239},"index":4}],"x":[0,1,1,2,3],"y":[1,2,3,4,4],"w":[3,2,4,2,1]}';
-            this.setJsonData(json);
+            // var json = '{"nodeNum":5,"edegeNum":5,"nodes":[{"pos":{"x":143,"y":50},"index":0},{"pos":{"x":138,"y":133},"index":1},{"pos":{"x":104,"y":191},"index":2},{"pos":{"x":197,"y":242},"index":3},{"pos":{"x":140,"y":239},"index":4}],"x":[0,1,1,2,3],"y":[1,2,3,4,4],"w":[3,2,4,2,1]}';
+            // this.setJsonData(json);
         };
         FindWindow.prototype.testData_1 = function () {
             // let g = new GraphData();
