@@ -201,7 +201,7 @@
       t.x = 200;
       t.y = 200;
             Laya.stage.addChild(t);
-            var n = 100000;
+            var n = 10000;
             this.addLine(`n=${n}`);
             setTimeout(() => {
                 this.testList([
