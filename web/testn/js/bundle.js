@@ -198,6 +198,8 @@
             t.color = '#FFFFFF';
             t.strokeColor = '#000000';
             t.align = 'left';
+      t.x = 200;
+      t.y = 200;
             Laya.stage.addChild(t);
             var n = 100000;
             this.addLine(`n=${n}`);
