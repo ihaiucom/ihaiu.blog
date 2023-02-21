@@ -1,0 +1,23 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/test_console/bin/Debug/net5.0/test_console.dll",
+            "args":[],
+            "cwd": "${workspaceFolder}/test_console",
+            "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "name": "附加进程",
+            "type": "coreclr",
+            "request": "attach",
+            "processId":"${command:pickProcess}"
+        }
+    ]
+}
