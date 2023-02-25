@@ -3,7 +3,29 @@ namespace ZF
 {
     public class BaseModifier
     {
-        
+
+        #region event 事件
+        /// <summary>
+        /// 技能开始
+        /// </summary>
+        public virtual void OnAbilityStart(ModifierAbilityEvent e)
+        {
+        }
+
+        /// <summary>
+        /// 释放技能
+        /// </summary>
+        public virtual void OnAbilityExecuted(ModifierAbilityEvent e)
+        {
+        }
+
+        /// <summary>
+        /// 停止施法
+        /// </summary>
+        public virtual void OnAbilityEndChannel(ModifierAbilityEvent e)
+        {
+        }
+        #endregion
     }
 }
 

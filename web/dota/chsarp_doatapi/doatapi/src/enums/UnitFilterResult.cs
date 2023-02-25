@@ -1,5 +1,8 @@
 namespace ZF
 {
+    /// <summary>
+    /// 单位--过滤结果
+    /// </summary>
     public enum UnitFilterResult {
         SUCCESS = 0, // 成功
         FAIL_FRIENDLY = 1, // 失败:友好的

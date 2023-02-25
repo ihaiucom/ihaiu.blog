@@ -4,7 +4,25 @@ namespace ZF
 {
     public abstract class BaseAbility
     {
+
+
         #region event 事件
+        /// <summary>
+        /// 开始施法
+        /// </summary>
+        public virtual void OnSpellStart()
+        {
+
+        }
+
+        /// <summary>
+        /// 开始阶段，转身之前（如果铸造成功，则返回true）。
+        /// </summary>
+        public virtual bool OnAbilityPhaseStart()
+        {
+            return false;
+        }
+
         /// <summary>
         /// 当拥有者死亡
         /// </summary>
@@ -19,13 +37,6 @@ namespace ZF
             
         }
 
-
-        /// <summary>
-        /// 当技能施法开始
-        /// </summary>
-        public virtual void OnSpellStart() { 
-            
-        }
 
         /// <summary>
         /// 当持续性施法 吟唱
@@ -68,12 +79,6 @@ namespace ZF
             
         }
 
-        /// <summary>
-        /// 铸造时间开始（如果铸造成功，则返回true）。
-        /// </summary>
-        public virtual bool OnAbilityPhaseStart() {
-            return false;
-        }
 
         
         /// <summary>
