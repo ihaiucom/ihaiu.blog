@@ -3,8 +3,8 @@ namespace ZF
 {
     public enum DotaTeam
     {
-        GOODGUYS = 2, // 光明
-        BADGUYS = 3, // 黑暗
+        GOODGUYS = 2, // 天辉
+        BADGUYS = 3, // 	夜魇
         NEUTRALS = 4, // 中立
         NOTEAM = 5, // 无队伍
         CUSTOM_1 = 6,
