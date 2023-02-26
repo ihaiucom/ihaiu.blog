@@ -4,7 +4,7 @@ namespace ZF
     /// <summary>
     /// 属性
     /// </summary>
-    public enum Attributes
+    public enum HeroType
     {
         INVALID = -1, // 无效
         STRENGTH = 0, // 力量
