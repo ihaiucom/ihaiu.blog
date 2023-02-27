@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ZF
+{
+    /// <summary>
+    ///  https://developer.valvesoftware.com/wiki/Animation_Events#Server_events
+    /// </summary>
+    public enum SourceEngineAnimationEvent
+    {
+        EMPTY = 0,
+        CL_PLAYSOUND = 1,
+        CL_PLAYSOUND_ATTACHMENT = 2,
+        CL_PLAYSOUND_POSITION = 3,
+        SV_PLAYSOUND = 4,
+        CL_STOPSOUND = 5,
+        CL_PLAYSOUND_LOOPING = 6,
+        CLIENT_EFFECT_ATTACH = 7,
+        CL_CREATE_PARTICLE_EFFECT = 8,
+        CL_STOP_PARTICLE_EFFECT = 9,
+        CL_ADD_PARTICLE_EFFECT_CP = 10,
+        CL_CREATE_PARTICLE_EFFECT_CFG = 11,
+        CL_SUPPRESS_EVENTS_WITH_TAG = 12,
+        START_SCRIPTED_EFFECT = 13,
+        STOP_SCRIPTED_EFFECT = 14,
+        MUZZLEFLASH = 15,
+        SV_CREATE_PARTICLE_EFFECT_CFG = 16,
+        SV_STOP_PARTICLE_EFFECT = 17,
+        CL_HIDE_PARTICLE_EFFECT = 18,
+        CL_SHOW_PARTICLE_EFFECT = 19,
+        FOOTSTEP = 20,
+        CL_FOOTSTEP_LEFT = 21,
+        CL_FOOTSTEP_RIGHT = 22,
+        CL_MFOOTSTEP_LEFT = 23,
+        CL_MFOOTSTEP_RIGHT = 24,
+        CL_MFOOTSTEP_LEFT_LOUD = 25,
+        CL_MFOOTSTEP_RIGHT_LOUD = 26,
+        RAGDOLL = 27,
+        CL_ENABLE_BODYGROUP = 28,
+        CL_DISABLE_BODYGROUP = 29,
+        CL_BODYGROUP_SET_VALUE = 30,
+        SV_BODYGROUP_SET_VALUE = 31,
+        CL_BODYGROUP_SET_VALUE_CMODEL_WPN = 32,
+        WPN_PRIMARYATTACK = 33,
+        WPN_PLAYWPNSOUND = 34,
+        WPN_SECONDARYATTACK = 35,
+        CL_SPEECH = 36,
+        FIRE_INPUT = 37,
+        CL_CLOTH_ATTR = 38,
+        CL_CLOTH_GROUND_OFFSET = 39,
+        CL_CLOTH_STIFFEN = 40,
+        CL_CLOTH_EFFECT = 41,
+        CL_CREATE_ANIM_SCOPE_PROP = 42,
+        HAPTIC_PULSE = 43,
+        CL_DOTA_PLAY_STATUS_EFFECT = 44,
+        CL_DOTA_STOP_STATUS_EFFECT = 45,
+        CL_DOTA_NPC_CREATE_PARTICLE_EFFECT = 46,
+        CL_DOTA_RUBICK_ARCANA_CREATE_PARTICLE_EFFECT = 47,
+        DOTA_PET_ITEM_PICKUP = 48,
+        DOTA_PET_ITEM_DROP = 49,
+        DOTA_SUPPRESS_CONSTANT_LAYER = 50,
+        DOTA_PLAY_SOUND_ATTACK_SPECIAL = 51,
+        DOTA_CREATE_CLINKZ_ATTACK = 52,
+        DOTA_PLAY_SOUND_ATTACK_BACKSTAB = 53,
+        DOTA_DIE_PHANTOM_DEATH_PARTICLES = 54,
+        DOTA_SWITCH_ATTACK_COMBO = 55,
+        DOTA_PLAY_SOUND_ATTACK = 57,
+    }
+}
