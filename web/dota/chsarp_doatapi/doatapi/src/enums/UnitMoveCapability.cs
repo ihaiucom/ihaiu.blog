@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ZF
 {
+    /// <summary>
+    /// 移动设定
+    /// </summary>
     public enum UnitMoveCapability
     {
         NONE = 0,

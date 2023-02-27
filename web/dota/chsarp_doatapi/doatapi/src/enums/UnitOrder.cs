@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ZF
 {
+    /// <summary>
+    /// 单位命令类型
+    /// </summary>
     public enum UnitOrder
     {
         NONE = 0,

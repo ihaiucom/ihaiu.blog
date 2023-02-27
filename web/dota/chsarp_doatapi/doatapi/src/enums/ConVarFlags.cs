@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ZF
 {
+    /// <summary>
+    /// 控制台变量标签
+    /// </summary>
     public enum ConVarFlags
     {
         NONE = 0,

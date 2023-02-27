@@ -4,6 +4,10 @@ using System.Text;
 
 namespace ZF
 {
+    /// <summary>
+    /// http://www.dota2rpg.com/forum.php?mod=viewthread&tid=1423
+    /// 修改器状态
+    /// </summary>
     public enum ModifierState
     {
         ROOTED = 0,

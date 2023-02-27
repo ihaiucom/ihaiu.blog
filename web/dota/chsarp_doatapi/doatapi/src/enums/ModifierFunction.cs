@@ -4,6 +4,11 @@ using System.Text;
 
 namespace ZF
 {
+    /// <summary>
+    /// http://www.dota2rpg.com/forum.php?mod=viewthread&tid=1423
+    /// 修改器功能
+    /// 修改器事件
+    /// </summary>
     public enum ModifierFunction
     {
         /**

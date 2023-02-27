@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ZF
 {
+    /// <summary>
+    /// 神符类型
+    /// </summary>
     public enum RuneType
     {
         INVALID = -1,

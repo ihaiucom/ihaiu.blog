@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ZF
 {
+    /// <summary>
+    /// 修改器属性
+    /// </summary>
     public enum ModifierAttribute
     {
         NONE = 0,

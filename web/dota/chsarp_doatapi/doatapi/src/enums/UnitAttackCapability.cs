@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ZF
 {
+    /// <summary>
+    /// 攻击设定
+    /// </summary>
     public enum UnitAttackCapability
     {
         NO_ATTACK = 0,

@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ZF
 {
+    /// <summary>
+    /// 攻击记录
+    /// </summary>
     public enum AttackRecord
     {
 
