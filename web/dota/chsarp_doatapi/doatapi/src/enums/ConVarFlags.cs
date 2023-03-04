@@ -9,94 +9,90 @@ namespace ZF
     /// </summary>
     public enum ConVarFlags
     {
-        NONE = 0,
+        NONE = 0, // 无标志
         /**
-         * If this is set, the convar will become anonymous and won't show up in the
-         * 'find' results.
+         * 如果设置了此标志，ConVar 将成为匿名的，不会出现在“find”结果中。
          */
-        UNREGISTERED = 1,
-        DEVELOPMENTONLY = 2,
-        HIDDEN = 16,
-        /**
-         * Makes the ConVar value hidden from all clients (for example sv_password).
+        UNREGISTERED = 1, // 未注册
+        DEVELOPMENTONLY = 2, // 仅限开发
+        HIDDEN = 16, // 隐藏
+        /*
+         * 使 ConVar 值对所有客户端隐藏（例如 sv_password）。
          *
-         * Reported as "prot" by cvarlist.
+         * 在 cvarlist 中报告为“prot”。
          */
-        PROTECTED = 32,
-        /**
-         * Executing the command or changing the ConVar is only allowed in singleplayer.
+        PROTECTED = 32, // 受保护
+        /*
+         * 执行命令或更改 ConVar 仅在单人游戏中允许。
          *
-         * Reported as "sp" by cvarlist.
+         * 在 cvarlist 中报告为“sp”。
          */
-        SPONLY = 64,
-        /**
-         * Save the ConVar value into config.cfg.
+        SPONLY = 64, // 仅限单人游戏
+        /*
+         * 将 ConVar 值保存到 config.cfg 中。
          *
-         * Reported as "a" by cvarlist, except Lua ConVars.
+         * 在 cvarlist 中报告为“a”，除了 Lua ConVar。
          */
-        ARCHIVE = 128,
-        /**
-         * For serverside ConVars, notifies all players with blue chat text when the value
-         * gets changed.
+        ARCHIVE = 128, // 存档
+        /*
+         * 对于服务器端 ConVar，当值更改时，向所有玩家发送蓝色聊天文本通知。
          *
-         * Reported as "nf" by cvarlist.
+         * 在 cvarlist 中报告为“nf”。
          */
-        NOTIFY = 256,
-        /**
-         * For clientside commands, sends the value to the server.
+        NOTIFY = 256, // 通知
+        /*
+         * 对于客户端命令，将值发送到服务器。
          *
-         * Reported as "user" by cvarlist.
+         * 在 cvarlist 中报告为“user”。
          */
-        USERINFO = 512,
-        /**
-         * Forces the ConVar to only have printable characters (no control characters).
+        USERINFO = 512, // 用户信息
+        /*
+         * 强制 ConVar 仅具有可打印字符（无控制字符）。
          *
-         * Reported as "print" by cvarlist.
+         * 在 cvarlist 中报告为“print”。
          */
-        PRINTABLEONLY = 1024,
-        /**
-         * Don't log the ConVar changes to console/log files/users.
+        PRINTABLEONLY = 1024, // 仅限可打印字符
+        /*
+         * 不要将 ConVar 更改记录到控制台/日志文件/用户中。
          *
-         * Reported as "log" by cvarlist.
+         * 在 cvarlist 中报告为“log”。
          */
-        UNLOGGED = 2048,
-        /**
-         * Tells the engine to never print this variable as a string since it contains
-         * control sequences.
+        UNLOGGED = 2048, // 未记录
+        /*
+         * 告诉引擎永远不要将此变量打印为字符串，因为它包含控制序列。
          *
-         * Reported as "numeric" by cvarlist.
+         * 在 cvarlist 中报告为“numeric”。
          */
-        NEVER_AS_STRING = 4096,
-        /**
-         * For serverside ConVars, it will send its value to all clients. The ConVar with
-         * the same name must also exist on the client!
+        NEVER_AS_STRING = 4096, // 不作为字符串处理
+        /*
+         * 对于服务器端 ConVar，它将向所有客户端发送其值。客户端上也必须存在相同名称的 ConVar！
          *
-         * Reported as "rep" by cvarlist.
+         * 在 cvarlist 中报告为“rep”。
          */
-        REPLICATED = 8192,
-        /**
-         * Requires sv_cheats to be enabled to change the ConVar or run the command.
+        REPLICATED = 8192, // 已复制
+        /*
+         * 要更改 ConVar 或运行命令，需要启用 sv_cheats。
          *
-         * Reported as "cheat" by cvarlist.
+         * 在 cvarlist 中报告为“cheat”。
          */
-        CHEAT = 16384,
-        SS = 32768,
-        /**
-         * Force the ConVar to be recorded by demo recordings.
+        CHEAT = 16384, // 作弊
+        SS = 32768, // SS
+        /*
+         * 强制 ConVar 被演示记录。
          *
-         * Reported as "demo" by cvarlist.
+         * 在 cvarlist 中报告为“demo”。
          */
-        DEMO = 65536,
-        /**
-         * Opposite of FCVAR_DEMO, ensures the ConVar is not recorded in demos.
+        DEMO = 65536, // 演示
+        /*
+         * FCVAR_DEMO 的反义词，确保 ConVar 不会在演示中记录。
          *
-         * Reported as "norecord" by cvarlist.
+         * 在 cvarlist 中报告为“norecord”。
          */
-        DONTRECORD = 131072,
-        /**
-         * Makes the ConVar not changeable while connected to a server or in singleplayer.
+        DONTRECORD = 131072, // 不记录
+        /*
+         * 使 ConVar 在连接到服务器或在单人游戏中时无法更改。
          */
-        NOT_CONNECTED = 4194304,
-        VCONSOLE_SET_FOCUS = 1073741824,
+        NOT_CONNECTED = 4194304, // 未连接
+        VCONSOLE_SET_FOCUS = 1073741824, // VCONSOLE_SET_FOCUS
     }
 }
