@@ -14,223 +14,223 @@ namespace ZF
         /**
          * Method Name: `GetModifierPreAttack_BonusDamage`
          */
-        PREATTACK_BONUS_DAMAGE = 0,
+        PREATTACK_BONUS_DAMAGE = 0,  //增加攻击前附加的额外伤害
         /**
          * Method Name: `GetModifierPreAttack_BonusDamage_Target`
          */
-        PREATTACK_BONUS_DAMAGE_TARGET = 1,
+        PREATTACK_BONUS_DAMAGE_TARGET = 1, //攻击特定目标附加的额外伤害
         /**
          * Method Name: `GetModifierPreAttack_BonusDamage_Proc`
          */
-        PREATTACK_BONUS_DAMAGE_PROC = 2,
+        PREATTACK_BONUS_DAMAGE_PROC = 2,  //触发攻击前附加的额外伤害
         /**
          * Method Name: `GetModifierPreAttack_BonusDamagePostCrit`
          */
-        PREATTACK_BONUS_DAMAGE_POST_CRIT = 3,
+        PREATTACK_BONUS_DAMAGE_POST_CRIT = 3, //暴击后触发的攻击前附加的额外伤害
         /**
          * Method Name: `GetModifierBaseAttack_BonusDamage`
          */
-        BASEATTACK_BONUSDAMAGE = 4,
+        BASEATTACK_BONUSDAMAGE = 4,  //增加基础攻击力
         /**
          * Method Name: `GetModifierProcAttack_BonusDamage_Physical`
          */
-        PROCATTACK_BONUS_DAMAGE_PHYSICAL = 5,
+        PROCATTACK_BONUS_DAMAGE_PHYSICAL = 5,  //触发攻击附加的物理伤害
         /**
          * Method Name: `GetModifierProcAttack_ConvertPhysicalToMagical`
          */
-        PROCATTACK_CONVERT_PHYSICAL_TO_MAGICAL = 6,
+        PROCATTACK_CONVERT_PHYSICAL_TO_MAGICAL = 6,  //将物理伤害转化为魔法伤害
         /**
          * Method Name: `GetModifierProcAttack_BonusDamage_Magical`
          */
-        PROCATTACK_BONUS_DAMAGE_MAGICAL = 7,
+        PROCATTACK_BONUS_DAMAGE_MAGICAL = 7,  //触发攻击附加的魔法伤害
         /**
          * Method Name: `GetModifierProcAttack_BonusDamage_Pure`
          */
-        PROCATTACK_BONUS_DAMAGE_PURE = 8,
+        PROCATTACK_BONUS_DAMAGE_PURE = 8,   //触发攻击附加的纯粹伤害
         /**
          * Method Name: `GetModifierProcAttack_BonusDamage_Magical_Target`
          */
-        PROCATTACK_BONUS_DAMAGE_MAGICAL_TARGET = 9,
+        PROCATTACK_BONUS_DAMAGE_MAGICAL_TARGET = 9,  //攻击特定目标触发的魔法伤害
         /**
          * Method Name: `GetModifierProcAttack_Feedback`
          */
-        PROCATTACK_FEEDBACK = 10,
+        PROCATTACK_FEEDBACK = 10, //反弹攻击伤害
         /**
          * Method Name: `GetModifierOverrideAttackDamage`
          */
-        OVERRIDE_ATTACK_DAMAGE = 11,
+        OVERRIDE_ATTACK_DAMAGE = 11,    //覆盖攻击伤害
         /**
          * Method Name: `GetModifierPreAttack`
          */
-        PRE_ATTACK = 12,
+        PRE_ATTACK = 12,  //攻击前触发的效果
         /**
          * Method Name: `GetModifierInvisibilityLevel`
          */
-        INVISIBILITY_LEVEL = 13,
+        INVISIBILITY_LEVEL = 13,     //设置隐身等级
         /**
          * Method Name: `GetModifierInvisibilityAttackBehaviorException`
          */
-        INVISIBILITY_ATTACK_BEHAVIOR_EXCEPTION = 14,
+        INVISIBILITY_ATTACK_BEHAVIOR_EXCEPTION = 14,   //设定隐身攻击行为
         /**
          * Method Name: `GetModifierPersistentInvisibility`
          */
-        PERSISTENT_INVISIBILITY = 15,
+        PERSISTENT_INVISIBILITY = 15,  //持续隐身
         /**
          * Method Name: `GetModifierMoveSpeedBonus_Constant`
          */
-        MOVESPEED_BONUS_CONSTANT = 16,
+        MOVESPEED_BONUS_CONSTANT = 16,  //增加一个固定的移动速度值
         /**
          * Method Name: `GetModifierMoveSpeedOverride`
          */
-        MOVESPEED_BASE_OVERRIDE = 17,
+        MOVESPEED_BASE_OVERRIDE = 17,   //覆盖基础移动速度
         /**
          * Method Name: `GetModifierMoveSpeedBonus_Percentage`
          */
-        MOVESPEED_BONUS_PERCENTAGE = 18,
+        MOVESPEED_BONUS_PERCENTAGE = 18,  //增加一个百分比的移动速度
         /**
          * Method Name: `GetModifierMoveSpeedBonus_Percentage_Unique`
          */
-        MOVESPEED_BONUS_PERCENTAGE_UNIQUE = 19,
+        MOVESPEED_BONUS_PERCENTAGE_UNIQUE = 19,  //增加一个唯一的百分比移动速度
         /**
          * Method Name: `GetModifierMoveSpeedBonus_Special_Boots`
          */
-        MOVESPEED_BONUS_UNIQUE = 20,
+        MOVESPEED_BONUS_UNIQUE = 20, //增加一个唯一的移动速度值
         /**
          * Method Name: `GetModifierMoveSpeedBonus_Special_Boots_2`
          */
-        MOVESPEED_BONUS_UNIQUE_2 = 21,
+        MOVESPEED_BONUS_UNIQUE_2 = 21, //增加另一个唯一的移动速度值
         /**
          * Method Name: `GetModifierMoveSpeedBonus_Constant_Unique`
          */
-        MOVESPEED_BONUS_CONSTANT_UNIQUE = 22,
+        MOVESPEED_BONUS_CONSTANT_UNIQUE = 22,  //增加一个唯一的固定移动速度值
         /**
          * Method Name: `GetModifierMoveSpeedBonus_Constant_Unique_2`
          */
-        MOVESPEED_BONUS_CONSTANT_UNIQUE_2 = 23,
+        MOVESPEED_BONUS_CONSTANT_UNIQUE_2 = 23,  //增加另一个唯一的固定移动速度值
         /**
          * Method Name: `GetModifierMoveSpeed_Absolute`
          */
-        MOVESPEED_ABSOLUTE = 24,
+        MOVESPEED_ABSOLUTE = 24,  //设置一个绝对的移动速度值
         /**
          * Method Name: `GetModifierMoveSpeed_AbsoluteMin`
          */
-        MOVESPEED_ABSOLUTE_MIN = 25,
+        MOVESPEED_ABSOLUTE_MIN = 25,  //设置一个最小的绝对移动速度值
         /**
          * Method Name: `GetModifierMoveSpeed_AbsoluteMax`
          */
-        MOVESPEED_ABSOLUTE_MAX = 26,
+        MOVESPEED_ABSOLUTE_MAX = 26,  //设置一个最大的绝对移动速度值
         /**
          * Method Name: `GetModifierIgnoreMovespeedLimit`
          */
-        IGNORE_MOVESPEED_LIMIT = 27,
+        IGNORE_MOVESPEED_LIMIT = 27,  //忽略移动速度上限
         /**
          * Method Name: `GetModifierMoveSpeed_Limit`
          */
-        MOVESPEED_LIMIT = 28,
+        MOVESPEED_LIMIT = 28,   //设置移动速度上限
         /**
          * Method Name: `GetModifierAttackSpeedBaseOverride`
          */
-        ATTACKSPEED_BASE_OVERRIDE = 29,
+        ATTACKSPEED_BASE_OVERRIDE = 29,   //覆盖基础攻击速度
         /**
          * Method Name: `GetModifierFixedAttackRate`
          */
-        FIXED_ATTACK_RATE = 30,
+        FIXED_ATTACK_RATE = 30,   //设置一个固定的攻击速度
         /**
          * Method Name: `GetModifierAttackSpeedBonus_Constant`
          */
-        ATTACKSPEED_BONUS_CONSTANT = 31,
+        ATTACKSPEED_BONUS_CONSTANT = 31,   //增加一个固定的攻击速度值
         /**
          * Method Name: `GetModifierAttackSpeed_Limit`
          */
-        IGNORE_ATTACKSPEED_LIMIT = 32,
+        IGNORE_ATTACKSPEED_LIMIT = 32,  //忽略攻击速度上限
         /**
          * Method Name: `GetModifierCooldownReduction_Constant`
          */
-        COOLDOWN_REDUCTION_CONSTANT = 33,
+        COOLDOWN_REDUCTION_CONSTANT = 33,   //减少技能冷却时间
         /**
          * Method Name: `GetModifierManacostReduction_Constant`
          */
-        MANACOST_REDUCTION_CONSTANT = 34,
+        MANACOST_REDUCTION_CONSTANT = 34,     //减少技能魔法消耗
         /**
          * Method Name: `GetModifierBaseAttackTimeConstant`
          */
-        BASE_ATTACK_TIME_CONSTANT = 35,
+        BASE_ATTACK_TIME_CONSTANT = 35,  //设置一个基础攻击间隔时间
         /**
          * Method Name: `GetModifierBaseAttackTimeConstant_Adjust`
          */
-        BASE_ATTACK_TIME_CONSTANT_ADJUST = 36,
+        BASE_ATTACK_TIME_CONSTANT_ADJUST = 36, //调整基础攻击间隔时间
         /**
          * Method Name: `GetModifierBaseAttackTimePercentage`
          */
-        BASE_ATTACK_TIME_PERCENTAGE = 37,
+        BASE_ATTACK_TIME_PERCENTAGE = 37,    //增加一个百分比的攻击间隔时间
         /**
          * Method Name: `GetModifierAttackPointConstant`
          */
-        ATTACK_POINT_CONSTANT = 38,
+        ATTACK_POINT_CONSTANT = 38,   //设置一个基础攻击前摇时间
         /**
          * Method Name: `GetModifierBonusDamageOutgoing_Percentage`
          */
-        BONUSDAMAGEOUTGOING_PERCENTAGE = 39,
+        BONUSDAMAGEOUTGOING_PERCENTAGE = 39,   //增加一个百分比的物理伤害
         /**
          * Method Name: `GetModifierDamageOutgoing_Percentage`
          */
-        DAMAGEOUTGOING_PERCENTAGE = 40,
+        DAMAGEOUTGOING_PERCENTAGE = 40,    //增加一个百分比的伤害
         /**
          * Method Name: `GetModifierDamageOutgoing_Percentage_Illusion`
          */
-        DAMAGEOUTGOING_PERCENTAGE_ILLUSION = 41,
+        DAMAGEOUTGOING_PERCENTAGE_ILLUSION = 41,  //增加一个百分比的幻象伤害
         /**
          * Method Name: `GetModifierDamageOutgoing_Percentage_Illusion_Amplify`
          */
-        DAMAGEOUTGOING_PERCENTAGE_ILLUSION_AMPLIFY = 42,
+        DAMAGEOUTGOING_PERCENTAGE_ILLUSION_AMPLIFY = 42, //增加一个幻象伤害加成
         /**
          * Method Name: `GetModifierTotalDamageOutgoing_Percentage`
          */
-        TOTALDAMAGEOUTGOING_PERCENTAGE = 43,
+        TOTALDAMAGEOUTGOING_PERCENTAGE = 43,  //增加一个总体伤害加成
         /**
          * Method Name: `GetModifierSpellAmplify_PercentageCreep`
          */
-        SPELL_AMPLIFY_PERCENTAGE_CREEP = 44,
+        SPELL_AMPLIFY_PERCENTAGE_CREEP = 44,  //增加一个百分比的对野怪技能加成
         /**
          * Method Name: `GetModifierSpellAmplify_Percentage`
          */
-        SPELL_AMPLIFY_PERCENTAGE = 45,
+        SPELL_AMPLIFY_PERCENTAGE = 45,  //增加一个百分比的技能加成
         /**
          * Method Name: `GetModifierSpellAmplify_PercentageUnique`
          */
-        SPELL_AMPLIFY_PERCENTAGE_UNIQUE = 46,
+        SPELL_AMPLIFY_PERCENTAGE_UNIQUE = 46,   //增加一个唯一的技能加成
         /**
          * Method Name: `GetModifierHealAmplify_PercentageSource`
          */
-        HEAL_AMPLIFY_PERCENTAGE_SOURCE = 47,
+        HEAL_AMPLIFY_PERCENTAGE_SOURCE = 47, //增加一个百分比的治疗加成（来源）
         /**
          * Method Name: `GetModifierHealAmplify_PercentageTarget`
          */
-        HEAL_AMPLIFY_PERCENTAGE_TARGET = 48,
+        HEAL_AMPLIFY_PERCENTAGE_TARGET = 48,   //增加一个百分比的治疗加成（目标）
         /**
          * Method Name: `GetModifierHPRegen_CanBeNegative`
          */
-        HP_REGEN_CAN_BE_NEGATIVE = 49,
+        HP_REGEN_CAN_BE_NEGATIVE = 49,   //允许生命回复为负值
         /**
          * Method Name: `GetModifierHPRegenAmplify_Percentage`
          */
-        HP_REGEN_AMPLIFY_PERCENTAGE = 50,
+        HP_REGEN_AMPLIFY_PERCENTAGE = 50,   //增加一个百分比的生命回复加成
         /**
          * Method Name: `GetModifierLifestealRegenAmplify_Percentage`
          */
-        LIFESTEAL_AMPLIFY_PERCENTAGE = 51,
+        LIFESTEAL_AMPLIFY_PERCENTAGE = 51,     //增加一个百分比的吸血加成
         /**
          * Method Name: `GetModifierSpellLifestealRegenAmplify_Percentage`
          */
-        SPELL_LIFESTEAL_AMPLIFY_PERCENTAGE = 52,
+        SPELL_LIFESTEAL_AMPLIFY_PERCENTAGE = 52,   //增加一个百分比的技能吸血加成
         /**
          * Method Name: `GetModifierMPRegenAmplify_Percentage`
          */
-        MP_REGEN_AMPLIFY_PERCENTAGE = 53,
+        MP_REGEN_AMPLIFY_PERCENTAGE = 53,    //增加一个百分比的魔法回复加成
         /**
          * Method Name: `GetModifierManaDrainAmplify_Percentage`
          */
-        MANA_DRAIN_AMPLIFY_PERCENTAGE = 54,
+        MANA_DRAIN_AMPLIFY_PERCENTAGE = 54,   //增加一个百分比的魔法吸收加成
         /**
          * Total amplify value is clamped to 0.
          *

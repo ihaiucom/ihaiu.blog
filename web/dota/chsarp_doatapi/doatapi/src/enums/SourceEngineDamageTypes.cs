@@ -10,108 +10,107 @@ namespace ZF
     public enum SourceEngineDamageTypes
     {
         /**
-        * Generic damage.
+        * 通用伤害。
         */
         GENERIC = 0,
         /**
-         * Caused by physics interaction. Ignored by airboat drivers.
+         * 由物理相互作用引起的伤害。忽略空气船驾驶员。
          */
         CRUSH = 1,
         /**
-         * Bullet damage.
+         * 子弹伤害。
          */
         BULLET = 2,
         /**
-         * Sharp objects, such as Manhacks or other NPCs attacks.
+         * 利器造成的伤害，例如Manhacks或其他NPC的攻击。
          */
         SLASH = 4,
         /**
-         * Damage from fire.
+         * 火焰伤害。
          */
         BURN = 8,
         /**
-         * Hit by a vehicle. This will need to be set for passengers of some vehicle to
-         * receive damage.
+         * 被车辆撞击。这需要为某些车辆的乘客设置以接收伤害。
          */
         VEHICLE = 16,
         /**
-         * Fall damage.
+         * 跌落伤害。
          */
         FALL = 32,
         /**
-         * Explosion damage. Will be ignored by most vehicle passengers.
+         * 爆炸伤害。大多数车辆乘客将忽略。
          */
         BLAST = 64,
         /**
-         * Crowbar damage.
+         * 铁棒伤害。
          */
         CLUB = 128,
         /**
-         * Electrical damage, shows smoke at the damage position.
+         * 电击伤害，在伤害位置显示烟雾。
          */
         SHOCK = 256,
         /**
-         * Sonic damage,used by the Gargantua and Houndeye NPCs.
+         * 声波伤害，由Gargantua和Houndeye NPC使用。
          */
         SONIC = 512,
         /**
-         * Laser.
+         * 激光。
          */
         ENERGYBEAM = 1024,
         /**
-         * Prevent a physics force.
+         * 防止物理力量。
          */
         PREVENT_PHYSICS_FORCE = 2048,
         /**
-         * Never creates gibs. Used by the crossbow.
+         * 从不创建碎片。由十字弓使用。
          */
         NEVERGIB = 4096,
         /**
-         * Always create gibs.
+         * 总是创建碎片。
          */
         ALWAYSGIB = 8192,
         /**
-         * Drown damage.
+         * 淹死伤害。
          */
         DROWN = 16384,
         /**
-         * Same as DMG_POISON.
+         * 与DMG_POISON相同。
          */
         PARALYZE = 32768,
         /**
-         * Neurotoxin damage.
+         * 神经毒气伤害。
          */
         NERVEGAS = 65536,
         /**
-         * Poison damage.
+         * 毒药伤害。
          */
         POISON = 131072,
         /**
-         * Radiation. Will be ignored by most vehicle passengers.
+         * 辐射。大多数车辆乘客将忽略。
          */
         RADIATION = 262144,
         /**
-         * Damage applied to the player to restore health after drowning.
+         * 在淹水后应用于玩家以恢复健康的伤害。
          */
         DROWNRECOVER = 524288,
         /**
-         * Toxic chemicals or acid burns.
+         * 有毒化学物质或酸灼伤。
          */
         ACID = 1048576,
         /**
-         * In an oven.
+         * 在烤箱中。
          */
         SLOWBURN = 2097152,
         /**
-         * Don't create a ragdoll on death.
+         * 在死亡时不要创建布娃娃。
          */
         REMOVENORAGDOLL = 4194304,
         /**
-         * Damage done by the gravity gun.
+         * 重力枪造成的伤害。
          */
         PHYSGUN = 8388608,
         /**
-         * Plasma.
+         * 等离子体。
          */
         PLASMA = 16777216,
     }
