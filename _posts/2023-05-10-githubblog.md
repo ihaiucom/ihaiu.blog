@@ -232,7 +232,9 @@ paginate: 20 #设置分页，每页数量
 
 # 3.评论
 
+[utterances](https://utteranc.es/)
 
+[博客使用 utterances 作为评论系统 - 掘金 (juejin.cn)](https://juejin.cn/post/6844903834712539150)
 
 
 
