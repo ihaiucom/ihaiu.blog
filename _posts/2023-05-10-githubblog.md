@@ -225,12 +225,14 @@ paginate: 20 #设置分页，每页数量
 
 
 
+# 3.语法高亮
+
+![image-20230511021809775](_img/2023-05-10-githubblog/image-20230511021809775.png)
 
 
 
 
-
-# 3.评论
+# 4.评论
 
 [utterances](https://utteranc.es/)
 
@@ -240,7 +242,7 @@ paginate: 20 #设置分页，每页数量
 
 
 
-# 4.编辑器工具
+# 5.编辑器工具
 
 [Typora 官方中文站 (typoraio.cn)](https://typoraio.cn/)
 
