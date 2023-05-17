@@ -51,7 +51,7 @@ sh_cpp: true
 # 1.github设置
 ### 1.1 设置启用page
 
-![image-20230510141833802](_img/2023-05-10-githubblog/image-20230510141833802.png)
+![image-20230510141833802](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510141833802.png)
 
 ```
 设置完分支，就可以用这个地址访问了。
@@ -62,7 +62,7 @@ https://${用户名}.github.io/test.blog/
 
 [https://ihaiucom.github.io/test.blog/](https://ihaiucom.github.io/test.blog/)
 
-![image-20230510144645029](_img/2023-05-10-githubblog/image-20230510144645029.png)
+![image-20230510144645029](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510144645029.png)
 
 **访问文件优先级:**
 
@@ -72,23 +72,23 @@ index.html > index.md > README.md
 
 ### 1.2 设置自己的域名
 
-![image-20230510151106746](_img/2023-05-10-githubblog/image-20230510151106746.png)
+![image-20230510151106746](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510151106746.png)
 
 
 
-![image-20230510151233349](_img/2023-05-10-githubblog/image-20230510151233349.png)
+![image-20230510151233349](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510151233349.png)
 
 
 
 配置完会添加一个文件CNAME
 
-![image-20230510154924321](_img/2023-05-10-githubblog/image-20230510154924321.png)
+![image-20230510154924321](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510154924321.png)
 
 
 
 [https://blog.zs.center](https://blog.zs.center/)
 
-![image-20230510154016994](_img/2023-05-10-githubblog/image-20230510154016994.png)
+![image-20230510154016994](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510154016994.png)
 
 
 # 2.用Jekyll来配置生成静态网站框架
@@ -116,29 +116,29 @@ index.html > index.md > README.md
 
 ### 2.2 _layouts 模板
 
-![image-20230510190623847](_img/2023-05-10-githubblog/image-20230510190623847.png)
+![image-20230510190623847](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510190623847.png)
 
-![image-20230510190944836](_img/2023-05-10-githubblog/image-20230510190944836.png)
+![image-20230510190944836](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510190944836.png)
 
-![image-20230510191047786](_img/2023-05-10-githubblog/image-20230510191047786.png)
-
-
-
-![image-20230510191206926](_img/2023-05-10-githubblog/image-20230510191206926.png)
+![image-20230510191047786](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510191047786.png)
 
 
 
-![image-20230510193142325](_img/2023-05-10-githubblog/image-20230510193142325.png)
+![image-20230510191206926](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510191206926.png)
 
-![image-20230510193308218](_img/2023-05-10-githubblog/image-20230510193308218.png)
+
+
+![image-20230510193142325](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510193142325.png)
+
+![image-20230510193308218](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510193308218.png)
 
 
 
 ### 2.3  _includes 模块
 
-![image-20230510192321365](_img/2023-05-10-githubblog/image-20230510192321365.png)
+![image-20230510192321365](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510192321365.png)
 
-![image-20230510192626315](_img/2023-05-10-githubblog/image-20230510192626315.png)
+![image-20230510192626315](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510192626315.png)
 
 
 
@@ -148,7 +148,7 @@ index.html > index.md > README.md
 
 
 
-![image-20230510224004703](_img/2023-05-10-githubblog/image-20230510224004703.png)
+![image-20230510224004703](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510224004703.png)
 
 #### 显示文章目录
 
@@ -158,15 +158,15 @@ https://blog.zs.center/index-posts/#content
 
 ```html
 <ul>
-  {% for post in site.posts %}
+  { % for post in site.posts % }
     <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
+      <a href="{{ post.url }}">{ { post.title } }</a>
     </li>
-  {% endfor %}
+  { % endfor % }
 </ul>
 ```
 
-![image-20230510223536341](_img/2023-05-10-githubblog/image-20230510223536341.png)
+![image-20230510223536341](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230510223536341.png)
 
 
 
@@ -191,16 +191,16 @@ permalink: /:title/
 
 [头信息 - Jekyll • 简单静态博客网站生成器 (jekyllcn.com)](http://jekyllcn.com/docs/frontmatter/)
 
-![image-20230511000815445](_img/2023-05-10-githubblog/image-20230511000815445.png)
+![image-20230511000815445](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230511000815445.png)
 
 ### 2.6 语法
 
 #### for
 
 ```html
-{% for post in site.posts %}
-      <a href="{{ post.url }}">{{ post.title }}</a>
-{% endfor %}
+{ % for post in site.posts % }
+      <a href="{ { post.url } }">{ { post.title } }</a>
+{ % endfor % }
 ```
 
 
@@ -221,13 +221,13 @@ _config.yml
 paginate: 20 #设置分页，每页数量
 ```
 
-![image-20230511003651360](_img/2023-05-10-githubblog/image-20230511003651360.png)
+![image-20230511003651360](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230511003651360.png)
 
 
 
 # 3.语法高亮
 
-![image-20230511021809775](_img/2023-05-10-githubblog/image-20230511021809775.png)
+![image-20230511021809775](https://blog.ihaiu.com/assets/docpic/2023-05-10-githubblog/image-20230511021809775.png)
 
 
 
