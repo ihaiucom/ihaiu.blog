@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ZF
 {
-    // 枚举属性衍生状态
+    // 枚举属性加成状态
     public enum AttributeDerivedStats
     {
         STRENGTH_DAMAGE = 0, // 力量对伤害的加成
