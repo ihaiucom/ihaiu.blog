@@ -79,7 +79,7 @@ namespace Zeng.war3.runtimes.datas
 
 ```
 
-![image-20231027002705717](01_war3_unity_map.assets/image-20231027002705717.png)
+![image-20231027002705717](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027002705717.png)
 
 #### 2.2 地形Mesh
 
@@ -120,7 +120,7 @@ namespace Zeng.war3.runtimes.datas
         }
 ```
 
-![image-20231027003854266](01_war3_unity_map.assets/image-20231027003854266.png)
+![image-20231027003854266](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027003854266.png)
 
 
 
@@ -231,9 +231,9 @@ Shader "Zeng/war3/MapGround"
 
 ```
 
-![image-20231027012411290](01_war3_unity_map.assets/image-20231027012411290.png)
+![image-20231027012411290](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027012411290.png)
 
-![image-20231027012338564](01_war3_unity_map.assets/image-20231027012338564.png)
+![image-20231027012338564](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027012338564.png)
 
 
 
@@ -241,9 +241,9 @@ Shader "Zeng/war3/MapGround"
 
 我们把中心点偏移加上
 
-![image-20231027013112574](01_war3_unity_map.assets/image-20231027013112574.png)
+![image-20231027013112574](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027013112574.png)
 
-![image-20231027013158679](01_war3_unity_map.assets/image-20231027013158679.png)
+![image-20231027013158679](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027013158679.png)
 
 
 
@@ -253,21 +253,21 @@ Shader "Zeng/war3/MapGround"
 
 [Graphics - Unity 脚本 API](https://docs.unity.cn/cn/2019.4/ScriptReference/Graphics.html)
 
-![image-20231027004633297](01_war3_unity_map.assets/image-20231027004633297.png)
+![image-20231027004633297](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027004633297.png)
 
 [Graphics-DrawMeshInstanced - Unity 脚本 API](https://docs.unity.cn/cn/2019.4/ScriptReference/Graphics.DrawMeshInstanced.html)
 
-![image-20231027004756162](01_war3_unity_map.assets/image-20231027004756162.png)
+![image-20231027004756162](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027004756162.png)
 
 [Graphics-DrawMeshInstancedIndirect - Unity 脚本 API](https://docs.unity.cn/cn/2019.4/ScriptReference/Graphics.DrawMeshInstancedIndirect.html)
 
-![image-20231027005056175](01_war3_unity_map.assets/image-20231027005056175.png)
+![image-20231027005056175](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027005056175.png)
 
-![image-20231027005140781](01_war3_unity_map.assets/image-20231027005140781.png)
+![image-20231027005140781](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027005140781.png)
 
 [Graphics-DrawMeshInstancedProcedural - Unity 脚本 API](https://docs.unity.cn/cn/2019.4/ScriptReference/Graphics.DrawMeshInstancedProcedural.html)
 
-![image-20231027005340158](01_war3_unity_map.assets/image-20231027005340158.png)
+![image-20231027005340158](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027005340158.png)
 
 ```
 
@@ -279,7 +279,7 @@ Shader "Zeng/war3/MapGround"
 
 首先我们要有每个瓦片的高度数据。
 
-![image-20231027014657746](01_war3_unity_map.assets/image-20231027014657746.png)
+![image-20231027014657746](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027014657746.png)
 
 需要把数据传给shader。有2种方式：
 
@@ -292,21 +292,21 @@ Shader "Zeng/war3/MapGround"
 
 
 
-![image-20231027020743874](01_war3_unity_map.assets/image-20231027020743874.png)
+![image-20231027020743874](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027020743874.png)
 
-![image-20231027021100675](01_war3_unity_map.assets/image-20231027021100675.png)
+![image-20231027021100675](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027021100675.png)
 
-![image-20231027020428599](01_war3_unity_map.assets/image-20231027020428599.png)
+![image-20231027020428599](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027020428599.png)
 
-![image-20231027021125544](01_war3_unity_map.assets/image-20231027021125544.png)
+![image-20231027021125544](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027021125544.png)
 
-![image-20231027021207736](01_war3_unity_map.assets/image-20231027021207736.png)
+![image-20231027021207736](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027021207736.png)
 
 如果直接用instanceID，看一下效果
 
-r![image-20231027021313090](01_war3_unity_map.assets/image-20231027021313090.png)
+r![image-20231027021313090](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027021313090.png)
 
-![image-20231027021404875](01_war3_unity_map.assets/image-20231027021404875.png)
+![image-20231027021404875](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027021404875.png)
 
 表现的结果是，因为每行x多1列，导致整体索引错位。
 
@@ -339,7 +339,7 @@ r![image-20231027021313090](01_war3_unity_map.assets/image-20231027021313090.png
         }
 ```
 
-![image-20231027022352329](01_war3_unity_map.assets/image-20231027022352329.png)
+![image-20231027022352329](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027022352329.png)
 
 
 
@@ -391,13 +391,13 @@ r![image-20231027021313090](01_war3_unity_map.assets/image-20231027021313090.png
         }
 ```
 
-![image-20231027022832922](01_war3_unity_map.assets/image-20231027022832922.png)
+![image-20231027022832922](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027022832922.png)
 
 
 
 修改我们的shader, 并且把贴图赋值给材质
 
-![image-20231027024124231](01_war3_unity_map.assets/image-20231027024124231.png)
+![image-20231027024124231](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027024124231.png)
 
 ```C#
 // 高度贴图
@@ -406,13 +406,13 @@ instanceMaterial.SetTexture("u_heightMap", mapData.groupData.cornerHeightTexture
 
 
 
-![image-20231027024252114](01_war3_unity_map.assets/image-20231027024252114.png)
+![image-20231027024252114](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027024252114.png)
 
 
 
 和ComputeBuffer相比，贴图自动帮我们做了差值。
 
-![image-20231027024358685](01_war3_unity_map.assets/image-20231027024358685.png)
+![image-20231027024358685](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027024358685.png)
 
 #### 2.5 地面贴图
 
@@ -635,15 +635,15 @@ public class TileMap : MonoBehaviour
 
 ```
 
-![img](01_war3_unity_map.assets/img_v2_cf84f917-f101-4b60-9dd4-ac23feec248g.gif)
+![img](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/img_v2_cf84f917-f101-4b60-9dd4-ac23feec248g.gif)
 
-![image-20231027031551635](01_war3_unity_map.assets/image-20231027031551635.png)
+![image-20231027031551635](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027031551635.png)
 
-![img](01_war3_unity_map.assets/img_v2_d25068d5-bfad-4db0-afdc-523a6f88a23g.gif)
+![img](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/img_v2_d25068d5-bfad-4db0-afdc-523a6f88a23g.gif)
 
 ##### 贴图和数据之间的关系
 
-![image-20231027030832487](01_war3_unity_map.assets/image-20231027030832487.png)
+![image-20231027030832487](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027030832487.png)
 
 
 
@@ -689,7 +689,7 @@ unity 多张贴图有两种方式：
         }
 ```
 
-![img](01_war3_unity_map.assets/img_v2_7e54287d-36b5-4683-b733-e814031c7eeg.gif)
+![img](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/img_v2_7e54287d-36b5-4683-b733-e814031c7eeg.gif)
 
 
 
@@ -721,7 +721,7 @@ unity 多张贴图有两种方式：
 
 计算UV
 
-![image-20231027041145539](01_war3_unity_map.assets/image-20231027041145539.png)
+![image-20231027041145539](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027041145539.png)
 
 
 
@@ -740,9 +740,9 @@ unity 多张贴图有两种方式：
             }
 ```
 
-![image-20231027041547632](01_war3_unity_map.assets/image-20231027041547632.png)
+![image-20231027041547632](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027041547632.png)
 
-![image-20231027041623796](01_war3_unity_map.assets/image-20231027041623796.png)
+![image-20231027041623796](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027041623796.png)
 
 混合贴图
 
@@ -1095,9 +1095,9 @@ namespace Zeng.war3.runtimes.views
 
 
 
-![image-20231027042421553](01_war3_unity_map.assets/image-20231027042421553.png)
+![image-20231027042421553](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027042421553.png)
 
-![image-20231027042455478](01_war3_unity_map.assets/image-20231027042455478.png)
+![image-20231027042455478](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027042455478.png)
 
 
 
@@ -1540,9 +1540,9 @@ namespace Zeng.war3.runtimes.views
 
 #### 2.6 地面镂空
 
-![image-20231027044200749](01_war3_unity_map.assets/image-20231027044200749.png)
+![image-20231027044200749](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027044200749.png)
 
-![image-20231027044221398](01_war3_unity_map.assets/image-20231027044221398.png)
+![image-20231027044221398](https://blog.ihaiu.com/web/mdx_map/01_war3_unity_map.assets/image-20231027044221398.png)
 
 
 
