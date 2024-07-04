@@ -549,6 +549,433 @@ Shader "ExampleShader" {
 
 
 
+## Pass
+
+[ShaderLab：定义一个通道 - Unity 手册](https://docs.unity.cn/cn/2023.2/Manual/SL-Pass.html)
+
+
+```glsl
+
+        Pass
+        {
+            Name "ZfPass"
+            
+            Tags { 
+                // 光照模型标签，
+                //   URP [UniversalForward, UniversalGBuffer, UniversalForwardOnly, Universal2D, ShadowCaster, DepthOnly, Meta, SRPDefaultUnlit]
+                //   内置渲染管线 [Always, ForwardBase, ForwardAdd, Deferred, ShadowCaster, MotionVectors, Vertex, VertexLMRGBM, VertexLM, DeptMeta]
+                "LightMode" = "UniversalForward"
+            }
+            
+            // 在此编写设置渲染状态的 ShaderLab 命令
+
+            HLSLPROGRAM
+            	// 在此编写 HLSL 着色器代码
+            ENDHLSL
+        }
+```
+
+
+### Pass Name 
+
+[ShaderLab：为通道指定名称 - Unity 手册](https://docs.unity.cn/cn/2023.2/Manual/SL-Name.html)
+
+```glsl
+Shader "Examples/ContainsNamedPass"
+{
+    SubShader
+    {
+        Pass
+        {    
+              Name "ExampleNamedPass"
+            
+              // 此处是定义通道的代码的其余部分。
+        }
+    }
+}
+```
+
+```c#
+using UnityEngine;
+
+public class GetPassName : MonoBehaviour
+{
+    // 将此脚本放置在具有 MeshRenderer 组件的游戏对象上
+    
+    void Start() {
+        // 获取材质
+        var material = GetComponent<MeshRenderer>().material;
+
+        // 获取为该材质分配的 Shader 对象的
+        // 活动子着色器中第一个通道的名称
+        var passName = material.GetPassName(0);
+
+        // 将名称打印到控制台
+        Debug.Log(passName);
+    }
+}
+```
+
+
+
+### Pass Tags
+
+[ShaderLab：为通道分配标签。 - Unity 手册](https://docs.unity.cn/cn/current/Manual/SL-PassTags.html)
+
+
+
+
+#### LightMode 标签
+
+[ShaderLab：内置渲染管线中的预定义通道标签 - Unity 手册](https://docs.unity.cn/cn/current/Manual/shader-predefined-pass-tags-built-in.html)
+
+[URP ShaderLab Pass tags | Universal RP | 11.0.0 (unity.cn)](https://docs.unity.cn/Packages/com.unity.render-pipelines.universal@11.0/manual/urp-shaders/urp-shaderlab-pass-tags.html#urp-pass-tags-lightmode)
+
+##### 内置渲染管线中
+
+这些是内置渲染管线中 `LightMode` 通道标签的有效值。有关 LightMode 标签的更多信息，请参阅 [ShaderLab：使用通道标签](https://docs.unity.cn/cn/current/Manual/SL-PassTags.html)。
+
+| **值**          | **功能**                                                     |
+| :-------------- | :----------------------------------------------------------- |
+| `Always`        | 始终渲染；不应用任何光照。这是默认值。                       |
+| `ForwardBase`   | 在前向渲染中使用；应用环境光、主方向光、顶点/SH 光源和光照贴图。 |
+| `ForwardAdd`    | 在前向渲染中使用；应用附加的每像素光源（每个光源有一个通道）。 |
+| `Deferred`      | 在延迟渲染中使用；渲染 G 缓冲区。                            |
+| `ShadowCaster`  | 将对象深度渲染到阴影贴图或深度纹理中。                       |
+| `MotionVectors` | 用于计算每个对象的运动矢量。                                 |
+| `Vertex`        | 用于旧版顶点光照渲染（当对象不进行光照贴图时）；应用所有顶点光源。 |
+| `VertexLMRGBM`  | 用于旧版顶点光照渲染（当对象不进行光照贴图时），以及光照贴图为 RGBM 编码的平台（PC 和游戏主机）。 |
+| `VertexLM`      | 用于旧版顶点光照渲染（当对象不进行光照贴图时），以及光照贴图为双 LDR 编码的平台上（移动平台）。 |
+| `Meta`          | 此过程在常规渲染过程中不使用，仅用于光照贴图烘焙或Enlighten实时全局照明。有关详细信息，请参见灯光贴图和着色器。 |
+
+
+
+##### URP
+
+通过此标记的值，管道可以确定在执行渲染管道的不同部分时要使用的过程。
+如果未在通行证中设置“LightMode”标记，URP将使用该通行证的“SRPDefaultUnlet”标记值。
+在URP中，“LightMode”标记可以具有以下值。
+
+| **Property**             | **Description**                                              |
+| :----------------------- | :----------------------------------------------------------- |
+| **UniversalForward**     | 渲染对象几何体并评估所有灯光贡献。URP在“正向渲染路径Forward Rendering”中使用此标记值。 |
+| **UniversalGBuffer**     | 渲染对象几何体，而不评估任何灯光贡献。URP在“延迟渲染路径Deferred Rendering”中使用此标记值。 |
+| **UniversalForwardOnly** | **“过程”渲染对象几何体并评估所有灯光贡献，类似于当**LightMode**具有**UniversalForward**值时。与**UniversalForward**的不同之处在于，URP可以将“过程”用于“正向”和“延迟渲染路径”。如果URP使用“延迟渲染路径”时某个过程必须使用“正向渲染路径”渲染对象，请使用此值。例如，如果URP使用延迟渲染路径渲染场景，并且场景包含的着色器数据不适合GBuffer的对象（如透明涂层法线），请使用此标记。如果着色器必须同时在“正向渲染路径”和“延迟渲染路径”中进行渲染，请使用“UniversalForward”和“UniversalGBuffer”标记值声明两个过程。如果着色器必须使用“正向渲染路径”（Forward Rendering Path）进行渲染，而不管URP渲染器使用的渲染路径是什么，请仅声明“LightMode”标记设置为“UniversalForwardOnly”的过程。 |
+| **Universal2D**          | 渲染对象并评估2D灯光贡献。URP在二维渲染器中使用此标记值。    |
+| **ShadowCaster**         | 将对象深度从灯光的透视渲染到“阴影”贴图或深度纹理中。         |
+| **DepthOnly**            | 仅将“摄影机”透视图中的深度信息渲染到深度纹理中。             |
+| **Meta**                 | 仅在Unity编辑器中烘焙光照贴图时执行此过程。Unity在构建播放器时从着色器中删除此Pass。 |
+| **SRPDefaultUnlit**      | 使用此“LightMode”标记值可以在渲染对象时绘制额外的Pass。应用示例：绘制对象轮廓。此标记值对“正向渲染路径”和“延迟渲染路径”都有效。当Pass没有“LightMode”标记时，URP使用此标记值作为默认值。 |
+
+> **注**：URP不支持以下LightMode标记： `Always`, `ForwardAdd`, `PrepassBase`, `PrepassFinal`, `Vertex`, `VertexLMRGBM`, `VertexLM`.
+
+
+
+
+
+#### PassFlags 标签 (仅内置渲染管线有效)
+
+在内置渲染管线中，使用 `PassFlags` 通道标签来指定 Unity 提供给通道的数据。
+
+| **值**          | **功能**                                                     |
+| :-------------- | :----------------------------------------------------------- |
+| OnlyDirectional | 仅在内置渲染管线中且渲染路径设置为 Forward，`LightMode` 标签值为 `ForwardBase` 的通道中有效。  Unity 只为该通道提供主方向光和环境光/光照探针数据。这意味着非重要光源的数据将不会传递到顶点光源或球谐函数着色器变量。请参阅[前向渲染路径](https://docs.unity.cn/cn/current/Manual/RenderTech-ForwardRendering.html)以了解详细信息。 |
+
+```glsl
+Shader "Examples/ExamplePassFlag"
+{
+    SubShader
+    {
+        Pass
+        {
+              Tags { "LightMode" = "ForwardBase" "PassFlags" = "OnlyDirectional" }
+
+              // The rest of the code that defines the Pass goes here.
+        }
+    }
+}
+```
+
+
+
+#### RequireOptions 标签 (仅内置渲染管线有效)
+
+在内置渲染管线中，`RequireOptions` 通道标签根据项目设置启用或禁用一个通道。
+
+
+
+| **值**           | **功能**                                                     |
+| :--------------- | :----------------------------------------------------------- |
+| `SoftVegetation` | Render this Pass only if [QualitySettings-softVegetation](https://docs.unity.cn/cn/current/ScriptReference/QualitySettings-softVegetation.html) is enabled. |
+
+```glsl
+Shader "Examples/ExampleRequireOptions"
+{
+    SubShader
+    {
+        Pass
+        {
+              Tags { "RequireOptions" = "SoftVegetation" }
+
+              // The rest of the code that defines the Pass goes here.
+        }
+    }
+}
+```
+
+> [QualitySettings](https://docs.unity.cn/cn/current/ScriptReference/QualitySettings.html).softVegetation
+>
+> public static bool **softVegetation** ;
+>
+> 对地形引擎中的植被使用双通道着色器。
+>
+> 如果启用，植被将具有平滑的边缘； 如果禁用，所有植被将具有生硬的边缘，但渲染速度可提高一倍左右。
+
+
+
+
+
+## 命令
+
+[ShaderLab：命令 - Unity 手册](https://docs.unity.cn/cn/2023.2/Manual/shader-shaderlab-commands.html)
+
+
+
+ [Category 代码块](https://docs.unity.cn/cn/2023.2/Manual/SL-Other.html)将 ShaderLab 命令组合起来。
+
+
+
+在 Pass 代码块中使用这些命令可为该 Pass 设置渲染状态，或者在 SubShader 代码块中使用这些命令可为该 SubShader 以及其中的所有 Pass 设置渲染状态。
+
+- [AlphaToMask](https://docs.unity.cn/cn/2023.2/Manual/SL-AlphaToMask.html)：设置 alpha-to-coverage 模式。
+- [Blend](https://docs.unity.cn/cn/2023.2/Manual/SL-Blend.html)：启用和配置 alpha 混合。
+- [BlendOp](https://docs.unity.cn/cn/2023.2/Manual/SL-BlendOp.html)：设置 Blend 命令使用的操作。
+- [ColorMask](https://docs.unity.cn/cn/2023.2/Manual/SL-ColorMask.html)：设置颜色通道写入掩码。
+- [Conservative](https://docs.unity.cn/cn/2023.2/Manual/SL-Conservative.html)：启用和禁用保守光栅化。
+- [Cull](https://docs.unity.cn/cn/2023.2/Manual/SL-Cull.html)：设置多边形剔除模式。
+- [Offset](https://docs.unity.cn/cn/2023.2/Manual/SL-Offset.html)：设置多边形深度偏移。
+- [Stencil](https://docs.unity.cn/cn/2023.2/Manual/SL-Stencil.html)：配置模板测试，以及向模板缓冲区写入的内容。
+- [ZClip](https://docs.unity.cn/cn/2023.2/Manual/SL-ZClip.html)：设置深度剪辑模式。
+- [ZTest](https://docs.unity.cn/cn/2023.2/Manual/SL-ZTest.html)：设置深度测试模式。
+- [ZWrite](https://docs.unity.cn/cn/2023.2/Manual/SL-ZWrite.html)：设置深度缓冲区写入模式。
+
+
+
+在 SubShader 中使用这些命令可定义具有特定用途的通道。
+
+- [UsePass](https://docs.unity.cn/cn/2023.2/Manual/SL-UsePass.html) 定义一个通道，它从另一个 Shader 对象导入指定的通道的内容。
+- [GrabPass](https://docs.unity.cn/cn/2023.2/Manual/SL-GrabPass.html) 创建一个通道，将屏幕内容抓取到纹理中，以便在之后的通道中使用。
+
+
+
+## PackageRequirements 指定包要求
+
+[ShaderLab: specifying package requirements - Unity 手册](https://docs.unity.cn/cn/current/Manual/SL-PackageRequirements.html)
+
+
+
+- 在SubShader和Pass中都能定义, 每个语句块内只能定义1个，并且要在语句块前面
+- Pass中定义的版本号要在SubShader的版本范围内
+
+##### 语法规
+
+```glsl
+Shader "Examples/ExampleShader"
+{
+    SubShader
+    {
+        PackageRequirements
+        {
+            // 指定包版本
+            // 包名:版本号规则
+            "com.my.package": "2.2"
+                
+            // 指定unity版本
+            // unity:unity版本号
+            "unity" : "2021.2"  
+        }
+        
+        ...
+     
+    }
+}
+```
+
+
+
+##### 版本语法规则
+
+
+
+```glsl
+Shader "Examples/ExampleShader"
+{
+    SubShader
+    {
+        PackageRequirements
+        {
+            // 要求版本, 大于等于指定版本号， ver >= 2.2
+            "com.my.package": "2.2"
+        }
+        Pass
+        {
+            PackageRequirements
+            {
+                
+                // 要求版本, 在两个版本号之间, 10.2.1 <= ver <= 11.0
+                "com.unity.render-pipelines.universal": "[10.2.1, 11.0]"
+                "com.unity.textmeshpro": "3.2"
+            }
+        }
+        Pass
+        {
+            PackageRequirements
+            {
+                "com.unity.render-pipelines.high-definition": "[8.0,8.5]"
+            }
+        }
+    }
+}
+```
+
+
+
+## 色器程序 HLSLPROGRAM 和 HLSLINCLUDE
+
+[ShaderLab：添加着色器程序 - Unity 手册](https://docs.unity.cn/cn/current/Manual/shader-shaderlab-code-blocks.html)
+
+渲染管线兼容性
+
+| 功能        | 内置渲染管线 | 通用渲染管线 (URP) | 高清渲染管线 (HDRP) | 自定义可编程渲染管线                                         |
+| :---------- | :----------- | :----------------- | :------------------ | :----------------------------------------------------------- |
+| HLSLPROGRAM | 是           | 是                 | 是                  | 是                                                           |
+| HLSLINCLUDE | 是           | 是                 | 是                  | 是                                                           |
+| CGPROGRAM   | 是           | 否                 | 否                  | 是  与使用 [SRP Core](https://docs.unity.cn/Packages/com.unity.render-pipelines.core@latest) 包的自定义渲染管线不兼容。 |
+| CGINCLUDE   | 是           | 否                 | 否                  | 是  与使用 [SRP Core](https://docs.unity.cn/Packages/com.unity.render-pipelines.core@latest) 包的自定义渲染管线不兼容。 |
+
+使用着色器程序块
+
+| **签名**                                               | **功能**                                                     |
+| :----------------------------------------------------- | :----------------------------------------------------------- |
+| `HLSLPROGRAM`   `[着色器程序的 HLSL 源代码]` `ENDHLSL` | 将 HLSL 着色器程序添加到包含此着色器程序块的 Pass。不包含 Unity 的内置着色器 include 文件。 |
+| `CGPROGRAM`   `[着色器程序的 HLSL 源代码]` `ENDCG`     | Adds the HLSL shader program to the Pass that includes this shader program block. Includes several of Unity’s [built-in shader include files](https://docs.unity.cn/cn/current/Manual/SL-BuiltinIncludes.html) by default, enabling you to use built-in variables and functions. |
+
+```glsl
+Shader "Examples/ExampleShader"
+{
+    SubShader
+    {
+        Pass
+        {   
+
+              HLSLPROGRAM
+                // 在此编写 HLSL 着色器代码
+              ENDHLSL
+        }
+    }
+}
+```
+
+使用着色器 include 块
+
+| **签名**                                           | **功能**                                                     |
+| :------------------------------------------------- | :----------------------------------------------------------- |
+| `HLSLINCLUDE`   `[您要共享的 HLSL 代码]` `ENDHLSL` | Unity 将此代码包含在 `HLSLPROGRAM` 块中定义的所有着色器程序中，可位于此源文件的任何位置。 |
+| `CGINCLUDE`   `[您要共享的 HLSL 代码]` `ENDCG`     |                                                              |
+
+```glsl
+Shader "Examples/ExampleShader"
+{
+    SubShader
+    {
+
+        HLSLINCLUDE
+            // 在此编写要共享的 HLSL 代码
+        ENDHLSL
+
+        Pass
+        {                
+              Name "ExampleFirstPassName"
+              Tags { "LightMode" = "ExampleLightModeTagValue" }
+
+              // 在此编写设置渲染状态的 ShaderLab 命令
+
+              HLSLPROGRAM
+                // 此 HLSL 着色器程序自动包含上面的 HLSLINCLUDE 块的内容
+                // 在此编写 HLSL 着色器代码
+              ENDHLSL
+        }
+
+        Pass
+        {                
+              Name "ExampleSecondPassName"
+              Tags { "LightMode" = "ExampleLightModeTagValue" }
+
+              // 在此编写设置渲染状态的 ShaderLab 命令
+
+              HLSLPROGRAM
+                // 此 HLSL 着色器程序自动包含上面的 HLSLINCLUDE 块的内容
+                // 在此编写 HLSL 着色器代码
+              ENDHLSL
+        }
+
+    }
+}
+```
+
+```glsl
+Shader "Unlit/ZF_02_SubShader"
+{
+    Properties
+    {
+        _MainTex ("Texture", 2D) = "white" {}
+    }
+    
+    HLSLINCLUDE
+        // 在此编写要共享的 HLSL 代码
+        float3 GetColorR()
+        {
+            return float3(1, 0, 0);
+        }
+    ENDHLSL
+    
+    SubShader
+    {
+        
+        HLSLINCLUDE
+            // 在此编写要共享的 HLSL 代码
+            
+            float3 GetColorG()
+            {
+                return float3(0, 1, 0);
+            }
+        ENDHLSL
+
+        Pass
+        {
+           
+            HLSLPROGRAM
+           
+            ....
+            fixed4 frag (v2f i) : SV_Target
+            {
+                fixed4 col = tex2D(_MainTex, i.uv);
+                // 在此使用上面共享的代码
+                col.rgb = GetColorR() + GetColorG();
+                return col;
+            }
+            ENDHLSL
+        }
+
+    }
+
+
+}
+
+```
+
+
+
 
 # 相关链接
 
