@@ -19,7 +19,6 @@ thumbnail:
 [TOC]
 
 
-
 # 模板
 
 ## Shader 模块
@@ -87,7 +86,7 @@ Shader "Examples/ShaderSyntax"
 | `[Normal]`          | 指示纹理属性需要法线贴图。  如果分配了不兼容的纹理，则 Unity 编辑器会显示警告。 |
 | `[PerRendererData]` | 指示纹理属性将来自每渲染器数据，形式为 [MaterialPropertyBlock](https://docs.unity.cn/cn/2022.3/ScriptReference/MaterialPropertyBlock.html)。  材质 Inspector 会将这些属性显示为只读。 |
 
-
+[MaterialPropertyDrawer - Unity 脚本 API](https://docs.unity.cn/cn/current/ScriptReference/MaterialPropertyDrawer.html)
 
 ```glsl
 Shader "Unlit/ZF_01_Shader"
@@ -151,6 +150,10 @@ Shader "Unlit/ZF_01_Shader"
         // [PerRendererData] 材质属性块
         [PerRendererData] _PerRendererDataValue("PerRendererDataValue", 2D) = "white" {}
         [PerRendererData] _PerRendererDataFloatValue("PerRendererDataFloatValue", float) = 0.5
+            
+            
+        [KeywordEnum(None, Add, Multiply)] _Overlay("Overlay mode", Float) = 0
+        [Toggle] _Invert("Invert color?", Float) = 0
         
     }
     
@@ -973,6 +976,328 @@ Shader "Unlit/ZF_02_SubShader"
 }
 
 ```
+
+
+
+
+
+# HLSL
+
+
+
+## 预编译指令
+
+### \#include
+
+导入文件，和原生hlsl功能一致
+
+
+
+ZF_hlsl_test_include.hlsl
+
+```glsl
+#ifndef ZF_hlsl_test_include
+#define ZF_hlsl_test_include
+
+#include "UnityCG.cginc"
+
+struct appdata
+{
+    float4 vertex : POSITION;
+    float2 uv : TEXCOORD0;
+};
+
+struct v2f
+{
+    float2 uv : TEXCOORD0;
+    float4 vertex : SV_POSITION;
+};
+
+sampler2D _MainTex;
+float4 _MainTex_ST;
+
+v2f zf_vert (appdata v)
+{
+    v2f o;
+    o.vertex = UnityObjectToClipPos(v.vertex);
+    o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+    return o;
+}
+
+
+fixed4 zf_frag (v2f i) : SV_Target
+{
+    // sample the texture
+    fixed4 col = tex2D(_MainTex, i.uv);
+    col.rgb = fixed3(0.5, 0.5, 1);
+    return col;
+}
+
+#endif
+```
+
+ZF_hlsl_test_include_with_pragma.hlsl
+
+```glsl
+#ifndef ZF_hlsl_test_include_with_pragma
+#define ZF_hlsl_test_include_with_pragma
+
+
+#pragma multi_compile_fog
+
+#endif
+```
+
+
+
+```glsl
+Shader "LearnURPShader/ZF_03_HLSL"
+{
+    Properties
+    {
+        _MainTex ("Texture", 2D) = "white" {}
+    }
+  
+    SubShader
+    {
+       
+        Pass
+        {
+        
+            Name "ZfPass"
+           
+            HLSLPROGRAM
+            
+            #include "ZF_hlsl_test_include.hlsl"
+            #include_with_pragmas "ZF_hlsl_test_include_with_pragma.hlsl"
+            #pragma target 4.0
+            #pragma vertex zf_vert
+            #pragma fragment zf_frag
+
+            ENDHLSL
+        }
+
+    }
+
+
+}
+
+```
+
+
+
+
+
+
+
+###  #include_with_pragmas
+
+[include and include_with_pragmas directives in HLSL - Unity 手册](https://docs.unity.cn/cn/current/Manual/shader-include-directives.html)
+
+导入预编译指令文件，该文件可以共享给多个shader使用
+
+```glsl
+// Comment out the following line to disable shader debugging
+#pragma enable_d3d11_debug_symbols
+```
+
+```glsl
+// Example pragma directives
+#pragma target 4.0
+#pragma vertex vert
+#pragma fragment frag
+
+// Replace path-to-include-file with the path to the include file 
+#include_with_pragmas "path-to-include-file"
+
+```
+
+
+
+### #pragma
+
+[pragma directives in HLSL - Unity 手册](https://docs.unity.cn/cn/current/Manual/SL-PragmaDirectives.html)
+
+[pragma Directive - Win32 apps | Microsoft Learn](https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-appendix-pre-pragma)
+
+[着色器编译：pragma 指令 - Unity 手册](https://docs.unity.cn/cn/2021.1/Manual/SL-PragmaDirectives.html)
+
+#### \#pragma surface <surface function> <lighting model> <optional parameters>
+
+仅内置渲染管线支持 [编写表面着色器 - Unity 手册](https://docs.unity.cn/cn/current/Manual/SL-SurfaceShaders.html)
+
+
+
+#### 着色器阶段
+
+| **语句**                  | **功能**                                                     |
+| :------------------------ | :----------------------------------------------------------- |
+| `#pragma vertex <name>`   | 顶点着色器                                                   |
+| `#pragma fragment <name>` | 像素着色器                                                   |
+| `#pragma geometry <name>` | 编译具有给定名称的函数作为几何体着色器。将＜name＞替换为函数名称。此选项自动启用“#pragma require geometry”；有关详细信息，请参见[瞄准HLSL中的着色器模型和GPU功能](https://docs.unity.cn/cn/current/Manual/SL-ShaderCompileTargets.html).  **注意**：Metal不支持几何体着色器。 [Geometry Shader学习笔记_#pragma geometry-CSDN博客](https://blog.csdn.net/qq_37925032/article/details/82936769) |
+| `#pragma hull <name>`     | 编译具有给定名称的函数作为DirectX 11外壳着色器。将＜name＞替换为函数名称。这会自动添加“#pragma require teshellation”；有关详细信息，请参见[瞄准HLSL中的着色器模型和GPU功能](https://docs.unity.cn/cn/current/Manual/SL-ShaderCompileTargets.html). |
+| `#pragma domain <name>`   | 编译具有给定名称的函数作为DirectX 11域着色器。将＜name＞替换为函数名称。此选项会自动启用“#pragma require tessellation”；有关详细信息，请参见[瞄准HLSL中的着色器模型和GPU功能](https://docs.unity.cn/cn/current/Manual/SL-ShaderCompileTargets.html). [Unity Shader：细分着色器(Tessellation Shader)在Unity顶点着色器中的写法以及各参数变量解释_unity tessellation-CSDN博客](https://blog.csdn.net/liu_if_else/article/details/75039895) |
+
+
+
+#### 着色器变体和关键字
+
+使用这些指令告诉着色器编译器如何处理[着色器变体和关键字](https://docs.unity.cn/cn/current/Manual/shader-variants-and-keywords.html). 有关详细信息，请参见[在HLSL中声明和使用着色器关键字](https://docs.unity.cn/cn/current/Manual/SL-MultipleProgramVariants.html).
+
+| **Directive**                              | **描述**                                                     |
+| :----------------------------------------- | :----------------------------------------------------------- |
+| `#pragma multi_compile <keywords>`         | 声明关键字的集合。编译器包括生成中的所有关键字。您可以使用后缀（如“_local”）来设置其他选项。有关更多信息和支持的后缀列表，请参阅[在HLSL中声明和使用着色器关键字](https://docs.unity.cn/cn/current/Manual/SL-MultipleProgramVariants.html). |
+| `#pragma shader_feature <keywords>`        | 声明关键字的集合。编译器从生成中排除未使用的关键字。您可以使用后缀（如“_local”）来设置其他选项。有关更多信息和支持的后缀列表，请参阅[在HLSL中声明和使用着色器关键字](https://docs.unity.cn/cn/current/Manual/SL-MultipleProgramVariants.html). |
+| `#pragma hardware_tier_variants <values>`  | 仅内置渲染管道：为给定图形API编译时，为**图形层**添加关键字。有关更多信息，请参阅[图形层](https://docs.unity.cn/cn/current/Manual/graphics-tiers.html). |
+| `#pragma skip_variants <list of keywords>` | 删除指定的关键字。                                           |
+
+
+
+[unity shader变体之#pragma multi_compile 和 #pragma shader_feature_shader compiled code-CSDN博客](https://blog.csdn.net/qq_17347313/article/details/106872268)
+
+[Unity - Manual: Declare shader keywords (unity3d.com)](https://docs.unity3d.com/Manual/SL-MultipleProgramVariants-declare.html)
+
+[Unity - Manual: Make shader behavior conditional (unity3d.com)](https://docs.unity3d.com/Manual/SL-MultipleProgramVariants-make-conditionals.html)
+
+[Unity - Manual: Use shortcuts to create keyword sets (unity3d.com)](https://docs.unity3d.com/Manual/SL-MultipleProgramVariants-shortcuts.html)
+
+[着色器变体和关键字 - Unity 手册](https://docs.unity.cn/cn/2021.1/Manual/SL-MultipleProgramVariants.html)
+
+
+
+##### multi_compile 的工作方式
+
+指令示例：
+
+```glsl
+# pragma multi_compile FANCY_STUFF_OFF FANCY_STUFF_ON
+```
+
+此指令示例生成两个着色器变体：一个定义了 `FANCY_STUFF_OFF`，另一个定义了 `FANCY_STUFF_ON`。在运行时，Unity 根据材质或全局着色器关键字来激活其中一个变体。如果这两个关键字均未启用，则 Unity 使用第一个关键字（在此示例中为 `FANCY_STUFF_OFF`）。
+
+可以在 multi_compile 行中添加两个以上的关键字。例如：
+
+```glsl
+# pragma multi_compile SIMPLE_SHADING BETTER_SHADING GOOD_SHADING BEST_SHADING
+```
+
+此指令示例生成四个着色器变体：`SIMPLE_SHADING`、`BETTER_SHADING`、`GOOD_SHADING` 和 `BEST_SHADING`。
+
+为了生成未定义预处理器宏的着色器变体，请添加一个只有下划线 (`__`) 的名称。这是避免用完两个关键字的常用方法，因为在一个项目中可以使用的关键字数量有限（请参阅后面的[关键字限制](https://docs.unity.cn/cn/2021.1/Manual/SL-MultipleProgramVariants.html#KeywordLimits)部分）。例如：
+
+```glsl
+# pragma multi_compile __ FOO_ON
+```
+
+此指令生成两个着色器变体：一个未定义任何关键字 (`__`)，另一个定义了 `FOO_ON`。
+
+
+
+##### #pragma multi_compile 与 #pragma shader_feature的区别：
+
+​        shader_feature与multi_compile非常相似。唯一的区别是Unity在最终的版本中不包括shader_feature着色器的未使用的变体。出于这个原因，你应该使用shader_feature来处理从material中设置的关键字，而multi_compile更好地处理从全局代码中设置的关键字。
+
+
+
+##### Local keywords:
+
+shader_feature和multi_compile的主要缺点是，定义的所有关键字都限制了Unity的全局关键字数量(256个全局关键字，加上64个本地关键字)。为了避免这个问题，我们可以使用不同的着色器变体指令:shader_feature_local和multi_compile_local。
+
+> shader_feature_local: 与 shader_feature类似, 但是仅限本shader使用
+> multi_compile_local: 与multi_compile类似, 但是限本shader使用
+
+使用更多的Local keywords和更少的globalkeywords，以减少每个着色器的关键字总数，这样可以减少变体的编译数量。因为变体的编译时根据关键字的数量相乘得到的，比方说：
+
+```glsl
+#pragma multi_compile A B C
+#pragma multi_compile D E
+```
+
+那么就会生成 3 * 2 = 6种，
+
+##### 限制：
+
+- 不能在api中使用本地关键字来改变全局关键字(比如着色器)。EnableKeyword或CommandBuffer.EnableShaderKeyword)。
+- 每个着色器有一个最大的64个唯一的本地关键字。
+- 如果一个材质启用了一个local关键字，并且它的着色器没声明用哪一个，那么Unity会创建一个新的global关键字。
+
+```c#
+public Material mat;
+Private void Start()
+{
+    mat.EnableKeyword("FOO_ON");
+}
+```
+
+##### 查看变体：
+
+我的变体定义如下：
+
+```glsl
+#pragma multi_compile_local _ PAINTSTYL_1 PAINTSTYL_2 PAINTSTYL_3 PAINTSTYL_4 PAINTSTYL_5 PAINTSTYL_6 PAINTSTYL_7 PAINTSTYL_8 PAINTSTYL_9
+```
+
+
+选中我们的shader，然后在Inspector中查看Compiled code 可以看到，下面显示80个变体，为什么多了10倍呢？
+
+![img](2024-07-03-URPShader.assets/20200620154520208.png)
+
+我们可以下点面板下的Show，查看代码，发现还有一些unity 自带的scene的变体（下图只是一部分），也会被包含，因此我们也不能任意增加变体的数量。会导致变体代码膨胀。
+
+![img](2024-07-03-URPShader.assets/20200620154509921.png)
+
+也可以直接在面板上查看，点开Keywords：
+
+![img](2024-07-03-URPShader.assets/20200620155221564.png)
+
+![img](2024-07-03-URPShader.assets/2020062015535980.png)
+
+##### 使用特定于阶段的关键字指令
+
+可用的后缀是 `_vertex`、`_fragment`、`_hull`、`_domain`、`_geometry` 和 `_raytracing`。您在关键字指令的末尾应用后缀，例如：`multi_compile_fragment` 或 `shader_feature_local_vertex`。要针对多个着色器阶段，您可以使用多个特定于阶段的关键字指令来声明同一个关键字。
+
+**注意：**您应确保关键字仅用于指定的着色器阶段。
+
+
+
+##### 内置 multi_compile 快捷方式
+
+在内置渲染管线中，有几个“快捷方式”符号用于编译多个着色器变体。这些变体主要处理 Unity 中的不同光源、阴影和光照贴图类型。请参阅有关[渲染路径和着色器](https://docs.unity.cn/cn/2021.1/Manual/SL-RenderPipeline.html)的文档以了解详细信息。
+
+- `multi_compile_fwdbase` 编译 [PassType.ForwardBase](https://docs.unity.cn/cn/2021.1/ScriptReference/Rendering.PassType.ForwardBase.html) 所需的所有变体。这些变体处理不同的光照贴图类型以及启用或禁用的方向光主要阴影。
+- `multi_compile_fwdadd` 编译 [PassType.ForwardAdd](https://docs.unity.cn/cn/2021.1/ScriptReference/Rendering.PassType.ForwardAdd.html) 的变体。这将编译变体来处理方向光、聚光灯或点光源类型，以及它们带有剪影纹理的变体。
+- `multi_compile_fwdadd_fullshadows` - 与 `multi_compile_fwdadd` 相同，但还能够让光源具有实时阴影。
+- `multi_compile_fog` 扩展为多个变体以处理不同的雾效类型 (off/linear/exp/exp2)。
+
+大多数内置快捷方式会产生许多着色器变体。如果知道项目不需要这些变体，可以使用 `#pragma skip_variants` 来跳过对其中一些变体的编译。例如：
+
+```
+# pragma multi_compile_fwdadd
+# pragma skip_variants POINT POINT_COOKIE
+解释
+```
+
+该指令会跳过包含 `POINT` 或 `POINT_COOKIE` 的所有变体。
+
+
+
+##### 启用和禁用着色器关键字
+
+要启用和禁用着色器关键字，请使用以下 API：
+
+- [Shader.EnableKeyword](https://docs.unity.cn/cn/2021.1/ScriptReference/Shader.EnableKeyword.html)：启用全局关键字
+- [Shader.DisableKeyword](https://docs.unity.cn/cn/2021.1/ScriptReference/Shader.DisableKeyword.html)：禁用全局关键字
+- [CommandBuffer.EnableShaderKeyword](https://docs.unity.cn/cn/2021.1/ScriptReference/Rendering.CommandBuffer.EnableShaderKeyword.html)：使用 `CommandBuffer` 来启用全局关键字
+- [CommandBuffer.DisableShaderKeyword](https://docs.unity.cn/cn/2021.1/ScriptReference/Rendering.CommandBuffer.DisableShaderKeyword.html)：使用 `CommandBuffer` 来禁用全局关键字
+- [Material.EnableKeyword](https://docs.unity.cn/cn/2021.1/ScriptReference/Material.EnableKeyword.html)：为常规着色器启用本地关键字
+- [Material.DisableKeyword](https://docs.unity.cn/cn/2021.1/ScriptReference/Material.DisableKeyword.html)：为常规着色器禁用本地关键字
+- [ComputeShader.EnableKeyword](https://docs.unity.cn/cn/2021.1/ScriptReference/ComputeShader.EnableKeyword.html)：为计算着色器启用本地关键字
+- [ComputeShader.DisableKeyword](https://docs.unity.cn/cn/2021.1/ScriptReference/ComputeShader.DisableKeyword.html)：为计算着色器禁用本地关键字
+
+启用或禁用关键字时，Unity 会使用相应变体。
+
+[MaterialPropertyDrawer - Unity 脚本 API](https://docs.unity.cn/cn/current/ScriptReference/MaterialPropertyDrawer.html)
+
 
 
 
