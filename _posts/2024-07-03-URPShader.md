@@ -1265,9 +1265,22 @@ Private void Start()
 在内置渲染管线中，有几个“快捷方式”符号用于编译多个着色器变体。这些变体主要处理 Unity 中的不同光源、阴影和光照贴图类型。请参阅有关[渲染路径和着色器](https://docs.unity.cn/cn/2021.1/Manual/SL-RenderPipeline.html)的文档以了解详细信息。
 
 - `multi_compile_fwdbase` 编译 [PassType.ForwardBase](https://docs.unity.cn/cn/2021.1/ScriptReference/Rendering.PassType.ForwardBase.html) 所需的所有变体。这些变体处理不同的光照贴图类型以及启用或禁用的方向光主要阴影。
+
 - `multi_compile_fwdadd` 编译 [PassType.ForwardAdd](https://docs.unity.cn/cn/2021.1/ScriptReference/Rendering.PassType.ForwardAdd.html) 的变体。这将编译变体来处理方向光、聚光灯或点光源类型，以及它们带有剪影纹理的变体。
+
 - `multi_compile_fwdadd_fullshadows` - 与 `multi_compile_fwdadd` 相同，但还能够让光源具有实时阴影。
+
 - `multi_compile_fog` 扩展为多个变体以处理不同的雾效类型 (off/linear/exp/exp2)。
+
+  
+
+  - `multi_compile_particles` 添加了与内置粒子系统相关的关键字：SOFTPACParticles_ON。它还编译了没有此关键字的变体。有关详细信息，请参见[内置粒子系统](https://docs.unity.cn/cn/current/Manual/Built-inParticleSystem.html).
+
+  - `multi_compile_fog` 添加与雾相关的这组关键字：fog_LINERAL、fog_EXP、fog_EXP2。它还编译没有这些关键字的变体。您可以在[图形设置]中控制此行为(https://docs.unity.cn/cn/current/Manual/class-GraphicsSettings.html窗
+
+  - `multi_compile_instancing`添加与实例化相关的关键字。如果着色器使用过程实例化，则会添加以下一组关键字：instancing_ON procedural_ON。否则，会添加以下关键字：instancing_ON。它还编译不包含任何这些关键字的变体。您可以在[图形设置]中控制此行为(https://docs.unity.cn/cn/current/Manual/class-GraphicsSettings.html窗
+
+    
 
 大多数内置快捷方式会产生许多着色器变体。如果知道项目不需要这些变体，可以使用 `#pragma skip_variants` 来跳过对其中一些变体的编译。例如：
 
@@ -1278,6 +1291,8 @@ Private void Start()
 ```
 
 该指令会跳过包含 `POINT` 或 `POINT_COOKIE` 的所有变体。
+
+
 
 
 
@@ -1297,6 +1312,136 @@ Private void Start()
 启用或禁用关键字时，Unity 会使用相应变体。
 
 [MaterialPropertyDrawer - Unity 脚本 API](https://docs.unity.cn/cn/current/ScriptReference/MaterialPropertyDrawer.html)
+
+
+
+#### \# pragma target
+
+[着色器编译：针对着色器模型和 GPU 功能 - Unity 手册](https://docs.unity.cn/cn/2021.1/Manual/SL-ShaderCompileTargets.html)
+
+默认情况下，Unity 将着色器编译为几乎支持的最低目标（“2.5”）；处于 DirectX 着色器模型 2.0 和 3.0 之间。其他一些编译指令使着色器自动 编译成更高的目标：
+
+- 使用几何着色器 (`#pragma geometry`) 将编译目标设置为 `4.0`。
+- 使用曲面细分着色器（`#pragma hull` 或 `#pragma domain`）将编译目标设置为 `4.6`。
+
+对于几何体、外壳或域着色器，未通过 `#pragma` 显式设置函数入口点的任何着色器都将降级内部着色器功能要求。这可使具有更广泛运行时和功能差异的非 DX11 目标与现有着色器内容更加兼容。
+
+例如，Unity 在 Metal 图形上支持曲面细分着色器，但 Metal 不支持几何着色器。使用 `#pragma target 5.0` 仍有效，只要您不使用几何着色器。
+
+
+
+#### \# pragma require
+
+[着色器编译：针对着色器模型和 GPU 功能 - Unity 手册](https://docs.unity.cn/cn/2021.1/Manual/SL-ShaderCompileTargets.html)
+
+`#pragma require` 指令支持的功能名称列表：
+
+- `interpolators10`：至少有 10 个顶点到片元插值器（“变化”）可用。
+- `interpolators15`：至少有 15 个顶点到片元插值器（“变化”）可用。
+- `interpolators32`：至少有 32 个顶点到片元插值器（“变化”）可用。
+- `mrt4`：多个渲染目标，至少 4 个。
+- `mrt8`：多个渲染目标，至少 8 个。
+- `derivatives`：像素着色器衍生指令 (ddx/ddy)。
+- `samplelod`：显式纹理 LOD 采样 (tex2Dlod / SampleLevel)。
+- `fragcoord`：像素着色器中的像素位置（屏幕上的 XY，裁剪空间中的 ZW 深度）输入。
+- `integers`：整数是一种实际的数据类型，包括位/移位操作。
+- `2darray`：2D 纹理数组 (Texture2DArray)。
+- `cubearray`：立方体贴图数组 (CubemapArray)。
+- `instancing`：SV_InstanceID 输入系统值。
+- `geometry`：DX10 几何着色器。
+- `compute`：计算着色器、结构化缓冲区、原子操作。
+- `randomwrite`：“随机写入”(UAV) 纹理。
+- `tesshw`：GPU 支持硬件曲面细分，但不一定是曲面细分着色器阶段（例如，Metal 支持曲面细分，但不是通过着色器阶段）。
+- `tessellation`：曲面细分外壳/域着色器阶段。
+- `msaatex`：能够访问多重采样的纹理（HLSL 中的 Texture2DMS）。
+- `sparsetex`：包含驻留信息的稀疏纹理（D3D 术语中的“Tier2”支持；CheckAccessFullyMapped HLSL 函数）。请注意，目前仅在 DX11/12 上实现。
+- `framebufferfetch`：帧缓冲提取 - 能够在像素着色器中读取输入像素颜色。
+
+
+
+#### 其他 pragma 指令
+
+| **语句**                                       | **功能**                                                     |
+| :--------------------------------------------- | :----------------------------------------------------------- |
+| `#pragma enable_d3d11_debug_symbols`           | 生成着色器调试符号和/或禁用优化。使用此指令在外部工具中调试着色器代码。  对于 Vulkan、DirectX 11 和 12 以及支持的游戏主机平台，Unity 会生成调试符号并禁用优化。  对于 Metal 和 OpenGL，默认情况下您已经可以调试着色器。当您使用此 pragma 指令时，Unity 会禁用优化。  **警告：**使用此指令会导致文件大小增加并降低着色器性能。当您完成对着色器的调试并准备好对应用程序进行最终构建时，请从着色器源代码中删除此行并重新编译着色器。 |
+| `#pragma hardware_tier_variants renderer name` | 针对每个可运行所选渲染器的硬件层，生成每个由系统编译的着色器的[多个着色器硬件变体](https://docs.unity.cn/cn/2021.1/Manual/SL-MultipleProgramVariants.html)。 仅在[内置渲染管线](https://docs.unity.cn/cn/2021.1/Manual/built-in-render-pipeline.html)中支持此语句。 |
+| `#pragma hlslcc_bytecode_disassembly`          | 将反汇编的 HLSLcc 字节码嵌入到转换的着色器中。               |
+| `#pragma disable_fastmath`                     | 启用涉及 NaN 处理的精确 IEEE 754 规则。当前这仅影响 Metal 平台。 |
+| `#pragma glsl_es2`                             | 在 GLSL 着色器中进行设置以生成 GLSL ES 1.0(OpenGL ES 2.0)，即使着色器目标为 OpenGL ES 3 也是如此。 |
+| `#pragma editor_sync_compilation`              | 强制进行同步编译。这仅影响 Unity 编辑器。有关更多信息，请参阅[异步着色器编译](https://docs.unity.cn/cn/2021.1/Manual/AsynchronousShaderCompilation.html)。 |
+| `#pragma enable_cbuffer`                       | 使用 HLSLSupport 的 `CBUFFER_START(name)` 和 `CBUFFER_END` 宏时，即使当前平台不支持常量缓冲区，也要发出 `cbuffer(name)`。 |
+
+
+
+| **Statement**                          | **Function**                                                 |
+| :------------------------------------- | :----------------------------------------------------------- |
+| `#pragma instancing_options <options>` | 使用给定的选项在此着色器中启用GPU实例化。有关详细信息，请参见[GPU实例化](https://docs.unity3d.com/Manual/GPUInstancing.html) |
+| `#pragma once`                         | 将此指令放入文件中，以确保编译器在着色器程序中只包含该文件一次**注意：**Unity仅在[Cacheching Shader Preprocessor](https://docs.unity3d.com/Manual/shader-compilation.html#preprocessor)已启用。 |
+| `#pragma skip_optimizations <value>`   | 强制关闭给定图形API的优化。将＜values＞替换为以空格分隔的有效值列表。有关有效值的列表，请参阅[在HLSL中定位图形API和平台](https://docs.unity3d.com/Manual/SL-ShaderCompilationAPIs.html) |
+
+
+
+
+
+#### 未使用的 pragma 指令
+
+以下编译指令不执行任何操作，因此可以安全删除：
+
+- `#pragma glsl`
+- `#pragma glsl_no_auto_normalization`
+- `#pragma profileoption`
+- `#pragma fragmentoption`
+
+
+
+#### \# pragma only_renderers
+
+[着色器编译：针对图形 API - Unity 手册](https://docs.unity.cn/cn/2021.1/Manual/SL-ShaderCompilationAPIs.html)
+
+默认情况下，Unity 为所有支持的图形 API 编译所有着色器程序。您可以让编译器排除或包含特定的 API。在使用并非所有平台都支持的着色器语言功能时，这很有用。
+
+```glsl
+# pragma only_renderers d3d11
+```
+
+支持的名称包括：
+
+| **语句**   | **Renderer**                                    |
+| :--------- | :---------------------------------------------- |
+| `d3d11`    | Direct3D 11/12                                  |
+| `glcore`   | OpenGL 3.x/4.x                                  |
+| `gles`     | OpenGL ES 2.0                                   |
+| `gles3`    | OpenGL ES 3.x                                   |
+| `metal`    | iOS/Mac Metal                                   |
+| `vulkan`   | Vulkan                                          |
+| `d3d11_9x` | Direct3D 11 9.x 功能级别，通常在 WSA 平台上使用 |
+| `xboxone`  | Xbox One                                        |
+| `ps4`      | PlayStation 4                                   |
+| `n3ds`     | Nintendo 3DS                                    |
+| `wiiu`     | Nintendo Wii U                                  |
+
+
+
+#### \#pragma exclude_renderers 
+
+[Unity - Manual: Targeting graphics APIs and platforms in HLSL (unity3d.com)](https://docs.unity3d.com/Manual/SL-ShaderCompilationAPIs.html)
+
+若要从给定编译器的编译中排除着色器代码，请使用#pragma exclude_renderers指令。您可以通过空格分隔的方式传递多个值。
+此示例演示如何从Metal和Vulkan的编译中排除着色器：
+
+```glsl
+#pragma exclude_renderers metal vulkan
+```
+
+
+
+## 语义
+
+[语义 - Win32 apps | Microsoft Learn](https://learn.microsoft.com/zh-cn/windows/win32/direct3dhlsl/dx-graphics-hlsl-semantics?redirectedfrom=MSDN)
+
+[着色器语义 - Unity 手册](https://docs.unity.cn/cn/current/Manual/SL-ShaderSemantics.html)
+
+
 
 
 
