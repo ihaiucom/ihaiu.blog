@@ -2245,6 +2245,92 @@ Shader "Custom/SimpleSurfaceIntanceShader"
 
 [Scriptable Render Pipeline Batcher - Unity 手册](https://docs.unity.cn/cn/2021.3/Manual/SRPBatcher.html#how-the-srp-batcher-works)
 
+[Unity中 URP Shader 常量缓冲区CBUFFER_unity cbuffer-CSDN博客](https://blog.csdn.net/qq_51603875/article/details/135017225)
+
+
+
+## CBUFFER_START 常量缓冲区
+
+能够支持我们的Shader被SRP Batcher（可编程渲染管线合批）允许，从而节省渲染上的性能。
+
+```glsl
+Shader "LearnURPShader/ZF_Unit"
+{
+    Properties
+    {
+        _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader
+    {
+        
+        
+        Tags { 
+            // 渲染管线标签， [UniversalRenderPipeline, HighDefinitionRenderPipeline, 自定义管线]
+            "RenderPipeline" = "UniversalRenderPipeline"
+            
+             // 队列标签， [Background, Geometry, AlphaTest, Transparent, Overlay, 正数]
+            "Queue" = "Geometry"
+            
+            // 渲染类型标签， [Opaque, Transparent, Cutout, Fade, Overlay,TreeOpaque, TreeTransparentCutout, TreeBillboard, Grass, GrassBillboard]
+            "RenderType"="Opaque" 
+        }
+        LOD 100
+
+        Pass
+        {
+            Tags { "LightMode" = "UniversalForward" }
+            
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            // make fog work
+            #pragma multi_compile_fog
+
+            #include "UnityCG.cginc"
+
+            // 能够支持我们的Shader被SRP Batcher（可编程渲染管线合批）允许，从而节省渲染上的性能。
+            CBUFFER_START(UnityPerMaterial)
+                sampler2D _MainTex;
+                float4 _MainTex_ST;
+            CBUFFER_END
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                UNITY_FOG_COORDS(1)
+                float4 vertex : SV_POSITION;
+            };
+
+
+            v2f vert (appdata v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                UNITY_TRANSFER_FOG(o,o.vertex);
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // sample the texture
+                fixed4 col = tex2D(_MainTex, i.uv);
+                // apply fog
+                UNITY_APPLY_FOG(i.fogCoord, col);
+                return col;
+            }
+            ENDHLSL
+        }
+    }
+}
+```
+
 
 
 # 相关链接
@@ -2258,3 +2344,7 @@ Shader "Custom/SimpleSurfaceIntanceShader"
 [Unity3D 实用技巧 - Unity Shader 汇总式学习·初探篇 - 技术专栏 - Unity官方开发者社区](https://developer.unity.cn/projects/5fbcef81edbc2a1283e10d02)
 
 [内部函数 - Win32 apps | Microsoft Learn](https://learn.microsoft.com/zh-cn/windows/win32/direct3dhlsl/dx-graphics-hlsl-intrinsic-functions)
+
+[Unity中Shader URP最简Shader框架（整理总结篇）_unity urp shader-CSDN博客](https://blog.csdn.net/qq_51603875/article/details/134998488)
+
+[Unity_楠溪泽岸的博客-CSDN博客](https://blog.csdn.net/qq_51603875/category_12279743.html)
