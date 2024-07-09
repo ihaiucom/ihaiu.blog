@@ -73,18 +73,473 @@ Shader "Examples/ShaderSyntax"
 
 
 
+#### URP 变量数据类型
+
+##### 标量类型
+
+| 类型   | 说明                                                         |
+| ------ | ------------------------------------------------------------ |
+| bool   |                                                              |
+| float  | 32位浮点数。常用于世界空间位置、纹理坐标或涉及复制函数（例如三角函数或幂）的标量计算。 |
+| half   | 16位浮点数。常用于短矢量、方向、物体空间位置、颜色。         |
+| double | 64 位浮动数。不能用在 输入/输出                              |
+| real   | 当函数可以支持half或float时，在URP/HDRP中使用。默认为half(假设平台支持)，除非左社区指定 **#define PREFER_HALF 0**，否则他将使用浮点精度。ShaderLibrary函数中的许多常见数学函数都用此类型。 |
+| int    | 32位有符号整数                                               |
+| uint   | 32位无符号整数 (GLES2除外，不支持此整数，而定义为int)        |
+
+fixed 
+
+- 11位顶点数，范围为-2到2。通常用于LDR颜色。
+- 来自CG语法，尽管所有平台现在似乎都只是将其转为half，即使在CGPROGRAM中也是如此
+- HLSL不支持fixed
+- 从内置管线升级时，请改用half
+
+
+
+##### 向量类型
+
+标量类型 + 向量长度
+
+- float2, float3, float4
+- half2, half3, half4
+- int2, int3, int4
+- 从技术上讲float1也是一个一维向量。要采用数组语法范围
+
+
+
+访问维度变量方式
+
+```glsl
+float4 pos = float4(0.0, 1.1, 2.2, 3.3)
+    
+float3 pos2 = pos.xyz;
+float3 pos3 = pos.xxx;
+float3 pos3 = pos.xxz;
+
+float4 pos4 = float4(pos.xy, 0, 0);
+float4 pos4 = float4(pos.xx, 0, 0);
+  
+```
+
+
+
+##### 矩阵类型
+
+![image-20240709184409082](2024-07-03-URPShader.assets/image-20240709184409082.png)
+
+![image-20240709185213568](2024-07-03-URPShader.assets/image-20240709185213568.png)
+
+
+
+##### 数组
+
+- 数组可以用for进行遍历
+
+- unity只能从C#脚本设置数组
+
+- 数组最大长度不能超过1024个。所以最大是1023
+
+  ```glsl
+  float4 _VectorArray[10]; // C# Shader.SetGlobalVector
+  
+  float _FloatArray[10] // C# Shader.SetGlobalFloat
+      
+  void AddArray(out float total)
+  {
+      float add = 0;
+      for(int i = 0; i < 10; i ++){
+          add += _FloatArray[i];
+      }
+      
+      total = add;
+  }
+  ```
+
+- 放在 CBUFFER 内，Shader.SetGlobalFloatArray 不起作用
+
+- 放在 CBUFFER 内，material.SetFloatArray 可以对之前材质有效
+
+- 放在 CBUFFER 外，material.SetFloatArray 也是对全局有效
+
+```glsl
+SubShader
+    {
+        HLSLINCLUDE
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            // 能够支持我们的Shader被SRP Batcher（可编程渲染管线合批）允许，从而节省渲染上的性能。
+            CBUFFER_START(UnityPerMaterial)
+            
+
+                // #数组
+                // 放在 CBUFFER 内，Shader.SetGlobalFloatArray 不起作用
+                // 放在 CBUFFER 内，material.SetFloatArray 可以对之前材质有效
+                //float _FloatArray[4];
+
+            CBUFFER_END
+
+           // #数组
+           // 放在 CBUFFER 外，material.SetFloatArray 也是对全局有效
+           float _FloatArray[4];
+            
+            struct Attributes
+            {
+                float3 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+        ENDHLSL
+        
+        
+        Tags { 
+            // 渲染管线标签， [UniversalRenderPipeline, HighDefinitionRenderPipeline, 自定义管线]
+            "RenderPipeline" = "UniversalRenderPipeline"
+            
+             // 队列标签， [Background, Geometry, AlphaTest, Transparent, Overlay, 正数]
+            "Queue" = "Geometry"
+            
+            // 渲染类型标签， [Opaque, Transparent, Cutout, Fade, Overlay,TreeOpaque, TreeTransparentCutout, TreeBillboard, Grass, GrassBillboard]
+            "RenderType"="Opaque" 
+        }
+        LOD 100
+        
+
+        Pass
+        {
+            Name  "ForwardLit"
+            Tags { "LightMode" = "UniversalForward" }
+            
+            HLSLPROGRAM
+            #pragma vertex UnitPassVertex
+            #pragma fragment UnitPassFragment
+
+
+
+            Varyings UnitPassVertex (Attributes v)
+            {
+                Varyings o;
+                
+                float3 positionWS = TransformObjectToWorld(v.positionOS);
+                float4 positionCS = TransformWorldToHClip(positionWS);
+                o.positionCS = positionCS;
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                return o;
+            }
+
+            half4 UnitPassFragment (Varyings i) : SV_Target
+            {
+              
+                // #数组
+               half4 col =  half4(_FloatArray[0], _FloatArray[1], _FloatArray[2], _FloatArray[3]);
+                
+                return col;
+            }
+            ENDHLSL
+        }
+```
+
+```c#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[ExecuteInEditMode]
+public class ShaderGlobalSet : MonoBehaviour
+{
+    public Color color;
+    public Material material;
+
+    void Update()
+    {
+        Shader.SetGlobalFloatArray("_FloatArray", new float[4] { color.r, color.g, color.b, color.a });
+
+        // material.SetFloatArray("_FloatArray", new float[4] { color.r, color.g, color.b, color.a });
+        
+    }
+}
+
+```
+
+
+
+##### StructureBuffer和[ComputeBuffer](https://docs.unity.cn/cn/current/ScriptReference/ComputeBuffer.html)
+
+
+
+
+
+##### 纹理
+
+[使用采样器状态 - Unity 手册](https://docs.unity.cn/cn/current/Manual/SL-SamplerStates.html)
+
+[着色器数据类型和精度 - Unity 手册](https://docs.unity.cn/cn/current/Manual/SL-DataTypesAndPrecision.html)
+
+```glsl
+SubShader
+    {
+        HLSLINCLUDE
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            // 能够支持我们的Shader被SRP Batcher（可编程渲染管线合批）允许，从而节省渲染上的性能。
+            CBUFFER_START(UnityPerMaterial)
+            
+                // https://docs.unity.cn/cn/current/Manual/SL-SamplerStates.html
+                // #纹理采样方式1
+                // sampler2D _MainTex;
+
+                // #纹理采样方式2
+                // TEXTURE2D(_MainTex);
+                // SAMPLER(sampler_MainTex);
+
+                // #纹理采样方式3
+                Texture2D _MainTex;
+                SamplerState sampler_MainTex; //"sampler"+"_MainTex"
+
+
+                // #内联采样器状态
+                /*
+                 * 采样器名称被识别为“内联”采样器状态（全都不区分大小写）：
+                 *     “Point”、“Linear”或“Trilinear”（必需）设置纹理过滤模式。
+                 *     “Clamp”、“Repeat”、“Mirror”或“MirrorOnce”（必需）设置纹理包裹模式。
+                 **/
+                SamplerState my_point_clamp_sampler;
+                //SamplerState my_Linear_Repeat_sampler;
+
+            	/*
+                 材质通常具有其纹理属性的 Tiling 和 Offset 字段。此信息将传递到着色器中的 float4 {TextureName}_ST 属性：
+                    x 包含 X 平铺值
+                    y 包含 Y 平铺值
+                    z 包含 X 偏移值
+                    w 包含 Y 偏移值
+                 */
+                float4 _MainTex_ST;
+            
+                half4 _OutlineColor;
+                real _OutlineWidth;
+            CBUFFER_END
+
+            
+            struct Attributes
+            {
+                float3 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+        ENDHLSL
+        
+        
+        Tags { 
+            // 渲染管线标签， [UniversalRenderPipeline, HighDefinitionRenderPipeline, 自定义管线]
+            "RenderPipeline" = "UniversalRenderPipeline"
+            
+             // 队列标签， [Background, Geometry, AlphaTest, Transparent, Overlay, 正数]
+            "Queue" = "Geometry"
+            
+            // 渲染类型标签， [Opaque, Transparent, Cutout, Fade, Overlay,TreeOpaque, TreeTransparentCutout, TreeBillboard, Grass, GrassBillboard]
+            "RenderType"="Opaque" 
+        }
+        LOD 100
+        
+
+        Pass
+        {
+            Name  "ForwardLit"
+            Tags { "LightMode" = "UniversalForward" }
+            
+            HLSLPROGRAM
+            #pragma vertex UnitPassVertex
+            #pragma fragment UnitPassFragment
+
+
+
+            Varyings UnitPassVertex (Attributes v)
+            {
+                Varyings o;
+                
+                float3 positionWS = TransformObjectToWorld(v.positionOS);
+                float4 positionCS = TransformWorldToHClip(positionWS);
+                o.positionCS = positionCS;
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                return o;
+            }
+
+            half4 UnitPassFragment (Varyings i) : SV_Target
+            {
+                // #纹理采样方式1
+                // half4 col = tex2D(_MainTex, i.uv);
+                
+                // #纹理采样方式2
+                // half4 col = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, i.uv);
+                
+                // #纹理采样方式3
+                // half4 col = _MainTex.Sample(sampler_MainTex, i.uv);
+
+                // 共用sampler_MainTex 采样器
+                // col += _SecondTex.Sample(sampler_MainTex, i.uv);
+                // col += _ThirdTex.Sample(sampler_MainTex, i.uv);
+
+                // #内联采样器状态
+                half4 col = _MainTex.Sample(my_point_clamp_sampler, i.uv);
+                
+                return col;
+            }
+            ENDHLSL
+        }
+
+```
+
+![image-20240709193755777](2024-07-03-URPShader.assets/image-20240709193755777.png)
+
+
+
+###### 纹理/采样器声明宏
+
+通常，在着色器代码中使用 `texture2D` 来声明纹理和采样器对。 但是在某些平台（例如 DX11）上，纹理和采样器是单独的对象， 并且可能的采样器最大数量非常有限。Unity 有一些宏来声明 没有采样器的纹理，并使用另一个纹理中的采样器对纹理进行采样。 如果您遇到采样器限制，并且知道几个纹理实际上可以共享同一个采样器 （采样器定义纹理过滤和包裹模式），请使用这些宏。
+
+| **宏：**                                           | **用途：**                                                   |
+| :------------------------------------------------- | :----------------------------------------------------------- |
+| `UNITY_DECLARE_TEX2D(name)`                        | 声明纹理和采样器对。                                         |
+| `UNITY_DECLARE_TEX2D_NOSAMPLER(name)`              | 声明不含采样器的纹理。                                       |
+| `UNITY_DECLARE_TEX2DARRAY(name)`                   | 声明纹理数组采样器变量。                                     |
+| `UNITY_SAMPLE_TEX2D(name,uv)`                      | 使用给定的纹理坐标从纹理和采样器对中采样。                   |
+| `UNITY_SAMPLE_TEX2D_SAMPLER( name,samplername,uv)` | 使用另一个纹理中的采样器 (samplername)，从纹理 (name) 中采样。 |
+| `UNITY_SAMPLE_TEX2DARRAY(name,uv)`                 | 从具有 float3 UV 的纹理数组中采样；坐标的 z 分量是数组元素索引。 |
+| `UNITY_SAMPLE_TEX2DARRAY_LOD(name,uv,lod)`         | 从具有显式 Mipmap 级别的纹理数组中采样。                     |
+
+
+
+###### 数组纹理
+
+```glsl
+Shader "LearnURPShader/ZF_Unit"
+{
+    Properties
+    {
+        _TexArray ("Texture Array", 2DArray) = "white" {}
+        [IntRange]_TexArrIndex ("Texture Array Index", Range(0, 24)) = 0
+    }
+    SubShader
+    {
+        HLSLINCLUDE
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            // 能够支持我们的Shader被SRP Batcher（可编程渲染管线合批）允许，从而节省渲染上的性能。
+            CBUFFER_START(UnityPerMaterial)
+           
+                // #采样数组纹理
+                Texture2DArray _TexArray;
+                SamplerState sampler_TexArray; //"sampler"+"_TexArray"
+        		float4 _TexArray_ST;
+                int _TexArrIndex;
+
+            CBUFFER_END
+
+            
+            struct Attributes
+            {
+                float3 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+        ENDHLSL
+        
+        
+        Tags { 
+            // 渲染管线标签， [UniversalRenderPipeline, HighDefinitionRenderPipeline, 自定义管线]
+            "RenderPipeline" = "UniversalRenderPipeline"
+            
+             // 队列标签， [Background, Geometry, AlphaTest, Transparent, Overlay, 正数]
+            "Queue" = "Geometry"
+            
+            // 渲染类型标签， [Opaque, Transparent, Cutout, Fade, Overlay,TreeOpaque, TreeTransparentCutout, TreeBillboard, Grass, GrassBillboard]
+            "RenderType"="Opaque" 
+        }
+        LOD 100
+        
+
+        Pass
+        {
+            Name  "ForwardLit"
+            Tags { "LightMode" = "UniversalForward" }
+            
+            HLSLPROGRAM
+            #pragma vertex UnitPassVertex
+            #pragma fragment UnitPassFragment
+
+
+
+            Varyings UnitPassVertex (Attributes v)
+            {
+                Varyings o;
+                
+                float3 positionWS = TransformObjectToWorld(v.positionOS);
+                float4 positionCS = TransformWorldToHClip(positionWS);
+                o.positionCS = positionCS;
+                o.uv = TRANSFORM_TEX(v.uv, _TexArray);
+                return o;
+            }
+
+            half4 UnitPassFragment (Varyings i) : SV_Target
+            {
+                
+                // #采样数组纹理
+                // half4 col = _TexArray.Sample(sampler_TexArray, float3(i.uv, _TexArrIndex));
+                half4 col = SAMPLE_TEXTURE2D_ARRAY(_TexArray, sampler_TexArray, i.uv, _TexArrIndex);
+              
+                return col;
+            }
+            ENDHLSL
+        }
+
+
+    }
+}
+
+```
+
+
+
 #### Properties 材质属性特性
 
-| **属性**            | **功能**                                                     |
-| :------------------ | :----------------------------------------------------------- |
-| `[Gamma]`           | 指示浮点数或矢量属性使用 sRGB 值，这意味着如果项目中的颜色空间需要，则它必须与其他 sRGB 值一起转换。有关更多信息，请参阅[着色器程序中的属性](https://docs.unity.cn/cn/2022.3/Manual/SL-PropertiesInPrograms.html)。 |
-| `[HDR]`             | 指示纹理或颜色属性使用[高动态范围 (HDR)](https://docs.unity.cn/cn/2022.3/Manual/HDR.html) 值。  对于纹理属性，如果分配了 LDR 纹理，则 Unity 编辑器会显示警告。对于颜色属性，Unity 编辑器会使用 HDR 拾色器编辑此值。 |
-| `[HideInInspector]` | 告知 Unity 编辑器在 Inspector 中隐藏此属性。                 |
-| `[MainTexture]`     | 为材质设置主纹理，可以使用 [Material.mainTexture](https://docs.unity.cn/cn/2022.3/ScriptReference/Material-mainTexture.html) 进行访问。  默认情况下，Unity 将具有属性名称 `_MainTex` 的纹理视为主纹理。如果纹理具有不同的属性名称，但希望 Unity 将它视为主纹理，请使用此特性。  如果多次使用此特性，则 Unity 会使用第一个属性并忽略后续属性。  **注意：**使用此特性设置主纹理时，如果使用纹理串流调试视图模式或自定义调试工具，则该纹理在游戏视图中不可见。 |
-| `[MainColor]`       | 为材质设置主色，可以使用 [Material.color](https://docs.unity.cn/cn/2022.3/ScriptReference/Material-color.html) 进行访问。  默认情况下，Unity 将具有属性名称 `_Color` 的颜色视为主色。如果您的颜色具有其他属性 (property) 名称，但您希望 Unity 将这个颜色视为主色，请使用此属性 (attribute)。如果您多次使用此属性 (attribute)，则 Unity 会使用第一个属性 (property)，而忽略后续属性 (property)。 |
-| `[NoScaleOffset]`   | 告知 Unity 编辑器隐藏此纹理属性的平铺和偏移字段。            |
-| `[Normal]`          | 指示纹理属性需要法线贴图。  如果分配了不兼容的纹理，则 Unity 编辑器会显示警告。 |
-| `[PerRendererData]` | 指示纹理属性将来自每渲染器数据，形式为 [MaterialPropertyBlock](https://docs.unity.cn/cn/2022.3/ScriptReference/MaterialPropertyBlock.html)。  材质 Inspector 会将这些属性显示为只读。 |
+| **属性**                             | **功能**                                                     |
+| :----------------------------------- | :----------------------------------------------------------- |
+| `[Gamma]`                            | 指示浮点数或矢量属性使用 sRGB 值，这意味着如果项目中的颜色空间需要，则它必须与其他 sRGB 值一起转换。有关更多信息，请参阅[着色器程序中的属性](https://docs.unity.cn/cn/2022.3/Manual/SL-PropertiesInPrograms.html)。 |
+| `[HDR]`                              | 指示纹理或颜色属性使用[高动态范围 (HDR)](https://docs.unity.cn/cn/2022.3/Manual/HDR.html) 值。  对于纹理属性，如果分配了 LDR 纹理，则 Unity 编辑器会显示警告。对于颜色属性，Unity 编辑器会使用 HDR 拾色器编辑此值。 |
+| `[HideInInspector]`                  | 告知 Unity 编辑器在 Inspector 中隐藏此属性。                 |
+| `[MainTexture]`                      | 为材质设置主纹理，可以使用 [Material.mainTexture](https://docs.unity.cn/cn/2022.3/ScriptReference/Material-mainTexture.html) 进行访问。  默认情况下，Unity 将具有属性名称 `_MainTex` 的纹理视为主纹理。如果纹理具有不同的属性名称，但希望 Unity 将它视为主纹理，请使用此特性。  如果多次使用此特性，则 Unity 会使用第一个属性并忽略后续属性。  **注意：**使用此特性设置主纹理时，如果使用纹理串流调试视图模式或自定义调试工具，则该纹理在游戏视图中不可见。 |
+| `[MainColor]`                        | 为材质设置主色，可以使用 [Material.color](https://docs.unity.cn/cn/2022.3/ScriptReference/Material-color.html) 进行访问。  默认情况下，Unity 将具有属性名称 `_Color` 的颜色视为主色。如果您的颜色具有其他属性 (property) 名称，但您希望 Unity 将这个颜色视为主色，请使用此属性 (attribute)。如果您多次使用此属性 (attribute)，则 Unity 会使用第一个属性 (property)，而忽略后续属性 (property)。 |
+| `[NoScaleOffset]`                    | 告知 Unity 编辑器隐藏此纹理属性的平铺和偏移字段。            |
+| `[Normal]`                           | 指示纹理属性需要法线贴图。  如果分配了不兼容的纹理，则 Unity 编辑器会显示警告。 |
+| `[PerRendererData]`                  | 指示纹理属性将来自每渲染器数据，形式为 [MaterialPropertyBlock](https://docs.unity.cn/cn/2022.3/ScriptReference/MaterialPropertyBlock.html)。  材质 Inspector 会将这些属性显示为只读。 |
+| [IntRang]                            | [IntRange]_CullType ("Cull Type", Range(0, 2)) = 1           |
+| [PowerSlider(3.0)]                   | 显示一个具有对应于 Range 着色器属性的非线性响应的滑动条。<br />// 带有 3.0 响应曲线的滑动条<br />[PowerSlider(3.0)] _Shininess ("Shininess", Range (0.01, 1)) = 0.08 |
+| [KeywordEnum(Key0, Key1, ...)]       | [KeywordEnum(None, Add, Multiply)] _Overlay("Overlay mode", Float) = 0 |
+| [Toggle]                             | [Toggle] _Invert("Invert color?", Float) = 0                 |
+| [Toggle(KEY)]                        | [Toggle(ENABLE_EXAMPLE_FEATURE)] _ExampleFeatureEnabled ("Enable example feature", Float) = 0 |
+| [ToggleOff]                          | [ToggleOff] _Another_Feature ("Enable another feature", Float) = 0 |
+| [ToggleOff(KEY)]                     | [ToggleOff(DISABLE_EXAMPLE_FEATURE)] _ExampleFeatureEnabled ("Enable example feature", Float) = 0 |
+| [Enum(CsharpEnum)]                   | [Enum(UnityEngine.Rendering.BlendMode)] _Blend ("Blend mode", Float) = 1 |
+| [Enum(Key0,Value0,Key1,Value1, ...)] | [Enum(One,1,SrcAlpha,5)] _Blend2 ("Blend mode subset", Float) = 1 |
+| [Space]                              | 在着色器属性之前创建垂直空间。<br /><br />// Default small amount of space. <br />[Space] _Prop1 ("Prop1", Float) = 0<br /><br />// Large amount of space. <br />[Space(50)] _Prop2 ("Prop2", Float) = 0 |
+| [Header(HeadTitle)]                  | 在着色器属性前创建标题文本。<br />[Header(A group of things)] _Prop1 ("Prop1", Float) = 0 |
 
 [MaterialPropertyDrawer - Unity 脚本 API](https://docs.unity.cn/cn/current/ScriptReference/MaterialPropertyDrawer.html)
 
