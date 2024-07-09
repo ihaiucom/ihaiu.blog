@@ -1443,7 +1443,435 @@ Private void Start()
 
 
 
+### 顶点输入数据 appdata
 
+[向顶点程序提供顶点数据 - Unity 手册](https://docs.unity.cn/cn/current/Manual/SL-VertexProgramInputs.html)
+
+
+
+```glsl
+struct appdata_base {
+    float4 vertex : POSITION;
+    float3 normal : NORMAL;
+    float4 texcoord : TEXCOORD0;
+    UNITY_VERTEX_INPUT_INSTANCE_ID
+};
+
+struct appdata_tan {
+    float4 vertex : POSITION;
+    float4 tangent : TANGENT;
+    float3 normal : NORMAL;
+    float4 texcoord : TEXCOORD0;
+    UNITY_VERTEX_INPUT_INSTANCE_ID
+};
+
+struct appdata_full {
+    float4 vertex : POSITION;
+    float4 tangent : TANGENT;
+    float3 normal : NORMAL;
+    float4 texcoord : TEXCOORD0;
+    float4 texcoord1 : TEXCOORD1;
+    float4 texcoord2 : TEXCOORD2;
+    float4 texcoord3 : TEXCOORD3;
+    fixed4 color : COLOR;
+    UNITY_VERTEX_INPUT_INSTANCE_ID
+};
+```
+
+要访问不同的顶点数据，您需要自己声明 顶点结构，或者将输入参数添加到 顶点着色器。顶点数据由 Cg/HLSL [语义](https://docs.unity.cn/cn/current/Manual/SL-ShaderSemantics.html)标识，并且必须来自 以下列表：
+
+- `POSITION` 是顶点位置，通常为 `float3` 或 `float4`。
+- `NORMAL` 是顶点法线，通常为 `float3`。
+- `TEXCOORD0` 是第一个 UV 坐标，通常为 `float2`、`float3` 或 `float4`。
+- `TEXCOORD1`、`TEXCOORD2` 和 `TEXCOORD3` 分别是第 2、第 3 和第 4 个 UV 坐标。
+- `TANGENT` 是切线矢量（用于法线贴图），通常为 `float4`。
+- `COLOR` 是每顶点颜色，通常为 `float4`。
+
+当网格数据包含的分量少于顶点着色器输入所需 的分量时，其余部分用零填充，但默认值为 1 的 `.w` 分量除外。例如，网格纹理坐标 通常是仅包含 x 和 y 分量的 2D 矢量。如果 顶点着色器使用 `TEXCOORD0` 语义声明一个 `float4` 输入，则 顶点着色器接收的值将包含 (x,y,0,1)。
+
+有关使用这些技术在内置渲染管线中可视化顶点数据的示例，请参阅[可视化顶点数据](https://docs.unity.cn/cn/current/Manual/built-in-shader-examples-vertex-data.html)。
+
+
+
+### 顶点着色器输入语义
+
+主顶点着色器函数（由 `#pragma vertex` 指令表示）需要在所有输入参数上都有语义。 这些对应于各个[网格](https://docs.unity.cn/cn/current/Manual/class-Mesh.html)数据元素，如顶点位置、法线网格和纹理坐标。 有关更多详细信息，请参阅[顶点程序输入](https://docs.unity.cn/cn/current/Manual/SL-VertexProgramInputs.html)。
+
+以下是一个简单的顶点着色器的示例，它采用顶点位置 和纹理坐标作为输入。像素着色器 将纹理坐标可视化为颜色。
+
+```
+Shader "Unlit/Show UVs"
+{
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            struct v2f {
+                float2 uv : TEXCOORD0;
+                float4 pos : SV_POSITION;
+            };
+
+            v2f vert (
+                float4 vertex : POSITION, // 顶点位置输入
+                float2 uv : TEXCOORD0 // 第一个纹理坐标输入
+                )
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(vertex);
+                o.uv = uv;
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                return fixed4(i.uv, 0, 0);
+            }
+            ENDCG
+        }
+    }
+}
+解释
+```
+
+![img](2024-07-03-URPShader.assets/SemanticsShowUVs.png)
+
+不必逐个拼写出所有的每个输入， 可以声明一个输入结构，并在该结构的每个 单独成员变量上指示语义。
+
+
+
+### 片元着色器输出语义
+
+通常，片元（像素）着色器会输出颜色，并具有 `SV_Target` 语义。上面示例中的片元着色器 完全就是这样的：
+
+```
+fixed4 frag (v2f i) : SV_Target
+解释
+```
+
+函数 `frag` 的返回类型为 `fixed4`（低精度 RGBA 颜色）。因为它只返回一个值，所以语义 由函数自身指示`: SV_Target`。
+
+也可以返回包含输出的结构。 上面的片元着色器也可以按如下所示重写， 功能完全相同：
+
+```
+struct fragOutput {
+    fixed4 color : SV_Target;
+};
+fragOutput frag (v2f i)
+{
+    fragOutput o;
+    o.color = fixed4(i.uv, 0, 0);
+    return o;
+}
+解释
+```
+
+从片元着色器返回结构对于不止返回单个颜色的 着色器非常有用。片元着色器 输出支持的其他语义如下。
+
+#### SV_TargetN：多个渲染目标
+
+`SV_Target1`、`SV_Target2` 等等：这些是着色器写入的附加颜色。这在一次渲染到多个渲染目标（称为“多渲染目标”渲染技术，简称 MRT）时使用。`SV_Target0` 等同于 `SV_Target`。
+
+#### SV_Depth：像素着色器深度输出
+
+通常情况下， 片元着色器不会覆盖 Z 缓冲区值，并使用 常规三角形栅格化中的默认值。但是， 对于某些效果，输出每个像素的自定义 Z 缓冲区深度值很有用。
+
+请注意，在许多 GPU 上，这会关闭一些深度缓冲区优化，因此如果没有充分的理由，请不要覆盖 Z 缓冲区值。`SV_Depth` 产生的成本取决于 GPU 架构，但总体上与 Alpha 测试（使用 HLSL 中的内置 `clip()` 函数）的成本非常相似。通过渲染着色器在所有常规不透明着色器之后修改深度（例如，使用 `AlphaTest` [渲染队列](https://docs.unity.cn/cn/current/Manual/SL-SubShaderTags.html)）。
+
+深度输出值必须为单个 `float`。
+
+### 顶点着色器输出和片元着色器输入
+
+顶点着色器需要输出顶点的最终裁剪空间位置，以便 GPU 知道屏幕上的栅格化位置以及深度。此输出需要具有 `SV_POSITION` 语义，并为 `float4` 类型。
+
+顶点着色器生成的所有其他输出（“插值器”或“变化”）都是您的特定着色器需要的。从顶点着色器输出的值将在渲染三角形的面上进行插值，并且每个像素的值将作为输入传递给片元着色器。
+
+许多现代 GPU 并不真正关心这些变量的语义；然而，一些旧系统（最主要的是 Direct3D 9 上的着色器模型 2 GPU）存在关于语义的特殊规则：
+
+- `TEXCOORD0`、`TEXCOORD1` 等语义用于指示任意高精度数据，如纹理坐标和位置。
+- 顶点输出和片元输入的 `COLOR0` 和 `COLOR1` 语义用于低精度 0 到 1 范围的数据（如简单的颜色值）。
+
+为了获得最佳的跨平台支持，应将顶点输出和 片元输入标记为 `TEXCOORDn` 语义。
+
+#### 插值器数量限制
+
+对于总共可以使用多少个插值器变量将信息 从顶点传递到片元着色器，存在一些限制。该限制 取决于平台和 GPU，一般准则如下：
+
+- **最多 8 个插值器：**OpenGL ES 2.0 (Android)、Direct3D 11 9.x 级别 (Windows Phone) 和 Direct3D 9 着色器模型 2.0（老旧 PC）。由于插值器 数量受到限制，但每个插值器可以是一个 4 分量矢量， 所以一些着色器将内容打包在一起以便不会超过限制。例如，两个纹理 坐标可以在一个 `float4` 变量中传递（.xy 表示一个坐标，.zw 表示第二个坐标）。
+- **最多 10 个插值器**：Direct3D 9 着色器模型 3.0 (`#pragma target 3.0`)。
+- **最多 16 个插值器**：OpenGL ES 3.0 (Android) 和 Metal (iOS)。
+- **最多 32 个插值器**：Direct3D 10 着色器模型 4.0 (`#pragma target 4.0`)。
+
+无论特定目标硬件如何，出于性能原因，通常最好使用尽可能少的插值器。
+
+### 其他特殊语义
+
+#### 屏幕空间像素位置：VPOS
+
+片元着色器可以接收渲染为特殊 `VPOS` 语义的像素的位置。 此功能仅从着色器模型 3.0 开始存在，因此着色器需要具有 `#pragma target 3.0` 编译指令。
+
+在不同的平台上，屏幕空间位置输入的基础类型会有所不同，因此为了获得最大的可移植性，请对其使用 `UNITY_VPOS_TYPE` 类型（在大多数平台上将是 `float4`，在 Direct3D 9 上将是 float2）。
+
+另外，使用像素位置语义将导致难以让裁剪空间位置 (SV_POSITION) 和 VPOS 处于相同的顶点到片元结构中。因此顶点着色器应将裁剪空间位置输出为单独的“out”变量。请参阅以下示例着色器：
+
+```
+Shader "Unlit/Screen Position"
+{
+    Properties
+    {
+        _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 3.0
+
+            // 注意：此结构中没有 SV_POSITION
+            struct v2f {
+                float2 uv : TEXCOORD0;
+            };
+
+            v2f vert (
+                float4 vertex : POSITION, // 顶点位置输入
+                float2 uv : TEXCOORD0, // 纹理坐标输入
+                out float4 outpos : SV_POSITION // 裁剪空间位置输出
+                )
+            {
+                v2f o;
+                o.uv = uv;
+                outpos = UnityObjectToClipPos(vertex);
+                return o;
+            }
+
+            sampler2D _MainTex;
+
+            fixed4 frag (v2f i, UNITY_VPOS_TYPE screenPos : VPOS) : SV_Target
+            {
+                // screenPos.xy 将包含像素整数坐标。
+                // 使用它们来实现一个跳过渲染 4x4 像素块的
+                // 棋盘图案
+
+                // 棋盘图案中 4x4 像素块的 checker 值
+                // 为负
+                screenPos.xy = floor(screenPos.xy * 0.25) * 0.5;
+                float checker = -frac(screenPos.r + screenPos.g);
+
+                // 如果值为负，则 clip HLSL 指令停止渲染像素
+                clip(checker);
+
+                // 对于保留的像素，读取纹理并将其输出
+                fixed4 c = tex2D (_MainTex, i.uv);
+                return c;
+            }
+            ENDCG
+        }
+    }
+}
+解释
+```
+
+![img](2024-07-03-URPShader.assets/SemanticsScreenPosition.png)
+
+#### 面对方向：VFACE
+
+片元着色器可以接收一种指示渲染表面是面向摄像机还是背对摄像机的变量。这在渲染应从两侧可见的几何体时非常有用 - 通常用于树叶和类似的薄型物体。`VFACE` 语义输入变量将包含表示正面三角形的正值，以及表示背面三角形的负值。
+
+此功能从着色器模型 3.0 开始才存在，因此着色器需要具有 `#pragma target 3.0` 编译指令。
+
+```
+Shader "Unlit/Face Orientation"
+{
+    Properties
+    {
+        _ColorFront ("Front Color", Color) = (1,0.7,0.7,1)
+        _ColorBack ("Back Color", Color) = (0.7,1,0.7,1)
+    }
+    SubShader
+    {
+        Pass
+        {
+            Cull Off // 关闭背面剔除
+
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 3.0
+
+            float4 vert (float4 vertex : POSITION) : SV_POSITION
+            {
+                return UnityObjectToClipPos(vertex);
+            }
+
+            fixed4 _ColorFront;
+            fixed4 _ColorBack;
+
+            fixed4 frag (fixed facing : VFACE) : SV_Target
+            {
+                // 正面的 VFACE 输入为正，
+                // 背面的为负。根据这种情况
+                // 输出两种颜色中的一种。
+                return facing > 0 ?_ColorFront : _ColorBack;
+            }
+            ENDCG
+        }
+    }
+}
+解释
+```
+
+上面的着色器使用 [Cull](https://docs.unity.cn/cn/current/Manual/SL-Cull.html) 状态来关闭背面剔除（默认情况下，根本不会渲染背面三角形）。以下是应用于一组四边形网格（以不同的方向旋转）的着色器：
+
+![img](2024-07-03-URPShader.assets/SemanticsFaceOrientation.png)
+
+#### 顶点 ID：SV_VertexID
+
+顶点着色器可以接收具有“顶点编号”（为无符号整数）的变量。当您想要从纹理或 [ComputeBuffers](https://docs.unity.cn/cn/current/Manual/class-ComputeShader.html) 中 获取额外的每顶点数据时，这非常有用。
+
+此功能从 DX10（着色器模型 4.0）和 GLCore/OpenGL ES 3 开始才存在，因此着色器需要具有 `#pragma target 3.5` 编译指令。
+
+```
+Shader "Unlit/VertexID"
+{
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 3.5
+
+            struct v2f {
+    fixed4 color : TEXCOORD0;
+                float4 pos : SV_POSITION;
+            };
+
+            v2f vert (
+                float4 vertex : POSITION, // 顶点位置输入
+                uint vid : SV_VertexID // 顶点 ID，必须为 uint
+                )
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(vertex);
+                // 基于顶点 ID 输出时髦颜色
+                float f = (float)vid;
+                o.color = half4(sin(f/10),sin(f/100),sin(f/1000),0) * 0.5 + 0.5;
+                return o;
+            }
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+    return i.color;
+            }
+            ENDCG
+        }
+    }
+}
+解释
+```
+
+![img](2024-07-03-URPShader.assets/SemanticsVertexID.png)
+
+
+
+
+
+# 访问着色器属性
+
+着色器在 [Properties](https://docs.unity.cn/cn/2023.2/Manual/SL-Properties.html) 代码块中声明材质属性。如果要在[着色器程序](https://docs.unity.cn/cn/2023.2/Manual/SL-ShaderPrograms.html)中访问其中一些属性，则需要声明具有相同名称和匹配类型的 Cg/HLSL 变量。
+
+例如，以下着色器属性：
+
+```glsl
+_MyColor ("Some Color", Color) = (1,1,1,1) 
+_MyVector ("Some Vector", Vector) = (0,0,0,0) 
+_MyFloat ("My float", Float) = 0.5 
+_MyTexture ("Texture", 2D) = "white" {} 
+_MyCubemap ("Cubemap", CUBE) = "" {}
+```
+
+可通过如下 Cg/HLSL 代码进行声明以供访问：
+
+```glsl
+fixed4 _MyColor; // 低精度类型对于颜色而言通常已经足够
+float4 _MyVector;
+float _MyFloat; 
+sampler2D _MyTexture;
+samplerCUBE _MyCubemap;
+```
+
+Cg/HLSL 还可以接受 **uniform** 关键字，但该关键字并不是必需的：
+
+```glsl
+uniform float4 _MyColor;
+```
+
+ShaderLab 中的属性类型以如下方式映射到 Cg/HLSL 变量类型：
+
+- Color 和 Vector 属性映射到 **float4**、**half4** 或 **fixed4** 变量。
+- Range 和 Float 属性映射到 **float**、**half** 或 **fixed** 变量。
+- 对于普通 (2D) 纹理，Texture 属性映射到 **sampler2D** 变量；立方体贴图 (Cubemap) 映射到 **samplerCUBE__；3D 纹理映射到** sampler3D__。
+
+## 如何向着色器提供属性值
+
+在下列位置中查找着色器属性值并提供给着色器：
+
+- [MaterialPropertyBlock](https://docs.unity.cn/cn/2023.2/ScriptReference/MaterialPropertyBlock.html) 中设置的每渲染器值。这通常是“每实例”数据（例如，全部共享相同材质的许多对象的自定义着色颜色）。
+- 在渲染的对象上使用的[材质](https://docs.unity.cn/cn/2023.2/Manual/class-Material.html)中设置的值。
+- 全局着色器属性，通过 Unity 渲染代码自身设置（请参阅[内置着色器变量](https://docs.unity.cn/cn/2023.2/Manual/SL-UnityShaderVariables.html)），或通过您自己的脚本来设置（例如 [Shader.SetGlobalTexture](https://docs.unity.cn/cn/2023.2/ScriptReference/Shader.SetGlobalTexture.html)）。
+
+优先顺序如上所述：每实例数据覆盖所有内容；然后使用材质数据；最后，如果这两个地方不存在着色器属性，则使用全局属性值。最终，如果在任何地方都没有定义着色器属性值，则将提供“默认值”（浮点数的默认值为零，颜色的默认值为黑色，纹理的默认值为空的白色纹理）。
+
+## 序列化和运行时材质属性
+
+[材质](https://docs.unity.cn/cn/2023.2/Manual/class-Material.html)可以同时包含序列化的属性值和运行时设置的属性值。
+
+序列化的数据是在着色器的 [Properties](https://docs.unity.cn/cn/2023.2/Manual/SL-Properties.html) 代码块中定义的所有属性。通常，这些是需要存储在材质中的值，并且可由用户在材质检视面板中进行调整。
+
+材质也可以具有着色器使用的一些属性，但不在着色器的 [Properties](https://docs.unity.cn/cn/2023.2/Manual/SL-Properties.html) 代码块中声明。通常，这适用于在运行时从脚本代码（例如，通过 [Material.SetColor](https://docs.unity.cn/cn/2023.2/ScriptReference/Material.SetColor.html)）设置的属性。请注意，矩阵和数组只能作为非序列化的运行时属性存在（因为无法在 Properties 代码块中定义它们）。
+
+## 特殊纹理属性
+
+对于设置为着色器/材质属性的每个纹理，Unity 还会在其他矢量属性中设置一些额外信息。
+
+#### 纹理平铺和偏移
+
+[材质](https://docs.unity.cn/cn/2023.2/Manual/class-Material.html)通常具有其纹理属性的 Tiling 和 Offset 字段。此信息将传递到着色器中的 float4 *{TextureName}*`_ST` 属性：
+
+- `x` 包含 X 平铺值
+- `y` 包含 Y 平铺值
+- `z` 包含 X 偏移值
+- `w` 包含 Y 偏移值
+
+例如，如果着色器包含名为 `_MainTex` 的纹理，则平铺信息将位于 `_MainTex_ST` 矢量中。
+
+#### 纹理大小
+
+*{TextureName}*`_TexelSize` - float4 属性包含纹理大小信息：
+
+- `x` 包含 1.0/宽度
+- `y` 包含 1.0/高度
+- `z` 包含宽度
+- `w` 包含高度
+
+#### 纹理 HDR 参数
+
+*{TextureName}*`_HDR` - 一个 float4 属性，其中包含有关如何根据所使用的[颜色空间](https://docs.unity.cn/cn/2023.2/Manual/LinearLighting.html)解码潜在 HDR（例如 RGBM 编码）纹理的信息。请参阅 [UnityCG.cginc](https://docs.unity.cn/cn/2023.2/Manual/SL-BuiltinIncludes.html) 着色器 include 文件中的 `DecodeHDR` 函数。
+
+## 颜色空间和颜色/矢量着色器数据
+
+使用[线性颜色空间](https://docs.unity.cn/cn/2023.2/Manual/LinearLighting.html)时，所有材质颜色属性均以 sRGB 颜色提供，但在传递到着色器时会转换为线性值。
+
+例如，如果 [Properties](https://docs.unity.cn/cn/2023.2/Manual/SL-Properties.html) 着色器代码块包含名为“*MyColor“的 `Color` 属性，则相应的”*MyColor”HLSL 变量将获得线性颜色值。
+
+对于标记为 `Float` 或 `Vector` 类型的属性，默认情况下不进行颜色空间转换；而是假设它们包含非颜色数据。可为浮点/矢量属性添加 `[Gamma]` 特性，以表示它们是以 sRGB 空间指定，就像颜色一样（请参阅[属性](https://docs.unity.cn/cn/2023.2/Manual/SL-Properties.html)）。
 
 
 
@@ -1455,5 +1883,6 @@ Private void Start()
 
 [着色器 - Unity 手册](https://docs.unity.cn/cn/2022.3/Manual/Shaders.html)
 
+[Unity3D 实用技巧 - Unity Shader 汇总式学习·初探篇 - 技术专栏 - Unity官方开发者社区](https://developer.unity.cn/projects/5fbcef81edbc2a1283e10d02)
 
-
+[内部函数 - Win32 apps | Microsoft Learn](https://learn.microsoft.com/zh-cn/windows/win32/direct3dhlsl/dx-graphics-hlsl-intrinsic-functions)
