@@ -1875,6 +1875,378 @@ ShaderLab 中的属性类型以如下方式映射到 Cg/HLSL 变量类型：
 
 
 
+
+
+# 静态合批
+
+## 合批条件要求
+
+- GameObject 是激活的.
+- GameObject 有 [Mesh Filter](https://docs.unity.cn/cn/2021.3/Manual/class-MeshFilter.html) 组件,  并且组件enabled
+- Mesh Filter 有引用 [Mesh](https://docs.unity.cn/cn/2021.3/Manual/class-Mesh.html).
+- Mesh可读写.
+- Mesh顶点数大于 0.
+- Mesh尚未与另一个Mesh组合。
+- GameObject 有 [Mesh Renderer](https://docs.unity.cn/cn/2021.3/Manual/class-MeshRenderer.html) 组件, 并且是 enabled.
+- 所有材质没有设置 `DisableBatching` 为 true.
+- 要批处理在一起的网格使用相同的顶点属性。例如，Unity 可以批量处理使用顶点位置、顶点法线和 1 个 UV 的网格，但不能批处理使用顶点位置、顶点法线、UV0、UV1 和顶点切线的网格。
+
+即使静态合批成功，合出来的每个批次可以包含的网格顶点数是有限的，最多是64000个顶点。如果超过这个数，则会创建到另一个批次中。
+
+如果要在游戏运行时进行静态合批，则可以使用StaticBatchingUtility类的Combine方法。
+
+StaticBatchingUtility.Combine(GameObject 根物体)
+对指定的根物体的所有子孙物体进行静态合批。
+只有当它们符合静态合批的所有条件，静态合批才会成功。
+成功之后，这些物体就不能再运动了，强行运动会出问题。但是该根物体仍然允许运动。
+
+StaticBatchingUtility.Combine(GameObject[] 要进行静态合批的游戏对象,GameObject 根物体)
+对指定的游戏对象进行静态合批，并指定它们静态合批的根物体。
+只有当它们符合静态合批的所有条件，静态合批才会成功。
+成功之后，这些物体就不能再运动了，强行运动会出问题。但是该根物体仍然允许运动。
+
+
+
+## 性能影响
+
+使用静态批处理需要额外的 CPU 内存来存储组合几何图形。如果多个游戏对象使用相同的网格，Unity 会为每个游戏对象创建一个网格副本，并将每个副本插入到组合的网格中。这意味着相同的几何图形会多次出现在组合网格中。无论您是使用[编辑器](https://docs.unity.cn/cn/2021.3/Manual/static-batching.html#editor)还是[运行时 API](https://docs.unity.cn/cn/2021.3/Manual/static-batching.html#runtime) 来准备游戏对象以进行静态批处理，Unity 都会执行此操作。如果要保留较小的内存占用，则可能需要牺牲渲染性能并避免某些游戏对象的静态批处理。例如，在茂密的森林环境中将树木标记为静态可能会对内存产生严重影响。
+
+**注**： 静态批处理可以包含的顶点数是有限制的。每个静态批处理最多可以包含 64000 个顶点。如果有更多批次，Unity 会创建另一个批次。
+
+
+
+[游戏图形批量渲染及优化：Unity静态合批技术 | indienova 独立游戏](https://indienova.com/u/gadqq/blogread/27660)
+[Unity静态合批处理详解_unity 静态批处理-CSDN博客](https://blog.csdn.net/Ling_SevoL_Y/article/details/130217990)
+
+[关于静态批处理/动态批处理/GPU Instancing /SRP Batcher的详细剖析 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/98642798#ref_2)
+
+
+
+## 构建时静态合批
+
+[Static batching - Unity 手册](https://docs.unity.cn/cn/2021.3/Manual/static-batching.html)
+
+1. 设置播放器平台静态合批打勾
+
+   ![image-20240709100457756](2024-07-03-URPShader.assets/image-20240709100457756.png)
+
+2. 设置GameObject 静态合批
+
+![The Static Editor Flags checkbox in the Inspector for a GameObject.](2024-07-03-URPShader.assets/StaticTagInspector.png)
+
+
+
+## 运行时静态合批
+
+[Mesh-CombineMeshes - Unity 脚本 API](https://docs.unity.cn/cn/2021.3/ScriptReference/Mesh.CombineMeshes.html)
+
+[StaticBatchingUtility-Combine - Unity 脚本 API](https://docs.unity.cn/cn/2021.3/ScriptReference/StaticBatchingUtility.Combine.html)
+
+
+
+
+
+# 动态合批
+
+[Dynamic batching - Unity 手册](https://docs.unity.cn/cn/2021.3/Manual/dynamic-batching.html)
+
+[U3D性能优化之动态合批(Dynamic batching)-CSDN博客](https://blog.csdn.net/Victor_Li_/article/details/122621657)
+
+
+
+# GPU Instance合批
+
+
+
+[Graphics-RenderMeshInstanced - Unity 脚本 API](https://docs.unity.cn/cn/2023.2/ScriptReference/Graphics.RenderMeshInstanced.html)
+
+[Creating shaders that support GPU instancing - Unity 手册](https://docs.unity.cn/cn/2021.3/Manual/gpu-instancing-shader.html)
+
+[深入URP之Shader篇14: GPU Instancing_unity shader advancedoptions enable gpu instancing-CSDN博客](https://blog.csdn.net/n5/article/details/132525846)
+
+[Unity Shader 之GPU Instancing的简单使用_unity gpu instancing使用-CSDN博客](https://blog.csdn.net/weixin_42825810/article/details/103554175)
+
+
+
+| 添加                                                    | 描述                                                         |
+| :------------------------------------------------------ | :----------------------------------------------------------- |
+| `#pragma multi_compile_instancing`                      | 生成实例化变态. **片段着色器**和**顶点着色器**是必须加这个. **Surface 着色器**可选. |
+| `#pragma instancing_options`                            | 实例化参数选项 [`#pragma instancing_options`](https://docs.unity.cn/cn/2021.3/Manual/gpu-instancing-shader.html#instancing_options-switches). |
+| `UNITY_VERTEX_INPUT_INSTANCE_ID`                        | 在**顶点输入**/**输出**结构体中声明 instance ID . 若要使用此宏，请启用INSTANCING_ON着色器关键字。否则，Unity不会设置实例ID。要访问实例ID，请在**#ifdef INSTANCING_ON**块内部使用。如果不使用此块，变体将无法编译**`vertexInput.instanceID`** |
+| `UNITY_INSTANCING_BUFFER_START(bufferName)`             | 声明名为的每实例常量**缓冲区的开始**。将此宏与`UNITY_INSTANCING_BUFFER_END`一起使用，可以包装要对每个实例唯一的属性声明。使用声明缓冲区内的属性`bufferName ``UNITY_DEFINE_INSTANCED_PROP` |
+| `UNITY_INSTANCING_BUFFER_END(bufferName)`               | **缓冲区的结束**                                             |
+| `UNITY_DEFINE_INSTANCED_PROP(type, propertyName)`       | 声明 缓冲区变量                                              |
+| `UNITY_SETUP_INSTANCE_ID(v);`                           | 允许着色器函数访问实例ID。对于顶点着色器，该宏在开始时是必需的。对于片段着色器，此添加是可选的。有关示例，请参见[Vertex and fragment shader](https://docs.unity.cn/cn/2021.3/Manual/gpu-instancing-shader.html#vertex-and-fragment-shader). |
+| `UNITY_TRANSFER_INSTANCE_ID(v, o);`                     | 将实例ID从输入结构复制到顶点着色器中的输出结构。             |
+| `UNITY_ACCESS_INSTANCED_PROP(bufferName, propertyName)` | 访问实例化常量缓冲区中的逐实例着色器属性。Unity使用实例ID对实例数据数组进行索引。必须与包含指定属性的常量缓冲区的名称匹配。此宏对INSTANCING_ON和非实例化变体的编译方式不同`bufferName` |
+
+
+
+
+
+### Instancing_options 开关
+
+[#pragma instancing_options]（#pragma-instancing_options）指令可以使用以下开关：
+
+| **开关**                                          | **描述**                                                     |
+| :------------------------------------------------ | :----------------------------------------------------------- |
+| `forcemaxcount:batchSize` 和 `maxcount:batchSize` | 在大多数平台上，Unity会自动计算实例化数据数组的大小。它将目标设备上的最大常量缓冲区大小除以包含所有每个实例属性的结构的大小。一般来说，您不需要担心批量大小。但是，有些平台需要固定的阵列大小。要**指定这些平台的批处理大小**，请使用选项。其他平台忽略此选项。如果要强制所有平台的批量大小，请使用。例如，当项目使用DrawMeshInstanced发出具有256个实例化精灵的绘制调用时，这很有用。这两个选项的默认值为500。`maxcount `forcemaxcount` |
+| `assumeuniformscaling`                            | 指示Unity假设所有实例具有统一的比例（所有X、Y和Z轴的比例相同）。 |
+| `nolodfade`                                       | 使Unity不将GPU实例化应用于[LOD](https://docs.unity.cn/cn/2021.3/Manual/LevelOfDetail.html)淡入值。 |
+| `nolightprobe`                                    | 阻止Unity将GPU实例化应用于[Light Probe](https://docs.unity.cn/cn/2021.3/Manual/LightProbes.html)值及其遮挡数据。如果您的项目不包含同时使用GPU实例化和Light Probes的GameObjects，则将此选项设置为可以提高性能`ON` |
+| `nolightmap`                                      | 阻止Unity将GPU实例化应用于光照贴图图集信息值。如果您的项目不包含同时使用GPU实例化和光照贴图的GameObjects，则将此选项设置为可以提高性能`ON` |
+| `procedural:FunctionName`                         | 生成用于[Graphics.DrawMeshInstancedIndirect]的附加变体(https://docs.unity.cn/cn/2021.3/Manual/Graphics.DrawMeshInstancedIndirect).在顶点着色器阶段开始时，Unity调用冒号后面指定的函数。若要手动设置实例数据，请将每个实例的数据添加到此函数，方法与通常将每个实例数据添加到着色器的方法相同。如果片段着色器中包含任何提取的实例属性，Unity也会在片段着色器的开头调用此函数。 |
+
+```glsl
+Shader "Custom/SimplestInstancedShader"
+{
+    Properties
+    {
+        _Color ("Color", Color) = (1, 1, 1, 1)
+    }
+
+    SubShader
+    {
+        Tags { "RenderType"="Opaque" }
+        LOD 100
+
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_instancing
+            #include "UnityCG.cginc"
+
+            struct appdata
+            {
+                float4 vertex : POSITION;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 vertex : SV_POSITION;
+                UNITY_VERTEX_INPUT_INSTANCE_ID // use this to access instanced properties in the fragment shader.
+            };
+
+            UNITY_INSTANCING_BUFFER_START(Props)
+                UNITY_DEFINE_INSTANCED_PROP(float4, _Color)
+            UNITY_INSTANCING_BUFFER_END(Props)
+
+            v2f vert(appdata v)
+            {
+                v2f o;
+
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_TRANSFER_INSTANCE_ID(v, o);
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                return o;
+            }
+
+            fixed4 frag(v2f i) : SV_Target
+            {
+                UNITY_SETUP_INSTANCE_ID(i);
+                return UNITY_ACCESS_INSTANCED_PROP(Props, _Color);
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+
+
+```c#
+using UnityEngine;
+
+public class MaterialPropertyBlockExample : MonoBehaviour
+{
+    public GameObject[] objects;
+
+    void Start()
+    {
+        MaterialPropertyBlock props = new MaterialPropertyBlock();
+        MeshRenderer renderer;
+
+        foreach (GameObject obj in objects)
+        {
+            float r = Random.Range(0.0f, 1.0f);
+            float g = Random.Range(0.0f, 1.0f);
+            float b = Random.Range(0.0f, 1.0f);
+            props.SetColor("_Color", new Color(r, g, b));
+
+            renderer = obj.GetComponent<MeshRenderer>();
+            renderer.SetPropertyBlock(props);
+        }
+    }
+}
+```
+
+
+
+### #pragma instancing_options procedural:setup
+
+[Unity3D学习笔记7——GPU实例化(2)_u3d esc gpu运算 demo-CSDN博客](https://blog.csdn.net/charlee44/article/details/125676243)
+
+### 
+
+```c#
+using UnityEngine;
+
+[ExecuteInEditMode]
+public class Note7Main : MonoBehaviour
+{
+    public Mesh mesh;
+    public Material material;
+    
+    int instanceCount = 200;
+    Bounds instanceBounds;
+
+    ComputeBuffer bufferWithArgs = null;
+    ComputeBuffer instanceParamBufferData = null;
+    
+    // Start is called before the first frame update
+    void Start()
+    {
+        instanceBounds = new Bounds(new Vector3(0, 0, 0), new Vector3(100, 100, 100));
+
+        uint[] args = new uint[5] { 0, 0, 0, 0, 0 };
+        bufferWithArgs = new ComputeBuffer(1, args.Length * sizeof(uint), ComputeBufferType.IndirectArguments);
+        int subMeshIndex = 0;
+        args[0] = mesh.GetIndexCount(subMeshIndex);
+        args[1] = (uint)instanceCount;
+        args[2] = mesh.GetIndexStart(subMeshIndex);
+        args[3] = mesh.GetBaseVertex(subMeshIndex);
+        bufferWithArgs.SetData(args);
+
+        InstanceParam[] instanceParam = new InstanceParam[instanceCount];
+
+        for (int i = 0; i < instanceCount; i++)
+        {
+            Vector3 position = Random.insideUnitSphere * 5;
+            Quaternion q = Quaternion.Euler(Random.Range(0.0f, 90.0f), Random.Range(0.0f, 90.0f), Random.Range(0.0f, 90.0f));
+            float s = Random.value;
+            Vector3 scale = new Vector3(s, s, s);
+
+            instanceParam[i].instanceToObjectMatrix = Matrix4x4.TRS(position, q, scale);
+            instanceParam[i].color = Random.ColorHSV();
+        }
+
+        int stride = System.Runtime.InteropServices.Marshal.SizeOf(typeof(InstanceParam));
+        instanceParamBufferData = new ComputeBuffer(instanceCount, stride);
+        instanceParamBufferData.SetData(instanceParam);
+        material.SetBuffer("dataBuffer", instanceParamBufferData);
+        material.SetMatrix("ObjectToWorld", Matrix4x4.identity);
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (bufferWithArgs != null)
+        {
+            Graphics.DrawMeshInstancedIndirect(mesh, 0, material, instanceBounds, bufferWithArgs, 0);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (bufferWithArgs != null)
+        {
+            bufferWithArgs.Release();
+        }
+
+        if (instanceParamBufferData != null)
+        {
+            instanceParamBufferData.Release();
+        }
+    }
+}
+
+
+```
+
+```glsl
+Shader "Custom/SimpleSurfaceIntanceShader"
+{
+    Properties
+    {
+        _Color ("Color", Color) = (1,1,1,1)
+        _MainTex ("Albedo (RGB)", 2D) = "white" {}
+        _Glossiness ("Smoothness", Range(0,1)) = 0.5
+        _Metallic ("Metallic", Range(0,1)) = 0.0
+    }
+    SubShader
+    {
+        Tags { "RenderType"="Opaque" }
+        LOD 200
+
+        CGPROGRAM
+        // Physically based Standard lighting model, and enable shadows on all light types
+        #pragma surface surf Standard fullforwardshadows
+		#pragma target 4.5
+		#pragma multi_compile_instancing
+        #pragma instancing_options procedural:setup     
+        
+		struct InstanceParam
+		{			
+			float4 color;
+			float4x4 instanceToObjectMatrix;
+		};
+
+	#ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
+        StructuredBuffer<InstanceParam> dataBuffer;
+    #endif
+
+		float4x4 ObjectToWorld;
+	
+        sampler2D _MainTex;
+
+        struct Input
+        {
+            float2 uv_MainTex;
+        };
+
+        half _Glossiness;
+        half _Metallic;
+        fixed4 _Color;
+
+		void setup()
+        {
+        #ifdef UNITY_PROCEDURAL_INSTANCING_ENABLED
+            InstanceParam data = dataBuffer[unity_InstanceID];
+            unity_ObjectToWorld = mul(ObjectToWorld, data.instanceToObjectMatrix);        
+        #endif
+        }
+
+        void surf (Input IN, inout SurfaceOutputStandard o)
+        {
+            // Albedo comes from a texture tinted by color
+            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;		
+            o.Albedo = c.rgb;
+            // Metallic and smoothness come from slider variables
+            o.Metallic = _Metallic;
+            o.Smoothness = _Glossiness;
+            o.Alpha = c.a;
+        }
+        ENDCG
+    }
+    FallBack "Diffuse"
+}
+
+```
+
+- #pragma multi_compile_instancing的意思是给这个着色器增加了实例化的变体，也就是增加了诸如INSTANCING_ON PROCEDURAL_ON这样的关键字，可以编译实例化的着色器版本。
+- #pragma instancing_options procedural:setup是搭配Graphics.DrawMeshInstancedIndirect 使用的，在顶点着色器阶段开始时，Unity会调用冒号后指定的setup()函数。
+- setup()函数的意思是通过实例化Id也就是unity_InstanceID，找到正确的实例化数据，并且调整Unity的内置变量unity_ObjectToWorld——也就是模型矩阵。GPU实例化的关键就在于模型矩阵的重新计算。在Unity API官方示例中，还修改了其逆矩阵unity_WorldToObject。
+- 
+
+# SRP 合批
+
+[Scriptable Render Pipeline Batcher - Unity 手册](https://docs.unity.cn/cn/2021.3/Manual/SRPBatcher.html#how-the-srp-batcher-works)
+
+
+
 # 相关链接
 
 
