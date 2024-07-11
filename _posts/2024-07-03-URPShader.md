@@ -599,7 +599,7 @@ Shader "Unlit/ZF_01_Shader"
         // [MainTexture]纹理
         [MainTexture] _MainTex ("Texture", 2D) = "white" {}
         // [Normal] [NoScaleOffset] 纹理
-        [Normal] [NoScaleOffset] _NormalMap ("NormalMap", 2D) = "white" {}
+        [Normal] [NoScaleOffset] _NormalMap ("NormalMap", 2D) = "bump" {}
         // [HideInInspector] 隐藏属性
         [HideInInspector] _HideValue("HideValue", Float) = 0.5
         // [PerRendererData] 材质属性块
