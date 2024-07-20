@@ -125,9 +125,9 @@ float4 pos4 = float4(pos.xx, 0, 0);
 
 ##### 矩阵类型
 
-![image-20240709184409082](2024-07-03-URPShader.assets/image-20240709184409082.png)
+![image-20240709184409082](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/image-20240709184409082.png)
 
-![image-20240709185213568](2024-07-03-URPShader.assets/image-20240709185213568.png)
+![image-20240709185213568](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/image-20240709185213568.png)
 
 
 
@@ -400,7 +400,7 @@ SubShader
 
 ```
 
-![image-20240709193755777](2024-07-03-URPShader.assets/image-20240709193755777.png)
+![image-20240709193755777](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/image-20240709193755777.png)
 
 
 
@@ -617,7 +617,7 @@ Shader "Unlit/ZF_01_Shader"
 }
 ```
 
-![image-20240703195309506](2024-07-03-URPShader.assets/image-20240703195309506.png)
+![image-20240703195309506](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/image-20240703195309506.png)
 
 
 
@@ -1695,17 +1695,17 @@ Private void Start()
 
 选中我们的shader，然后在Inspector中查看Compiled code 可以看到，下面显示80个变体，为什么多了10倍呢？
 
-![img](2024-07-03-URPShader.assets/20200620154520208.png)
+![img](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/20200620154520208.png)
 
 我们可以下点面板下的Show，查看代码，发现还有一些unity 自带的scene的变体（下图只是一部分），也会被包含，因此我们也不能任意增加变体的数量。会导致变体代码膨胀。
 
-![img](2024-07-03-URPShader.assets/20200620154509921.png)
+![img](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/20200620154509921.png)
 
 也可以直接在面板上查看，点开Keywords：
 
-![img](2024-07-03-URPShader.assets/20200620155221564.png)
+![img](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/20200620155221564.png)
 
-![img](2024-07-03-URPShader.assets/2020062015535980.png)
+![img](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/2020062015535980.png)
 
 ##### 使用特定于阶段的关键字指令
 
@@ -1992,7 +1992,7 @@ Shader "Unlit/Show UVs"
 解释
 ```
 
-![img](2024-07-03-URPShader.assets/SemanticsShowUVs.png)
+![img](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/SemanticsShowUVs.png)
 
 不必逐个拼写出所有的每个输入， 可以声明一个输入结构，并在该结构的每个 单独成员变量上指示语义。
 
@@ -2132,7 +2132,7 @@ Shader "Unlit/Screen Position"
 解释
 ```
 
-![img](2024-07-03-URPShader.assets/SemanticsScreenPosition.png)
+![img](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/SemanticsScreenPosition.png)
 
 #### 面对方向：VFACE
 
@@ -2183,7 +2183,7 @@ Shader "Unlit/Face Orientation"
 
 上面的着色器使用 [Cull](https://docs.unity.cn/cn/current/Manual/SL-Cull.html) 状态来关闭背面剔除（默认情况下，根本不会渲染背面三角形）。以下是应用于一组四边形网格（以不同的方向旋转）的着色器：
 
-![img](2024-07-03-URPShader.assets/SemanticsFaceOrientation.png)
+![img](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/SemanticsFaceOrientation.png)
 
 #### 顶点 ID：SV_VertexID
 
@@ -2232,7 +2232,7 @@ Shader "Unlit/VertexID"
 解释
 ```
 
-![img](2024-07-03-URPShader.assets/SemanticsVertexID.png)
+![img](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/SemanticsVertexID.png)
 
 
 
@@ -2383,11 +2383,11 @@ StaticBatchingUtility.Combine(GameObject[] 要进行静态合批的游戏对象,
 
 1. 设置播放器平台静态合批打勾
 
-   ![image-20240709100457756](2024-07-03-URPShader.assets/image-20240709100457756.png)
+   ![image-20240709100457756](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/image-20240709100457756.png)
 
 2. 设置GameObject 静态合批
 
-![The Static Editor Flags checkbox in the Inspector for a GameObject.](2024-07-03-URPShader.assets/StaticTagInspector.png)
+![The Static Editor Flags checkbox in the Inspector for a GameObject.](https://blog.ihaiu.com/assets/docpic/2024-07-03-URPShader.assets/StaticTagInspector.png)
 
 
 
