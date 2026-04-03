@@ -409,9 +409,11 @@ input[type="text"]:focus { border-color: #6c63ff; }
   color: #ffd86f; min-width: 34px; text-align: right;
 }
 #game-chat {
-  position: absolute; bottom: 60px; left: 12px;
-  max-width: 280px; pointer-events: none;
+  position: absolute; bottom: 64px; left: 50%; transform: translateX(-50%);
+  width: min(560px, 78vw);
+  max-width: 560px; pointer-events: none;
   display: flex; flex-direction: column; gap: 3px;
+  align-items: center;
 }
 .game-chat-msg {
   background: rgba(0,0,0,0.6); border-radius: 8px;
@@ -420,12 +422,15 @@ input[type="text"]:focus { border-color: #6c63ff; }
 }
 @keyframes fadeMsg { 0%,70%{opacity:1} 100%{opacity:0} }
 #game-chat-input-bar {
-  position: absolute; bottom: 10px; left: 12px;
+  position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
   display: flex; gap: 6px;
   pointer-events: all;
 }
 #game-chat-input-bar.hidden { display: none; }
-#game-chat-input { width: 220px; font-size: 13px; }
+#game-chat-input { width: min(460px, 70vw); font-size: 13px; }
+#game.mobile-ui #game-chat { bottom: 188px; width: min(520px, 92vw); }
+#game.mobile-ui #game-chat-input-bar { bottom: 152px; }
+#game.mobile-ui #game-chat-input { width: min(520px, 92vw); }
 #spectator-bar {
   position: absolute; bottom: 10px; right: 12px;
   background: rgba(0,0,0,0.65); backdrop-filter: blur(4px);
@@ -650,6 +655,111 @@ input[type="text"]:focus { border-color: #6c63ff; }
 }
 #controls-hint.hidden { display: none; }
 
+/* ===== MOBILE CONTROLS ===== */
+#mobile-mode-toggle-wrap {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1300;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+#mobileModeToggle {
+  font-size: 12px;
+  padding: 7px 10px;
+}
+#fullscreenToggle {
+  font-size: 12px;
+  padding: 7px 10px;
+}
+#mobile-controls {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: none;
+  pointer-events: none;
+}
+#mobile-controls.show { display: block; }
+.mobile-dpad {
+  width: 164px;
+  height: 164px;
+  position: absolute;
+  left: 14px;
+  bottom: 10px;
+  pointer-events: auto;
+  touch-action: none;
+}
+.mobile-actions {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: auto;
+  touch-action: none;
+}
+#mobile-controls.layout-edit .mobile-dpad,
+#mobile-controls.layout-edit .mobile-actions {
+  outline: 1px dashed rgba(255,255,255,0.45);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.06);
+}
+#mobile-controls.layout-edit .mctrl-btn,
+#mobile-controls.layout-edit .mact-btn {
+  pointer-events: none;
+}
+.mctrl-btn {
+  position: absolute;
+  width: 54px;
+  height: 54px;
+  border-radius: 13px;
+  border: 1px solid rgba(255,255,255,0.24);
+  background: rgba(10,18,40,0.72);
+  color: #dfe8ff;
+  font-weight: 800;
+  font-size: 20px;
+  backdrop-filter: blur(3px);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+.mctrl-btn:active,
+.mctrl-btn.pressed {
+  transform: scale(0.95);
+  background: rgba(70,90,160,0.78);
+  border-color: rgba(180,210,255,0.5);
+}
+.mctrl-up { left: 55px; top: 0; }
+.mctrl-left { left: 0; top: 55px; }
+.mctrl-right { right: 0; top: 55px; }
+.mctrl-down { left: 55px; bottom: 0; }
+.mact-btn {
+  min-width: 76px;
+  height: 56px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.24);
+  background: rgba(10,18,40,0.72);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+.mact-btn:active,
+.mact-btn.pressed {
+  transform: scale(0.96);
+  background: rgba(80,120,220,0.78);
+}
+.mact-jump { color: #ffeaa7; }
+.mact-dash { color: #81ecec; }
+.mact-net { color: #ffb8b8; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -738,6 +848,12 @@ input[type="text"]:focus { border-color: #6c63ff; }
 </head>
 <body>
 <div id="countdown-overlay" aria-hidden="true"></div>
+<div id="mobile-mode-toggle-wrap">
+  <button id="mobileModeToggle" type="button" class="btn btn-secondary btn-small" onclick="toggleMobileMode()">📱 手机模式: 关</button>
+  <button id="mobileLayoutEditToggle" type="button" class="btn btn-secondary btn-small" onclick="toggleMobileLayoutEdit()">🎛 布局编辑: 关</button>
+  <button id="mobileLayoutResetBtn" type="button" class="btn btn-secondary btn-small" onclick="resetMobileControlLayout()" style="display:none">↺ 重置布局</button>
+  <button id="fullscreenToggle" type="button" class="btn btn-secondary btn-small" onclick="toggleFullscreenMode()">⛶ 全屏</button>
+</div>
 
 <!-- ===== LOBBY ===== -->
 <div id="lobby" class="screen active">
@@ -882,11 +998,24 @@ input[type="text"]:focus { border-color: #6c63ff; }
     </div>
     <div id="controls-hint">
       ← → 或 A D 移动<br>
-      ↑ 或 W 或 空格 跳跃<br>
+      空格 跳跃<br>
       双跳: 再次按跳跃键<br>
       飞行中: ↓ 或 S 下降<br>
       F 发射逮捕网<br>
       T 打开聊天
+    </div>
+  </div>
+  <div id="mobile-controls">
+    <div class="mobile-dpad">
+      <button id="mctrl-up" class="mctrl-btn mctrl-up" type="button">↑</button>
+      <button id="mctrl-left" class="mctrl-btn mctrl-left" type="button">←</button>
+      <button id="mctrl-right" class="mctrl-btn mctrl-right" type="button">→</button>
+      <button id="mctrl-down" class="mctrl-btn mctrl-down" type="button">↓</button>
+    </div>
+    <div class="mobile-actions">
+      <button id="mact-jump" class="mact-btn mact-jump" type="button">跳</button>
+      <button id="mact-dash" class="mact-btn mact-dash" type="button">冲</button>
+      <button id="mact-net" class="mact-btn mact-net" type="button">网</button>
     </div>
   </div>
 </div>
@@ -1005,6 +1134,7 @@ input[type="text"]:focus { border-color: #6c63ff; }
           <li>移动：← → / A D</li>
           <li>跳跃：空格（可连跳）</li>
           <li>能量条在头顶自动回复；每次冲刺消耗 1/3 能量，满能量可连续冲刺 3 次。<strong>双击任意方向键</strong>可冲刺，并支持方向组合（例如按住右+上可冲向右上 45°）；鼠标双击左右键仍可水平冲刺。</li>
+          <li>手机端默认开启虚拟按键（方向 / 跳 / 冲 / 网）；桌面端可点左上角「📱 手机模式」按钮预览触屏操作。</li>
           <li>飞行状态可按 ↓ / S 下降，T 打开聊天。</li>
           <li>对局中约 <strong>1 分钟</strong>无任何方向/跳跃操作（含鼠标双击冲刺）时，其他玩家会看到你为<strong>暂离</strong>（半透明、昵称带标记）；任意游戏操作即可恢复。<strong>已冲线</strong>或<strong>观战位加入</strong>的玩家不参与该判定。</li>
         </ul>
@@ -1520,6 +1650,16 @@ let pendingDashVec = null;
 let _lastDblTapLeft = 0, _lastDblTapRight = 0, _lastDblTapUp = 0, _lastDblTapDown = 0;
 let _lastMouseLeftDown = 0, _lastMouseRightDown = 0;
 let _gameCanvasInputBound = false;
+let mobileControlMode = false;
+let mobileControlAuto = false;
+let mobileLayoutEdit = false;
+const MOBILE_LAYOUT_STORAGE_KEY = 'parkour_mobile_layout_v1';
+let mobileControlLayout = {
+  dpadLeft: 14,
+  dpadBottom: 10,
+  actionsRight: 14,
+  actionsBottom: 10
+};
 
 // Canvas
 let canvas, ctx;
@@ -5713,6 +5853,7 @@ function enterGameScreenForCountdown(roomPlayers) {
 
   gameStartTime = Date.now();
   gameRunning = true;
+  updateMobileModeUI();
   gameEnvTheme = roomEnvTheme;
   lastGameInputAt = Date.now();
   sessionStageTotal = roomStageTotal;
@@ -5736,8 +5877,12 @@ function enterGameScreenForCountdown(roomPlayers) {
   specAutoMode = true;
 
   showSpecBar(false);
-  document.getElementById('controls-hint').classList.remove('hidden');
-  setTimeout(() => document.getElementById('controls-hint').classList.add('hidden'), 8000);
+  if (!mobileControlMode) {
+    document.getElementById('controls-hint').classList.remove('hidden');
+    setTimeout(() => document.getElementById('controls-hint').classList.add('hidden'), 8000);
+  } else {
+    document.getElementById('controls-hint').classList.add('hidden');
+  }
 
   cam.x = gMap.spawnX - CW * 0.35;
   cam.y = gMap.spawnY - CH * 0.55;
@@ -5796,6 +5941,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     localNets = []; peerNets = []; droppedTraps = [];
     gameStartTime = startTimestamp;
     gameRunning = true;
+    updateMobileModeUI();
     ghostRecordingBuffer = [];
     lastGhostSampleAt = 0;
     pbGhostPlayback = loadPbGhostFromStorage(gameSeed);
@@ -5807,8 +5953,12 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
       showSpecBar(true);
     } else {
       showSpecBar(false);
-      document.getElementById('controls-hint').classList.remove('hidden');
-      setTimeout(() => document.getElementById('controls-hint').classList.add('hidden'), 8000);
+      if (!mobileControlMode) {
+        document.getElementById('controls-hint').classList.remove('hidden');
+        setTimeout(() => document.getElementById('controls-hint').classList.add('hidden'), 8000);
+      } else {
+        document.getElementById('controls-hint').classList.add('hidden');
+      }
     }
 
     cam.x = gMap.spawnX - CW * 0.35;
@@ -5873,6 +6023,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
 function stopGame() {
   GameAudio.stopBgm();
   gameRunning = false;
+  updateMobileModeUI();
   raceInputLocked = false;
   screenShakeAmp = 0;
   sessionMultiplayerRace = false;
@@ -5946,6 +6097,296 @@ function syncPosition() {
     away,
     arrestedUntil: localPlayer.arrestedUntil || 0
   }));
+}
+
+function isLikelyMobileBrowser() {
+  return /Android|iPhone|iPad|iPod|Mobile|HarmonyOS/i.test(navigator.userAgent) ||
+    window.matchMedia('(pointer: coarse)').matches;
+}
+
+function clearMobileHeldKeys() {
+  keys.ArrowLeft = false;
+  keys.ArrowRight = false;
+  keys.ArrowUp = false;
+  keys.ArrowDown = false;
+  keys[' '] = false;
+  document.querySelectorAll('.mctrl-btn.pressed, .mact-btn.pressed').forEach(el => el.classList.remove('pressed'));
+}
+
+function clampMobileControlLayout() {
+  const dpadEl = document.querySelector('.mobile-dpad');
+  const actionsEl = document.querySelector('.mobile-actions');
+  const dpadW = dpadEl?.offsetWidth || 164;
+  const dpadH = dpadEl?.offsetHeight || 164;
+  const actW = actionsEl?.offsetWidth || 84;
+  const actH = actionsEl?.offsetHeight || 188;
+  mobileControlLayout.dpadLeft = clamp(mobileControlLayout.dpadLeft, 0, Math.max(0, window.innerWidth - dpadW));
+  mobileControlLayout.dpadBottom = clamp(mobileControlLayout.dpadBottom, 0, Math.max(0, window.innerHeight - dpadH));
+  mobileControlLayout.actionsRight = clamp(mobileControlLayout.actionsRight, 0, Math.max(0, window.innerWidth - actW));
+  mobileControlLayout.actionsBottom = clamp(mobileControlLayout.actionsBottom, 0, Math.max(0, window.innerHeight - actH));
+}
+
+function applyMobileControlLayout() {
+  clampMobileControlLayout();
+  const dpadEl = document.querySelector('.mobile-dpad');
+  const actionsEl = document.querySelector('.mobile-actions');
+  if (dpadEl) {
+    dpadEl.style.left = `${Math.round(mobileControlLayout.dpadLeft)}px`;
+    dpadEl.style.bottom = `${Math.round(mobileControlLayout.dpadBottom)}px`;
+  }
+  if (actionsEl) {
+    actionsEl.style.right = `${Math.round(mobileControlLayout.actionsRight)}px`;
+    actionsEl.style.bottom = `${Math.round(mobileControlLayout.actionsBottom)}px`;
+  }
+}
+
+function saveMobileControlLayout() {
+  try {
+    localStorage.setItem(MOBILE_LAYOUT_STORAGE_KEY, JSON.stringify(mobileControlLayout));
+  } catch (_) {}
+}
+
+function loadMobileControlLayout() {
+  try {
+    const raw = localStorage.getItem(MOBILE_LAYOUT_STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== 'object') return;
+    mobileControlLayout.dpadLeft = Number.isFinite(parsed.dpadLeft) ? parsed.dpadLeft : mobileControlLayout.dpadLeft;
+    mobileControlLayout.dpadBottom = Number.isFinite(parsed.dpadBottom) ? parsed.dpadBottom : mobileControlLayout.dpadBottom;
+    mobileControlLayout.actionsRight = Number.isFinite(parsed.actionsRight) ? parsed.actionsRight : mobileControlLayout.actionsRight;
+    mobileControlLayout.actionsBottom = Number.isFinite(parsed.actionsBottom) ? parsed.actionsBottom : mobileControlLayout.actionsBottom;
+  } catch (_) {}
+}
+
+function resetMobileControlLayout() {
+  mobileControlLayout = { dpadLeft: 14, dpadBottom: 10, actionsRight: 14, actionsBottom: 10 };
+  applyMobileControlLayout();
+  saveMobileControlLayout();
+}
+
+function toggleMobileLayoutEdit(forceValue) {
+  const next = typeof forceValue === 'boolean' ? forceValue : !mobileLayoutEdit;
+  mobileLayoutEdit = !!next;
+  if (!mobileLayoutEdit) clearMobileHeldKeys();
+  updateMobileModeUI();
+}
+
+function bindMobileLayoutDrag(targetSelector, mode) {
+  const el = document.querySelector(targetSelector);
+  if (!el) return;
+  let dragging = null;
+  const onMove = (e) => {
+    if (!dragging) return;
+    e.preventDefault();
+    const dx = e.clientX - dragging.startX;
+    const dy = e.clientY - dragging.startY;
+    if (mode === 'dpad') {
+      mobileControlLayout.dpadLeft = dragging.baseMain + dx;
+      mobileControlLayout.dpadBottom = dragging.baseCross - dy;
+    } else {
+      mobileControlLayout.actionsRight = dragging.baseMain - dx;
+      mobileControlLayout.actionsBottom = dragging.baseCross - dy;
+    }
+    applyMobileControlLayout();
+  };
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = null;
+    saveMobileControlLayout();
+  };
+  el.addEventListener('pointerdown', e => {
+    if (!mobileLayoutEdit) return;
+    e.preventDefault();
+    dragging = {
+      startX: e.clientX,
+      startY: e.clientY,
+      baseMain: mode === 'dpad' ? mobileControlLayout.dpadLeft : mobileControlLayout.actionsRight,
+      baseCross: mode === 'dpad' ? mobileControlLayout.dpadBottom : mobileControlLayout.actionsBottom
+    };
+  });
+  window.addEventListener('pointermove', onMove, { passive: false });
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', endDrag);
+}
+
+function isFullscreenActive() {
+  return !!(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement
+  );
+}
+
+function updateFullscreenButtonUI() {
+  const btn = document.getElementById('fullscreenToggle');
+  if (!btn) return;
+  const active = isFullscreenActive();
+  btn.textContent = active ? '🗗 退出全屏' : '⛶ 全屏';
+  btn.className = active ? 'btn btn-success btn-small' : 'btn btn-secondary btn-small';
+}
+
+async function toggleFullscreenMode() {
+  try {
+    if (isFullscreenActive()) {
+      if (document.exitFullscreen) await document.exitFullscreen();
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      else if (document.msExitFullscreen) document.msExitFullscreen();
+      updateFullscreenButtonUI();
+      return;
+    }
+    const el = document.documentElement;
+    if (el.requestFullscreen) await el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    updateFullscreenButtonUI();
+  } catch (_) {
+    // 某些移动浏览器需要用户手势或不支持全屏，忽略异常并保持按钮可用
+    updateFullscreenButtonUI();
+  }
+}
+
+function updateMobileModeUI() {
+  const btn = document.getElementById('mobileModeToggle');
+  const editBtn = document.getElementById('mobileLayoutEditToggle');
+  const resetBtn = document.getElementById('mobileLayoutResetBtn');
+  const wrap = document.getElementById('mobile-mode-toggle-wrap');
+  const panel = document.getElementById('mobile-controls');
+  const gameEl = document.getElementById('game');
+  if (!btn || !editBtn || !resetBtn || !wrap || !panel) return;
+  const onGameScreen = document.getElementById('game')?.classList.contains('active');
+  const onRoomScreen = document.getElementById('room')?.classList.contains('active');
+  const showPanel = mobileControlMode && onGameScreen && gameRunning && !isSpectator;
+  if (!showPanel) mobileLayoutEdit = false;
+  if (gameEl) gameEl.classList.toggle('mobile-ui', mobileControlMode);
+  if (onGameScreen) {
+    // 游戏内避开左上 HUD（排名/信息条）
+    wrap.style.top = '54px';
+    wrap.style.left = '10px';
+    wrap.style.right = 'auto';
+  } else if (onRoomScreen) {
+    // 房间内下移到头部下方，避免与“离开”按钮同排重叠
+    wrap.style.top = '62px';
+    wrap.style.right = '10px';
+    wrap.style.left = 'auto';
+  } else {
+    // 大厅等页面也放右上，避免遮挡左侧区域
+    wrap.style.top = '10px';
+    wrap.style.right = '10px';
+    wrap.style.left = 'auto';
+  }
+  if (showPanel) {
+    panel.classList.add('show');
+    panel.classList.toggle('layout-edit', mobileLayoutEdit);
+    applyMobileControlLayout();
+  }
+  else {
+    panel.classList.remove('show');
+    panel.classList.remove('layout-edit');
+    clearMobileHeldKeys();
+  }
+  const modeTxt = mobileControlMode ? '开' : '关';
+  btn.textContent = `📱 手机模式: ${modeTxt}`;
+  btn.className = mobileControlMode ? 'btn btn-success btn-small' : 'btn btn-secondary btn-small';
+  const editTxt = mobileLayoutEdit ? '开' : '关';
+  editBtn.textContent = `🎛 布局编辑: ${editTxt}`;
+  editBtn.className = mobileLayoutEdit ? 'btn btn-success btn-small' : 'btn btn-secondary btn-small';
+  editBtn.style.display = showPanel ? 'inline-block' : 'none';
+  resetBtn.style.display = showPanel ? 'inline-block' : 'none';
+  wrap.style.opacity = mobileControlMode ? '1' : '0.88';
+  updateFullscreenButtonUI();
+}
+
+function toggleMobileMode(forceValue) {
+  const next = typeof forceValue === 'boolean' ? forceValue : !mobileControlMode;
+  mobileControlMode = !!next;
+  mobileControlAuto = false;
+  updateMobileModeUI();
+}
+
+function bindHoldButton(el, onDown, onUp) {
+  if (!el) return;
+  const up = () => {
+    el.classList.remove('pressed');
+    if (onUp) onUp();
+  };
+  el.addEventListener('pointerdown', e => {
+    if (mobileLayoutEdit) return;
+    e.preventDefault();
+    el.classList.add('pressed');
+    if (onDown) onDown();
+  });
+  el.addEventListener('pointerup', e => { e.preventDefault(); up(); });
+  el.addEventListener('pointercancel', up);
+  el.addEventListener('pointerleave', e => {
+    if ((e.buttons | 0) === 0) up();
+  });
+}
+
+function bindMobileControls() {
+  const bindDir = (id, key) => {
+    const el = document.getElementById(id);
+    bindHoldButton(
+      el,
+      () => {
+        keys[key] = true;
+        if (gameRunning) lastGameInputAt = Date.now();
+      },
+      () => { keys[key] = false; }
+    );
+  };
+  bindDir('mctrl-left', 'ArrowLeft');
+  bindDir('mctrl-right', 'ArrowRight');
+  bindDir('mctrl-up', 'ArrowUp');
+  bindDir('mctrl-down', 'ArrowDown');
+
+  bindHoldButton(
+    document.getElementById('mact-jump'),
+    () => {
+      keys[' '] = true;
+      if (gameRunning) lastGameInputAt = Date.now();
+    },
+    () => { keys[' '] = false; }
+  );
+
+  const dashBtn = document.getElementById('mact-dash');
+  if (dashBtn) {
+    dashBtn.addEventListener('pointerdown', e => {
+      if (mobileLayoutEdit) return;
+      e.preventDefault();
+      dashBtn.classList.add('pressed');
+      const fallbackX = localPlayer?.facing || 1;
+      requestDash(fallbackX, 0);
+      if (gameRunning) lastGameInputAt = Date.now();
+    });
+    const dashUp = () => dashBtn.classList.remove('pressed');
+    dashBtn.addEventListener('pointerup', dashUp);
+    dashBtn.addEventListener('pointercancel', dashUp);
+    dashBtn.addEventListener('pointerleave', e => {
+      if ((e.buttons | 0) === 0) dashUp();
+    });
+  }
+
+  const netBtn = document.getElementById('mact-net');
+  if (netBtn) {
+    netBtn.addEventListener('pointerdown', e => {
+      if (mobileLayoutEdit) return;
+      e.preventDefault();
+      netBtn.classList.add('pressed');
+      tryThrowNet();
+      if (gameRunning) lastGameInputAt = Date.now();
+    });
+    const netUp = () => netBtn.classList.remove('pressed');
+    netBtn.addEventListener('pointerup', netUp);
+    netBtn.addEventListener('pointercancel', netUp);
+    netBtn.addEventListener('pointerleave', e => {
+      if ((e.buttons | 0) === 0) netUp();
+    });
+  }
+
+  window.addEventListener('blur', clearMobileHeldKeys);
+  bindMobileLayoutDrag('.mobile-dpad', 'dpad');
+  bindMobileLayoutDrag('.mobile-actions', 'actions');
 }
 
 // ===================== INPUT =====================
@@ -6048,6 +6489,7 @@ function setScreen(name) {
       strip.style.display = 'none';
     }
   }
+  updateMobileModeUI();
 }
 
 function onGameCanvasMouseDown(e) {
@@ -6091,6 +6533,7 @@ function resizeCanvas() {
 
 window.addEventListener('resize', () => {
   if (document.getElementById('game').classList.contains('active')) resizeCanvas();
+  applyMobileControlLayout();
 });
 
 // ===================== LOBBY ACTIONS =====================
@@ -6842,6 +7285,15 @@ window.addEventListener('load', () => {
   }
   initLobbyStageSelect();
   resizeCanvas();
+  bindMobileControls();
+  loadMobileControlLayout();
+  applyMobileControlLayout();
+  mobileControlAuto = isLikelyMobileBrowser();
+  mobileControlMode = mobileControlAuto;
+  document.addEventListener('fullscreenchange', updateFullscreenButtonUI);
+  document.addEventListener('webkitfullscreenchange', updateFullscreenButtonUI);
+  document.addEventListener('msfullscreenchange', updateFullscreenButtonUI);
+  updateMobileModeUI();
   connect(() => { fetchRooms(); fetchLeaderboard(); }, renderOfflineLobbyHint);
   setInterval(fetchRooms, 5000);
   setInterval(fetchLeaderboard, 8000);
