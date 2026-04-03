@@ -1120,6 +1120,8 @@ body.game-touch-lock #mobile-toggle-wrap * {
 #gm-panel .gm-btn.gm-speed2:hover { background: rgba(0,206,201,0.15); color: #00cec9; }
 #gm-panel .gm-btn.gm-speed3 { border-color: rgba(253,150,68,0.35); }
 #gm-panel .gm-btn.gm-speed3:hover { background: rgba(253,150,68,0.15); color: #fd9644; }
+#gm-panel .gm-btn.gm-clear { border-color: rgba(255,107,107,0.35); }
+#gm-panel .gm-btn.gm-clear:hover { background: rgba(255,107,107,0.15); color: #ff6b6b; }
 #gm-panel .gm-btn.gm-next { border-color: rgba(0,184,148,0.35); }
 #gm-panel .gm-btn.gm-next:hover { background: rgba(0,184,148,0.15); color: #00b894; }
 #gm-panel .gm-btn.gm-skip { border-color: rgba(108,99,255,0.35); }
@@ -1361,6 +1363,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
       ← → 或 A D 移动<br>
       空格 跳跃<br>
       双跳: 再次按跳跃键<br>
+      蹬墙跳: 空中贴墙时按跳跃键<br>
       飞行中: ↓ 或 S 下降<br>
       F 发射逮捕网<br>
       T 打开聊天
@@ -1488,6 +1491,12 @@ body.game-touch-lock #mobile-toggle-wrap * {
         </ul>
       </div>
       <div class="guide-card">
+        <h4>高级动作</h4>
+        <ul>
+          <li><b>蹬墙跳</b>：空中靠近平台侧面并按住朝向墙壁的方向键，角色会贴墙缓慢下滑（墙壁滑行）；此时按跳跃键可蹬墙反弹跳起，获得反方向的水平冲量。可连续蹬墙在两面墙之间交替攀升！</li>
+        </ul>
+      </div>
+      <div class="guide-card">
         <h4>音效与音乐</h4>
         <ul>
           <li>使用浏览器 <strong>Web Audio</strong> 生成短音效与轻量循环 BGM，无需下载音频文件。</li>
@@ -1517,6 +1526,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
           <li><b>🦘 连跳+1</b>：额外增加 1 次连跳次数（长期生效）。</li>
           <li><b>❤️+1 生命</b>：立即恢复 1 条生命。</li>
           <li><b>🔋 能量补满</b>：能量条立刻回满，可马上冲刺。</li>
+          <li><b>🧲 磁铁</b>（仅单人模式）：拾取后自动吸引周围金币飞向玩家，持续 8 秒。红色虚线圆圈表示吸引范围。</li>
           <li>多人对战中，大部分道具<strong>每人可各领一次</strong>；约三分之一为<strong>全房仅一人可领</strong>（金色虚线方框标记）。<strong>金币</strong>仍为全场先到先得。</li>
           <li>≥2 人时，吃掉金币后有较低概率在附近<strong>额外刷出补给道具</strong>（全房同步），方便后队追赶。</li>
           <li>部分道具会在原位附近<strong>缓慢漂浮移动</strong>（正弦轨迹），同一地图 seed 下所有人看到的轨迹一致。</li>
@@ -1533,6 +1543,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
   <button class="gm-btn gm-fly" onclick="gmFly()">🪽 飞行 5分钟</button>
   <button class="gm-btn gm-speed2" onclick="gmSpeed2()">⚡ 速度×2 5分钟</button>
   <button class="gm-btn gm-speed3" onclick="gmSpeed3()">🔥 速度×3 5分钟</button>
+  <button class="gm-btn gm-clear" onclick="gmClearAllEffects()">🚫 取消所有道具</button>
   <button class="gm-btn gm-next" onclick="gmNextLevel()">⏭ 跳到下一关</button>
   <div class="gm-skip-row">
     <input type="number" class="gm-skip-input" id="gmSkipN" value="2" min="1" max="99">
@@ -1585,6 +1596,10 @@ const GROUND_FRICTION = 0.92;
 const AIR_FRICTION = 0.985;
 const ICE_FRICTION = 0.997;
 const MAX_FALL = 18;
+const WALL_SLIDE_SPEED = 3;
+const WALL_JUMP_VEL_Y = -13;
+const WALL_JUMP_VEL_X = 7;
+const WALL_JUMP_COOLDOWN = 8;
 const COYOTE = 8;
 const JBUF = 10;
 const PW = 28;
@@ -3773,7 +3788,8 @@ function generateMap(seed, envTheme, stageOpts) {
   const pwRng = mulberry32(seed + 777);
   const powerups = [];
   let pwId = 0;
-  const PW_TYPES = ['speed2', 'invincible', 'fly', 'invincible_fly', 'extra_jump', 'life', 'life', 'energy_full'];
+  const PW_TYPES_BASE = ['speed2', 'invincible', 'fly', 'invincible_fly', 'extra_jump', 'life', 'life', 'energy_full'];
+  const PW_TYPES = offlineSoloMode ? [...PW_TYPES_BASE, 'magnet', 'magnet'] : PW_TYPES_BASE;
   const PW_TYPES_RISK = ['invincible_fly', 'life', 'fly', 'invincible', 'energy_full', 'speed2', 'extra_jump'];
 
   for (let i = 3; i < finishIdx; i++) {
@@ -4257,6 +4273,25 @@ function drawCoins(ctx, t) {
   }
 }
 
+const MAGNET_RADIUS = 280;
+const MAGNET_PULL_SPEED = 8;
+
+function updateMagnetAttraction(p) {
+  if (!gMap || !gMap.coins || !p.isAlive || p.finished) return;
+  if (!hasEffect('magnet')) return;
+  const px = p.x + PW / 2, py = p.y + PH / 2;
+  for (const coin of gMap.coins) {
+    if (collectedCoins.has(coin.id)) continue;
+    const dx = px - coin.x, dy = py - coin.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < MAGNET_RADIUS && dist > 1) {
+      const pull = MAGNET_PULL_SPEED * (1 - dist / MAGNET_RADIUS) + 2;
+      coin.x += (dx / dist) * pull;
+      coin.y += (dy / dist) * pull;
+    }
+  }
+}
+
 function checkCoinCollection(p) {
   if (!gMap || !gMap.coins || !p.isAlive || p.finished) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
@@ -4293,7 +4328,8 @@ const POWERUP_DEFS = {
   invincible_fly:  { label: '无敌+飞行',  icon: '🌟', color: '#ff69b4', duration: 5000, bgColor: 'rgba(255,105,180,0.15)' },
   extra_jump:      { label: '连跳+1',     icon: '🦘', color: '#7cfc00', duration: 15000, bgColor: 'rgba(124,252,0,0.15)' },
   life:            { label: '❤️+1',      icon: '❤️', color: '#ff4444', duration: 0, bgColor: 'rgba(255,68,68,0.15)' },
-  energy_full:     { label: '能量补满',   icon: '🔋', color: '#26c6da', duration: 0, bgColor: 'rgba(38,198,218,0.2)' }
+  energy_full:     { label: '能量补满',   icon: '🔋', color: '#26c6da', duration: 0, bgColor: 'rgba(38,198,218,0.2)' },
+  magnet:          { label: '磁铁',       icon: '🧲', color: '#e53935', duration: 8000, bgColor: 'rgba(229,57,53,0.15)' }
 };
 
 function hasEffect(ptype) {
@@ -4331,6 +4367,9 @@ function activatePowerup(ptype) {
   } else if (ptype === 'extra_jump') {
     activeEffects = activeEffects.filter(e => e.ptype !== 'extra_jump');
     activeEffects.push({ ptype, endsAt: Date.now() + def.duration });
+  } else if (ptype === 'magnet') {
+    activeEffects = activeEffects.filter(e => e.ptype !== 'magnet');
+    activeEffects.push({ ptype, endsAt: Date.now() + 8000 });
   } else if (ptype === 'energy_full') {
     if (localPlayer) localPlayer.energy = ENERGY_MAX;
   } else if (ptype === 'life') {
@@ -4552,6 +4591,32 @@ function drawPlayerEffects(ctx, p, t) {
       ctx.beginPath();
       ctx.arc(cx - p.facing * (10 + i * 6), cy + (i - 2) * 5, 3 - i * 0.5, 0, Math.PI * 2);
       ctx.fill();
+    }
+    ctx.restore();
+  }
+  if (hasEffect('magnet')) {
+    ctx.save();
+    const magPulse = 0.15 + Math.sin(t * 3) * 0.08;
+    const magR = MAGNET_RADIUS;
+    const mg = ctx.createRadialGradient(cx, cy, magR * 0.3, cx, cy, magR);
+    mg.addColorStop(0, 'transparent');
+    mg.addColorStop(0.7, `rgba(229,57,53,${magPulse * 0.5})`);
+    mg.addColorStop(1, 'transparent');
+    ctx.fillStyle = mg;
+    ctx.beginPath(); ctx.arc(cx, cy, magR, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = `rgba(229,57,53,${magPulse})`;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([8, 6]);
+    ctx.beginPath(); ctx.arc(cx, cy, magR, 0, Math.PI * 2); ctx.stroke();
+    ctx.setLineDash([]);
+    const arcCount = 6;
+    for (let i = 0; i < arcCount; i++) {
+      const a = t * 1.5 + (i / arcCount) * Math.PI * 2;
+      const ar = magR * (0.5 + Math.sin(t * 2 + i) * 0.15);
+      const ax = cx + Math.cos(a) * ar;
+      const ay = cy + Math.sin(a) * ar;
+      ctx.fillStyle = `rgba(229,57,53,${0.3 + Math.sin(t * 4 + i * 2) * 0.15})`;
+      ctx.beginPath(); ctx.arc(ax, ay, 3, 0, Math.PI * 2); ctx.fill();
     }
     ctx.restore();
   }
@@ -5667,7 +5732,9 @@ function mkPlayer(id, name, color, x, y) {
     dashVY: 0,
     away: false,
     arrestedUntil: 0,
-    netCooldownUntil: 0
+    netCooldownUntil: 0,
+    wallSlide: 0,
+    wallJumpCooldown: 0
   };
 }
 
@@ -5730,6 +5797,8 @@ function killLocalPlayer(reason) {
     p.vx = 0; p.vy = 0;
     p.onGround = false;
     p.jumpCount = 0;
+    p.wallSlide = 0;
+    p.wallJumpCooldown = 0;
     p.energy = 0;
     p.dashTimer = 0;
     p.respawnCountdownUntil = Date.now() + RESPAWN_COUNTDOWN_MS;
@@ -5891,6 +5960,16 @@ function updateLocalPlayer() {
       jumpBuf = 0;
       spawnParticles(p.x + PW / 2, p.y + PH, 'jump');
       GameAudio.playSfxJump();
+    } else if (p.wallSlide !== 0) {
+      p.vy = WALL_JUMP_VEL_Y;
+      p.vx = p.wallSlide * WALL_JUMP_VEL_X * speedMul * eventMul;
+      p.facing = p.wallSlide;
+      p.jumpCount = 1;
+      p.wallJumpCooldown = WALL_JUMP_COOLDOWN;
+      jumpBuf = 0;
+      const wx = p.wallSlide < 0 ? p.x + PW + 2 : p.x - 2;
+      spawnParticles(wx, p.y + PH * 0.5, 'walljump');
+      GameAudio.playSfxJump();
     } else if (p.jumpCount >= 1 && p.jumpCount < maxJumps) {
       p.vy = DBL_JUMP_VEL;
       const dir = (right ? 1 : 0) - (left ? 1 : 0);
@@ -6010,6 +6089,51 @@ function updateLocalPlayer() {
     }
   }
 
+  // ---- 蹬墙检测 (Wall Slide) ----
+  if (p.wallJumpCooldown > 0) p.wallJumpCooldown--;
+  p.wallSlide = 0;
+  if (!p.onGround && !flying && p.dashTimer <= 0 && p.wallJumpCooldown <= 0 && p.vy >= 0) {
+    const moveDir = (right ? 1 : 0) - (left ? 1 : 0);
+    if (moveDir !== 0) {
+      for (let pi = 0; pi < gMap.platforms.length; pi++) {
+        const plat = gMap.platforms[pi];
+        if (plat.type === 'oneway') continue;
+        if (plat.flicker && !isFlickerPlatformVisible(plat, t)) continue;
+        if (plat.type === 'crumble') {
+          const cs = crumbleStates.get(pi);
+          if (cs && cs.state === 'broken') continue;
+        }
+        const wpx = getPlatX(plat, t);
+        const wpy = getPlatY(plat, t);
+        if (p.y + p.h <= wpy + 4 || p.y >= wpy + plat.h - 4) continue;
+        if (plat.h < 18) continue;
+        if (moveDir > 0) {
+          const wallLeft = wpx;
+          if (p.x + p.w >= wallLeft - 2 && p.x + p.w <= wallLeft + 6) {
+            p.wallSlide = -1;
+            p.x = wallLeft - p.w;
+            break;
+          }
+        } else {
+          const wallRight = wpx + plat.w;
+          if (p.x <= wallRight + 2 && p.x >= wallRight - 6) {
+            p.wallSlide = 1;
+            p.x = wallRight;
+            break;
+          }
+        }
+      }
+    }
+  }
+  if (p.wallSlide !== 0) {
+    p.vy = Math.min(p.vy, WALL_SLIDE_SPEED);
+    p.facing = -p.wallSlide;
+    if (Math.random() < 0.3) {
+      const sx = p.wallSlide < 0 ? p.x + PW + 1 : p.x - 1;
+      spawnParticles(sx, p.y + PH * 0.6, 'wallslide');
+    }
+  }
+
   if (
     p.onGround &&
     !prevOnG &&
@@ -6046,7 +6170,9 @@ function updateLocalPlayer() {
 
   // Animation
   p.animT++;
-  if (p.onGround && Math.abs(p.vx) > 0.5) {
+  if (p.wallSlide !== 0) {
+    p.frame = 6;
+  } else if (p.onGround && Math.abs(p.vx) > 0.5) {
     p.frame = Math.floor(p.animT / 6) % 4;
   } else if (!p.onGround) {
     p.frame = p.vy < 0 ? 4 : 5;
@@ -6064,6 +6190,7 @@ function updateLocalPlayer() {
   }
 
   // Coin & powerup collection
+  updateMagnetAttraction(p);
   checkCoinCollection(p);
   checkRainCoinCollection(p);
   checkPowerupCollection(p);
@@ -6173,7 +6300,9 @@ function spawnParticles(x, y, type) {
     coin:       { n: 10, colors: ['#FFD700','#FFA500','#FFE066','#fff'], vx:[-4,4],  vy:[-6,-2], life:[18,32], size:[2,6]  },
     stomp:      { n: 14, colors: ['#ffd700','#ff6584','#2ecc71','#fff'], vx:[-5,5], vy:[-5,-1], life:[20,38], size:[3,8] },
     dash:       { n: 20, colors: ['#80d8ff','#40c4ff','#b3e5fc','#fff'], vx:[-5,5], vy:[-3,3], life:[12,26], size:[3,8] },
-    skid:       { n: 5,  colors: ['#ccc','#aaa','#ddd','#fff'],        vx:[-1,1], vy:[-2,-0.5], life:[12,22], size:[2,5] }
+    skid:       { n: 5,  colors: ['#ccc','#aaa','#ddd','#fff'],        vx:[-1,1], vy:[-2,-0.5], life:[12,22], size:[2,5] },
+    wallslide:  { n: 3,  colors: ['#ccc','#aaa','#ddd'],              vx:[-0.5,0.5], vy:[-1.5,0], life:[10,18], size:[2,4] },
+    walljump:   { n: 14, colors: ['#fff','#adf','#88f','#ffdd57'],    vx:[-4,4], vy:[-4,-1], life:[20,35], size:[3,7] }
   };
   const c = configs[type] || configs.land;
   for (let i = 0; i < c.n; i++) {
@@ -7341,7 +7470,8 @@ function drawPlayer(ctx, p, isLocal, t, ghostOpts) {
   else if (showAway) ctx.globalAlpha = isLocal ? 0.52 : 0.4;
 
   // Squash/stretch
-  const scaleY = onGround ? (Math.abs(p.vx || 0) > 1 ? 0.95 : 1) : (vy < -3 ? 1.1 : vy > 5 ? 0.9 : 1);
+  const isWallSliding = frame === 6;
+  const scaleY = isWallSliding ? 0.92 : (onGround ? (Math.abs(p.vx || 0) > 1 ? 0.95 : 1) : (vy < -3 ? 1.1 : vy > 5 ? 0.9 : 1));
   const scaleX = 2 - scaleY;
   ctx.translate(cx, y + PH);
   ctx.scale(scaleX, scaleY);
@@ -7381,14 +7511,16 @@ function drawPlayer(ctx, p, isLocal, t, ghostOpts) {
 
   // Mouth
   ctx.strokeStyle = '#222'; ctx.lineWidth = 1.5;
-  if (vy < -2) {
-    // Excited mouth (jumping)
+  if (isWallSliding) {
+    ctx.beginPath();
+    ctx.moveTo(x + PW / 2 - 3, y + 23);
+    ctx.lineTo(x + PW / 2 + 3, y + 22);
+    ctx.stroke();
+  } else if (vy < -2) {
     ctx.beginPath(); ctx.arc(x + PW / 2, y + 22, 4, 0, Math.PI); ctx.stroke();
   } else if (!onGround && vy > 5) {
-    // Worried mouth (falling)
     ctx.beginPath(); ctx.arc(x + PW / 2, y + 26, 4, Math.PI, 0); ctx.stroke();
   } else {
-    // Normal smile
     ctx.beginPath(); ctx.arc(x + PW / 2, y + 21, 3, 0, Math.PI); ctx.stroke();
   }
 
@@ -7396,12 +7528,14 @@ function drawPlayer(ctx, p, isLocal, t, ghostOpts) {
   const legLen = 8;
   const legAnim = frame < 4 ? Math.sin(frame * Math.PI / 2) : 0;
   ctx.strokeStyle = darkenColor(color, 20); ctx.lineWidth = 4; ctx.lineCap = 'round';
-  if (onGround && Math.abs(p.vx || 0) > 0.5) {
-    // Running legs
+  if (isWallSliding) {
+    const wallSide = facing > 0 ? 1 : -1;
+    ctx.beginPath(); ctx.moveTo(x + PW * 0.35, y + PH); ctx.lineTo(x + PW * 0.35 + wallSide * 3, y + PH + legLen - 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x + PW * 0.65, y + PH); ctx.lineTo(x + PW * 0.65 + wallSide * 5, y + PH + legLen + 1); ctx.stroke();
+  } else if (onGround && Math.abs(p.vx || 0) > 0.5) {
     ctx.beginPath(); ctx.moveTo(x + PW * 0.35, y + PH); ctx.lineTo(x + PW * 0.35 + legAnim * 6, y + PH + legLen); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(x + PW * 0.65, y + PH); ctx.lineTo(x + PW * 0.65 - legAnim * 6, y + PH + legLen); ctx.stroke();
   } else {
-    // Standing/airborne legs
     ctx.beginPath(); ctx.moveTo(x + PW * 0.3, y + PH); ctx.lineTo(x + PW * 0.25, y + PH + legLen); ctx.stroke();
     ctx.beginPath(); ctx.moveTo(x + PW * 0.7, y + PH); ctx.lineTo(x + PW * 0.75, y + PH + legLen); ctx.stroke();
   }
@@ -10171,6 +10305,17 @@ function gmSpeed3() {
   activeEffects.push({ ptype: 'speed3', endsAt: Date.now() + GM_DURATION });
   GameAudio.startLoopSpeed();
   gmMsg('🔥 速度×3 5分钟', '#fd9644');
+}
+
+function gmClearAllEffects() {
+  if (!gameRunning || !localPlayer) {
+    return alert('需要在游戏中时使用');
+  }
+  activeEffects = [];
+  GameAudio.stopLoopInvincible();
+  GameAudio.stopLoopFly();
+  GameAudio.stopLoopSpeed();
+  gmMsg('🚫 已取消所有道具', '#ff6b6b');
 }
 
 function gmNextLevel() {
