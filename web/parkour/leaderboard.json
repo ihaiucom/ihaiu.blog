@@ -25,14 +25,5 @@
       "date": 1775222868589
     }
   ],
-  "lastGame": [
-    {
-      "name": "烈焰海豹433",
-      "color": "#FF6B6B",
-      "time": null,
-      "coins": 78,
-      "rank": null,
-      "date": 1775243123221
-    }
-  ]
+  "lastGame": []
 }

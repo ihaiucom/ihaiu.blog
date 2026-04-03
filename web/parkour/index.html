@@ -66,6 +66,7 @@ input[type="text"]:focus { border-color: #6c63ff; }
   transition: transform 0.15s, box-shadow 0.15s, filter 0.15s, background 0.15s;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 .btn-primary { background: linear-gradient(135deg, #6c63ff, #9b5de5); color: #fff; }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108,99,255,0.4); }
@@ -980,8 +981,12 @@ input[type="text"]:focus { border-color: #6c63ff; }
 #game.mobile-ui {
   touch-action: none;
 }
-body.game-touch-lock,
-body.game-touch-lock * {
+body.game-touch-lock #game,
+body.game-touch-lock #game *,
+body.game-touch-lock #mobile-controls,
+body.game-touch-lock #mobile-controls *,
+body.game-touch-lock #mobile-toggle-wrap,
+body.game-touch-lock #mobile-toggle-wrap * {
   user-select: none !important;
   -webkit-user-select: none !important;
   -webkit-touch-callout: none;
@@ -1444,6 +1449,7 @@ body.game-touch-lock * {
           <li><b>火焰旋转</b>：固定在平台上的旋转火球链（类似超级玛丽），触碰任何火球即死；注意观察旋转节奏，趁间隙通过（无敌状态可免疫）。</li>
           <li><b>碎裂平台</b>：褐色带裂纹的平台，踩上去后开始剧烈抖动（1~2秒），随后碎裂掉落！碎裂后一段时间会自动重生。需要快速通过，不可久留。</li>
           <li><b>砸落石块</b>：悬浮在空中的愤怒面孔石块（类似超级玛丽 Thwomp），玩家靠近时猛砸下来，底部带尖刺；砸落后停顿片刻再缓慢升回，需要观察节奏趁其上升时通过（无敌状态可免疫）。</li>
+          <li><b>滚石</b>：从平台一端周期性滚出的巨石（类似冒险岛），优先出现在下坡长平台；需跳过或躲避，产生点有 ⚠ 警告标记（无敌状态可免疫）。</li>
         </ul>
       </div>
       <div class="guide-card">
@@ -1501,15 +1507,9 @@ body.game-touch-lock * {
 </div>
 
 <script>
-// Prevent double-tap zoom & pinch zoom on mobile
+// Prevent pinch zoom on mobile (double-tap zoom already handled by CSS touch-action: manipulation)
 document.addEventListener('touchstart', function(e) {
   if (e.touches.length > 1) e.preventDefault();
-}, { passive: false });
-let _lastTouchEnd = 0;
-document.addEventListener('touchend', function(e) {
-  const now = Date.now();
-  if (now - _lastTouchEnd <= 300) e.preventDefault();
-  _lastTouchEnd = now;
 }, { passive: false });
 document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
 
@@ -2987,6 +2987,30 @@ document.addEventListener('click', function (e) {
   GameAudio.playSfxClick();
 }, true);
 
+// 移动端 click 可靠性保障：pointerup 后若 click 未在 400ms 内触发，则手动派发
+(function () {
+  if (!('ontouchstart' in window || navigator.maxTouchPoints > 0)) return;
+  let pendingBtn = null, pendingTimer = null;
+  document.addEventListener('pointerdown', function (e) {
+    pendingBtn = e.target.closest('button, .btn');
+    if (pendingBtn && pendingBtn.closest('#mobile-controls')) pendingBtn = null;
+  }, { passive: true, capture: true });
+  document.addEventListener('click', function () {
+    if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; }
+    pendingBtn = null;
+  }, { capture: true });
+  document.addEventListener('pointerup', function () {
+    if (!pendingBtn) return;
+    const btn = pendingBtn;
+    if (pendingTimer) clearTimeout(pendingTimer);
+    pendingTimer = setTimeout(() => {
+      pendingTimer = null;
+      if (btn && btn.isConnected) btn.click();
+      pendingBtn = null;
+    }, 400);
+  }, { passive: true, capture: true });
+})();
+
 (function bindAudioUnlock() {
   let audioFullyUnlocked = false;
   let unlockAttempts = 0;
@@ -3877,6 +3901,35 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
+  // ---- 滚石产生器生成（优先下坡长平台） ----
+  const brRng = mulberry32(seed + 999);
+  const boulderSpawners = [];
+  for (let i = 3; i < mainLen - 1; i++) {
+    const plat = mainSpine[i];
+    if (plat.type !== 'normal' && plat.type !== 'ice') continue;
+    if (plat.flicker || plat.moving || plat.w < 120) continue;
+    const nextPlat = mainSpine[i + 1];
+    if (!nextPlat) continue;
+    const drop = nextPlat.y - plat.y;
+    const isDownhill = drop > 30;
+    const prog = i / Math.max(1, mainLen);
+    if (brRng() > (isDownhill ? 0.25 : 0.06) + prog * 0.04 + stageDiff * 0.03) continue;
+    const dir = brRng() > 0.3 ? 1 : -1;
+    const spawnX2 = dir > 0 ? plat.x + 10 : plat.x + plat.w - 10;
+    boulderSpawners.push({
+      platIdx: i,
+      spawnX: Math.round(spawnX2),
+      surfaceY: plat.y,
+      platLeft: plat.x,
+      platRight: plat.x + plat.w,
+      dir,
+      radius: 14 + brRng() * 8,
+      speed: 80 + brRng() * 80 + stageDiff * 40,
+      interval: 3.5 + brRng() * 3.0,
+      phase: brRng() * 10
+    });
+  }
+
   return {
     platforms,
     decos,
@@ -3887,6 +3940,7 @@ function generateMap(seed, envTheme, stageOpts) {
     windZones,
     fireBars: roomRaceMode ? [] : fireBars,
     thwomps: roomRaceMode ? [] : thwomps,
+    boulderSpawners: roomRaceMode ? [] : boulderSpawners,
     mapWidth: mapW,
     finishX,
     spawnX: 180,
@@ -4856,6 +4910,155 @@ function drawThwomps(ctx, t) {
   }
 }
 
+// ---- 滚石系统 ----
+
+function getActiveBoulders(t) {
+  if (!gMap?.boulderSpawners?.length) return [];
+  const boulders = [];
+  const MAX_DIST = 800;
+  for (const sp of gMap.boulderSpawners) {
+    const curIdx = Math.floor((t + sp.phase) / sp.interval);
+    for (let idx = Math.max(0, curIdx - 1); idx <= curIdx; idx++) {
+      const spawnT = idx * sp.interval - sp.phase;
+      const age = t - spawnT;
+      if (age < 0 || age > MAX_DIST / sp.speed) continue;
+      const dist = age * sp.speed;
+      const bx = sp.spawnX + sp.dir * dist;
+      const by = sp.surfaceY - sp.radius;
+      const rotSpeed = sp.speed / sp.radius;
+      if (bx < sp.platLeft - sp.radius * 2 || bx > sp.platRight + sp.radius * 2) {
+        const overshoot = sp.dir > 0
+          ? bx - (sp.platRight + sp.radius * 2)
+          : (sp.platLeft - sp.radius * 2) - bx;
+        if (overshoot > 400) continue;
+        const fallT = overshoot / Math.max(1, sp.speed);
+        boulders.push({
+          x: bx,
+          y: by + fallT * fallT * 800,
+          r: sp.radius,
+          rot: age * rotSpeed * sp.dir,
+          speed: sp.speed,
+          dir: sp.dir,
+          falling: true
+        });
+      } else {
+        boulders.push({
+          x: bx,
+          y: by,
+          r: sp.radius,
+          rot: age * rotSpeed * sp.dir,
+          speed: sp.speed,
+          dir: sp.dir,
+          falling: false
+        });
+      }
+    }
+  }
+  return boulders;
+}
+
+function checkBoulderCollisions(p, t) {
+  if (!gMap?.boulderSpawners?.length || !p.isAlive || p.finished) return;
+  if (p.respawnTimer > 0) return;
+  if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
+
+  for (const b of getActiveBoulders(t)) {
+    if (b.y > DEATH_Y) continue;
+    if (circleRectOverlap(b.x, b.y, b.r * 0.85, p.x + 3, p.y + 3, p.w - 6, p.h - 6)) {
+      killLocalPlayer('被巨石碾压！');
+      return;
+    }
+  }
+}
+
+function drawBoulders(ctx, t) {
+  if (!gMap?.boulderSpawners?.length) return;
+  const boulders = getActiveBoulders(t);
+
+  for (const b of boulders) {
+    if (b.x - b.r > cam.x + CW + 30 || b.x + b.r < cam.x - 30) continue;
+    if (b.y > DEATH_Y) continue;
+
+    ctx.save();
+    ctx.translate(b.x, b.y);
+    ctx.rotate(b.rot);
+
+    // shadow
+    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+    ctx.beginPath();
+    ctx.ellipse(0, b.r + 3, b.r * 0.8, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // body
+    const grad = ctx.createRadialGradient(-b.r * 0.25, -b.r * 0.25, b.r * 0.1, 0, 0, b.r);
+    grad.addColorStop(0, '#a09080');
+    grad.addColorStop(0.4, '#7a6a5a');
+    grad.addColorStop(0.8, '#5a4a3a');
+    grad.addColorStop(1, '#3a2a1a');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.arc(0, 0, b.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // rocky cracks
+    ctx.strokeStyle = 'rgba(40,30,20,0.5)';
+    ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    ctx.moveTo(-b.r * 0.3, -b.r * 0.5);
+    ctx.lineTo(b.r * 0.1, 0);
+    ctx.lineTo(-b.r * 0.15, b.r * 0.4);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(b.r * 0.2, -b.r * 0.4);
+    ctx.lineTo(b.r * 0.4, b.r * 0.2);
+    ctx.stroke();
+
+    // specular highlight
+    ctx.fillStyle = 'rgba(255,255,255,0.15)';
+    ctx.beginPath();
+    ctx.arc(-b.r * 0.25, -b.r * 0.3, b.r * 0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // outline
+    ctx.strokeStyle = 'rgba(30,20,10,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(0, 0, b.r, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+
+    // rolling dust particles (only on ground)
+    if (!b.falling && Math.random() < 0.3) {
+      const dustX = b.x - b.dir * b.r * 0.5;
+      const dustY = b.y + b.r;
+      particles.push({
+        x: dustX + (Math.random() - 0.5) * 6,
+        y: dustY,
+        vx: -b.dir * (0.3 + Math.random() * 0.8),
+        vy: -(0.5 + Math.random() * 1.5),
+        life: 15 + Math.random() * 15,
+        maxLife: 30,
+        size: 2 + Math.random() * 2.5,
+        color: 'rgba(160,140,120,0.6)'
+      });
+    }
+  }
+
+  // draw spawner warning indicators
+  for (const sp of gMap.boulderSpawners) {
+    if (sp.spawnX < cam.x - 50 || sp.spawnX > cam.x + CW + 50) continue;
+    const warnAlpha = 0.3 + Math.sin(t * 4 + sp.phase) * 0.15;
+    ctx.save();
+    ctx.globalAlpha = warnAlpha;
+    ctx.fillStyle = '#aa7744';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(sp.dir > 0 ? '⚠▸' : '◂⚠', sp.spawnX, sp.surfaceY - sp.radius * 2 - 8);
+    ctx.restore();
+  }
+}
+
 // ---- 逮捕网渲染 ----
 
 function drawNets(ctx) {
@@ -5701,11 +5904,12 @@ function updateLocalPlayer() {
     p.frame = 0; p.animT = 0;
   }
 
-  // Monster & bullet & fire bar & thwomp collision (skipped if invincible)
+  // Monster & bullet & fire bar & thwomp & boulder collision (skipped if invincible)
   if (!isInvincible()) {
     checkMonsterCollisions(p, t);
     checkFireBarCollisions(p, t);
     checkThwompCollisions(p, t);
+    checkBoulderCollisions(p, t);
   }
 
   // Coin & powerup collection
@@ -6454,6 +6658,7 @@ function renderGame(timestamp) {
   drawMonsters(ctx, t);
   drawFireBars(ctx, t);
   drawThwomps(ctx, t);
+  drawBoulders(ctx, t);
   drawTraps(ctx);
   drawNets(ctx);
 
@@ -7600,6 +7805,7 @@ function connect(cb, onFail) {
       return;
     }
     ws = null;
+    if (offlineSoloMode) return;
     if (gameRunning) stopGame();
     setScreen('lobby');
     addRoomChat({ type: 'system', text: '连接断开，请刷新页面重连' });
