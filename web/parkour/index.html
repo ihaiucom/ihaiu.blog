@@ -1443,6 +1443,7 @@ body.game-touch-lock * {
           <li><b>履带平台</b>：灰色金属传送带，两端有滚轮、表面条纹滚动指示方向；站上后会被持续推向一侧，到达边缘会掉落，需注意逆向行走或及时跳开。</li>
           <li><b>火焰旋转</b>：固定在平台上的旋转火球链（类似超级玛丽），触碰任何火球即死；注意观察旋转节奏，趁间隙通过（无敌状态可免疫）。</li>
           <li><b>碎裂平台</b>：褐色带裂纹的平台，踩上去后开始剧烈抖动（1~2秒），随后碎裂掉落！碎裂后一段时间会自动重生。需要快速通过，不可久留。</li>
+          <li><b>砸落石块</b>：悬浮在空中的愤怒面孔石块（类似超级玛丽 Thwomp），玩家靠近时猛砸下来，底部带尖刺；砸落后停顿片刻再缓慢升回，需要观察节奏趁其上升时通过（无敌状态可免疫）。</li>
         </ul>
       </div>
       <div class="guide-card">
@@ -1606,6 +1607,7 @@ let globalExclusivePowerupConsumed = new Set();
 let sessionMultiplayerRace = false;
 let deadMonsters = new Set();
 let crumbleStates = new Map();
+let thwompStates = [];
 let cachedLeaderboard = null;
 let currentLbTab = 'alltime';
 let activeEffects = [];   // { ptype, endsAt } — 本地玩家激活中的效果
@@ -3847,6 +3849,34 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
+  // ---- 砸落石块 (Thwomp) 生成 ----
+  const thRng = mulberry32(seed + 666);
+  const thwomps = [];
+  for (let i = 6; i < finishIdx; i++) {
+    const plat = platforms[i];
+    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'crumble') continue;
+    if (plat.flicker || plat.w < 80) continue;
+    if (plat.moving) continue;
+    const prog = i / Math.max(1, finishIdx);
+    if (thRng() > 0.07 + prog * 0.05 + stageDiff * 0.03) continue;
+    const tw = 36 + thRng() * 12;
+    const th2 = 36 + thRng() * 12;
+    const hoverH = 100 + thRng() * 80;
+    const px = plat.x + plat.w * (0.2 + thRng() * 0.6) - tw / 2;
+    thwomps.push({
+      x: Math.round(px),
+      restY: Math.round(plat.y - hoverH - th2),
+      slamY: Math.round(plat.y - th2),
+      w: Math.round(tw),
+      h: Math.round(th2),
+      triggerDist: 90 + thRng() * 50,
+      slamSpeed: 12 + thRng() * 6,
+      riseSpeed: 1.2 + thRng() * 0.8,
+      stunTime: 0.8 + thRng() * 0.6,
+      phase: thRng() * Math.PI * 2
+    });
+  }
+
   return {
     platforms,
     decos,
@@ -3856,6 +3886,7 @@ function generateMap(seed, envTheme, stageOpts) {
     arrestTraps,
     windZones,
     fireBars: roomRaceMode ? [] : fireBars,
+    thwomps: roomRaceMode ? [] : thwomps,
     mapWidth: mapW,
     finishX,
     spawnX: 180,
@@ -4591,6 +4622,236 @@ function drawFireBars(ctx, t) {
         ctx.globalAlpha = 1;
       }
     }
+    ctx.restore();
+  }
+}
+
+// ---- 砸落石块 (Thwomp) ----
+
+function resetThwompStates() {
+  if (!gMap?.thwomps?.length) { thwompStates = []; return; }
+  thwompStates = gMap.thwomps.map(() => ({ state: 'idle', y: 0, waitUntil: 0 }));
+}
+
+function getThwompY(tw, ts, t) {
+  switch (ts.state) {
+    case 'idle': return tw.restY + Math.sin(t * 2 + tw.phase) * 3;
+    case 'slamming': return ts.y;
+    case 'stunned': return tw.slamY;
+    case 'rising': return ts.y;
+    default: return tw.restY;
+  }
+}
+
+function updateThwomps(t, playerX, playerY) {
+  if (!gMap?.thwomps?.length) return;
+  if (thwompStates.length !== gMap.thwomps.length) resetThwompStates();
+
+  for (let i = 0; i < gMap.thwomps.length; i++) {
+    const tw = gMap.thwomps[i];
+    const ts = thwompStates[i];
+    const twCx = tw.x + tw.w / 2;
+
+    switch (ts.state) {
+      case 'idle': {
+        const dx = Math.abs(playerX - twCx);
+        const dy = playerY - tw.restY;
+        if (dx < tw.triggerDist && dy > -20 && dy < tw.slamY - tw.restY + 60) {
+          ts.state = 'slamming';
+          ts.y = tw.restY;
+        }
+        break;
+      }
+      case 'slamming': {
+        ts.y += tw.slamSpeed;
+        if (ts.y >= tw.slamY) {
+          ts.y = tw.slamY;
+          ts.state = 'stunned';
+          ts.waitUntil = t + tw.stunTime;
+          addScreenShake(3.5);
+          spawnThwompImpactParticles(tw.x, tw.slamY + tw.h, tw.w);
+        }
+        break;
+      }
+      case 'stunned': {
+        if (t >= ts.waitUntil) {
+          ts.state = 'rising';
+          ts.y = tw.slamY;
+        }
+        break;
+      }
+      case 'rising': {
+        ts.y -= tw.riseSpeed;
+        if (ts.y <= tw.restY) {
+          ts.y = tw.restY;
+          ts.state = 'idle';
+        }
+        break;
+      }
+    }
+  }
+}
+
+function spawnThwompImpactParticles(x, y, w) {
+  for (let i = 0; i < 10; i++) {
+    particles.push({
+      x: x + Math.random() * w,
+      y: y,
+      vx: (Math.random() - 0.5) * 4,
+      vy: -(1 + Math.random() * 3),
+      life: 25 + Math.random() * 20,
+      maxLife: 45,
+      size: 2 + Math.random() * 3,
+      color: ['#999', '#777', '#aaa', '#bbb'][Math.floor(Math.random() * 4)]
+    });
+  }
+}
+
+function checkThwompCollisions(p, t) {
+  if (!gMap?.thwomps?.length || !p.isAlive || p.finished) return;
+  if (p.respawnTimer > 0) return;
+  if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
+
+  for (let i = 0; i < gMap.thwomps.length; i++) {
+    const tw = gMap.thwomps[i];
+    const ts = thwompStates[i];
+    if (!ts || ts.state === 'idle') continue;
+    const ty = getThwompY(tw, ts, t);
+    if (rectsOverlap(p.x + 3, p.y + 3, p.w - 6, p.h - 6, tw.x, ty, tw.w, tw.h)) {
+      killLocalPlayer('被石块砸中！');
+      return;
+    }
+  }
+}
+
+function drawThwomps(ctx, t) {
+  if (!gMap?.thwomps?.length) return;
+  if (thwompStates.length !== gMap.thwomps.length) resetThwompStates();
+
+  for (let i = 0; i < gMap.thwomps.length; i++) {
+    const tw = gMap.thwomps[i];
+    const ts = thwompStates[i];
+    const ty = getThwompY(tw, ts, t);
+
+    if (tw.x + tw.w < cam.x - 30 || tw.x > cam.x + CW + 30) continue;
+
+    const { x, w, h } = tw;
+    const shakeX = ts.state === 'stunned' ? Math.sin(t * 30) * 1.5 : 0;
+    const dx = x + shakeX;
+
+    ctx.save();
+
+    // shadow when above ground
+    if (ty < tw.slamY) {
+      const shadowAlpha = Math.max(0.05, 0.3 * (1 - (tw.slamY - ty) / (tw.slamY - tw.restY)));
+      ctx.fillStyle = `rgba(0,0,0,${shadowAlpha})`;
+      ctx.beginPath();
+      ctx.ellipse(x + w / 2, tw.slamY + h + 4, w / 2 * 0.8, 4, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // body
+    const grad = ctx.createLinearGradient(dx, ty, dx + w, ty + h);
+    grad.addColorStop(0, '#8a8a9a');
+    grad.addColorStop(0.3, '#6a6a7a');
+    grad.addColorStop(0.7, '#5a5a6a');
+    grad.addColorStop(1, '#4a4a5a');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.roundRect(dx, ty, w, h, 4); ctx.fill();
+
+    // edge highlight
+    ctx.strokeStyle = 'rgba(200,200,220,0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(dx + 2, ty + h - 2);
+    ctx.lineTo(dx + 2, ty + 2);
+    ctx.lineTo(dx + w - 2, ty + 2);
+    ctx.stroke();
+
+    // bottom edge shadow
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.moveTo(dx + 2, ty + h - 1);
+    ctx.lineTo(dx + w - 2, ty + h - 1);
+    ctx.lineTo(dx + w - 1, ty + 3);
+    ctx.stroke();
+
+    // spikes on bottom
+    const spikeCount = Math.max(2, Math.floor(w / 12));
+    const spikeW = w / spikeCount;
+    ctx.fillStyle = '#555';
+    for (let s = 0; s < spikeCount; s++) {
+      const sx = dx + s * spikeW;
+      ctx.beginPath();
+      ctx.moveTo(sx + 1, ty + h);
+      ctx.lineTo(sx + spikeW / 2, ty + h + 5);
+      ctx.lineTo(sx + spikeW - 1, ty + h);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // angry face
+    const fcx = dx + w / 2;
+    const fcy = ty + h * 0.45;
+    const eyeW = w * 0.12;
+    const eyeH = h * 0.15;
+    const isSlamming = ts.state === 'slamming';
+
+    // eyebrows
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(fcx - w * 0.22, fcy - eyeH * 1.6);
+    ctx.lineTo(fcx - w * 0.08, fcy - eyeH * (isSlamming ? 2.4 : 1.2));
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(fcx + w * 0.22, fcy - eyeH * 1.6);
+    ctx.lineTo(fcx + w * 0.08, fcy - eyeH * (isSlamming ? 2.4 : 1.2));
+    ctx.stroke();
+
+    // eyes
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(fcx - w * 0.2 - eyeW / 2, fcy - eyeH / 2, eyeW, eyeH);
+    ctx.fillRect(fcx + w * 0.2 - eyeW / 2, fcy - eyeH / 2, eyeW, eyeH);
+    ctx.fillStyle = ts.state === 'stunned' ? '#888' : '#222';
+    const pupilR = eyeW * 0.35;
+    ctx.beginPath();
+    ctx.arc(fcx - w * 0.2, fcy, pupilR, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(fcx + w * 0.2, fcy, pupilR, 0, Math.PI * 2);
+    ctx.fill();
+
+    // mouth
+    if (ts.state === 'stunned') {
+      ctx.strokeStyle = '#555';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(fcx - w * 0.12, fcy + h * 0.2);
+      ctx.lineTo(fcx + w * 0.12, fcy + h * 0.2);
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = '#333';
+      ctx.beginPath();
+      ctx.moveTo(fcx - w * 0.12, fcy + h * 0.15);
+      ctx.quadraticCurveTo(fcx, fcy + h * (isSlamming ? 0.35 : 0.25), fcx + w * 0.12, fcy + h * 0.15);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // idle: slight hover bob
+    if (ts.state === 'idle') {
+      ctx.globalAlpha = 0.15;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(fcx - w * 0.2, fcy - eyeH * 0.3, pupilR * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(fcx + w * 0.2, fcy - eyeH * 0.3, pupilR * 0.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
     ctx.restore();
   }
 }
@@ -5440,10 +5701,11 @@ function updateLocalPlayer() {
     p.frame = 0; p.animT = 0;
   }
 
-  // Monster & bullet & fire bar collision (skipped if invincible)
+  // Monster & bullet & fire bar & thwomp collision (skipped if invincible)
   if (!isInvincible()) {
     checkMonsterCollisions(p, t);
     checkFireBarCollisions(p, t);
+    checkThwompCollisions(p, t);
   }
 
   // Coin & powerup collection
@@ -5505,6 +5767,9 @@ function updateLocalPlayer() {
   }
 
   updateCrumbleStates(t);
+  if (localPlayer && localPlayer.isAlive) {
+    updateThwomps(t, localPlayer.x + PW / 2, localPlayer.y + PH / 2);
+  }
 
   recordGhostSampleIfNeeded();
   prevKeys = { ...keys };
@@ -6188,6 +6453,7 @@ function renderGame(timestamp) {
   // Monsters & bullets (before players so players render on top)
   drawMonsters(ctx, t);
   drawFireBars(ctx, t);
+  drawThwomps(ctx, t);
   drawTraps(ctx);
   drawNets(ctx);
 
@@ -7269,6 +7535,7 @@ function advanceOfflineSoloStage() {
   applyExclusivePowerupSnapshot([]);
   deadMonsters = new Set();
   crumbleStates = new Map();
+  thwompStates = [];
   activeEffects = [];
   GameAudio.stopAllLoopsAndEvent();
   localNets = []; peerNets = []; droppedTraps = [];
@@ -7734,6 +8001,7 @@ function enterGameScreenForCountdown(roomPlayers) {
   applyExclusivePowerupSnapshot([]);
   deadMonsters = new Set();
   crumbleStates = new Map();
+  thwompStates = [];
   playerScores = {};
   activeEffects = [];
   GameAudio.stopAllLoopsAndEvent();
@@ -7831,6 +8099,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     applyExclusivePowerupSnapshot(exclusivePowerupConsumedFromServer);
     deadMonsters = new Set();
     crumbleStates = new Map();
+    thwompStates = [];
     playerScores = {};
     activeEffects = [];
     GameAudio.stopAllLoopsAndEvent();
@@ -7878,6 +8147,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     applyExclusivePowerupSnapshot(exclusivePowerupConsumedFromServer);
     deadMonsters = new Set();
     crumbleStates = new Map();
+    thwompStates = [];
     playerScores = {};
     activeEffects = [];
     GameAudio.stopAllLoopsAndEvent();
@@ -7981,6 +8251,7 @@ function returnToRoomAfterGame(players) {
   sessionMultiplayerRace = false;
   deadMonsters = new Set();
   crumbleStates = new Map();
+  thwompStates = [];
   playerScores = {};
   activeEffects = [];
   GameAudio.stopAllLoopsAndEvent();
