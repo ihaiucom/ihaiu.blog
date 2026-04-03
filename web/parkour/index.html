@@ -3577,8 +3577,11 @@ function generateMap(seed, envTheme, stageOpts) {
 
   const si = stageOpts && Number(stageOpts.stageIndex) >= 1 ? (stageOpts.stageIndex | 0) : 1;
   const st = stageOpts && Number(stageOpts.stageTotal) >= 1 ? (stageOpts.stageTotal | 0) : 1;
-  const stageDiff = st > 1 && si > 1 ? clamp((si - 1) / Math.max(1, st - 1), 0, 1) : 0;
-  const haz = Math.min(0.12, stageDiff * 0.065);
+  const stageProgress = st > 1 && si > 1 ? clamp((si - 1) / Math.max(1, st - 1), 0, 1) : 0;
+  const stageDiff = stageProgress * stageProgress * 0.55 + stageProgress * 0.45;
+  const haz = Math.min(0.14, stageDiff * 0.075);
+  // stageGate: 单局模式(st=1)全部解锁; 连关模式按进度逐步解锁机制
+  const stageGate = st > 1 ? stageProgress : 1;
 
   // Starting safe platform
   mainSpine.push({ x: 0, y: 450, w: 620, h: 28, type: 'normal' });
@@ -3626,19 +3629,19 @@ function generateMap(seed, envTheme, stageOpts) {
     // Width decreases with difficulty；靠后关卡再收一点
     const w = Math.max(50, (280 - prog * 200) + rng() * (180 - prog * 120) - stageDiff * (20 + prog * 48));
 
-    // Type selection（弹跳板 / 强弹跳 / 单向门 / 冰 / 移动）
+    // Type selection — 连关模式按 stageGate 逐步解锁平台类型
     const r = rng();
     let type = 'normal';
     let platH = 20;
-    if (i > 10 && r > 0.93 - haz) type = 'launchpad';
-    else if (i > 8 && r > 0.91 - haz) type = 'bounce';
-    else if (i > 14 && r > 0.874 - haz) { type = 'oneway'; platH = 14; }
-    else if (i > 5 && r > 0.80 - haz) type = 'ice';
-    else if (i > 15 && r > 0.76 - haz) type = 'moving';
-    else if (i > 10 && r > 0.73 - haz) type = 'vmove';
-    else if (i > 7 && r > 0.69 - haz) type = 'conveyor';
-    else if (i > 4 && r > 0.65 - haz) type = 'crumble';
-    else if (i > 6 && r > 0.61 - haz) type = 'pendulum';
+    if      (i > 10 && r > 0.93 - haz && stageGate >= 0.30) type = 'launchpad';
+    else if (i > 8  && r > 0.91 - haz)                       type = 'bounce';
+    else if (i > 14 && r > 0.874 - haz && stageGate >= 0.30) { type = 'oneway'; platH = 14; }
+    else if (i > 5  && r > 0.80 - haz)                       type = 'ice';
+    else if (i > 15 && r > 0.76 - haz && stageGate >= 0.20)  type = 'moving';
+    else if (i > 10 && r > 0.73 - haz && stageGate >= 0.30)  type = 'vmove';
+    else if (i > 7  && r > 0.69 - haz && stageGate >= 0.10)  type = 'conveyor';
+    else if (i > 4  && r > 0.65 - haz && stageGate >= 0.10)  type = 'crumble';
+    else if (i > 6  && r > 0.61 - haz && stageGate >= 0.40)  type = 'pendulum';
 
     let moving = null;
     if (type === 'moving') {
@@ -3679,7 +3682,7 @@ function generateMap(seed, envTheme, stageOpts) {
       platObj.launchVy = -(18.2 + rng() * 2.6) * (1 + stageDiff * 0.12);
       platObj.launchVx = (rng() - 0.5) * 4.5 * (1 + stageDiff * 0.15);
     }
-    if (i > 11 && (type === 'normal' || type === 'ice') && rng() > 0.86 - haz * 1.4) {
+    if (i > 11 && (type === 'normal' || type === 'ice') && stageGate >= 0.50 && rng() > 0.86 - haz * 1.4) {
       platObj.flicker = {
         period: 2.1 + rng() * 2.0,
         duty: Math.max(0.22, 0.36 + rng() * 0.2 - stageDiff * 0.08),
@@ -3690,8 +3693,8 @@ function generateMap(seed, envTheme, stageOpts) {
     cx += w;
   }
 
-  const riskBranches = buildRiskSkyBranches(mainSpine, seed, stageDiff);
-  const multiLanes = buildMultiLaneZones(mainSpine, seed, stageDiff);
+  const riskBranches = stageGate >= 0.20 ? buildRiskSkyBranches(mainSpine, seed, stageDiff) : [];
+  const multiLanes = stageGate >= 0.10 ? buildMultiLaneZones(mainSpine, seed, stageDiff) : [];
   const platforms = mainSpine.concat(riskBranches, multiLanes);
 
   // Finish platform（必须始终在数组末尾，供金币等逻辑排除）
@@ -3703,7 +3706,7 @@ function generateMap(seed, envTheme, stageOpts) {
   // Background decorations
   const bgRng = mulberry32(seed + 77);
   const mapW = cx + 500;
-  const windZones = buildWindZones(mainSpine, mapW, seed, stageDiff);
+  const windZones = stageGate >= 0.20 ? buildWindZones(mainSpine, mapW, seed, stageDiff) : [];
   for (let i = 0; i < 120; i++) {
     decos.push({
       x: bgRng() * mapW,
@@ -3831,15 +3834,21 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
-  // ---- 逮捕陷阱生成 ----
+  // 防止同一平台堆叠多种陷阱/怪物
+  const hazardUsed = new Set();
+
+  // ---- 逮捕陷阱生成 (stageGate >= 0.20) ----
   const trapRng = mulberry32(seed + 888);
   const arrestTraps = [];
   let trapId = 0;
   for (let i = 3; i < finishIdx; i++) {
+    if (stageGate < 0.20) break;
     const plat = platforms[i];
     if (plat.type === 'finish' || plat.w < 60) continue;
     if (plat.flicker) continue;
+    if (hazardUsed.has(i)) continue;
     if (trapRng() > 0.10) continue;
+    hazardUsed.add(i);
     arrestTraps.push({
       id: trapId++,
       x: plat.x + 15 + trapRng() * (plat.w - 30),
@@ -3848,16 +3857,19 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
-  // ---- 尖刺地带生成 ----
+  // ---- 尖刺地带生成 (stageGate >= 0.10) ----
   const spikeRng = mulberry32(seed + 777);
   const spikeZones = [];
   for (let i = 4; i < finishIdx; i++) {
+    if (stageGate < 0.10) break;
     const plat = platforms[i];
     if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'oneway' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
     if (plat.flicker || plat.moving || plat.type === 'crumble') continue;
     if (plat.w < 80) continue;
+    if (hazardUsed.has(i)) continue;
     const prog = i / Math.max(1, finishIdx);
     if (spikeRng() > 0.10 + prog * 0.06 + stageDiff * 0.05) continue;
+    hazardUsed.add(i);
     const zoneW = Math.round(plat.w * (0.25 + spikeRng() * 0.35));
     const maxOff = plat.w - zoneW - 12;
     const ox = 12 + spikeRng() * Math.max(0, maxOff);
@@ -3881,9 +3893,9 @@ function generateMap(seed, envTheme, stageOpts) {
     const typeRoll = monRng();
     let mtype;
     const sb = stageDiff * 0.11;
-    if (prog < 0.25 - sb * 0.45) mtype = 'slime';
-    else if (prog < 0.55 - sb * 0.35) mtype = typeRoll > 0.5 ? 'bat' : 'slime';
-    else mtype = typeRoll > (0.65 - sb) ? 'shooter' : (typeRoll > (0.35 - sb * 0.45) ? 'bat' : 'slime');
+    if (prog < 0.25 - sb * 0.45 || stageGate < 0.10) mtype = 'slime';
+    else if (prog < 0.55 - sb * 0.35 || stageGate < 0.40) mtype = typeRoll > 0.5 && stageGate >= 0.10 ? 'bat' : 'slime';
+    else mtype = typeRoll > (0.65 - sb) && stageGate >= 0.40 ? 'shooter' : (typeRoll > (0.35 - sb * 0.45) && stageGate >= 0.10 ? 'bat' : 'slime');
 
     if (mtype === 'slime') {
       const range = Math.max(16, Math.min(plat.w / 2 - 20, 28 + monRng() * 55));
@@ -3954,15 +3966,18 @@ function generateMap(seed, envTheme, stageOpts) {
     }
   }
 
-  // ---- 火焰旋转陷阱生成 ----
+  // ---- 火焰旋转陷阱生成 (stageGate >= 0.40) ----
   const fbRng = mulberry32(seed + 555);
   const fireBars = [];
   for (let i = 5; i < finishIdx; i++) {
+    if (stageGate < 0.40) break;
     const plat = platforms[i];
     if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
     if (plat.flicker || plat.w < 70) continue;
+    if (hazardUsed.has(i)) continue;
     const prog = i / Math.max(1, finishIdx);
     if (fbRng() > 0.08 + prog * 0.06 + stageDiff * 0.04) continue;
+    hazardUsed.add(i);
     const arms = fbRng() > 0.7 ? 2 : 1;
     const armLen = 55 + fbRng() * 45 + stageDiff * 20;
     const ballCount = Math.max(3, Math.round(armLen / 16));
@@ -3978,16 +3993,19 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
-  // ---- 砸落石块 (Thwomp) 生成 ----
+  // ---- 砸落石块 (Thwomp) 生成 (stageGate >= 0.50) ----
   const thRng = mulberry32(seed + 666);
   const thwomps = [];
   for (let i = 6; i < finishIdx; i++) {
+    if (stageGate < 0.50) break;
     const plat = platforms[i];
     if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'crumble' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
     if (plat.flicker || plat.w < 80) continue;
     if (plat.moving) continue;
+    if (hazardUsed.has(i)) continue;
     const prog = i / Math.max(1, finishIdx);
     if (thRng() > 0.07 + prog * 0.05 + stageDiff * 0.03) continue;
+    hazardUsed.add(i);
     const tw = 36 + thRng() * 12;
     const th2 = 36 + thRng() * 12;
     const hoverH = 100 + thRng() * 80;
@@ -4006,19 +4024,22 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
-  // ---- 滚石产生器生成（优先下坡长平台） ----
+  // ---- 滚石产生器生成（优先下坡长平台）(stageGate >= 0.30) ----
   const brRng = mulberry32(seed + 999);
   const boulderSpawners = [];
   for (let i = 3; i < mainLen - 1; i++) {
+    if (stageGate < 0.30) break;
     const plat = mainSpine[i];
     if (plat.type !== 'normal' && plat.type !== 'ice') continue;
     if (plat.flicker || plat.moving || plat.w < 120) continue;
+    if (hazardUsed.has(i)) continue;
     const nextPlat = mainSpine[i + 1];
     if (!nextPlat) continue;
     const drop = nextPlat.y - plat.y;
     const isDownhill = drop > 30;
     const prog = i / Math.max(1, mainLen);
     if (brRng() > (isDownhill ? 0.25 : 0.06) + prog * 0.04 + stageDiff * 0.03) continue;
+    hazardUsed.add(i);
     const dir = brRng() > 0.3 ? 1 : -1;
     const spawnX2 = dir > 0 ? plat.x + 10 : plat.x + plat.w - 10;
     boulderSpawners.push({
@@ -4035,16 +4056,19 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
-  // ---- 食人花生成 (Piranha Plant) ----
+  // ---- 食人花生成 (Piranha Plant) (stageGate >= 0.60) ----
   const ppRng = mulberry32(seed + 2222);
   const piranhaPlants = [];
   for (let i = 5; i < finishIdx; i++) {
+    if (stageGate < 0.60) break;
     const plat = platforms[i];
     if (plat.type !== 'normal' && plat.type !== 'ice') continue;
     if (plat.flicker || plat.moving || plat.w < 70) continue;
     if (plat.type === 'crumble' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
+    if (hazardUsed.has(i)) continue;
     const prog = i / Math.max(1, finishIdx);
     if (ppRng() > 0.07 + prog * 0.05 + stageDiff * 0.04) continue;
+    hazardUsed.add(i);
     const side = ppRng() > 0.5 ? 'left' : 'right';
     const px = side === 'left' ? plat.x + 8 : plat.x + plat.w - 8;
     piranhaPlants.push({
@@ -10159,7 +10183,7 @@ function initLobbyStageSelect() {
     html += `<option value="${i}">${i === 1 ? '1（单图一局）' : `${i} 关连打`}</option>`;
   }
   sel.innerHTML = html;
-  sel.value = '1';
+  sel.value = '10';
 }
 
 function initRoomStageSelect() {
