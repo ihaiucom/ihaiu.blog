@@ -13,11 +13,26 @@
       "date": 1775225013994
     },
     {
+      "name": "烈焰海豹433",
+      "time": null,
+      "coins": 78,
+      "date": 1775243123221
+    },
+    {
       "name": "冰霜企鹅601",
       "time": null,
       "coins": 15,
       "date": 1775222868589
     }
   ],
-  "lastGame": []
+  "lastGame": [
+    {
+      "name": "烈焰海豹433",
+      "color": "#FF6B6B",
+      "time": null,
+      "coins": 78,
+      "rank": null,
+      "date": 1775243123221
+    }
+  ]
 }

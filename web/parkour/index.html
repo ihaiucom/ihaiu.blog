@@ -8,7 +8,7 @@
 <meta name="theme-color" content="#0d0d1e">
 <title>跑酷大乱斗</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; touch-action: manipulation; }
 html {
   background: #0d0d1e;
   height: 100%;
@@ -1442,6 +1442,7 @@ body.game-touch-lock * {
           <li><b>单向门</b>：半透明蓝薄板，可从下方向上穿过，从上方落下时可踩踏。</li>
           <li><b>履带平台</b>：灰色金属传送带，两端有滚轮、表面条纹滚动指示方向；站上后会被持续推向一侧，到达边缘会掉落，需注意逆向行走或及时跳开。</li>
           <li><b>火焰旋转</b>：固定在平台上的旋转火球链（类似超级玛丽），触碰任何火球即死；注意观察旋转节奏，趁间隙通过（无敌状态可免疫）。</li>
+          <li><b>碎裂平台</b>：褐色带裂纹的平台，踩上去后开始剧烈抖动（1~2秒），随后碎裂掉落！碎裂后一段时间会自动重生。需要快速通过，不可久留。</li>
         </ul>
       </div>
       <div class="guide-card">
@@ -1499,6 +1500,18 @@ body.game-touch-lock * {
 </div>
 
 <script>
+// Prevent double-tap zoom & pinch zoom on mobile
+document.addEventListener('touchstart', function(e) {
+  if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
+let _lastTouchEnd = 0;
+document.addEventListener('touchend', function(e) {
+  const now = Date.now();
+  if (now - _lastTouchEnd <= 300) e.preventDefault();
+  _lastTouchEnd = now;
+}, { passive: false });
+document.addEventListener('gesturestart', function(e) { e.preventDefault(); }, { passive: false });
+
 // roundRect polyfill for older browsers
 if (!CanvasRenderingContext2D.prototype.roundRect) {
   CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
@@ -1592,6 +1605,7 @@ let globalExclusivePowerupConsumed = new Set();
 /** 本局是否 ≥2 人同跑（用于独占道具描边等） */
 let sessionMultiplayerRace = false;
 let deadMonsters = new Set();
+let crumbleStates = new Map();
 let cachedLeaderboard = null;
 let currentLbTab = 'alltime';
 let activeEffects = [];   // { ptype, endsAt } — 本地玩家激活中的效果
@@ -3415,6 +3429,7 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
         if (tr > 0.82) type = 'ice';
         else if (tr > 0.65 && p > 0) type = 'moving';
         else if (tr > 0.55 && p > 0) type = 'conveyor';
+        else if (tr > 0.45 && p > 0) type = 'crumble';
 
         let moving = null;
         if (type === 'moving') {
@@ -3428,6 +3443,10 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
         const laneObj = { x: px, y: lcy, w, h: platH, type, moving, laneRoute: true };
         if (type === 'conveyor') {
           laneObj.conveyorSpeed = (rng() > 0.5 ? 1 : -1) * (2.0 + rng() * 2.5) * (1 + stageDiff * 0.3);
+        }
+        if (type === 'crumble') {
+          laneObj.crumbleDelay = 1.0 + rng() * 1.0;
+          laneObj.crumbleRespawn = 4.5 + rng() * 2.0;
         }
         out.push(laneObj);
       }
@@ -3523,6 +3542,7 @@ function generateMap(seed, envTheme, stageOpts) {
     else if (i > 5 && r > 0.80 - haz) type = 'ice';
     else if (i > 15 && r > 0.76 - haz) type = 'moving';
     else if (i > 7 && r > 0.72 - haz) type = 'conveyor';
+    else if (i > 4 && r > 0.68 - haz) type = 'crumble';
 
     let moving = null;
     if (type === 'moving') {
@@ -3536,6 +3556,10 @@ function generateMap(seed, envTheme, stageOpts) {
     const platObj = { x: Math.round(cx), y: Math.round(cy), w: Math.round(w), h: platH, type, moving };
     if (type === 'conveyor') {
       platObj.conveyorSpeed = (rng() > 0.5 ? 1 : -1) * (2.0 + rng() * 2.5) * (1 + stageDiff * 0.3);
+    }
+    if (type === 'crumble') {
+      platObj.crumbleDelay = 1.0 + rng() * 1.0;
+      platObj.crumbleRespawn = 4.5 + rng() * 2.0;
     }
     if (type === 'launchpad') {
       platObj.launchVy = -(18.2 + rng() * 2.6) * (1 + stageDiff * 0.12);
@@ -3853,6 +3877,43 @@ function isFlickerPlatformVisible(plat, t) {
   if (!period || period <= 0) return true;
   const u = ((t + phase) % period + period) % period;
   return u < period * duty;
+}
+
+function updateCrumbleStates(t) {
+  for (const [pi, cs] of crumbleStates) {
+    const plat = gMap?.platforms?.[pi];
+    if (!plat) continue;
+    if (cs.state === 'shaking') {
+      const elapsed = t - cs.triggeredAt;
+      if (elapsed >= (plat.crumbleDelay || 1.5)) {
+        cs.state = 'broken';
+        cs.brokenAt = t;
+        const px = getPlatX(plat, t);
+        spawnCrumbleParticles(px, plat.y, plat.w, plat.h);
+      }
+    } else if (cs.state === 'broken') {
+      const elapsed = t - cs.brokenAt;
+      if (elapsed >= (plat.crumbleRespawn || 5)) {
+        crumbleStates.delete(pi);
+      }
+    }
+  }
+}
+
+function spawnCrumbleParticles(px, py, w, h) {
+  const count = Math.max(8, Math.floor(w / 8));
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: px + Math.random() * w,
+      y: py + Math.random() * h,
+      vx: (Math.random() - 0.5) * 3,
+      vy: 1 + Math.random() * 4,
+      life: 40 + Math.random() * 30,
+      maxLife: 70,
+      size: 3 + Math.random() * 4,
+      color: ['#a08060', '#8b6b4a', '#c4a67a', '#6b4226'][Math.floor(Math.random() * 4)]
+    });
+  }
 }
 
 function applyWindZones(p) {
@@ -4998,7 +5059,7 @@ function mkPlayer(id, name, color, x, y) {
 
 function isRespawnPlatformSafe(plat) {
   if (!plat) return false;
-  if (plat.type === 'oneway' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'conveyor') return false;
+  if (plat.type === 'oneway' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'conveyor' || plat.type === 'crumble') return false;
   if (plat.flicker) return false; // 不在周期性消失的平台复活
   return true;
 }
@@ -5135,8 +5196,13 @@ function updateLocalPlayer() {
     const arrestT = gameRunning ? (Date.now() - gameStartTime) / 1000 : 0;
     p.vy = Math.min(p.vy + GRAVITY, MAX_FALL);
     p.y += p.vy;
-    for (const plat of gMap.platforms) {
+    for (let pi = 0; pi < gMap.platforms.length; pi++) {
+      const plat = gMap.platforms[pi];
       if (plat.type === 'oneway' || (plat.flicker && !isFlickerPlatformVisible(plat, arrestT))) continue;
+      if (plat.type === 'crumble') {
+        const cs = crumbleStates.get(pi);
+        if (cs && cs.state === 'broken') continue;
+      }
       const apx = getPlatX(plat, arrestT);
       if (p.x + p.w > apx && p.x < apx + plat.w &&
           p.y + p.h > plat.y && p.y + p.h < plat.y + plat.h + 12 && p.vy >= 0) {
@@ -5145,6 +5211,9 @@ function updateLocalPlayer() {
         p.onGround = true;
         if (plat.type === 'conveyor' && plat.conveyorSpeed) {
           p.x += plat.conveyorSpeed;
+        }
+        if (plat.type === 'crumble' && !crumbleStates.has(pi)) {
+          crumbleStates.set(pi, { state: 'shaking', triggeredAt: arrestT });
         }
         if (plat.moving && _prevUpdateGameT >= 0) {
           p.x += getPlatX(plat, arrestT) - getPlatX(plat, _prevUpdateGameT);
@@ -5272,11 +5341,17 @@ function updateLocalPlayer() {
   let landedPlat = null;
   const t = gameRunning ? (Date.now() - gameStartTime) / 1000 : 0;
 
-  for (const plat of gMap.platforms) {
+  for (let pi = 0; pi < gMap.platforms.length; pi++) {
+    const plat = gMap.platforms[pi];
     const px = getPlatX(plat, t);
     const py = plat.y;
 
     if (!isFlickerPlatformVisible(plat, t)) continue;
+
+    if (plat.type === 'crumble') {
+      const cs = crumbleStates.get(pi);
+      if (cs && cs.state === 'broken') continue;
+    }
 
     // Horizontal overlap (with small tolerance)
     if (p.x + p.w <= px + 3 || p.x >= px + plat.w - 3) continue;
@@ -5309,6 +5384,9 @@ function updateLocalPlayer() {
         if (plat.type === 'ice') p.onIce = true;
         if (plat.type === 'conveyor' && plat.conveyorSpeed) {
           p.x += plat.conveyorSpeed;
+        }
+        if (plat.type === 'crumble' && !crumbleStates.has(pi)) {
+          crumbleStates.set(pi, { state: 'shaking', triggeredAt: t });
         }
         if (plat.moving && _prevUpdateGameT >= 0) {
           p.x += getPlatX(plat, t) - getPlatX(plat, _prevUpdateGameT);
@@ -5425,6 +5503,8 @@ function updateLocalPlayer() {
   if (p.dashTimer === 0 && p.energy < ENERGY_MAX) {
     p.energy = Math.min(ENERGY_MAX, p.energy + ENERGY_REGEN);
   }
+
+  updateCrumbleStates(t);
 
   recordGhostSampleIfNeeded();
   prevKeys = { ...keys };
@@ -6066,10 +6146,11 @@ function renderGame(timestamp) {
 
   // Platforms
   if (gMap) {
-    for (const plat of gMap.platforms) {
+    for (let pi = 0; pi < gMap.platforms.length; pi++) {
+      const plat = gMap.platforms[pi];
       const px = getPlatX(plat, t);
       if (px + plat.w < cam.x - 10 || px > cam.x + CW + 10) continue;
-      drawPlatform(ctx, plat, px, t);
+      drawPlatform(ctx, plat, px, t, pi);
     }
 
     // Finish line
@@ -6235,9 +6316,39 @@ function drawDeco(ctx, d) {
   ctx.restore();
 }
 
-function drawPlatform(ctx, plat, px, t) {
+function drawPlatform(ctx, plat, px, t, platIdx) {
   const { y, w, h, type } = plat;
   const th = getActiveMapTheme();
+
+  if (type === 'crumble') {
+    const cs = crumbleStates.get(platIdx);
+    if (cs && cs.state === 'broken') {
+      const elapsed = t - cs.brokenAt;
+      const respawnT = plat.crumbleRespawn || 5;
+      const regenProg = Math.min(1, elapsed / respawnT);
+      if (regenProg > 0.6) {
+        ctx.globalAlpha = (regenProg - 0.6) / 0.4 * 0.4;
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = 'rgba(180,140,100,0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(px + 1, y + 1, w - 2, h - 2);
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 1;
+      }
+      return;
+    }
+    let shakeX = 0, shakeAlpha = 1;
+    if (cs && cs.state === 'shaking') {
+      const elapsed = t - cs.triggeredAt;
+      const intensity = Math.min(1, elapsed / (plat.crumbleDelay || 1.5));
+      shakeX = Math.sin(t * 40 + px) * (1.5 + intensity * 3.5);
+      shakeAlpha = 1 - intensity * 0.3;
+    }
+    ctx.save();
+    ctx.translate(shakeX, 0);
+    ctx.globalAlpha = shakeAlpha;
+    px += 0;
+  }
 
   if (plat.flicker && !isFlickerPlatformVisible(plat, t)) {
     const fb = 0.07 + 0.09 * Math.sin(t * 3.6 + px * 0.04 + y * 0.03);
@@ -6389,6 +6500,34 @@ function drawPlatform(ctx, plat, px, t) {
       const ax = px + w * (ai + 0.5) / arrowCount;
       ctx.fillText(dir > 0 ? '▸▸' : '◂◂', ax, y - 4);
     }
+  } else if (type === 'crumble') {
+    const grad = ctx.createLinearGradient(0, y, 0, y + h);
+    grad.addColorStop(0, '#9a7b5a');
+    grad.addColorStop(1, '#6b4226');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.roundRect(px, y, w, h, 3); ctx.fill();
+    ctx.strokeStyle = 'rgba(80,50,20,0.6)';
+    ctx.lineWidth = 1;
+    const cracks = Math.max(2, Math.floor(w / 35));
+    for (let ci = 0; ci < cracks; ci++) {
+      const cx2 = px + w * (ci + 0.5) / cracks + (Math.sin(ci * 7.3 + px * 0.1) * 6);
+      const cy2 = y + 3;
+      ctx.beginPath();
+      ctx.moveTo(cx2, cy2);
+      ctx.lineTo(cx2 + 4, cy2 + h * 0.4);
+      ctx.lineTo(cx2 - 2, cy2 + h * 0.7);
+      ctx.lineTo(cx2 + 1, cy2 + h - 2);
+      ctx.stroke();
+    }
+    ctx.fillStyle = 'rgba(255,200,100,0.25)';
+    ctx.font = '9px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('⚠', px + w / 2, y - 3);
+    ctx.strokeStyle = 'rgba(255,180,80,0.35)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.strokeRect(px + 1, y + 1, w - 2, h - 2);
+    ctx.setLineDash([]);
   } else if (type === 'oneway') {
     ctx.fillStyle = 'rgba(100, 180, 255, 0.32)';
     ctx.beginPath(); ctx.roundRect(px, y, w, h, 3); ctx.fill();
@@ -6431,6 +6570,10 @@ function drawPlatform(ctx, plat, px, t) {
 
   if (plat.riskBranchEntry) {
     drawRiskBranchEntryMarker(ctx, px, y, w, t);
+  }
+
+  if (type === 'crumble') {
+    ctx.restore();
   }
 }
 
@@ -7125,6 +7268,7 @@ function advanceOfflineSoloStage() {
   myCollectedPowerups = new Set();
   applyExclusivePowerupSnapshot([]);
   deadMonsters = new Set();
+  crumbleStates = new Map();
   activeEffects = [];
   GameAudio.stopAllLoopsAndEvent();
   localNets = []; peerNets = []; droppedTraps = [];
@@ -7589,6 +7733,7 @@ function enterGameScreenForCountdown(roomPlayers) {
   myCollectedPowerups = new Set();
   applyExclusivePowerupSnapshot([]);
   deadMonsters = new Set();
+  crumbleStates = new Map();
   playerScores = {};
   activeEffects = [];
   GameAudio.stopAllLoopsAndEvent();
@@ -7685,6 +7830,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     applyPowerupClaimsSnapshot(powerupClaimsFromServer, myId);
     applyExclusivePowerupSnapshot(exclusivePowerupConsumedFromServer);
     deadMonsters = new Set();
+    crumbleStates = new Map();
     playerScores = {};
     activeEffects = [];
     GameAudio.stopAllLoopsAndEvent();
@@ -7731,6 +7877,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     applyPowerupClaimsSnapshot(powerupClaimsFromServer, myId);
     applyExclusivePowerupSnapshot(exclusivePowerupConsumedFromServer);
     deadMonsters = new Set();
+    crumbleStates = new Map();
     playerScores = {};
     activeEffects = [];
     GameAudio.stopAllLoopsAndEvent();
@@ -7833,6 +7980,7 @@ function returnToRoomAfterGame(players) {
   applyExclusivePowerupSnapshot([]);
   sessionMultiplayerRace = false;
   deadMonsters = new Set();
+  crumbleStates = new Map();
   playerScores = {};
   activeEffects = [];
   GameAudio.stopAllLoopsAndEvent();
