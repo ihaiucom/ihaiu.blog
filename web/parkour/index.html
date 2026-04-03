@@ -3221,7 +3221,7 @@ const POWERUP_DEFS = {
   invincible:      { label: '无敌',       icon: '🛡️', color: '#ffd700', duration: 5000, bgColor: 'rgba(255,215,0,0.15)' },
   fly:             { label: '飞行',       icon: '🪽', color: '#da70d6', duration: 5000, bgColor: 'rgba(218,112,214,0.15)' },
   invincible_fly:  { label: '无敌+飞行',  icon: '🌟', color: '#ff69b4', duration: 5000, bgColor: 'rgba(255,105,180,0.15)' },
-  extra_jump:      { label: '连跳+1',     icon: '🦘', color: '#7cfc00', duration: 0, bgColor: 'rgba(124,252,0,0.15)' },
+  extra_jump:      { label: '连跳+1',     icon: '🦘', color: '#7cfc00', duration: 15000, bgColor: 'rgba(124,252,0,0.15)' },
   life:            { label: '❤️+1',      icon: '❤️', color: '#ff4444', duration: 0, bgColor: 'rgba(255,68,68,0.15)' },
   energy_full:     { label: '能量补满',   icon: '🔋', color: '#26c6da', duration: 0, bgColor: 'rgba(38,198,218,0.2)' }
 };
@@ -3241,7 +3241,7 @@ function isFlying() {
   return hasEffect('fly') || hasEffect('invincible_fly');
 }
 function getExtraJumps() {
-  return activeEffects.filter(e => e.ptype === 'extra_jump' && e.endsAt > Date.now()).length;
+  return activeEffects.some(e => e.ptype === 'extra_jump' && e.endsAt > Date.now()) ? 1 : 0;
 }
 function getSpeedMultiplier() {
   const e = hasAnySpeed();
@@ -3258,7 +3258,8 @@ function activatePowerup(ptype) {
     activeEffects = activeEffects.filter(e => e.ptype !== 'speed2' && e.ptype !== 'speed3');
     activeEffects.push({ ptype, endsAt: Date.now() + 8000 });
   } else if (ptype === 'extra_jump') {
-    activeEffects.push({ ptype, endsAt: Date.now() + 999999000 });
+    activeEffects = activeEffects.filter(e => e.ptype !== 'extra_jump');
+    activeEffects.push({ ptype, endsAt: Date.now() + def.duration });
   } else if (ptype === 'energy_full') {
     if (localPlayer) localPlayer.energy = ENERGY_MAX;
   } else if (ptype === 'life') {
