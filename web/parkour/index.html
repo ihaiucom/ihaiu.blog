@@ -1522,7 +1522,6 @@ body.game-touch-lock #mobile-toggle-wrap * {
         <h4>道具一览</h4>
         <ul>
           <li><b>⚡ 加速×2</b>：移动速度提升到 2 倍，持续 8 秒，期间附带无敌，结束后额外 2 秒无敌保护。</li>
-          <li><b>⚡⚡ 加速×3</b>：移动速度提升到 3 倍，持续 8 秒，期间附带无敌，结束后额外 2 秒无敌保护。</li>
           <li><b>🪽 飞行</b>：短时飞行，持续 5 秒，期间附带无敌，结束后额外 2 秒无敌保护，飞行结束前 2 秒会预警。</li>
           <li><b>🦘 连跳+1</b>：额外增加 1 次连跳次数（长期生效）。</li>
           <li><b>❤️+1 生命</b>：立即恢复 1 条生命。</li>
@@ -1576,7 +1575,7 @@ if (!CanvasRenderingContext2D.prototype.roundRect) {
 }
 
 // ===================== CONSTANTS =====================
-const WS_URL = `ws://${location.host}`;
+const WS_URL = `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}`;
 const GRAVITY = 0.55;
 const JUMP_VEL = -14;
 /** 二段跳：垂直初速强于首跳（更易接大间隙）；另有水平助推见下方 */
@@ -3906,9 +3905,9 @@ function generateMap(seed, envTheme, stageOpts) {
   const pwRng = mulberry32(seed + 777);
   const powerups = [];
   let pwId = 0;
-  const PW_TYPES_BASE = ['speed2', 'speed3', 'fly', 'fly', 'extra_jump', 'life', 'life', 'energy_full', 'magnet', 'magnet'];
+  const PW_TYPES_BASE = ['speed2', 'speed2', 'fly', 'fly', 'extra_jump', 'life', 'life', 'energy_full', 'magnet', 'magnet'];
   const PW_TYPES = PW_TYPES_BASE;
-  const PW_TYPES_RISK = ['fly', 'life', 'fly', 'speed3', 'energy_full', 'speed2', 'extra_jump', 'magnet'];
+  const PW_TYPES_RISK = ['fly', 'life', 'fly', 'speed2', 'energy_full', 'speed2', 'extra_jump', 'magnet'];
 
   for (let i = 3; i < finishIdx; i++) {
     const plat = platforms[i];
@@ -8710,7 +8709,12 @@ function connect(cb, onFail) {
     onFail && onFail();
   };
 
-  ws = new WebSocket(WS_URL);
+  try {
+    ws = new WebSocket(WS_URL);
+  } catch (_) {
+    fail();
+    return;
+  }
   const connectTimer = setTimeout(fail, 2200);
 
   ws.onopen = () => {
