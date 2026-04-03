@@ -1520,11 +1520,11 @@ const DASH_ENERGY_COST = ENERGY_MAX / DASH_CHARGES_MAX;
 const DASH_SPEED = 15.5;
 const DASH_FRAMES = 16;
 const DOUBLE_TAP_MS = 380;
-const GROUND_ACCEL = 0.65;
-const AIR_ACCEL = 0.35;
-const GROUND_FRICTION = 0.82;
-const AIR_FRICTION = 0.97;
-const ICE_FRICTION = 0.994;
+const GROUND_ACCEL = 0.20;
+const AIR_ACCEL = 0.12;
+const GROUND_FRICTION = 0.92;
+const AIR_FRICTION = 0.985;
+const ICE_FRICTION = 0.997;
 const MAX_FALL = 18;
 const COYOTE = 8;
 const JBUF = 10;
@@ -1850,6 +1850,58 @@ const GameAudio = (function () {
     beep(329.63, 0.22, 'triangle', 0.09, t0 + 0.22);
   }
 
+  function playSfxVictory() {
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    const fanfare = [
+      [523.25, 0.10, 'triangle', 0.10],
+      [659.25, 0.10, 'triangle', 0.11],
+      [783.99, 0.10, 'sine',     0.11],
+      [1046.5, 0.18, 'sine',     0.13],
+      [783.99, 0.07, 'triangle', 0.06],
+      [1046.5, 0.12, 'sine',     0.10],
+      [1318.5, 0.30, 'sine',     0.13],
+    ];
+    let off = 0;
+    for (const [f, d, ty, pk] of fanfare) {
+      beep(f, d, ty, pk, t0 + off);
+      off += 0.09;
+    }
+    beep(523.25, 0.35, 'sine', 0.04, t0);
+    beep(783.99, 0.50, 'sine', 0.03, t0 + 0.18);
+    beep(1046.5, 0.55, 'sine', 0.025, t0 + 0.36);
+  }
+
+  function playSfxDefeat() {
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    const seq = [
+      [392.00, 0.18, 'triangle', 0.09],
+      [349.23, 0.20, 'triangle', 0.08],
+      [293.66, 0.24, 'sine',     0.08],
+      [261.63, 0.35, 'sine',     0.07],
+      [220.00, 0.45, 'sine',     0.06],
+    ];
+    let off = 0;
+    for (const [f, d, ty, pk] of seq) {
+      beep(f, d, ty, pk, t0 + off);
+      off += 0.16;
+    }
+    const osc = c.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(220, t0 + 0.5);
+    osc.frequency.linearRampToValueAtTime(165, t0 + 1.2);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.03, t0 + 0.5);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 1.3);
+    osc.connect(g);
+    g.connect(sfxGain);
+    osc.start(t0 + 0.5);
+    osc.stop(t0 + 1.4);
+  }
+
   /** 本地踩中怪物瞬间：短促撞击感 */
   function playSfxStomp() {
     const c = ensure();
@@ -1991,6 +2043,7 @@ const GameAudio = (function () {
   // ---- 状态循环音效（飞行 / 加速） ----
   let _flyLoopNodes = null;
   let _speedLoopNodes = null;
+  let _invincLoopNodes = null;
 
   function _startLoop(createFn) {
     const c = ensure();
@@ -2016,11 +2069,13 @@ const GameAudio = (function () {
   function stopAllLoops() {
     stopLoopFly();
     stopLoopSpeed();
+    stopLoopInvincible();
   }
 
   function startLoopFly() {
     if (_flyLoopNodes) return;
     stopLoopSpeed();
+    stopLoopInvincible();
     const c = ensure();
     if (!c) return;
 
@@ -2088,6 +2143,7 @@ const GameAudio = (function () {
   function startLoopSpeed() {
     if (_speedLoopNodes) return;
     stopLoopFly();
+    stopLoopInvincible();
     const c = ensure();
     if (!c) return;
 
@@ -2139,6 +2195,95 @@ const GameAudio = (function () {
   function stopLoopSpeed() {
     _stopLoop(_speedLoopNodes);
     _speedLoopNodes = null;
+  }
+
+  function startLoopInvincible() {
+    if (_invincLoopNodes) return;
+    stopLoopFly();
+    stopLoopSpeed();
+    const c = ensure();
+    if (!c) return;
+
+    const masterGain = c.createGain();
+    masterGain.gain.setValueAtTime(0, c.currentTime);
+    masterGain.gain.linearRampToValueAtTime(1, c.currentTime + 0.3);
+    masterGain.connect(sfxGain);
+
+    const drone = c.createOscillator();
+    drone.type = 'triangle';
+    drone.frequency.setValueAtTime(110, c.currentTime);
+    const droneGain = c.createGain();
+    droneGain.gain.setValueAtTime(0, c.currentTime);
+    droneGain.gain.linearRampToValueAtTime(0.015, c.currentTime + 0.5);
+    drone.connect(droneGain);
+    droneGain.connect(masterGain);
+    drone.start(c.currentTime);
+
+    const drumPattern = [
+      { freq: 150, decay: 0.28, vol: 0.06, accent: true },
+      { freq: 130, decay: 0.18, vol: 0.035, accent: false },
+      { freq: 140, decay: 0.15, vol: 0.03, accent: false },
+      { freq: 130, decay: 0.18, vol: 0.035, accent: false },
+    ];
+    let idx = 0;
+    let stopped = false;
+
+    function playBeat() {
+      if (stopped) return;
+      const beat = drumPattern[idx % drumPattern.length];
+      idx++;
+      const t0 = c.currentTime;
+
+      const kick = c.createOscillator();
+      kick.type = 'sine';
+      kick.frequency.setValueAtTime(beat.freq * 2.2, t0);
+      kick.frequency.exponentialRampToValueAtTime(beat.freq, t0 + 0.05);
+      const kg = c.createGain();
+      kg.gain.setValueAtTime(beat.vol, t0);
+      kg.gain.exponentialRampToValueAtTime(0.001, t0 + beat.decay);
+      kick.connect(kg);
+      kg.connect(masterGain);
+      kick.start(t0);
+      kick.stop(t0 + beat.decay + 0.02);
+
+      const body = c.createOscillator();
+      body.type = 'triangle';
+      body.frequency.setValueAtTime(beat.freq * 0.75, t0);
+      const bg = c.createGain();
+      bg.gain.setValueAtTime(beat.vol * 0.5, t0);
+      bg.gain.exponentialRampToValueAtTime(0.001, t0 + beat.decay * 1.2);
+      body.connect(bg);
+      bg.connect(masterGain);
+      body.start(t0);
+      body.stop(t0 + beat.decay * 1.2 + 0.02);
+
+      if (beat.accent) {
+        const snap = c.createOscillator();
+        snap.type = 'square';
+        snap.frequency.setValueAtTime(280, t0);
+        snap.frequency.exponentialRampToValueAtTime(180, t0 + 0.03);
+        const sg = c.createGain();
+        sg.gain.setValueAtTime(0.02, t0);
+        sg.gain.exponentialRampToValueAtTime(0.001, t0 + 0.06);
+        snap.connect(sg);
+        sg.connect(masterGain);
+        snap.start(t0);
+        snap.stop(t0 + 0.08);
+      }
+    }
+
+    const tid = setInterval(playBeat, 420);
+    playBeat();
+
+    _invincLoopNodes = {
+      gain: masterGain,
+      stop() { stopped = true; clearInterval(tid); try { drone.stop(); } catch (_) {} }
+    };
+  }
+
+  function stopLoopInvincible() {
+    _stopLoop(_invincLoopNodes);
+    _invincLoopNodes = null;
   }
 
   const BGM_STORAGE_KEY = 'parkour_bgm_settings_v1';
@@ -2291,6 +2436,8 @@ const GameAudio = (function () {
     playSfxFinish,
     playSfxCountdown,
     playSfxGameEnd,
+    playSfxVictory,
+    playSfxDefeat,
     playSfxStomp,
     playSfxMonsterDie,
     playSfxClick,
@@ -2304,6 +2451,8 @@ const GameAudio = (function () {
     stopLoopFly,
     startLoopSpeed,
     stopLoopSpeed,
+    startLoopInvincible,
+    stopLoopInvincible,
     stopAllLoops,
     startBgm,
     stopBgm,
@@ -3426,7 +3575,8 @@ function activatePowerup(ptype) {
   } else {
     // 有持续时间的效果
     activeEffects.push({ ptype, endsAt: Date.now() + def.duration });
-    if (ptype === 'fly' || ptype === 'invincible_fly') GameAudio.startLoopFly();
+    if (ptype === 'invincible' || ptype === 'invincible_fly') GameAudio.startLoopInvincible();
+    else if (ptype === 'fly') GameAudio.startLoopFly();
   }
 }
 
@@ -3446,13 +3596,9 @@ function cleanExpiredEffects() {
   const prev = activeEffects;
   activeEffects = activeEffects.filter(e => e.endsAt > now);
   if (prev.length !== activeEffects.length) {
-    if (!isFlying() && !hasAnySpeed()) {
-      GameAudio.stopAllLoops();
-    } else if (!isFlying()) {
-      GameAudio.stopLoopFly();
-    } else if (!hasAnySpeed()) {
-      GameAudio.stopLoopSpeed();
-    }
+    if (!isInvincible()) GameAudio.stopLoopInvincible();
+    if (!isFlying()) GameAudio.stopLoopFly();
+    if (!hasAnySpeed()) GameAudio.stopLoopSpeed();
   }
 }
 
@@ -4455,11 +4601,14 @@ function updateLocalPlayer() {
     p.vx = p.dashVX * dashSpd;
     p.vy = p.dashVY * dashSpd;
   } else if (targetVx !== 0) {
+    if (p.onGround && targetVx * p.vx < -1.5) {
+      spawnParticles(p.x + PW / 2 + p.vx * 2, p.y + PH, 'skid');
+    }
     p.vx += (targetVx * curWalkSpeed - p.vx) * accel;
     p.facing = targetVx > 0 ? 1 : -1;
   } else {
     p.vx *= friction;
-    if (Math.abs(p.vx) < 0.05) p.vx = 0;
+    if (Math.abs(p.vx) < 0.15) p.vx = 0;
   }
 
   applyWindZones(p);
@@ -4677,7 +4826,8 @@ function spawnParticles(x, y, type) {
     hit:        { n: 16, colors: ['#ff6b35','#ff4444','#ffd700','#fff'], vx:[-6,6],  vy:[-7,-1], life:[25,45], size:[4,8]  },
     coin:       { n: 10, colors: ['#FFD700','#FFA500','#FFE066','#fff'], vx:[-4,4],  vy:[-6,-2], life:[18,32], size:[2,6]  },
     stomp:      { n: 14, colors: ['#ffd700','#ff6584','#2ecc71','#fff'], vx:[-5,5], vy:[-5,-1], life:[20,38], size:[3,8] },
-    dash:       { n: 20, colors: ['#80d8ff','#40c4ff','#b3e5fc','#fff'], vx:[-5,5], vy:[-3,3], life:[12,26], size:[3,8] }
+    dash:       { n: 20, colors: ['#80d8ff','#40c4ff','#b3e5fc','#fff'], vx:[-5,5], vy:[-3,3], life:[12,26], size:[3,8] },
+    skid:       { n: 5,  colors: ['#ccc','#aaa','#ddd','#fff'],        vx:[-1,1], vy:[-2,-0.5], life:[12,22], size:[2,5] }
   };
   const c = configs[type] || configs.land;
   for (let i = 0; i < c.n; i++) {
@@ -6933,7 +7083,13 @@ function stopGame() {
 }
 
 function endGameClient(order, stayInRoom, stageWinners) {
-  GameAudio.playSfxGameEnd();
+  const myId = localPlayer?.id;
+  const finished = myId && Array.isArray(order) && order.some(o => String(o.id) === String(myId));
+  if (finished) {
+    GameAudio.playSfxVictory();
+  } else {
+    GameAudio.playSfxDefeat();
+  }
   stopGame();
   const allPlayers = localPlayer ? [localPlayer, ...Object.values(peers)] : Object.values(peers);
   showResults(order, allPlayers, stayInRoom === true, Array.isArray(stageWinners) ? stageWinners : []);
@@ -7569,6 +7725,22 @@ function setScreen(name) {
   } else if (name !== 'game') {
     GameAudio.stopLobbyBgm();
   }
+  const bgmCtrl = document.getElementById('bgm-control');
+  if (bgmCtrl) {
+    if (name === 'game') {
+      bgmCtrl.style.top = 'auto';
+      bgmCtrl.style.bottom = '12px';
+      bgmCtrl.style.right = '12px';
+    } else if (name === 'room') {
+      bgmCtrl.style.bottom = '';
+      bgmCtrl.style.top = '56px';
+      bgmCtrl.style.right = '14px';
+    } else {
+      bgmCtrl.style.bottom = '';
+      bgmCtrl.style.top = '10px';
+      bgmCtrl.style.right = '14px';
+    }
+  }
   updateMobileModeUI();
 }
 
@@ -7812,7 +7984,10 @@ function enterRoom(players, spectate) {
   document.getElementById('roomCodeDisplay').textContent = roomId;
   document.getElementById('hostBadge').style.display = isHost ? 'inline' : 'none';
   document.getElementById('spectatorBadge').style.display = spectate ? 'inline' : 'none';
-  document.getElementById('readyBtn').style.display = spectate ? 'none' : 'inline-block';
+  const rbtn = document.getElementById('readyBtn');
+  rbtn.style.display = spectate ? 'none' : 'inline-block';
+  rbtn.textContent = '准备';
+  rbtn.className = 'btn btn-success';
   document.getElementById('forceStartBtn').style.display = (isHost && !spectate) ? 'inline-block' : 'none';
   renderPlayerGrid(players);
 }
@@ -8301,6 +8476,7 @@ function gmInvincible() {
   }
   activeEffects = activeEffects.filter(e => e.ptype !== 'invincible');
   activeEffects.push({ ptype: 'invincible', endsAt: Date.now() + GM_DURATION });
+  GameAudio.startLoopInvincible();
   gmMsg('🛡️ 无敌 5分钟', '#ffd700');
 }
 
