@@ -100,6 +100,31 @@ input[type="text"]:focus { border-color: #6c63ff; }
 .state-finished { background: rgba(108,99,255,0.2); color: #6c63ff; }
 .room-actions { display: flex; gap: 6px; }
 .empty-hint { color: #555; text-align: center; padding: 30px; font-size: 14px; }
+.color-picker-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.color-picker-label { font-size: 12px; color: #888; white-space: nowrap; }
+.color-swatch {
+  width: 24px; height: 24px; border-radius: 50%; cursor: pointer;
+  border: 2px solid transparent; transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  flex-shrink: 0;
+}
+.color-swatch:hover { transform: scale(1.18); }
+.color-swatch.selected { border-color: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.5); transform: scale(1.15); }
+.color-swatch-current { width: 18px; height: 18px; border-radius: 50%; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.3); }
+.room-color-btn {
+  padding: 4px 10px; font-size: 11px; cursor: pointer;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px; color: #ccc; transition: background 0.15s;
+  display: flex; align-items: center; gap: 5px;
+}
+.room-color-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.room-color-popup {
+  position: absolute; bottom: 100%; left: 0; margin-bottom: 6px;
+  background: rgba(20,16,40,0.96); border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px; padding: 10px 12px;
+  display: flex; gap: 6px; flex-wrap: wrap; max-width: 220px;
+  z-index: 100; box-shadow: 0 -4px 24px rgba(0,0,0,0.5);
+}
+.room-color-popup.hidden { display: none; }
 .lb-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
 .lb-tab {
   flex: 1; padding: 6px 4px; border: none; border-radius: 6px; cursor: pointer;
@@ -1196,6 +1221,9 @@ body.game-touch-lock #mobile-toggle-wrap * {
         <input type="text" id="playerName" placeholder="输入玩家名称..." maxlength="12">
         <button class="btn btn-primary" onclick="createRoom()">创建房间</button>
       </div>
+      <div class="color-picker-row" id="lobbyColorPicker">
+        <span class="color-picker-label">你的颜色</span>
+      </div>
       <div style="margin-top:12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <span style="color:#888;font-size:12px">同局关卡</span>
         <select id="lobbyStageTotalSelect" class="room-theme-select" style="max-width:200px" title="大于 1 时：任意一人先到终点，全员满血复活并进入下一关（新随机图），最后一关仍按全员完赛/淘汰结算"></select>
@@ -1279,6 +1307,12 @@ body.game-touch-lock #mobile-toggle-wrap * {
   </div>
   <div class="room-actions-bar">
     <span class="room-status" id="roomStatus">等待玩家准备...</span>
+    <span style="position:relative;display:inline-block">
+      <button class="room-color-btn" onclick="toggleRoomColorPopup()">
+        <span class="color-swatch-current" id="roomColorPreview"></span>换色
+      </button>
+      <div class="room-color-popup hidden" id="roomColorPopup"></div>
+    </span>
     <button id="readyBtn" class="btn btn-success" onclick="toggleReady()">准备</button>
     <button id="forceStartBtn" class="btn btn-warn" onclick="forceStart()" style="display:none">强制开始</button>
   </div>
@@ -1450,6 +1484,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
           <li><b>碎裂平台</b>：褐色带裂纹的平台，踩上去后开始剧烈抖动（1~2秒），随后碎裂掉落！碎裂后一段时间会自动重生。需要快速通过，不可久留。</li>
           <li><b>砸落石块</b>：悬浮在空中的愤怒面孔石块（类似超级玛丽 Thwomp），玩家靠近时猛砸下来，底部带尖刺；砸落后停顿片刻再缓慢升回，需要观察节奏趁其上升时通过（无敌状态可免疫）。</li>
           <li><b>滚石</b>：从平台一端周期性滚出的巨石（类似冒险岛），优先出现在下坡长平台；需跳过或躲避，产生点有 ⚠ 警告标记（无敌状态可免疫）。</li>
+          <li><b>摆锤平台</b>：悬挂在链条上像钟摆一样左右摆动的木质平台（类似超级玛丽），需要看准时机跳上跳下，站在上面会跟随平台一起移动。</li>
         </ul>
       </div>
       <div class="guide-card">
@@ -1581,6 +1616,12 @@ let ws = null;
 let serverUnavailable = false;
 let offlineSoloMode = false;
 let myId = null, myColor = '#fff', myName = '玩家', roomId = null;
+const PLAYER_COLOR_OPTIONS = [
+  '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F0A500',
+  '#6c63ff', '#ff6584', '#00b894', '#fd9644', '#a29bfe', '#55efc4', '#fab1a0', '#81ecec'
+];
+const COLOR_STORAGE_KEY = 'parkour_color';
+let myChosenColor = localStorage.getItem(COLOR_STORAGE_KEY) || PLAYER_COLOR_OPTIONS[0];
 let gameSeed = 0, isHost = false, isSpectator = false;
 /** 房间内同步：房主可选；'random' 表示按地图 seed 抽主题 */
 let roomEnvTheme = 'random';
@@ -3569,6 +3610,7 @@ function generateMap(seed, envTheme, stageOpts) {
     else if (i > 15 && r > 0.76 - haz) type = 'moving';
     else if (i > 7 && r > 0.72 - haz) type = 'conveyor';
     else if (i > 4 && r > 0.68 - haz) type = 'crumble';
+    else if (i > 6 && r > 0.64 - haz) type = 'pendulum';
 
     let moving = null;
     if (type === 'moving') {
@@ -3586,6 +3628,17 @@ function generateMap(seed, envTheme, stageOpts) {
     if (type === 'crumble') {
       platObj.crumbleDelay = 1.0 + rng() * 1.0;
       platObj.crumbleRespawn = 4.5 + rng() * 2.0;
+    }
+    if (type === 'pendulum') {
+      const ropeLen = 120 + rng() * 80;
+      platObj.pendulum = {
+        pivotX: Math.round(cx + w / 2),
+        pivotY: Math.round(cy - ropeLen),
+        ropeLength: ropeLen,
+        maxAngle: 0.5 + rng() * 0.35,
+        speed: 1.2 + rng() * 0.8 + stageDiff * 0.3,
+        phase: rng() * Math.PI * 2
+      };
     }
     if (type === 'launchpad') {
       platObj.launchVy = -(18.2 + rng() * 2.6) * (1 + stageDiff * 0.12);
@@ -3759,6 +3812,22 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
+  // ---- 尖刺地带生成 ----
+  const spikeRng = mulberry32(seed + 777);
+  const spikeZones = [];
+  for (let i = 4; i < finishIdx; i++) {
+    const plat = platforms[i];
+    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'oneway' || plat.type === 'pendulum') continue;
+    if (plat.flicker || plat.moving || plat.type === 'crumble') continue;
+    if (plat.w < 80) continue;
+    const prog = i / Math.max(1, finishIdx);
+    if (spikeRng() > 0.10 + prog * 0.06 + stageDiff * 0.05) continue;
+    const zoneW = Math.round(plat.w * (0.25 + spikeRng() * 0.35));
+    const maxOff = plat.w - zoneW - 12;
+    const ox = 12 + spikeRng() * Math.max(0, maxOff);
+    spikeZones.push({ x: Math.round(plat.x + ox), y: plat.y, w: zoneW });
+  }
+
   // ---- 怪物生成 ----
   const monRng = mulberry32(seed + 333);
   const monsters = [];
@@ -3766,10 +3835,10 @@ function generateMap(seed, envTheme, stageOpts) {
 
   for (let i = 2; i < mainLen; i++) {
     const plat = mainSpine[i];
-    if (plat.type === 'finish' || plat.w < 65) continue;
+    if (plat.type === 'finish' || plat.type === 'pendulum' || plat.w < 65) continue;
     if (plat.flicker) continue;
 
-    const prog = (i - 2) / Math.max(1, mainLen - 3); // 0~1 难度进度
+    const prog = (i - 2) / Math.max(1, mainLen - 3);
     const monThr = 0.22 + prog * 0.42 - stageDiff * (0.08 + prog * 0.12);
     if (monRng() > monThr) continue;
 
@@ -3854,7 +3923,7 @@ function generateMap(seed, envTheme, stageOpts) {
   const fireBars = [];
   for (let i = 5; i < finishIdx; i++) {
     const plat = platforms[i];
-    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce') continue;
+    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'pendulum') continue;
     if (plat.flicker || plat.w < 70) continue;
     const prog = i / Math.max(1, finishIdx);
     if (fbRng() > 0.08 + prog * 0.06 + stageDiff * 0.04) continue;
@@ -3878,7 +3947,7 @@ function generateMap(seed, envTheme, stageOpts) {
   const thwomps = [];
   for (let i = 6; i < finishIdx; i++) {
     const plat = platforms[i];
-    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'crumble') continue;
+    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'crumble' || plat.type === 'pendulum') continue;
     if (plat.flicker || plat.w < 80) continue;
     if (plat.moving) continue;
     const prog = i / Math.max(1, finishIdx);
@@ -3937,6 +4006,7 @@ function generateMap(seed, envTheme, stageOpts) {
     coins,
     powerups,
     arrestTraps,
+    spikeZones,
     windZones,
     fireBars: roomRaceMode ? [] : fireBars,
     thwomps: roomRaceMode ? [] : thwomps,
@@ -3951,8 +4021,22 @@ function generateMap(seed, envTheme, stageOpts) {
 }
 
 function getPlatX(plat, t) {
+  if (plat.pendulum) {
+    const pnd = plat.pendulum;
+    const angle = pnd.maxAngle * Math.sin(t * pnd.speed + pnd.phase);
+    return pnd.pivotX + Math.sin(angle) * pnd.ropeLength - plat.w / 2;
+  }
   if (!plat.moving) return plat.x;
   return plat.x + Math.sin(t * plat.moving.speed + plat.moving.phase) * plat.moving.range;
+}
+
+function getPlatY(plat, t) {
+  if (plat.pendulum) {
+    const pnd = plat.pendulum;
+    const angle = pnd.maxAngle * Math.sin(t * pnd.speed + pnd.phase);
+    return pnd.pivotY + Math.cos(angle) * pnd.ropeLength;
+  }
+  return plat.y;
 }
 
 /** 闪烁平台：duty 为单周期内可见时间占比 */
@@ -5328,6 +5412,72 @@ function drawTraps(ctx) {
   }
 }
 
+// ---- 尖刺地带 ----
+
+function checkSpikeCollisions(p) {
+  if (!gMap?.spikeZones?.length || !p.isAlive || p.finished) return;
+  if (p.respawnTimer > 0) return;
+  if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
+  if (isInvincible()) return;
+  const px = p.x + 3, py = p.y + 3, pw = p.w - 6, ph = p.h - 4;
+  const spikeH = 10;
+  for (const spike of gMap.spikeZones) {
+    if (rectsOverlap(px, py, pw, ph, spike.x, spike.y - spikeH, spike.w, spikeH)) {
+      killLocalPlayer('踩到尖刺！');
+      return;
+    }
+  }
+}
+
+function drawSpikes(ctx) {
+  if (!gMap?.spikeZones?.length) return;
+  const gt = gameRunning ? (Date.now() - gameStartTime) / 1000 : 0;
+  for (const spike of gMap.spikeZones) {
+    if (spike.x + spike.w < cam.x - 20 || spike.x > cam.x + CW + 20) continue;
+    const { x, y, w } = spike;
+    const sH = 11;
+    const sW = 10;
+    const count = Math.max(1, Math.floor(w / sW));
+    const actualW = count * sW;
+    const startX = x + (w - actualW) / 2;
+
+    ctx.fillStyle = 'rgba(60,60,70,0.45)';
+    ctx.fillRect(x, y - 2, w, 4);
+
+    for (let i = 0; i < count; i++) {
+      const bL = startX + i * sW;
+      const bR = bL + sW;
+      const tipX = bL + sW / 2;
+      const g = ctx.createLinearGradient(tipX, y - sH, tipX, y);
+      g.addColorStop(0, '#e8e8ec');
+      g.addColorStop(0.35, '#b0b0b8');
+      g.addColorStop(1, '#707078');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.moveTo(tipX, y - sH);
+      ctx.lineTo(bR, y);
+      ctx.lineTo(bL, y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(tipX, y - sH);
+      ctx.lineTo(bL, y);
+      ctx.stroke();
+      ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+      ctx.beginPath();
+      ctx.moveTo(tipX, y - sH);
+      ctx.lineTo(bR, y);
+      ctx.stroke();
+    }
+
+    const pulse = 0.25 + 0.12 * Math.sin(gt * 4 + x * 0.02);
+    ctx.fillStyle = `rgba(255, 50, 50, ${pulse})`;
+    ctx.fillRect(x, y - 1.5, w, 2);
+  }
+}
+
 // ---- 怪物渲染 ----
 
 function drawMonsters(ctx, t) {
@@ -5523,7 +5673,7 @@ function mkPlayer(id, name, color, x, y) {
 
 function isRespawnPlatformSafe(plat) {
   if (!plat) return false;
-  if (plat.type === 'oneway' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'conveyor' || plat.type === 'crumble') return false;
+  if (plat.type === 'oneway' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'conveyor' || plat.type === 'crumble' || plat.type === 'pendulum') return false;
   if (plat.flicker) return false; // 不在周期性消失的平台复活
   return true;
 }
@@ -5668,9 +5818,10 @@ function updateLocalPlayer() {
         if (cs && cs.state === 'broken') continue;
       }
       const apx = getPlatX(plat, arrestT);
+      const apy = getPlatY(plat, arrestT);
       if (p.x + p.w > apx && p.x < apx + plat.w &&
-          p.y + p.h > plat.y && p.y + p.h < plat.y + plat.h + 12 && p.vy >= 0) {
-        p.y = plat.y - p.h;
+          p.y + p.h > apy && p.y + p.h < apy + plat.h + 12 && p.vy >= 0) {
+        p.y = apy - p.h;
         p.vy = 0;
         p.onGround = true;
         if (plat.type === 'conveyor' && plat.conveyorSpeed) {
@@ -5679,7 +5830,7 @@ function updateLocalPlayer() {
         if (plat.type === 'crumble' && !crumbleStates.has(pi)) {
           crumbleStates.set(pi, { state: 'shaking', triggeredAt: arrestT });
         }
-        if (plat.moving && _prevUpdateGameT >= 0) {
+        if ((plat.moving || plat.pendulum) && _prevUpdateGameT >= 0) {
           p.x += getPlatX(plat, arrestT) - getPlatX(plat, _prevUpdateGameT);
         }
       }
@@ -5808,7 +5959,7 @@ function updateLocalPlayer() {
   for (let pi = 0; pi < gMap.platforms.length; pi++) {
     const plat = gMap.platforms[pi];
     const px = getPlatX(plat, t);
-    const py = plat.y;
+    const py = getPlatY(plat, t);
 
     if (!isFlickerPlatformVisible(plat, t)) continue;
 
@@ -5817,7 +5968,6 @@ function updateLocalPlayer() {
       if (cs && cs.state === 'broken') continue;
     }
 
-    // Horizontal overlap (with small tolerance)
     if (p.x + p.w <= px + 3 || p.x >= px + plat.w - 3) continue;
 
     const prevBottom = p.y + p.h - p.vy;
@@ -5852,7 +6002,7 @@ function updateLocalPlayer() {
         if (plat.type === 'crumble' && !crumbleStates.has(pi)) {
           crumbleStates.set(pi, { state: 'shaking', triggeredAt: t });
         }
-        if (plat.moving && _prevUpdateGameT >= 0) {
+        if ((plat.moving || plat.pendulum) && _prevUpdateGameT >= 0) {
           p.x += getPlatX(plat, t) - getPlatX(plat, _prevUpdateGameT);
         }
       }
@@ -5910,6 +6060,7 @@ function updateLocalPlayer() {
     checkFireBarCollisions(p, t);
     checkThwompCollisions(p, t);
     checkBoulderCollisions(p, t);
+    checkSpikeCollisions(p);
   }
 
   // Coin & powerup collection
@@ -6618,9 +6769,18 @@ function renderGame(timestamp) {
     for (let pi = 0; pi < gMap.platforms.length; pi++) {
       const plat = gMap.platforms[pi];
       const px = getPlatX(plat, t);
-      if (px + plat.w < cam.x - 10 || px > cam.x + CW + 10) continue;
-      drawPlatform(ctx, plat, px, t, pi);
+      const py = getPlatY(plat, t);
+      if (plat.pendulum) {
+        const swingRange = plat.pendulum.ropeLength * Math.sin(plat.pendulum.maxAngle) + plat.w;
+        if (plat.pendulum.pivotX + swingRange < cam.x - 10 || plat.pendulum.pivotX - swingRange > cam.x + CW + 10) continue;
+      } else {
+        if (px + plat.w < cam.x - 10 || px > cam.x + CW + 10) continue;
+      }
+      if (plat.pendulum) drawPendulumChain(ctx, plat, px, py, t);
+      drawPlatform(ctx, plat, px, py, t, pi);
     }
+
+    drawSpikes(ctx);
 
     // Finish line
     drawFinishLine(ctx, gMap.finishX, gMap.platforms[gMap.platforms.length - 1].y);
@@ -6787,8 +6947,48 @@ function drawDeco(ctx, d) {
   ctx.restore();
 }
 
-function drawPlatform(ctx, plat, px, t, platIdx) {
-  const { y, w, h, type } = plat;
+function drawPendulumChain(ctx, plat, px, py, t) {
+  const pnd = plat.pendulum;
+  const pivotX = pnd.pivotX;
+  const pivotY = pnd.pivotY;
+  const platCX = px + plat.w / 2;
+  const platCY = py;
+
+  ctx.save();
+  ctx.strokeStyle = '#8a7a6a';
+  ctx.lineWidth = 3;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(pivotX, pivotY);
+  ctx.lineTo(platCX, platCY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.fillStyle = '#555';
+  ctx.beginPath();
+  ctx.arc(pivotX, pivotY, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#888';
+  ctx.beginPath();
+  ctx.arc(pivotX, pivotY, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  const numLinks = Math.max(3, Math.floor(pnd.ropeLength / 22));
+  for (let i = 1; i < numLinks; i++) {
+    const frac = i / numLinks;
+    const lx = pivotX + (platCX - pivotX) * frac;
+    const ly = pivotY + (platCY - pivotY) * frac;
+    ctx.fillStyle = i % 2 === 0 ? '#7a6a5a' : '#9a8a7a';
+    ctx.beginPath();
+    ctx.arc(lx, ly, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+function drawPlatform(ctx, plat, px, py, t, platIdx) {
+  const { w, h, type } = plat;
+  const y = py;
   const th = getActiveMapTheme();
 
   if (type === 'crumble') {
@@ -6999,6 +7199,30 @@ function drawPlatform(ctx, plat, px, t, platIdx) {
     ctx.setLineDash([3, 3]);
     ctx.strokeRect(px + 1, y + 1, w - 2, h - 2);
     ctx.setLineDash([]);
+  } else if (type === 'pendulum') {
+    const grad = ctx.createLinearGradient(0, y, 0, y + h);
+    grad.addColorStop(0, '#8b6914');
+    grad.addColorStop(0.5, '#a07828');
+    grad.addColorStop(1, '#6b4f0e');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.roundRect(px, y, w, h, 4); ctx.fill();
+    ctx.fillStyle = '#5a3e08';
+    ctx.fillRect(px + 2, y + h - 4, w - 4, 4);
+    ctx.strokeStyle = 'rgba(200,170,80,0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(px + 1, y + 1, w - 2, h - 2, 3); ctx.stroke();
+    const boltR = 3;
+    ctx.fillStyle = '#bbb';
+    ctx.beginPath(); ctx.arc(px + 8, y + h / 2, boltR, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(px + w - 8, y + h / 2, boltR, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#999';
+    ctx.beginPath(); ctx.arc(px + 8, y + h / 2, 1.5, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(px + w - 8, y + h / 2, 1.5, 0, Math.PI * 2); ctx.fill();
+    const ringX = px + w / 2;
+    const ringY = y;
+    ctx.strokeStyle = '#8a7a6a';
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(ringX, ringY, 5, 0, Math.PI * 2); ctx.stroke();
   } else if (type === 'oneway') {
     ctx.fillStyle = 'rgba(100, 180, 255, 0.32)';
     ctx.beginPath(); ctx.roundRect(px, y, w, h, 3); ctx.fill();
@@ -7681,7 +7905,7 @@ function startOfflineSoloGame() {
   const name = saveName();
   myName = name;
   myId = `solo-${Date.now().toString(36)}`;
-  myColor = '#6c63ff';
+  myColor = myChosenColor;
   roomId = 'SOLO';
   isHost = true;
   isSpectator = false;
@@ -7828,12 +8052,15 @@ function handleMsg(msg) {
     case 'joinedRoom':
       myId = msg.playerId;
       myColor = msg.playerColor;
+      myChosenColor = myColor;
+      localStorage.setItem(COLOR_STORAGE_KEY, myColor);
       myName = msg.playerName;
       roomId = msg.roomId;
       gameSeed = msg.seed;
       isHost = msg.isHost;
       isSpectator = false;
       myReady = false;
+      updateRoomColorPreview(myColor);
       if (msg.stageTotal != null) {
         const st = parseInt(msg.stageTotal, 10);
         roomStageTotal = Number.isFinite(st) ? Math.max(1, Math.min(15, st)) : 1;
@@ -7895,6 +8122,19 @@ function handleMsg(msg) {
     case 'playerLeft':
       renderPlayerGrid(msg.players);
       syncRoomThemeUI();
+      break;
+
+    case 'colorChanged':
+      if (msg.playerId === myId) {
+        myColor = msg.color;
+        myChosenColor = msg.color;
+        localStorage.setItem(COLOR_STORAGE_KEY, msg.color);
+        updateRoomColorPreview(msg.color);
+        if (localPlayer) localPlayer.color = msg.color;
+      } else if (peers[msg.playerId]) {
+        peers[msg.playerId].color = msg.color;
+      }
+      if (msg.players) renderPlayerGrid(msg.players);
       break;
 
     case 'roomEnvTheme':
@@ -9176,6 +9416,78 @@ function saveName() {
   return name;
 }
 
+function initColorPicker(containerId, onSelect) {
+  const container = document.getElementById(containerId);
+  if (!container || container.dataset.inited === '1') return;
+  container.dataset.inited = '1';
+  PLAYER_COLOR_OPTIONS.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (c === myChosenColor ? ' selected' : '');
+    sw.style.background = c;
+    sw.dataset.color = c;
+    sw.addEventListener('click', () => {
+      container.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      myChosenColor = c;
+      localStorage.setItem(COLOR_STORAGE_KEY, c);
+      if (onSelect) onSelect(c);
+    });
+    container.appendChild(sw);
+  });
+}
+
+function initLobbyColorPicker() {
+  initColorPicker('lobbyColorPicker');
+}
+
+function buildRoomColorPopup() {
+  const popup = document.getElementById('roomColorPopup');
+  if (!popup) return;
+  popup.innerHTML = '';
+  PLAYER_COLOR_OPTIONS.forEach(c => {
+    const sw = document.createElement('div');
+    sw.className = 'color-swatch' + (c === myColor ? ' selected' : '');
+    sw.style.background = c;
+    sw.dataset.color = c;
+    sw.addEventListener('click', () => {
+      popup.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+      sw.classList.add('selected');
+      myChosenColor = c;
+      localStorage.setItem(COLOR_STORAGE_KEY, c);
+      if (ws && ws.readyState === 1) {
+        ws.send(JSON.stringify({ type: 'changeColor', color: c }));
+      }
+      popup.classList.add('hidden');
+    });
+    popup.appendChild(sw);
+  });
+}
+
+function toggleRoomColorPopup() {
+  const popup = document.getElementById('roomColorPopup');
+  if (!popup) return;
+  if (popup.classList.contains('hidden')) {
+    buildRoomColorPopup();
+    popup.classList.remove('hidden');
+    setTimeout(() => {
+      const closeHandler = (e) => {
+        if (!popup.contains(e.target) && !e.target.closest('.room-color-btn')) {
+          popup.classList.add('hidden');
+          document.removeEventListener('click', closeHandler);
+        }
+      };
+      document.addEventListener('click', closeHandler);
+    }, 0);
+  } else {
+    popup.classList.add('hidden');
+  }
+}
+
+function updateRoomColorPreview(color) {
+  const el = document.getElementById('roomColorPreview');
+  if (el) el.style.background = color;
+}
+
 function createRoom() {
   const name = saveName();
   myName = name;
@@ -9183,7 +9495,7 @@ function createRoom() {
   const stSel = document.getElementById('lobbyStageTotalSelect');
   const stRaw = stSel ? parseInt(stSel.value, 10) : 1;
   const stageTotal = Number.isFinite(stRaw) ? Math.max(1, Math.min(15, stRaw)) : 1;
-  const payload = JSON.stringify({ type: 'createRoom', name, stageTotal });
+  const payload = JSON.stringify({ type: 'createRoom', name, stageTotal, color: myChosenColor });
   if (serverUnavailable) {
     startOfflineSoloGame();
     return;
@@ -9203,7 +9515,7 @@ function joinRoom(spectate = false) {
   const rid = (document.getElementById('joinRoomId').value.trim() || '').toUpperCase();
   const name = saveName();
   if (!rid) { alert('请输入房间号'); return; }
-  const doJoin = () => ws.send(JSON.stringify({ type: 'joinRoom', roomId: rid, name, spectate }));
+  const doJoin = () => ws.send(JSON.stringify({ type: 'joinRoom', roomId: rid, name, spectate, color: myChosenColor }));
   if (!ws || ws.readyState !== 1) { connect(doJoin, renderOfflineLobbyHint); } else { doJoin(); }
 }
 
@@ -9337,6 +9649,9 @@ function enterRoom(players, spectate) {
   rbtn.textContent = '准备';
   rbtn.className = 'btn btn-success';
   document.getElementById('forceStartBtn').style.display = (isHost && !spectate) ? 'inline-block' : 'none';
+  const colorBtn = document.querySelector('.room-color-btn');
+  if (colorBtn) colorBtn.style.display = spectate ? 'none' : 'inline-flex';
+  updateRoomColorPreview(myColor);
   renderPlayerGrid(players);
 }
 
@@ -9924,6 +10239,7 @@ window.addEventListener('load', () => {
     localStorage.setItem('parkour_name', name);
   }
   initLobbyStageSelect();
+  initLobbyColorPicker();
   loadMobileControlLayout();
   loadViewportScaleSetting();
   loadMobileTopbarCollapsedSetting();

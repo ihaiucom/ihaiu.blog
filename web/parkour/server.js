@@ -262,7 +262,7 @@ class Room {
     this._advancingStage = false;
   }
 
-  addPlayer(ws, name) {
+  addPlayer(ws, name, preferredColor) {
     const COLORS = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F0A500'];
 
     // 同名玩家重连：踢掉旧连接，复用颜色
@@ -281,9 +281,12 @@ class Room {
     }
 
     const id = uid();
+    const chosenColor = (typeof preferredColor === 'string' && /^#[0-9A-Fa-f]{3,8}$/.test(preferredColor))
+      ? preferredColor
+      : COLORS[this.players.size % COLORS.length];
     const player = {
       id, name,
-      color: COLORS[this.players.size % COLORS.length],
+      color: chosenColor,
       x: 200 + this.players.size * 50, y: 400,
       vx: 0, vy: 0,
       facing: 1, frame: 0,
@@ -657,7 +660,7 @@ wss.on('connection', ws => {
           if (!Number.isFinite(st)) st = 1;
           room.stageTotal = Math.max(1, Math.min(15, st));
         }
-        const p = room.addPlayer(ws, msg.name || '玩家');
+        const p = room.addPlayer(ws, msg.name || '玩家', msg.color);
         myId = p.id;
         ws.send(JSON.stringify({
           type: 'roomCreated',
@@ -696,7 +699,7 @@ wss.on('connection', ws => {
           r.broadcast({ type: 'spectatorJoined', count: r.spectators.size }, ws);
         } else {
           // 等待 / 倒计时 / 进行中 均可作为玩家加入
-          const p = r.addPlayer(ws, msg.name || '玩家');
+          const p = r.addPlayer(ws, msg.name || '玩家', msg.color);
           myId = p.id;
 
           const isLateJoin = r.state === 'playing' || r.state === 'countdown';
@@ -904,6 +907,22 @@ wss.on('connection', ws => {
         } else {
           room.broadcast({ type: 'peerDied', id: p.id, lives, eliminated: false }, ws);
         }
+        break;
+      }
+
+      case 'changeColor': {
+        if (!room || spectator) return;
+        const p = room.players.get(myId);
+        if (!p) return;
+        const newColor = msg.color;
+        if (typeof newColor !== 'string' || !/^#[0-9A-Fa-f]{3,8}$/.test(newColor)) return;
+        p.color = newColor;
+        room.broadcast({
+          type: 'colorChanged',
+          playerId: p.id,
+          color: newColor,
+          players: room.getPlayers()
+        });
         break;
       }
 
