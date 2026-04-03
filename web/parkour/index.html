@@ -1488,6 +1488,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
           <li><b>砸落石块</b>：悬浮在空中的愤怒面孔石块（类似超级玛丽 Thwomp），玩家靠近时猛砸下来，底部带尖刺；砸落后停顿片刻再缓慢升回，需要观察节奏趁其上升时通过（无敌状态可免疫）。</li>
           <li><b>滚石</b>：从平台一端周期性滚出的巨石（类似冒险岛），优先出现在下坡长平台；需跳过或躲避，产生点有 ⚠ 警告标记（无敌状态可免疫）。</li>
           <li><b>摆锤平台</b>：悬挂在链条上像钟摆一样左右摆动的木质平台（类似超级玛丽），需要看准时机跳上跳下，站在上面会跟随平台一起移动。</li>
+          <li><b>弹簧蘑菇</b>：红色蘑菇头+弹簧底座（类似超级玛丽），踩上去可以获得超高弹跳（比普通弹跳板强很多）！但每个蘑菇只能使用一次，踩后会压扁消失。</li>
         </ul>
       </div>
       <div class="guide-card">
@@ -1664,6 +1665,7 @@ let sessionMultiplayerRace = false;
 let deadMonsters = new Set();
 let crumbleStates = new Map();
 let thwompStates = [];
+let usedMushrooms = new Set();
 let cachedLeaderboard = null;
 let currentLbTab = 'alltime';
 let activeEffects = [];   // { ptype, endsAt } — 本地玩家激活中的效果
@@ -4015,6 +4017,24 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
+  // ---- 弹簧蘑菇生成 ----
+  const mushRng = mulberry32(seed + 1111);
+  const springMushrooms = [];
+  let mushId = 0;
+  for (let i = 4; i < finishIdx; i++) {
+    const plat = platforms[i];
+    if (plat.type !== 'normal' && plat.type !== 'ice') continue;
+    if (plat.flicker || plat.moving || plat.w < 60) continue;
+    const prog = i / Math.max(1, finishIdx);
+    if (mushRng() > 0.08 + prog * 0.04 + stageDiff * 0.03) continue;
+    springMushrooms.push({
+      id: mushId++,
+      x: plat.x + 20 + mushRng() * (plat.w - 40),
+      y: plat.y,
+      phase: mushRng() * Math.PI * 2
+    });
+  }
+
   return {
     platforms,
     decos,
@@ -4027,6 +4047,7 @@ function generateMap(seed, envTheme, stageOpts) {
     fireBars: roomRaceMode ? [] : fireBars,
     thwomps: roomRaceMode ? [] : thwomps,
     boulderSpawners: roomRaceMode ? [] : boulderSpawners,
+    springMushrooms,
     mapWidth: mapW,
     finishX,
     spawnX: 180,
@@ -4489,6 +4510,33 @@ function checkPowerupCollection(p) {
   }
 }
 
+const MUSHROOM_W = 30;
+const MUSHROOM_H = 28;
+const MUSHROOM_BOUNCE_VEL = -22;
+let mushroomAnimStates = new Map();
+
+function checkMushroomBounce(p) {
+  if (!gMap || !gMap.springMushrooms || !p.isAlive || p.finished) return;
+  if (p.vy < 0) return;
+  const px = p.x + PW / 2, pBottom = p.y + PH;
+  for (const m of gMap.springMushrooms) {
+    if (usedMushrooms.has(m.id)) continue;
+    const mx = m.x, my = m.y - MUSHROOM_H;
+    if (px >= mx - MUSHROOM_W / 2 - 6 && px <= mx + MUSHROOM_W / 2 + 6 &&
+        pBottom >= my && pBottom <= my + MUSHROOM_H + 8) {
+      p.vy = MUSHROOM_BOUNCE_VEL;
+      p.jumpCount = 0;
+      p.onGround = false;
+      usedMushrooms.add(m.id);
+      mushroomAnimStates.set(m.id, { triggeredAt: Date.now(), x: m.x, y: m.y });
+      spawnParticles(m.x, m.y - MUSHROOM_H / 2, 'bounce');
+      addFloatingText(m.x, m.y - MUSHROOM_H - 16, '弹弹弹!', '#ff6b9d', 15);
+      GameAudio.playSfxJump();
+      break;
+    }
+  }
+}
+
 function drawPowerup(ctx, pw, t) {
   const anchor = getPowerupAnchorXY(pw, t);
   const bob = Math.sin(t * 2.2 + pw.phase) * 5 * POWERUP_DRAW_SCALE;
@@ -4548,6 +4596,97 @@ function drawPowerups(ctx, t) {
     if (powerupHiddenForLocal(pw)) continue;
     if (pw.x + margin < cam.x - 30 || pw.x - margin > cam.x + CW + 30) continue;
     drawPowerup(ctx, pw, t);
+  }
+}
+
+function drawSpringMushrooms(ctx, t) {
+  if (!gMap || !gMap.springMushrooms) return;
+  const now = Date.now();
+  for (const m of gMap.springMushrooms) {
+    if (m.x < cam.x - 40 || m.x > cam.x + CW + 40) continue;
+
+    const used = usedMushrooms.has(m.id);
+    const anim = mushroomAnimStates.get(m.id);
+
+    if (used && anim) {
+      const elapsed = (now - anim.triggeredAt) / 1000;
+      if (elapsed > 1.2) continue;
+      const squish = Math.max(0, 1 - elapsed / 0.15);
+      const fade = Math.max(0, 1 - elapsed / 1.0);
+      if (fade <= 0) continue;
+      ctx.save();
+      ctx.globalAlpha = fade * 0.6;
+      ctx.translate(m.x, m.y);
+      ctx.scale(1 + (1 - squish) * 0.5, squish);
+      drawMushroomShape(ctx, 0, 0, t, m.phase, true);
+      ctx.restore();
+      continue;
+    }
+    if (used) continue;
+
+    const bob = Math.sin(t * 2.5 + m.phase) * 2;
+    ctx.save();
+    ctx.translate(m.x, m.y + bob);
+    drawMushroomShape(ctx, 0, 0, t, m.phase, false);
+    ctx.restore();
+  }
+}
+
+function drawMushroomShape(ctx, x, y, t, phase, faded) {
+  const hw = MUSHROOM_W / 2;
+  const stemW = 10, stemH = 12;
+  const capH = 16;
+
+  ctx.fillStyle = faded ? '#a08060' : '#d2a06a';
+  ctx.beginPath();
+  ctx.roundRect(x - stemW / 2, y - stemH, stemW, stemH, [0, 0, 3, 3]);
+  ctx.fill();
+  if (!faded) {
+    ctx.fillStyle = '#c49458';
+    ctx.fillRect(x - stemW / 2 + 2, y - stemH + 2, 2, stemH - 4);
+  }
+
+  const capGrad = ctx.createRadialGradient(x, y - stemH - capH * 0.4, 2, x, y - stemH - capH * 0.3, hw + 4);
+  capGrad.addColorStop(0, faded ? '#b05050' : '#ff4d6a');
+  capGrad.addColorStop(0.7, faded ? '#903030' : '#e0224a');
+  capGrad.addColorStop(1, faded ? '#702020' : '#b01030');
+  ctx.fillStyle = capGrad;
+  ctx.beginPath();
+  ctx.ellipse(x, y - stemH - capH * 0.35, hw, capH * 0.65, 0, Math.PI, 0);
+  ctx.fill();
+
+  if (!faded) {
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.beginPath(); ctx.arc(x - 6, y - stemH - capH * 0.45, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + 7, y - stemH - capH * 0.3, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x - 1, y - stemH - capH * 0.6, 2.5, 0, Math.PI * 2); ctx.fill();
+
+    ctx.fillStyle = 'rgba(255,255,255,0.45)';
+    ctx.beginPath();
+    ctx.ellipse(x - 4, y - stemH - capH * 0.55, 5, 2, -0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    const springY = y;
+    const coils = 3;
+    ctx.strokeStyle = '#aaa';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    for (let i = 0; i <= coils * 8; i++) {
+      const frac = i / (coils * 8);
+      const sx = x + Math.sin(frac * coils * Math.PI * 2) * 6;
+      const sy = springY + frac * 6;
+      i === 0 ? ctx.moveTo(sx, sy) : ctx.lineTo(sx, sy);
+    }
+    ctx.stroke();
+
+    const pulse = 0.6 + Math.sin(t * 3 + phase) * 0.2;
+    ctx.strokeStyle = `rgba(255,100,150,${pulse})`;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.arc(x, y - stemH - capH * 0.3, hw + 6, Math.PI * 1.1, Math.PI * 1.9);
+    ctx.stroke();
+    ctx.setLineDash([]);
   }
 }
 
@@ -6194,6 +6333,7 @@ function updateLocalPlayer() {
   checkCoinCollection(p);
   checkRainCoinCollection(p);
   checkPowerupCollection(p);
+  checkMushroomBounce(p);
   checkTrapCollisions(p);
 
   // Death (flying players get pulled back instead)
@@ -6941,6 +7081,7 @@ function renderGame(timestamp) {
   drawCoins(ctx, t);
   drawRainCoins(ctx, t);
   drawPowerups(ctx, t);
+  drawSpringMushrooms(ctx, t);
   updateFloatingTexts();
 
   // Monsters & bullets (before players so players render on top)
@@ -8099,6 +8240,7 @@ function advanceOfflineSoloStage() {
   deadMonsters = new Set();
   crumbleStates = new Map();
   thwompStates = [];
+  usedMushrooms = new Set();
   activeEffects = [];
   GameAudio.stopAllLoopsAndEvent();
   localNets = []; peerNets = []; droppedTraps = [];
@@ -8582,6 +8724,7 @@ function enterGameScreenForCountdown(roomPlayers) {
   deadMonsters = new Set();
   crumbleStates = new Map();
   thwompStates = [];
+  usedMushrooms = new Set();
   playerScores = {};
   activeEffects = [];
   GameAudio.stopAllLoopsAndEvent();
@@ -8680,6 +8823,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     deadMonsters = new Set();
     crumbleStates = new Map();
     thwompStates = [];
+    usedMushrooms = new Set();
     playerScores = {};
     activeEffects = [];
     GameAudio.stopAllLoopsAndEvent();
@@ -8728,6 +8872,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     deadMonsters = new Set();
     crumbleStates = new Map();
     thwompStates = [];
+    usedMushrooms = new Set();
     playerScores = {};
     activeEffects = [];
     GameAudio.stopAllLoopsAndEvent();
@@ -8832,6 +8977,7 @@ function returnToRoomAfterGame(players) {
   deadMonsters = new Set();
   crumbleStates = new Map();
   thwompStates = [];
+  usedMushrooms = new Set();
   playerScores = {};
   activeEffects = [];
   GameAudio.stopAllLoopsAndEvent();
