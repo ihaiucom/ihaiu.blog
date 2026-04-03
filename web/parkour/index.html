@@ -454,6 +454,16 @@ input[type="text"]:focus { border-color: #6c63ff; }
   z-index: 48;
 }
 #finish-banner.show { display: block; }
+#game.mobile-ui #event-hint {
+  max-width: min(86vw, 520px);
+  font-size: 13px;
+  padding: 8px 12px;
+}
+#game.mobile-ui #finish-banner {
+  max-width: min(86vw, 520px);
+  font-size: 13px;
+  padding: 8px 14px;
+}
 
 /* 冲线 / 夺冠 / 个人纪录 — 全屏短暂庆祝层（叠在 HUD 下、横幅旁） */
 #celebration-layer {
@@ -667,6 +677,13 @@ input[type="text"]:focus { border-color: #6c63ff; }
   flex-direction: column;
   gap: 6px;
   align-items: flex-start;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+#mobileTopbarToggle {
+  font-size: 12px;
+  padding: 7px 10px;
 }
 .mobile-top-btns {
   display: flex;
@@ -674,6 +691,8 @@ input[type="text"]:focus { border-color: #6c63ff; }
   align-items: center;
   flex-wrap: wrap;
 }
+#mobile-mode-toggle-wrap.collapsed .mobile-top-btns { display: none; }
+#mobile-mode-toggle-wrap.collapsed #viewportScalePanel { display: none !important; }
 #mobileModeToggle {
   font-size: 12px;
   padding: 7px 10px;
@@ -795,6 +814,12 @@ input[type="text"]:focus { border-color: #6c63ff; }
 }
 #game.mobile-ui {
   touch-action: none;
+}
+body.game-touch-lock,
+body.game-touch-lock * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none;
 }
 .mact-btn {
   position: absolute;
@@ -929,6 +954,7 @@ input[type="text"]:focus { border-color: #6c63ff; }
 <body>
 <div id="countdown-overlay" aria-hidden="true"></div>
 <div id="mobile-mode-toggle-wrap">
+  <button id="mobileTopbarToggle" type="button" class="btn btn-secondary btn-small" onclick="toggleMobileTopbar()">▾ 控件</button>
   <div class="mobile-top-btns">
     <button id="mobileModeToggle" type="button" class="btn btn-secondary btn-small" onclick="toggleMobileMode()">📱 手机模式: 关</button>
     <button id="mobileLayoutEditToggle" type="button" class="btn btn-secondary btn-small" onclick="toggleMobileLayoutEdit()">🎛 布局编辑: 关</button>
@@ -1744,6 +1770,7 @@ let mobileControlAuto = false;
 let mobileLayoutEdit = false;
 const MOBILE_LAYOUT_STORAGE_KEY = 'parkour_mobile_layout_v1';
 const VIEWPORT_SCALE_STORAGE_KEY = 'parkour_viewport_scale_v1';
+const MOBILE_TOPBAR_COLLAPSED_KEY = 'parkour_mobile_topbar_collapsed_v1';
 let mobileControlLayout = {
   dpadLeft: 14,
   dpadBottom: 10,
@@ -1753,6 +1780,7 @@ let mobileControlLayout = {
 let viewportScalePanelOpen = false;
 let userViewportScale = null;
 let mobileJoyPointerId = null;
+let mobileTopbarCollapsed = false;
 
 // Canvas
 let canvas, ctx;
@@ -6232,9 +6260,32 @@ function clampMobileControlLayout() {
 function loadViewportScaleSetting() {
   try {
     const raw = localStorage.getItem(VIEWPORT_SCALE_STORAGE_KEY);
-    if (!raw) return;
+    if (!raw) {
+      if (isLikelyMobileBrowser()) {
+        userViewportScale = 0.5;
+        saveViewportScaleSetting();
+      }
+      return;
+    }
     const n = Number(raw);
     if (Number.isFinite(n)) userViewportScale = clamp(n, 0.5, 1.1);
+  } catch (_) {}
+}
+
+function loadMobileTopbarCollapsedSetting() {
+  try {
+    const raw = localStorage.getItem(MOBILE_TOPBAR_COLLAPSED_KEY);
+    if (raw == null) {
+      mobileTopbarCollapsed = isLikelyMobileBrowser();
+      return;
+    }
+    mobileTopbarCollapsed = raw === '1';
+  } catch (_) {}
+}
+
+function saveMobileTopbarCollapsedSetting() {
+  try {
+    localStorage.setItem(MOBILE_TOPBAR_COLLAPSED_KEY, mobileTopbarCollapsed ? '1' : '0');
   } catch (_) {}
 }
 
@@ -6282,6 +6333,16 @@ function resetViewportScaleAuto() {
 function toggleViewportScalePanel(forceValue) {
   viewportScalePanelOpen = typeof forceValue === 'boolean' ? forceValue : !viewportScalePanelOpen;
   updateViewportScaleUI();
+}
+
+function toggleMobileTopbar(forceValue) {
+  mobileTopbarCollapsed = typeof forceValue === 'boolean' ? forceValue : !mobileTopbarCollapsed;
+  if (mobileTopbarCollapsed) {
+    viewportScalePanelOpen = false;
+    mobileLayoutEdit = false;
+  }
+  saveMobileTopbarCollapsedSetting();
+  updateMobileModeUI();
 }
 
 function applyMobileControlLayout() {
@@ -6407,6 +6468,7 @@ async function toggleFullscreenMode() {
 }
 
 function updateMobileModeUI() {
+  const topbarBtn = document.getElementById('mobileTopbarToggle');
   const btn = document.getElementById('mobileModeToggle');
   const editBtn = document.getElementById('mobileLayoutEditToggle');
   const resetBtn = document.getElementById('mobileLayoutResetBtn');
@@ -6414,11 +6476,15 @@ function updateMobileModeUI() {
   const wrap = document.getElementById('mobile-mode-toggle-wrap');
   const panel = document.getElementById('mobile-controls');
   const gameEl = document.getElementById('game');
-  if (!btn || !editBtn || !resetBtn || !scaleBtn || !wrap || !panel) return;
+  if (!topbarBtn || !btn || !editBtn || !resetBtn || !scaleBtn || !wrap || !panel) return;
   const onGameScreen = document.getElementById('game')?.classList.contains('active');
   const onRoomScreen = document.getElementById('room')?.classList.contains('active');
   const showPanel = mobileControlMode && onGameScreen && gameRunning && !isSpectator;
+  document.body.classList.toggle('game-touch-lock', mobileControlMode && onGameScreen);
   if (!showPanel) mobileLayoutEdit = false;
+  wrap.classList.toggle('collapsed', mobileTopbarCollapsed);
+  topbarBtn.textContent = mobileTopbarCollapsed ? '▸ 控件' : '▾ 控件';
+  topbarBtn.className = mobileTopbarCollapsed ? 'btn btn-secondary btn-small' : 'btn btn-success btn-small';
   if (gameEl) gameEl.classList.toggle('mobile-ui', mobileControlMode);
   if (onGameScreen) {
     // 游戏内避开左上 HUD（排名/信息条）
@@ -7519,6 +7585,7 @@ window.addEventListener('load', () => {
   initLobbyStageSelect();
   loadMobileControlLayout();
   loadViewportScaleSetting();
+  loadMobileTopbarCollapsedSetting();
   mobileControlAuto = isLikelyMobileBrowser();
   mobileControlMode = mobileControlAuto;
   resizeCanvas();
