@@ -3397,16 +3397,60 @@ function applyEnvThemeFromServer(v) {
 
 // ===================== MAP GENERATION =====================
 
+function getMapVerticalProfile() {
+  const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+  const mobileView = mobileControlMode || isLikelyMobileBrowser() || (vh > 0 && vh <= 760);
+  if (!mobileView) {
+    return {
+      startY: 450,
+      mainMinY: 100,
+      mainMaxY: 600,
+      deltaScale: 1,
+      riskMinY: 115,
+      riskMaxY: 395,
+      riskLiftScale: 1,
+      laneMinY: 50,
+      laneMaxY: 780,
+      laneOffsetScale: 1,
+      laneClimbScale: 1,
+      laneDriftScale: 1,
+      wallTopMinY: 120,
+      finishMinY: 200,
+      finishMaxY: 430
+    };
+  }
+
+  const centerY = clamp(390 + (vh - 700) * 0.12, 350, 430);
+  return {
+    startY: Math.round(centerY + 10),
+    mainMinY: Math.round(centerY - 145),
+    mainMaxY: Math.round(centerY + 145),
+    deltaScale: 0.62,
+    riskMinY: Math.round(centerY - 180),
+    riskMaxY: Math.round(centerY - 40),
+    riskLiftScale: 0.7,
+    laneMinY: Math.round(centerY - 175),
+    laneMaxY: Math.round(centerY + 175),
+    laneOffsetScale: 0.46,
+    laneClimbScale: 0.68,
+    laneDriftScale: 0.62,
+    wallTopMinY: Math.round(centerY - 190),
+    finishMinY: Math.round(centerY - 105),
+    finishMaxY: Math.round(centerY + 55)
+  };
+}
+
 /**
  * 在主线上生成蹬墙跳竖井（两面高墙 + 中间通道 + 引导金币），
  * 作为可选的垂直攀升捷径，奖励更高。
  */
-function buildWallJumpSections(mainSpine, seed, stageDiff) {
+function buildWallJumpSections(mainSpine, seed, stageDiff, yProfile) {
   const rng = mulberry32(seed + 31415);
   const wallPlats = [];
   const wallCoins = [];
   const len = mainSpine.length;
   if (len < 18) return { platforms: wallPlats, coins: wallCoins };
+  const wallTopMinY = Number.isFinite(yProfile?.wallTopMinY) ? yProfile.wallTopMinY : 120;
 
   const sectionCount = 2 + Math.floor(rng() * 2);
   const usedIndices = new Set();
@@ -3428,7 +3472,9 @@ function buildWallJumpSections(mainSpine, seed, stageDiff) {
 
     for (let k = idx - 2; k <= idx + 2; k++) usedIndices.add(k);
 
-    const wallH = 220 + Math.floor(rng() * 100);
+    const rawWallH = 220 + Math.floor(rng() * 100);
+    const maxWallH = Math.max(110, Math.round(refPlat.y - wallTopMinY));
+    const wallH = Math.max(110, Math.min(rawWallH, maxWallH));
     const wallW = 48 + Math.floor(rng() * 14);
     const gapW  = 100 + Math.floor(rng() * 30);
     const totalW = wallW * 2 + gapW;
@@ -3487,10 +3533,13 @@ function buildWallJumpSections(mainSpine, seed, stageDiff) {
 }
 
 /** 在主线两平台之间的大空隙上方生成窄「高风险空中路线」，金币/道具更密集 */
-function buildRiskSkyBranches(mainSpine, seed, stageDiff = 0) {
+function buildRiskSkyBranches(mainSpine, seed, stageDiff = 0, yProfile) {
   const rng = mulberry32(seed + 90210);
   const narrow = stageDiff * 8;
   const out = [];
+  const riskMinY = Number.isFinite(yProfile?.riskMinY) ? yProfile.riskMinY : 115;
+  const riskMaxY = Number.isFinite(yProfile?.riskMaxY) ? yProfile.riskMaxY : 395;
+  const riskLiftScale = Number.isFinite(yProfile?.riskLiftScale) ? yProfile.riskLiftScale : 1;
   const targetBranches = 2 + (rng() * 2.99 | 0);
   const usedAnchors = new Set();
   let placed = 0;
@@ -3514,7 +3563,7 @@ function buildRiskSkyBranches(mainSpine, seed, stageDiff = 0) {
     const nChunks = 3 + (rng() * 3 | 0);
     if (span < nChunks * 34) continue;
 
-    const lift = 68 + rng() * 58;
+    const lift = (68 + rng() * 58) * riskLiftScale;
     const baseY = Math.min(left.y, right.y) - lift;
     const seg = span / nChunks;
     const branchId = placed;
@@ -3540,8 +3589,8 @@ function buildRiskSkyBranches(mainSpine, seed, stageDiff = 0) {
         };
       }
 
-      let y = Math.round(baseY + (rng() - 0.5) * (20 + stageDiff * 14));
-      y = Math.max(115, Math.min(395, y));
+      let y = Math.round(baseY + (rng() - 0.5) * (20 + stageDiff * 14) * riskLiftScale);
+      y = Math.max(riskMinY, Math.min(riskMaxY, y));
 
       out.push({
         x: Math.round(px),
@@ -3566,11 +3615,16 @@ function buildRiskSkyBranches(mainSpine, seed, stageDiff = 0) {
  * 在主线某些区段生成上下分叉的平行路线（1-2 条额外路线），
  * 高度差较大，给玩家提供多条可选路径。
  */
-function buildMultiLaneZones(mainSpine, seed, stageDiff) {
+function buildMultiLaneZones(mainSpine, seed, stageDiff, yProfile) {
   const rng = mulberry32(seed + 77777);
   const out = [];
   const len = mainSpine.length;
   if (len < 20) return out;
+  const laneMinY = Number.isFinite(yProfile?.laneMinY) ? yProfile.laneMinY : 50;
+  const laneMaxY = Number.isFinite(yProfile?.laneMaxY) ? yProfile.laneMaxY : 780;
+  const laneOffsetScale = Number.isFinite(yProfile?.laneOffsetScale) ? yProfile.laneOffsetScale : 1;
+  const laneClimbScale = Number.isFinite(yProfile?.laneClimbScale) ? yProfile.laneClimbScale : 1;
+  const laneDriftScale = Number.isFinite(yProfile?.laneDriftScale) ? yProfile.laneDriftScale : 1;
 
   const zoneCount = 2 + (rng() * 2.5 | 0);
   const usedIndices = new Set();
@@ -3599,8 +3653,8 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
       offsets.push(-1, 1);
     }
 
-    const singleOff = 380 + rng() * 200;
-    const dualOff = 420 + rng() * 180;
+    const singleOff = (380 + rng() * 200) * laneOffsetScale;
+    const dualOff = (420 + rng() * 180) * laneOffsetScale;
 
     for (const dir of offsets) {
       const baseOff = dir * (laneCount === 1 ? singleOff : dualOff);
@@ -3612,11 +3666,11 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
       const laneSpan = laneEndX - laneStartX;
 
       const LANE_MAX_GAP = 200;
-      const LANE_MAX_CLIMB = 120;
+      const LANE_MAX_CLIMB = 120 * laneClimbScale;
       const platCount = Math.max(4, Math.ceil(laneSpan / LANE_MAX_GAP));
 
-      let lcy = clamp(Math.round(firstRef.y + baseOff), 50, 780);
-      const targetEndY = clamp(Math.round(lastRef.y + baseOff), 50, 780);
+      let lcy = clamp(Math.round(firstRef.y + baseOff), laneMinY, laneMaxY);
+      const targetEndY = clamp(Math.round(lastRef.y + baseOff), laneMinY, laneMaxY);
 
       for (let p = 0; p < platCount; p++) {
         const t = p / Math.max(1, platCount - 1);
@@ -3624,12 +3678,12 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
         const w = Math.max(50, Math.round(60 + rng() * 70));
         const px = Math.round(segX + (rng() - 0.5) * 30);
 
-        const drift = (rng() - 0.5) * 60;
+        const drift = (rng() - 0.5) * 60 * laneDriftScale;
         const blendY = lcy + (targetEndY - lcy) * 0.15;
         let nextY = Math.round(blendY + drift);
         const dy = nextY - lcy;
         if (dy < -LANE_MAX_CLIMB) nextY = lcy - LANE_MAX_CLIMB;
-        lcy = clamp(nextY, 50, 780);
+        lcy = clamp(nextY, laneMinY, laneMaxY);
 
         const tr = rng();
         let type = 'normal';
@@ -3667,8 +3721,8 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
         out.push(laneObj);
       }
 
-      const entryY = clamp(Math.round((firstRef.y + firstRef.y + baseOff) / 2), 50, 780);
-      const exitY = clamp(Math.round((lastRef.y + lastRef.y + baseOff) / 2), 50, 780);
+      const entryY = clamp(Math.round((firstRef.y + firstRef.y + baseOff) / 2), laneMinY, laneMaxY);
+      const exitY = clamp(Math.round((lastRef.y + lastRef.y + baseOff) / 2), laneMinY, laneMaxY);
       out.push({
         x: Math.round(firstRef.x - 40 - rng() * 30),
         y: entryY,
@@ -3696,6 +3750,7 @@ function generateMap(seed, envTheme, stageOpts) {
   const rng = mulberry32(seed);
   const mainSpine = [];
   const decos = [];
+  const yProfile = getMapVerticalProfile();
 
   const si = stageOpts && Number(stageOpts.stageIndex) >= 1 ? (stageOpts.stageIndex | 0) : 1;
   const st = stageOpts && Number(stageOpts.stageTotal) >= 1 ? (stageOpts.stageTotal | 0) : 1;
@@ -3706,9 +3761,9 @@ function generateMap(seed, envTheme, stageOpts) {
   const stageGate = st > 1 ? stageProgress : 1;
 
   // Starting safe platform
-  mainSpine.push({ x: 0, y: 450, w: 620, h: 28, type: 'normal' });
+  mainSpine.push({ x: 0, y: yProfile.startY, w: 620, h: 28, type: 'normal' });
 
-  let cx = 620, cy = 450;
+  let cx = 620, cy = yProfile.startY;
 
   // 跳跃物理约束（用于向上攀升限制）
   const MAX_CLIMB = 125;   // 单次向上跳跃安全高度
@@ -3745,8 +3800,9 @@ function generateMap(seed, envTheme, stageOpts) {
       gap = (70 + prog * 80 + stageDiff * (26 + prog * 52)) + rng() * (40 + prog * 80 + stageDiff * (28 + prog * 55));
     }
 
+    dh *= yProfile.deltaScale;
     cx += gap;
-    cy = Math.max(100, Math.min(600, cy + dh));
+    cy = Math.max(yProfile.mainMinY, Math.min(yProfile.mainMaxY, cy + dh));
 
     // Width decreases with difficulty；靠后关卡再收一点
     const w = Math.max(50, (280 - prog * 200) + rng() * (180 - prog * 120) - stageDiff * (20 + prog * 48));
@@ -3815,14 +3871,14 @@ function generateMap(seed, envTheme, stageOpts) {
     cx += w;
   }
 
-  const riskBranches = stageGate >= 0.20 ? buildRiskSkyBranches(mainSpine, seed, stageDiff) : [];
-  const multiLanes = stageGate >= 0.10 ? buildMultiLaneZones(mainSpine, seed, stageDiff) : [];
-  const wallJumpData = stageGate >= 0.15 ? buildWallJumpSections(mainSpine, seed, stageDiff) : { platforms: [], coins: [] };
+  const riskBranches = stageGate >= 0.20 ? buildRiskSkyBranches(mainSpine, seed, stageDiff, yProfile) : [];
+  const multiLanes = stageGate >= 0.10 ? buildMultiLaneZones(mainSpine, seed, stageDiff, yProfile) : [];
+  const wallJumpData = stageGate >= 0.15 ? buildWallJumpSections(mainSpine, seed, stageDiff, yProfile) : { platforms: [], coins: [] };
   const platforms = mainSpine.concat(riskBranches, multiLanes, wallJumpData.platforms);
 
   // Finish platform（必须始终在数组末尾，供金币等逻辑排除）
   cx += 200;
-  cy = Math.max(200, Math.min(430, cy));
+  cy = Math.max(yProfile.finishMinY, Math.min(yProfile.finishMaxY, cy));
   platforms.push({ x: Math.round(cx), y: Math.round(cy), w: 320, h: 24, type: 'normal' });
   const finishX = cx + 160;
 
