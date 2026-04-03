@@ -845,7 +845,13 @@ input[type="text"]:focus { border-color: #6c63ff; }
   box-shadow: 0 2px 12px rgba(0,0,0,0.3);
   font-size: 12px;
   color: #cfe8ff;
+  touch-action: auto !important;
+  pointer-events: auto !important;
   user-select: none;
+}
+#bgm-control * {
+  touch-action: auto !important;
+  pointer-events: auto !important;
 }
 #bgmToggleBtn {
   background: none;
@@ -857,7 +863,7 @@ input[type="text"]:focus { border-color: #6c63ff; }
 }
 #bgmVolume {
   width: 70px;
-  height: 4px;
+  height: 20px;
   accent-color: #6ec6ff;
   cursor: pointer;
 }
@@ -1159,7 +1165,7 @@ body.game-touch-lock * {
 <!-- ===== BGM CONTROL ===== -->
 <div id="bgm-control">
   <button id="bgmToggleBtn" type="button" onclick="toggleBgm()" title="播放/暂停背景音乐">🔇</button>
-  <input id="bgmVolume" type="range" min="0" max="100" value="40" oninput="onBgmVolumeChange(this.value)" title="BGM 音量">
+  <input id="bgmVolume" type="range" min="0" max="100" value="25" oninput="onBgmVolumeChange(this.value)" onchange="onBgmVolumeChange(this.value)" title="BGM 音量">
   <span id="bgmTrackName">--</span>
 </div>
 
@@ -1673,13 +1679,13 @@ const GameAudio = (function () {
     ctx = new AC();
     ctx.onstatechange = () => {};
     master = ctx.createGain();
-    master.gain.value = 1.0;
+    master.gain.value = 1.0 * 1;
     master.connect(ctx.destination);
     sfxGain = ctx.createGain();
-    sfxGain.gain.value = 1.0;
+    sfxGain.gain.value = 2.5 * 5;
     sfxGain.connect(master);
     bgmGain = ctx.createGain();
-    bgmGain.gain.value = 0.55;
+    bgmGain.gain.value = 0.55 * 1;
     bgmGain.connect(master);
     return ctx;
   }
@@ -1864,10 +1870,150 @@ const GameAudio = (function () {
     beep(95, 0.11, 'sine', 0.055, t0 + 0.16);
   }
 
+  /** 拾取道具：明亮上升琶音，比金币更丰满 */
+  function playSfxPowerup() {
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    beep(523.25, 0.06, 'triangle', 0.1, t0);
+    beep(659.25, 0.06, 'sine', 0.11, t0 + 0.06);
+    beep(783.99, 0.07, 'triangle', 0.1, t0 + 0.12);
+    beep(1046.5, 0.1, 'sine', 0.09, t0 + 0.19);
+  }
+
+  /** 跳跃：轻盈弹起声 */
+  function playSfxJump() {
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(260, t0);
+    osc.frequency.exponentialRampToValueAtTime(580, t0 + 0.08);
+    g.gain.setValueAtTime(0.06, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.12);
+    osc.connect(g);
+    g.connect(sfxGain);
+    osc.start(t0);
+    osc.stop(t0 + 0.15);
+  }
+
+  /** 二段跳：更高频的弹跳 */
+  function playSfxDoubleJump() {
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(400, t0);
+    osc.frequency.exponentialRampToValueAtTime(900, t0 + 0.07);
+    g.gain.setValueAtTime(0.06, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.1);
+    osc.connect(g);
+    g.connect(sfxGain);
+    osc.start(t0);
+    osc.stop(t0 + 0.13);
+  }
+
+  let _walkStepT = 0;
+  /** 行走脚步声：低沉短促节奏，内建节流 */
+  function playSfxStep() {
+    const c = ensure();
+    if (!c) return;
+    const now = performance.now();
+    if (now - _walkStepT < 220) return;
+    _walkStepT = now;
+    const freq = 90 + Math.random() * 30;
+    beep(freq, 0.04, 'triangle', 0.04);
+    beep(freq * 0.7, 0.03, 'sine', 0.025);
+  }
+
+  let _shootSfxT = 0;
+  /** 射击怪发射子弹：短促电子枪声，内建节流避免连续叠加 */
+  function playSfxShoot() {
+    const c = ensure();
+    if (!c) return;
+    const now = performance.now();
+    if (now - _shootSfxT < 300) return;
+    _shootSfxT = now;
+    const t0 = c.currentTime;
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(880, t0);
+    osc.frequency.exponentialRampToValueAtTime(220, t0 + 0.08);
+    g.gain.setValueAtTime(0.05, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.1);
+    osc.connect(g);
+    g.connect(sfxGain);
+    osc.start(t0);
+    osc.stop(t0 + 0.12);
+    beep(150, 0.04, 'sawtooth', 0.03, t0 + 0.02);
+  }
+
+  /** 踩到陷阱：电击定身感 */
+  function playSfxTrap() {
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    const lfo = c.createOscillator();
+    const lfoGain = c.createGain();
+    lfo.frequency.setValueAtTime(35, t0);
+    lfoGain.gain.setValueAtTime(200, t0);
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc.frequency);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(300, t0);
+    osc.frequency.exponentialRampToValueAtTime(120, t0 + 0.25);
+    g.gain.setValueAtTime(0.08, t0);
+    g.gain.linearRampToValueAtTime(0.06, t0 + 0.05);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.3);
+    osc.connect(g);
+    g.connect(sfxGain);
+    osc.start(t0);
+    osc.stop(t0 + 0.35);
+    lfo.start(t0);
+    lfo.stop(t0 + 0.35);
+    beep(180, 0.06, 'square', 0.07, t0);
+    beep(90, 0.08, 'triangle', 0.05, t0 + 0.06);
+  }
+
+  const BGM_STORAGE_KEY = 'parkour_bgm_settings_v1';
   let _bgmEl = null;
-  let _bgmVol = 0.4;
+  let _bgmVol = 0.25;
   let _bgmTrack = '';
   let _bgmUserPaused = false;
+  let _bgmGainNode = null;
+  let _bgmSrcNode = null;
+
+  (function _loadBgmSettings() {
+    try {
+      const raw = localStorage.getItem(BGM_STORAGE_KEY);
+      if (!raw) return;
+      const s = JSON.parse(raw);
+      if (typeof s.vol === 'number') _bgmVol = Math.max(0, Math.min(1, s.vol));
+      if (typeof s.muted === 'boolean') _bgmUserPaused = s.muted;
+    } catch (_) {}
+  })();
+
+  function _saveBgmSettings() {
+    try {
+      localStorage.setItem(BGM_STORAGE_KEY, JSON.stringify({ vol: _bgmVol, muted: _bgmUserPaused }));
+    } catch (_) {}
+  }
+
+  function _ensureBgmGain() {
+    if (_bgmGainNode) return;
+    const c = ensure();
+    if (!c) return;
+    _bgmGainNode = c.createGain();
+    _bgmGainNode.gain.value = _bgmVol;
+    _bgmGainNode.connect(c.destination);
+  }
 
   function _updateBgmUI() {
     const btn = document.getElementById('bgmToggleBtn');
@@ -1881,10 +2027,8 @@ const GameAudio = (function () {
   function _playBgm(url, label) {
     _stopAllBgm();
     _bgmTrack = label;
-    _bgmUserPaused = false;
     const a = new Audio(url);
     a.loop = true;
-    a.volume = _bgmVol;
     a.addEventListener('playing', _updateBgmUI);
     a.addEventListener('pause', _updateBgmUI);
     a.addEventListener('error', () => {
@@ -1892,7 +2036,25 @@ const GameAudio = (function () {
       _updateBgmUI();
     });
     _bgmEl = a;
-    a.play().then(() => _updateBgmUI()).catch(() => _updateBgmUI());
+
+    _ensureBgmGain();
+    if (_bgmGainNode) {
+      _bgmGainNode.gain.value = _bgmVol;
+      try {
+        const c = ensure();
+        if (c) {
+          _bgmSrcNode = c.createMediaElementSource(a);
+          _bgmSrcNode.connect(_bgmGainNode);
+        }
+      } catch (_) {}
+    }
+    a.volume = _bgmVol;
+
+    if (_bgmUserPaused) {
+      _updateBgmUI();
+    } else {
+      a.play().then(() => _updateBgmUI()).catch(() => _updateBgmUI());
+    }
   }
 
   function _stopAllBgm() {
@@ -1901,15 +2063,21 @@ const GameAudio = (function () {
       _bgmEl.currentTime = 0;
       _bgmEl.removeEventListener('playing', _updateBgmUI);
       _bgmEl.removeEventListener('pause', _updateBgmUI);
-      _bgmEl = null;
     }
+    if (_bgmSrcNode) {
+      try { _bgmSrcNode.disconnect(); } catch (_) {}
+      _bgmSrcNode = null;
+    }
+    _bgmEl = null;
     _bgmTrack = '';
     _updateBgmUI();
   }
 
   function setBgmVolume(v) {
     _bgmVol = Math.max(0, Math.min(1, v));
+    if (_bgmGainNode) _bgmGainNode.gain.value = _bgmVol;
     if (_bgmEl) _bgmEl.volume = _bgmVol;
+    _saveBgmSettings();
   }
 
   function toggleBgmPause() {
@@ -1921,6 +2089,7 @@ const GameAudio = (function () {
       _bgmUserPaused = true;
       _bgmEl.pause();
     }
+    _saveBgmSettings();
     _updateBgmUI();
   }
 
@@ -1940,7 +2109,7 @@ const GameAudio = (function () {
   }
 
   function startLobbyBgm() {
-    if (_bgmEl && !_bgmEl.paused && _bgmTrack === '大厅曲') return;
+    if (_bgmEl && _bgmTrack === '大厅曲') return;
     _playBgm('music/bgm_free_run_marioish.mp3', '大厅曲');
   }
 
@@ -1965,6 +2134,12 @@ const GameAudio = (function () {
     playSfxGameEnd,
     playSfxStomp,
     playSfxMonsterDie,
+    playSfxPowerup,
+    playSfxJump,
+    playSfxDoubleJump,
+    playSfxStep,
+    playSfxShoot,
+    playSfxTrap,
     startBgm,
     stopBgm,
     tickBgm,
@@ -3170,6 +3345,7 @@ function checkPowerupCollection(p) {
       myCollectedPowerups.add(pw.id);
       activatePowerup(pw.ptype);
       spawnParticles(cx, cy, 'coin');
+      GameAudio.playSfxPowerup();
       const def = POWERUP_DEFS[pw.ptype];
       addFloatingText(cx, cy - 16 * POWERUP_DRAW_SCALE, def.label, def.color, 16);
       if (ws && ws.readyState === 1) {
@@ -3595,6 +3771,7 @@ function checkTrapCollisions(p) {
     if (rectsOverlap(px + 3, py + 3, pw - 6, ph - 4, tx, ty, trapW, trapH)) {
       trap.triggered = true;
       arrestPlayer(p, '踩到陷阱! 定身5秒');
+      GameAudio.playSfxTrap();
       if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'trapTriggered', trapId: trap.id }));
       return;
     }
@@ -3606,6 +3783,7 @@ function checkTrapCollisions(p) {
     if (rectsOverlap(px + 3, py + 3, pw - 6, ph - 4, tx, ty, trapW, trapH)) {
       trap.triggered = true;
       arrestPlayer(p, '踩到逮捕网! 定身5秒');
+      GameAudio.playSfxTrap();
       if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'droppedTrapTriggered', trapId: trap.id }));
       return;
     }
@@ -3667,6 +3845,7 @@ function drawMonsters(ctx, t) {
   }
   for (const b of getActiveBullets(t)) {
     if (b.x < cam.x - 60 || b.x > cam.x + CW + 60) continue;
+    if (b.age < 0.06) GameAudio.playSfxShoot();
     drawBullet(ctx, b);
   }
 }
@@ -3886,7 +4065,12 @@ function killLocalPlayer(reason) {
     GameAudio.playSfxDeath();
     p.isAlive = false;
     if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'died', lives: 0 }));
-    showFinishBanner('生命耗尽！观战中...');
+    if (offlineSoloMode) {
+      showFinishBanner('生命耗尽！');
+      setTimeout(() => { if (gameRunning) endGameClient(finishOrder, false, []); }, 2000);
+    } else {
+      showFinishBanner('生命耗尽！观战中...');
+    }
     specAutoMode = true;
     showSpecBar(true);
   } else {
@@ -4038,13 +4222,14 @@ function updateLocalPlayer() {
       p.jumpCount = 1;
       coyoteT = 0; jumpBuf = 0;
       spawnParticles(p.x + PW / 2, p.y + PH, 'jump');
+      GameAudio.playSfxJump();
     } else if (!flying && !p.onGround && p.jumpCount === 0) {
-      // 走出台阶、Coyote 用尽后仍在坠落：首跳未消耗前始终可再按一次，等同首跳（未到死亡线也能自救）
       p.vy = JUMP_VEL;
       p.jumpCount = 1;
       coyoteT = 0;
       jumpBuf = 0;
       spawnParticles(p.x + PW / 2, p.y + PH, 'jump');
+      GameAudio.playSfxJump();
     } else if (p.jumpCount >= 1 && p.jumpCount < maxJumps) {
       p.vy = DBL_JUMP_VEL;
       const dir = (right ? 1 : 0) - (left ? 1 : 0);
@@ -4058,6 +4243,7 @@ function updateLocalPlayer() {
       p.jumpCount++;
       jumpBuf = 0;
       spawnParticles(p.x + PW / 2, p.y + PH / 2, 'doublejump');
+      GameAudio.playSfxDoubleJump();
     }
   }
 
@@ -4178,6 +4364,11 @@ function updateLocalPlayer() {
     }
   }
 
+  // Walk step sfx
+  if (p.onGround && Math.abs(p.vx) > 1.2 && p.dashTimer <= 0) {
+    GameAudio.playSfxStep();
+  }
+
   // Animation
   p.animT++;
   if (p.onGround && Math.abs(p.vx) > 0.5) {
@@ -4232,6 +4423,9 @@ function updateLocalPlayer() {
       });
       specAutoMode = true;
       showSpecBar(true);
+      if (offlineSoloMode) {
+        setTimeout(() => { if (gameRunning) endGameClient(finishOrder, false, []); }, 2000);
+      }
     } else {
       showFinishBanner(`🏁 抢先冲线！即将全员复活进入第 ${sessionStageCurrent + 1} 关…`);
     }
@@ -6786,6 +6980,13 @@ function toggleBgm() {
 function onBgmVolumeChange(v) {
   GameAudio.setBgmVolume(parseFloat(v) / 100);
 }
+(function () {
+  const el = document.getElementById('bgm-control');
+  if (!el) return;
+  ['touchstart', 'touchmove', 'touchend', 'pointerdown', 'pointermove', 'pointerup'].forEach(evt => {
+    el.addEventListener(evt, e => e.stopPropagation(), { passive: true });
+  });
+})();
 
 let _mobileAutoFullscreenDone = false;
 function tryMobileAutoFullscreen() {
