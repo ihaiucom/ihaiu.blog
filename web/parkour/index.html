@@ -20,7 +20,8 @@ body {
   font-family: 'Segoe UI', 'PingFang SC', sans-serif;
   overflow: hidden;
   height: 100vh;
-  height: 100dvh;
+  height: var(--app-vh, 100dvh);
+  min-height: var(--app-vh, 100dvh);
   width: 100vw;
   touch-action: manipulation;
   overscroll-behavior: none;
@@ -10108,10 +10109,28 @@ function getPreferredViewportScale() {
   return 1;
 }
 
+function getViewportSize() {
+  const vv = window.visualViewport;
+  let sw = window.innerWidth || document.documentElement.clientWidth || 0;
+  let sh = window.innerHeight || document.documentElement.clientHeight || 0;
+  if (vv) {
+    if (vv.width > 0) sw = Math.round(vv.width);
+    if (vv.height > 0) sh = Math.round(vv.height);
+  }
+  sw = Math.max(1, Math.round(sw));
+  sh = Math.max(1, Math.round(sh));
+  return { sw, sh };
+}
+
+function syncAppViewportHeightVar() {
+  const { sh } = getViewportSize();
+  document.documentElement.style.setProperty('--app-vh', `${sh}px`);
+}
+
 function resizeCanvas() {
   canvas = document.getElementById('canvas');
-  const sw = window.innerWidth;
-  const sh = window.innerHeight;
+  const { sw, sh } = getViewportSize();
+  syncAppViewportHeightVar();
   viewportScale = getPreferredViewportScale();
   CW = Math.max(320, Math.round(sw / viewportScale));
   CH = Math.max(220, Math.round(sh / viewportScale));
@@ -10134,24 +10153,52 @@ window.addEventListener('resize', () => {
 // 通过强制滚动+延迟重算视口来解决。
 (function () {
   if (!(/iPhone|iPad|iPod/i.test(navigator.userAgent))) return;
-  function forceViewportRefresh() {
+  let refreshTimer = null;
+
+  function doRefreshPass() {
     window.scrollTo(0, 0);
-    document.documentElement.style.height = '100.1vh';
-    setTimeout(() => {
-      document.documentElement.style.height = '';
-      window.scrollTo(0, 0);
-      if (document.getElementById('game').classList.contains('active')) resizeCanvas();
-      applyMobileControlLayout();
-    }, 120);
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-      if (document.getElementById('game').classList.contains('active')) resizeCanvas();
-    }, 350);
+    syncAppViewportHeightVar();
+    if (document.getElementById('game').classList.contains('active')) resizeCanvas();
+    applyMobileControlLayout();
   }
+
+  function scheduleViewportRefresh() {
+    if (refreshTimer) {
+      clearTimeout(refreshTimer);
+      refreshTimer = null;
+    }
+    document.documentElement.style.height = '100.1vh';
+    const delays = [0, 120, 350, 900, 1800];
+    delays.forEach((ms, idx) => {
+      setTimeout(() => {
+        if (idx === 1) document.documentElement.style.height = '';
+        doRefreshPass();
+      }, ms);
+    });
+    refreshTimer = setTimeout(() => {
+      document.documentElement.style.height = '';
+      refreshTimer = null;
+    }, 1900);
+  }
+
+  function forceViewportRefresh() {
+    scheduleViewportRefresh();
+  }
+
   window.addEventListener('orientationchange', forceViewportRefresh);
   if (screen.orientation) {
     screen.orientation.addEventListener('change', forceViewportRefresh);
   }
+  window.addEventListener('pageshow', forceViewportRefresh);
+  window.addEventListener('focus', forceViewportRefresh);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') forceViewportRefresh();
+  });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', forceViewportRefresh);
+  }
+  setTimeout(forceViewportRefresh, 120);
+  setTimeout(forceViewportRefresh, 900);
 })();
 
 // ===================== LOBBY ACTIONS =====================
