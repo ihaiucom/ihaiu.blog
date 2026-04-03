@@ -4304,7 +4304,7 @@ function generateMap(seed, envTheme, stageOpts) {
     mapWidth: mapW,
     finishX,
     spawnX: 180,
-    spawnY: 400,
+    spawnY: yProfile.startY,
     theme: resolveMapTheme(seed, envTheme),
     envTheme: envTheme === undefined || envTheme === null ? 'random' : envTheme
   };
@@ -6311,6 +6311,17 @@ function findRespawnPoint(px) {
     return { x: sx - PW / 2, y: sy - PH - 10 };
   }
   return { x: best.x + best.w / 2 - PW / 2, y: best.y - PH - 10 };
+}
+
+function getStartSpawnPoint(orderIndex = 0, totalPlayers = 1, dropFromAbove = true) {
+  const spawnBaseX = gMap?.spawnX ?? 180;
+  const spawnBaseY = gMap?.spawnY ?? 400;
+  const spread = 34;
+  const centerBias = (Number(totalPlayers) - 1) * 0.5;
+  const x = spawnBaseX + (Number(orderIndex) - centerBias) * spread;
+  const yOnPlatform = spawnBaseY - PH - 10;
+  const dropOffset = dropFromAbove ? 56 : 0;
+  return { x, y: yOnPlatform - dropOffset };
 }
 
 function killLocalPlayer(reason) {
@@ -8736,7 +8747,7 @@ function advanceOfflineSoloStage() {
   mapSeedAtGenerate = gameSeed;
 
   localPlayer.x = gMap.spawnX ?? 180;
-  localPlayer.y = (gMap.spawnY ?? 400) - PH - 10;
+  localPlayer.y = (gMap.spawnY ?? 400) - PH - 10 - 56;
   localPlayer.vx = 0;
   localPlayer.vy = 0;
   localPlayer.onGround = false;
@@ -9267,7 +9278,8 @@ function enterGameScreenForCountdown(roomPlayers) {
   sessionMultiplayerRace = roomPlayers.length >= 2;
 
   roomPlayers.forEach((rp, i) => {
-    const x = 150 + i * 50, y = 400;
+    const sp = getStartSpawnPoint(i, roomPlayers.length, true);
+    const x = sp.x, y = sp.y;
     if (rp.id === myId) {
       localPlayer = mkPlayer(rp.id, rp.name, rp.color, x, y);
     } else {
@@ -9303,12 +9315,14 @@ function enterGameScreenForCountdown(roomPlayers) {
 function spawnPlayersFromServerList(players) {
   localPlayer = null;
   peers = {};
-  for (const p of players) {
+  for (let i = 0; i < players.length; i++) {
+    const p = players[i];
+    const sp = getStartSpawnPoint(i, players.length, true);
     if (p.id === myId && !isSpectator) {
-      localPlayer = mkPlayer(p.id, p.name, p.color, p.x, p.y);
+      localPlayer = mkPlayer(p.id, p.name, p.color, sp.x, sp.y);
     } else {
-      const np = mkPlayer(p.id, p.name, p.color, p.x, p.y);
-      np.serverX = p.x; np.serverY = p.y; np.serverInit = true;
+      const np = mkPlayer(p.id, p.name, p.color, sp.x, sp.y);
+      np.serverX = sp.x; np.serverY = sp.y; np.serverInit = true;
       np.away = !!p.away;
       peers[p.id] = np;
       if (p.finished) { peers[p.id].finished = true; peers[p.id].finishTime = p.finishTime; }
