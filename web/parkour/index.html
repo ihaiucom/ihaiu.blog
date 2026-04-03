@@ -2070,6 +2070,7 @@ const GameAudio = (function () {
     stopLoopFly();
     stopLoopSpeed();
     stopLoopInvincible();
+    stopLoopEvent();
   }
 
   function startLoopFly() {
@@ -2286,6 +2287,153 @@ const GameAudio = (function () {
     _invincLoopNodes = null;
   }
 
+  // ---- 事件循环音效（独立于 buff 循环，可同时播放） ----
+  let _eventLoopNodes = null;
+
+  function startLoopCoinRain() {
+    if (_eventLoopNodes) return;
+    const c = ensure();
+    if (!c) return;
+
+    const masterGain = c.createGain();
+    masterGain.gain.setValueAtTime(0, c.currentTime);
+    masterGain.gain.linearRampToValueAtTime(1, c.currentTime + 0.4);
+    masterGain.connect(sfxGain);
+
+    const shimmer = c.createOscillator();
+    shimmer.type = 'sine';
+    shimmer.frequency.setValueAtTime(1760, c.currentTime);
+    const shimmerGain = c.createGain();
+    shimmerGain.gain.setValueAtTime(0, c.currentTime);
+    shimmerGain.gain.linearRampToValueAtTime(0.006, c.currentTime + 0.5);
+    const shimmerLfo = c.createOscillator();
+    shimmerLfo.type = 'sine';
+    shimmerLfo.frequency.setValueAtTime(4, c.currentTime);
+    const shimmerLfoGain = c.createGain();
+    shimmerLfoGain.gain.setValueAtTime(60, c.currentTime);
+    shimmerLfo.connect(shimmerLfoGain);
+    shimmerLfoGain.connect(shimmer.frequency);
+    shimmer.connect(shimmerGain);
+    shimmerGain.connect(masterGain);
+    shimmer.start(c.currentTime);
+    shimmerLfo.start(c.currentTime);
+
+    const arpNotes = [1319, 1175, 988, 784, 988, 1175, 1319, 1568];
+    let idx = 0;
+    let stopped = false;
+
+    function playDrop() {
+      if (stopped) return;
+      const freq = arpNotes[idx % arpNotes.length];
+      idx++;
+      const t0 = c.currentTime;
+      const o = c.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(freq, t0);
+      o.frequency.exponentialRampToValueAtTime(freq * 0.85, t0 + 0.12);
+      const ng = c.createGain();
+      ng.gain.setValueAtTime(0.016, t0);
+      ng.gain.exponentialRampToValueAtTime(0.001, t0 + 0.14);
+      o.connect(ng);
+      ng.connect(masterGain);
+      o.start(t0);
+      o.stop(t0 + 0.16);
+
+      const bell = c.createOscillator();
+      bell.type = 'triangle';
+      bell.frequency.setValueAtTime(freq * 2, t0);
+      const bg = c.createGain();
+      bg.gain.setValueAtTime(0.008, t0);
+      bg.gain.exponentialRampToValueAtTime(0.001, t0 + 0.08);
+      bell.connect(bg);
+      bg.connect(masterGain);
+      bell.start(t0);
+      bell.stop(t0 + 0.1);
+    }
+
+    const tid = setInterval(playDrop, 200);
+    playDrop();
+
+    _eventLoopNodes = {
+      gain: masterGain,
+      stop() {
+        stopped = true;
+        clearInterval(tid);
+        try { shimmer.stop(); shimmerLfo.stop(); } catch (_) {}
+      }
+    };
+  }
+
+  function startLoopSlowdown() {
+    if (_eventLoopNodes) return;
+    const c = ensure();
+    if (!c) return;
+
+    const masterGain = c.createGain();
+    masterGain.gain.setValueAtTime(0, c.currentTime);
+    masterGain.gain.linearRampToValueAtTime(1, c.currentTime + 0.5);
+    masterGain.connect(sfxGain);
+
+    const drone = c.createOscillator();
+    drone.type = 'sine';
+    drone.frequency.setValueAtTime(130, c.currentTime);
+    const droneLfo = c.createOscillator();
+    droneLfo.type = 'sine';
+    droneLfo.frequency.setValueAtTime(0.4, c.currentTime);
+    const droneLfoGain = c.createGain();
+    droneLfoGain.gain.setValueAtTime(8, c.currentTime);
+    droneLfo.connect(droneLfoGain);
+    droneLfoGain.connect(drone.frequency);
+    const droneGain = c.createGain();
+    droneGain.gain.setValueAtTime(0, c.currentTime);
+    droneGain.gain.linearRampToValueAtTime(0.018, c.currentTime + 0.6);
+    drone.connect(droneGain);
+    droneGain.connect(masterGain);
+    drone.start(c.currentTime);
+    droneLfo.start(c.currentTime);
+
+    const waveNotes = [262, 247, 220, 196, 220, 247];
+    let idx = 0;
+    let stopped = false;
+
+    function playTone() {
+      if (stopped) return;
+      const freq = waveNotes[idx % waveNotes.length];
+      idx++;
+      const t0 = c.currentTime;
+      const o = c.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(freq, t0);
+      o.frequency.linearRampToValueAtTime(freq * 0.94, t0 + 0.5);
+      const ng = c.createGain();
+      ng.gain.setValueAtTime(0, t0);
+      ng.gain.linearRampToValueAtTime(0.016, t0 + 0.08);
+      ng.gain.linearRampToValueAtTime(0.012, t0 + 0.3);
+      ng.gain.exponentialRampToValueAtTime(0.001, t0 + 0.52);
+      o.connect(ng);
+      ng.connect(masterGain);
+      o.start(t0);
+      o.stop(t0 + 0.55);
+    }
+
+    const tid = setInterval(playTone, 550);
+    playTone();
+
+    _eventLoopNodes = {
+      gain: masterGain,
+      stop() {
+        stopped = true;
+        clearInterval(tid);
+        try { drone.stop(); droneLfo.stop(); } catch (_) {}
+      }
+    };
+  }
+
+  function stopLoopEvent() {
+    _stopLoop(_eventLoopNodes);
+    _eventLoopNodes = null;
+  }
+
   const BGM_STORAGE_KEY = 'parkour_bgm_settings_v1';
   let _bgmEl = null;
   let _bgmVol = 0.25;
@@ -2454,6 +2602,9 @@ const GameAudio = (function () {
     startLoopInvincible,
     stopLoopInvincible,
     stopAllLoops,
+    startLoopCoinRain,
+    startLoopSlowdown,
+    stopLoopEvent,
     startBgm,
     stopBgm,
     tickBgm,
@@ -4890,6 +5041,7 @@ function resetWorldEventClient() {
   worldEventEndAt = 0;
   rainCoins = [];
   rainSpawnAcc = 0;
+  GameAudio.stopLoopEvent();
 }
 
 function getWorldEventSlowMul() {
@@ -4979,6 +5131,8 @@ function onServerEventBegin(kind, durationMs, silent) {
   worldEventEndAt = Date.now() + Math.max(300, durationMs);
   rainSpawnAcc = 0;
   if (kind === 'coinRain') rainCoins = [];
+  if (kind === 'coinRain') GameAudio.startLoopCoinRain();
+  else if (kind === 'slowdown') GameAudio.startLoopSlowdown();
   if (!silent) {
     GameAudio.playSfxEventBegin(kind, false);
     const line = kind === 'coinRain' ? '🪙 金币雨降临！接住下落金币 +1🪙' : '🐌 全场减速！移动与重力暂时变缓';
@@ -4997,6 +5151,7 @@ function onServerEventEnd(kind) {
     worldEventEndAt = 0;
     rainCoins = [];
     rainSpawnAcc = 0;
+    GameAudio.stopLoopEvent();
     addGameChat({
       name: '✓ 事件结束',
       text: worldEventLabel(kind) + ' 已结束',
