@@ -1870,6 +1870,12 @@ const GameAudio = (function () {
     beep(95, 0.11, 'sine', 0.055, t0 + 0.16);
   }
 
+  /** UI 按钮点击：轻快短促的反馈音 */
+  function playSfxClick() {
+    beep(660, 0.035, 'sine', 0.06);
+    beep(880, 0.03, 'triangle', 0.04);
+  }
+
   /** 拾取道具：明亮上升琶音，比金币更丰满 */
   function playSfxPowerup() {
     const c = ensure();
@@ -2134,6 +2140,7 @@ const GameAudio = (function () {
     playSfxGameEnd,
     playSfxStomp,
     playSfxMonsterDie,
+    playSfxClick,
     playSfxPowerup,
     playSfxJump,
     playSfxDoubleJump,
@@ -2149,6 +2156,14 @@ const GameAudio = (function () {
     toggleBgmPause
   };
 })();
+
+// 全局 UI 按钮点击音效（排除游戏内操控按钮）
+document.addEventListener('click', function (e) {
+  const btn = e.target.closest('button, .btn, .lb-tab, .room-item .btn-success, .room-item .btn-secondary');
+  if (!btn) return;
+  if (btn.closest('#mobile-controls')) return;
+  GameAudio.playSfxClick();
+}, true);
 
 (function bindAudioUnlock() {
   let audioFullyUnlocked = false;
@@ -2840,8 +2855,8 @@ function generateMap(seed, envTheme, stageOpts) {
   const pwRng = mulberry32(seed + 777);
   const powerups = [];
   let pwId = 0;
-  const PW_TYPES = ['speed2', 'speed3', 'invincible', 'fly', 'invincible_fly', 'extra_jump', 'life', 'life', 'energy_full'];
-  const PW_TYPES_RISK = ['speed3', 'invincible_fly', 'life', 'fly', 'invincible', 'energy_full', 'speed2', 'extra_jump'];
+  const PW_TYPES = ['speed2', 'invincible', 'fly', 'invincible_fly', 'extra_jump', 'life', 'life', 'energy_full'];
+  const PW_TYPES_RISK = ['invincible_fly', 'life', 'fly', 'invincible', 'energy_full', 'speed2', 'extra_jump'];
 
   for (let i = 3; i < finishIdx; i++) {
     const plat = platforms[i];
@@ -4060,6 +4075,8 @@ function killLocalPlayer(reason) {
 
   p.lives--;
   spawnParticles(p.x + PW / 2, p.y + PH / 2, 'death');
+  activeEffects = [];
+  p.arrestedUntil = 0;
 
   if (p.lives <= 0) {
     GameAudio.playSfxDeath();
