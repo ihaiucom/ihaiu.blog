@@ -1441,6 +1441,7 @@ body.game-touch-lock * {
           <li><b>闪烁平台</b>：部分普通/冰面会周期性消失；消失时无碰撞，仅留虚线轮廓，注意节奏落脚。</li>
           <li><b>单向门</b>：半透明蓝薄板，可从下方向上穿过，从上方落下时可踩踏。</li>
           <li><b>履带平台</b>：灰色金属传送带，两端有滚轮、表面条纹滚动指示方向；站上后会被持续推向一侧，到达边缘会掉落，需注意逆向行走或及时跳开。</li>
+          <li><b>火焰旋转</b>：固定在平台上的旋转火球链（类似超级玛丽），触碰任何火球即死；注意观察旋转节奏，趁间隙通过（无敌状态可免疫）。</li>
         </ul>
       </div>
       <div class="guide-card">
@@ -3798,6 +3799,30 @@ function generateMap(seed, envTheme, stageOpts) {
     }
   }
 
+  // ---- 火焰旋转陷阱生成 ----
+  const fbRng = mulberry32(seed + 555);
+  const fireBars = [];
+  for (let i = 5; i < finishIdx; i++) {
+    const plat = platforms[i];
+    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce') continue;
+    if (plat.flicker || plat.w < 70) continue;
+    const prog = i / Math.max(1, finishIdx);
+    if (fbRng() > 0.08 + prog * 0.06 + stageDiff * 0.04) continue;
+    const arms = fbRng() > 0.7 ? 2 : 1;
+    const armLen = 55 + fbRng() * 45 + stageDiff * 20;
+    const ballCount = Math.max(3, Math.round(armLen / 16));
+    fireBars.push({
+      cx: plat.x + plat.w * (0.25 + fbRng() * 0.5),
+      cy: plat.y,
+      armLength: armLen,
+      numBalls: ballCount,
+      ballRadius: 6 + fbRng() * 2,
+      speed: (fbRng() > 0.5 ? 1 : -1) * (1.2 + fbRng() * 1.8) * (1 + stageDiff * 0.3),
+      phase: fbRng() * Math.PI * 2,
+      arms
+    });
+  }
+
   return {
     platforms,
     decos,
@@ -3806,6 +3831,7 @@ function generateMap(seed, envTheme, stageOpts) {
     powerups,
     arrestTraps,
     windZones,
+    fireBars: roomRaceMode ? [] : fireBars,
     mapWidth: mapW,
     finishX,
     spawnX: 180,
@@ -4400,6 +4426,111 @@ function checkMonsterCollisions(p, t) {
       killLocalPlayer('被子弹击中！');
       return;
     }
+  }
+}
+
+// ---- 火焰旋转陷阱 ----
+
+function getFireBarBalls(fb, t) {
+  const balls = [];
+  const angle = t * fb.speed + fb.phase;
+  for (let arm = 0; arm < fb.arms; arm++) {
+    const armAngle = angle + arm * Math.PI / fb.arms;
+    for (let i = 1; i <= fb.numBalls; i++) {
+      const dist = (i / fb.numBalls) * fb.armLength;
+      balls.push({
+        x: fb.cx + Math.cos(armAngle) * dist,
+        y: fb.cy + Math.sin(armAngle) * dist,
+        r: fb.ballRadius * (0.6 + 0.4 * (i / fb.numBalls))
+      });
+    }
+  }
+  return balls;
+}
+
+function checkFireBarCollisions(p, t) {
+  if (!gMap?.fireBars?.length || !p.isAlive || p.finished) return;
+  if (p.respawnTimer > 0) return;
+  if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
+
+  for (const fb of gMap.fireBars) {
+    if (Math.abs(fb.cx - p.x) > fb.armLength + 60) continue;
+    for (const ball of getFireBarBalls(fb, t)) {
+      if (circleRectOverlap(ball.x, ball.y, ball.r, p.x + 3, p.y + 3, p.w - 6, p.h - 6)) {
+        killLocalPlayer('被火焰击中！');
+        return;
+      }
+    }
+  }
+}
+
+function drawFireBars(ctx, t) {
+  if (!gMap?.fireBars?.length) return;
+
+  for (const fb of gMap.fireBars) {
+    if (fb.cx - fb.armLength - 20 > cam.x + CW || fb.cx + fb.armLength + 20 < cam.x) continue;
+
+    ctx.save();
+    ctx.fillStyle = '#555';
+    ctx.strokeStyle = '#777';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(fb.cx, fb.cy, 7, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#888';
+    ctx.beginPath();
+    ctx.arc(fb.cx, fb.cy, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    const angle = t * fb.speed + fb.phase;
+    for (let arm = 0; arm < fb.arms; arm++) {
+      const armAngle = angle + arm * Math.PI / fb.arms;
+      const endX = fb.cx + Math.cos(armAngle) * fb.armLength;
+      const endY = fb.cy + Math.sin(armAngle) * fb.armLength;
+
+      ctx.strokeStyle = 'rgba(80,60,40,0.6)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(fb.cx, fb.cy);
+      ctx.lineTo(endX, endY);
+      ctx.stroke();
+
+      for (let i = 1; i <= fb.numBalls; i++) {
+        const frac = i / fb.numBalls;
+        const dist = frac * fb.armLength;
+        const bx = fb.cx + Math.cos(armAngle) * dist;
+        const by = fb.cy + Math.sin(armAngle) * dist;
+        const br = fb.ballRadius * (0.6 + 0.4 * frac);
+
+        const glow = ctx.createRadialGradient(bx, by, br * 0.2, bx, by, br * 2.5);
+        glow.addColorStop(0, 'rgba(255,200,50,0.5)');
+        glow.addColorStop(0.5, 'rgba(255,100,20,0.2)');
+        glow.addColorStop(1, 'transparent');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(bx, by, br * 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        const grad = ctx.createRadialGradient(bx - br * 0.2, by - br * 0.2, br * 0.1, bx, by, br);
+        grad.addColorStop(0, '#fff8e0');
+        grad.addColorStop(0.25, '#ffcc00');
+        grad.addColorStop(0.6, '#ff6600');
+        grad.addColorStop(1, '#cc2200');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(bx, by, br, 0, Math.PI * 2);
+        ctx.fill();
+
+        const flicker = Math.sin(t * 12 + i * 1.7 + arm * 3) * 0.3 + 0.7;
+        ctx.globalAlpha = flicker * 0.3;
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(bx - br * 0.25, by - br * 0.25, br * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+    }
+    ctx.restore();
   }
 }
 
@@ -5231,9 +5362,10 @@ function updateLocalPlayer() {
     p.frame = 0; p.animT = 0;
   }
 
-  // Monster & bullet collision (skipped if invincible)
+  // Monster & bullet & fire bar collision (skipped if invincible)
   if (!isInvincible()) {
     checkMonsterCollisions(p, t);
+    checkFireBarCollisions(p, t);
   }
 
   // Coin & powerup collection
@@ -5974,6 +6106,7 @@ function renderGame(timestamp) {
 
   // Monsters & bullets (before players so players render on top)
   drawMonsters(ctx, t);
+  drawFireBars(ctx, t);
   drawTraps(ctx);
   drawNets(ctx);
 
