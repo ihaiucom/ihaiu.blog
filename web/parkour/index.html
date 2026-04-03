@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <title>跑酷大乱斗</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -12,6 +15,7 @@ body {
   font-family: 'Segoe UI', 'PingFang SC', sans-serif;
   overflow: hidden;
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
   touch-action: manipulation;
   overscroll-behavior: none;
@@ -144,6 +148,74 @@ input[type="text"]:focus { border-color: #6c63ff; }
 @media (max-width: 760px) {
   .guide-grid { grid-template-columns: 1fr; }
   .guide-powerups { grid-column: span 1; }
+
+  /* --- Lobby 手机适配 --- */
+  #lobby { padding: 16px 12px; }
+  .logo { font-size: 32px; letter-spacing: 2px; margin-bottom: 4px; }
+  .logo-sub { font-size: 11px; margin-bottom: 18px; letter-spacing: 1px; }
+  .lobby-top { flex-direction: column; gap: 12px; }
+  .lobby-bottom { flex-direction: column; gap: 12px; }
+  .leaderboard-area { width: 100%; flex-shrink: 1; }
+  .card { padding: 14px; }
+  .room-list { max-height: 220px; }
+  .room-item { padding: 9px 12px; gap: 8px; }
+  .room-id { font-size: 13px; min-width: 58px; }
+  .room-info { font-size: 12px; }
+  .room-actions .btn { padding: 6px 10px; font-size: 11px; }
+  .lb-row { padding: 5px 8px; font-size: 12px; }
+  .lb-my-card .lb-big { font-size: 26px; }
+
+  /* --- Room 手机适配 --- */
+  .room-header { padding: 12px 14px; gap: 10px; flex-wrap: wrap; }
+  .room-code { font-size: 17px; letter-spacing: 2px; }
+  .room-body { flex-direction: column; }
+  .players-panel { padding: 14px; }
+  .players-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+  .player-card { padding: 9px 12px; gap: 8px; }
+  .player-name { font-size: 13px; }
+  .chat-panel {
+    width: 100%; max-height: 35vh;
+    border-left: none; border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .room-theme-strip { padding: 8px 14px; font-size: 12px; gap: 8px; }
+  .room-actions-bar { padding: 12px 14px; gap: 8px; flex-wrap: wrap; }
+  .room-actions-bar .btn { padding: 10px 18px; font-size: 13px; }
+
+  /* --- Results 手机适配 --- */
+  #results { padding: 24px 14px; }
+  .results-title { font-size: 26px; margin-bottom: 18px; }
+  .podium { gap: 10px; margin-bottom: 20px; }
+  .podium-block { width: 70px; }
+  .podium-1 .podium-block { height: 80px; }
+  .podium-2 .podium-block { height: 60px; }
+  .podium-3 .podium-block { height: 45px; }
+  .podium-name { font-size: 11px; max-width: 70px; }
+  .podium-time { font-size: 10px; }
+  .result-row { padding: 8px 12px; gap: 8px; }
+  .result-rank { font-size: 15px; width: 24px; }
+  .result-name { font-size: 13px; }
+  .result-time { font-size: 13px; }
+  .result-coins { font-size: 12px; min-width: 44px; }
+  .results-btns { flex-wrap: wrap; gap: 8px; }
+
+  /* --- Countdown overlay 手机适配 --- */
+  #countdown-overlay { font-size: 18vw; }
+
+  /* --- iPhone 安全区适配 --- */
+  #lobby {
+    padding-top: calc(16px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+  .room-header {
+    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+  }
+  .room-actions-bar {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+  #results {
+    padding-top: calc(24px + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* ===== ROOM ===== */
@@ -430,7 +502,23 @@ input[type="text"]:focus { border-color: #6c63ff; }
 }
 #game-chat-input-bar.hidden { display: none; }
 #game-chat-input { width: min(460px, 70vw); font-size: 13px; }
-#game.mobile-ui #game-chat { bottom: 188px; width: min(520px, 92vw); }
+#game.mobile-ui #game-chat {
+  bottom: auto;
+  top: 40px;
+  left: 6px;
+  transform: none;
+  width: min(300px, 56vw);
+  align-items: flex-start;
+  gap: 2px;
+}
+#game.mobile-ui .game-chat-msg {
+  font-size: 10px;
+  padding: 2px 7px;
+  background: rgba(0,0,0,0.45);
+  border-radius: 6px;
+  animation: fadeMsgMobile 5s forwards;
+}
+@keyframes fadeMsgMobile { 0%,55%{opacity:0.88} 100%{opacity:0} }
 #game.mobile-ui #game-chat-input-bar { bottom: 152px; }
 #game.mobile-ui #game-chat-input { width: min(520px, 92vw); }
 #spectator-bar {
@@ -455,14 +543,20 @@ input[type="text"]:focus { border-color: #6c63ff; }
 }
 #finish-banner.show { display: block; }
 #game.mobile-ui #event-hint {
-  max-width: min(86vw, 520px);
-  font-size: 13px;
-  padding: 8px 12px;
+  top: 38px;
+  max-width: min(62vw, 340px);
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  opacity: 0.85;
 }
 #game.mobile-ui #finish-banner {
-  max-width: min(86vw, 520px);
-  font-size: 13px;
-  padding: 8px 14px;
+  top: 38px;
+  max-width: min(62vw, 340px);
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  opacity: 0.85;
 }
 
 /* 冲线 / 夺冠 / 个人纪录 — 全屏短暂庆祝层（叠在 HUD 下、横幅旁） */
@@ -670,8 +764,8 @@ input[type="text"]:focus { border-color: #6c63ff; }
 /* ===== MOBILE CONTROLS ===== */
 #mobile-mode-toggle-wrap {
   position: fixed;
-  top: 10px;
-  left: 10px;
+  top: calc(10px + env(safe-area-inset-top, 0px));
+  left: calc(10px + env(safe-area-inset-left, 0px));
   z-index: 1300;
   display: flex;
   flex-direction: column;
@@ -741,7 +835,7 @@ input[type="text"]:focus { border-color: #6c63ff; }
 .mobile-dpad {
   position: absolute;
   left: 0;
-  bottom: 0;
+  bottom: env(safe-area-inset-bottom, 0px);
   width: 52vw;
   height: 46vh;
   pointer-events: auto;
@@ -749,8 +843,8 @@ input[type="text"]:focus { border-color: #6c63ff; }
 }
 .mobile-actions {
   position: absolute;
-  right: 14px;
-  bottom: 10px;
+  right: calc(14px + env(safe-area-inset-right, 0px));
+  bottom: calc(10px + env(safe-area-inset-bottom, 0px));
   width: 210px;
   height: 182px;
   pointer-events: auto;
@@ -961,9 +1055,44 @@ body.game-touch-lock * {
   margin-top: 2px;
   user-select: none;
 }
+
+/* ===== 竖屏旋转提示 ===== */
+#portrait-overlay {
+  position: fixed; inset: 0; z-index: 99999;
+  background: #0d0d1e;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  color: #fff;
+}
+#portrait-overlay .rotate-icon {
+  font-size: 64px;
+  animation: rotateHint 2s ease-in-out infinite;
+}
+#portrait-overlay .rotate-text {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.6;
+  color: #ccc;
+}
+@keyframes rotateHint {
+  0%,100% { transform: rotate(0deg); }
+  25% { transform: rotate(-30deg); }
+  75% { transform: rotate(30deg); }
+}
+@media (max-width: 760px) and (orientation: portrait) {
+  #portrait-overlay { display: flex; }
+}
 </style>
 </head>
 <body>
+<div id="portrait-overlay" aria-hidden="true">
+  <div class="rotate-icon">📱</div>
+  <div class="rotate-text">请旋转手机至横屏模式<br>以获得最佳游戏体验</div>
+</div>
 <div id="countdown-overlay" aria-hidden="true"></div>
 <div id="mobile-mode-toggle-wrap">
   <button id="mobileTopbarToggle" type="button" class="btn btn-secondary btn-small" onclick="toggleMobileTopbar()">▾ 控件</button>
@@ -1739,6 +1868,7 @@ const GameAudio = (function () {
 
   return {
     resume,
+    _ctx() { return ensure(); },
     playSfxLand,
     playSfxCoin,
     playSfxRainCoin,
@@ -1760,30 +1890,61 @@ const GameAudio = (function () {
 })();
 
 (function bindAudioUnlock() {
-  let iosUnlocked = false;
-  // iOS Safari 将 Web Audio 归入 ringer 类别，静音开关会导致外放无声。
-  // 通过播放一个 <audio> 元素把音频会话切换到 playback 类别，绕过静音开关。
-  function unlockIOSAudio() {
-    if (iosUnlocked) return;
-    iosUnlocked = true;
+  let audioFullyUnlocked = false;
+  let unlockAttempts = 0;
+  const isStandalone = window.navigator.standalone === true ||
+    window.matchMedia('(display-mode: standalone)').matches;
+  const SILENT_MP3 = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA';
+
+  // iOS (Safari + 独立模式) 将 Web Audio 归入 ringer 类别。
+  // 播放 <audio> 元素将音频会话切到 playback 类别，绕过静音开关；
+  // 独立模式下更严格，需要多次尝试并验证 AudioContext 真正 running。
+  function tryUnlock() {
+    if (audioFullyUnlocked) return;
+    unlockAttempts++;
+
+    // 1. 播放静音 <audio> 切换 iOS 音频会话类别
     try {
-      const silentDataUri = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA';
-      const a = new Audio(silentDataUri);
+      const a = new Audio(SILENT_MP3);
       a.controls = false;
       a.loop = false;
       a.volume = 0.01;
       a.setAttribute('playsinline', '');
-      a.play().then(() => { setTimeout(() => { a.pause(); a.remove(); }, 200); })
-        .catch(() => { iosUnlocked = false; });
-    } catch (_) { iosUnlocked = false; }
+      a.play().then(() => { setTimeout(() => { a.pause(); a.remove(); }, 250); }).catch(() => {});
+    } catch (_) {}
+
+    // 2. 确保 AudioContext 在用户手势中创建/恢复
+    GameAudio.resume().then(() => {
+      // 3. 播一个极短静音振荡器，彻底激活音频管线
+      try {
+        const c = GameAudio._ctx();
+        if (c && c.state === 'running') {
+          const osc = c.createOscillator();
+          const g = c.createGain();
+          g.gain.value = 0;
+          osc.connect(g);
+          g.connect(c.destination);
+          osc.start(0);
+          osc.stop(c.currentTime + 0.001);
+          audioFullyUnlocked = true;
+        }
+      } catch (_) {}
+    }).catch(() => {});
   }
+
   const unlock = () => {
-    unlockIOSAudio();
-    GameAudio.resume();
+    if (audioFullyUnlocked && unlockAttempts > 2) return;
+    tryUnlock();
   };
+  const unlockAndFullscreen = () => {
+    unlock();
+    if (typeof tryMobileAutoFullscreen === 'function') tryMobileAutoFullscreen();
+  };
+  // touchend 在 iOS 独立模式下最可靠
+  document.addEventListener('touchend', unlockAndFullscreen, { capture: true, passive: true });
   document.addEventListener('touchstart', unlock, { capture: true, passive: true });
-  document.addEventListener('touchend', unlock, { capture: true, passive: true });
   document.addEventListener('pointerdown', unlock, { capture: true, passive: true });
+  document.addEventListener('click', unlockAndFullscreen, { capture: true, passive: true });
   document.addEventListener('keydown', unlock, { capture: true, passive: true });
 })();
 
@@ -5427,7 +5588,7 @@ function showFinishBanner(msg) {
   const el = document.getElementById('finish-banner');
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 4000);
+  setTimeout(() => el.classList.remove('show'), mobileControlMode ? 2500 : 4000);
 }
 
 let celebrationClearTimer = null;
@@ -6460,9 +6621,24 @@ function updateFullscreenButtonUI() {
   btn.className = active ? 'btn btn-success btn-small' : 'btn btn-secondary btn-small';
 }
 
+function tryLockLandscape() {
+  try {
+    const so = screen.orientation || screen.mozOrientation || screen.msOrientation;
+    if (so && so.lock) so.lock('landscape').catch(() => {});
+  } catch (_) {}
+}
+
+function tryUnlockOrientation() {
+  try {
+    const so = screen.orientation || screen.mozOrientation || screen.msOrientation;
+    if (so && so.unlock) so.unlock();
+  } catch (_) {}
+}
+
 async function toggleFullscreenMode() {
   try {
     if (isFullscreenActive()) {
+      tryUnlockOrientation();
       if (document.exitFullscreen) await document.exitFullscreen();
       else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
       else if (document.msExitFullscreen) document.msExitFullscreen();
@@ -6474,12 +6650,28 @@ async function toggleFullscreenMode() {
     if (el.requestFullscreen) await el.requestFullscreen();
     else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     else if (el.msRequestFullscreen) el.msRequestFullscreen();
+    tryLockLandscape();
     resizeCanvas();
     updateFullscreenButtonUI();
   } catch (_) {
-    // 某些移动浏览器需要用户手势或不支持全屏，忽略异常并保持按钮可用
     updateFullscreenButtonUI();
   }
+}
+
+let _mobileAutoFullscreenDone = false;
+function tryMobileAutoFullscreen() {
+  if (_mobileAutoFullscreenDone) return;
+  if (!isLikelyMobileBrowser()) return;
+  if (isFullscreenActive()) return;
+  _mobileAutoFullscreenDone = true;
+  const el = document.documentElement;
+  const doFS = el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen;
+  if (!doFS) return;
+  doFS.call(el).then(() => {
+    tryLockLandscape();
+    resizeCanvas();
+    updateFullscreenButtonUI();
+  }).catch(() => {});
 }
 
 function updateMobileModeUI() {
@@ -7258,10 +7450,10 @@ function addGameChat(msg) {
   div.className = 'game-chat-msg';
   div.innerHTML = `<span style="color:${msg.color||'#aaa'};font-weight:600">${esc(msg.name)}: </span>${esc(msg.text)}`;
   container.appendChild(div);
-  // Limit to 5 messages
-  while (container.children.length > 5) container.removeChild(container.firstChild);
-  // Remove after animation
-  setTimeout(() => div.remove(), 8000);
+  const maxMsg = mobileControlMode ? 3 : 5;
+  while (container.children.length > maxMsg) container.removeChild(container.firstChild);
+  const removeMs = mobileControlMode ? 5000 : 8000;
+  setTimeout(() => div.remove(), removeMs);
 }
 
 // ===================== COUNTDOWN =====================
