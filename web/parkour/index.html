@@ -64,14 +64,19 @@ input[type="text"]:focus { border-color: #6c63ff; }
   padding: 10px 20px; border: none; border-radius: 8px;
   cursor: pointer; font-size: 14px; font-weight: 600;
   transition: all 0.2s; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
 }
 .btn-primary { background: linear-gradient(135deg, #6c63ff, #9b5de5); color: #fff; }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108,99,255,0.4); }
+.btn-primary:active { transform: scale(0.95); filter: brightness(0.85); box-shadow: none; }
 .btn-secondary { background: rgba(255,255,255,0.1); color: #ddd; border: 1px solid rgba(255,255,255,0.15); }
 .btn-secondary:hover { background: rgba(255,255,255,0.15); }
+.btn-secondary:active { transform: scale(0.95); background: rgba(255,255,255,0.22); }
 .btn-success { background: linear-gradient(135deg, #00b894, #00cec9); color: #fff; }
 .btn-success:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,184,148,0.4); }
+.btn-success:active { transform: scale(0.95); filter: brightness(0.85); box-shadow: none; }
 .btn-warn { background: linear-gradient(135deg, #fd9644, #e17055); color: #fff; }
+.btn-warn:active { transform: scale(0.95); filter: brightness(0.85); }
 .btn-small { padding: 6px 14px; font-size: 12px; }
 .lobby-bottom { display: flex; gap: 16px; width: 100%; max-width: 1000px; }
 .room-list-area { min-width: 0; }
@@ -101,6 +106,7 @@ input[type="text"]:focus { border-color: #6c63ff; }
 }
 .lb-tab.active { background: rgba(108,99,255,0.25); color: #6c63ff; }
 .lb-tab:hover { background: rgba(255,255,255,0.1); }
+.lb-tab:active { transform: scale(0.95); background: rgba(255,255,255,0.18); }
 .lb-content { max-height: 300px; overflow-y: auto; }
 .lb-row {
   display: flex; align-items: center; gap: 8px;
@@ -1432,6 +1438,7 @@ body.game-touch-lock * {
           <li><b>弹跳板</b>：金色弹簧板（中等弹跳）；<b>强弹射板</b>：橙紫渐变、带向上箭头，弹得更高并带侧向冲量。</li>
           <li><b>闪烁平台</b>：部分普通/冰面会周期性消失；消失时无碰撞，仅留虚线轮廓，注意节奏落脚。</li>
           <li><b>单向门</b>：半透明蓝薄板，可从下方向上穿过，从上方落下时可踩踏。</li>
+          <li><b>履带平台</b>：灰色金属传送带，两端有滚轮、表面条纹滚动指示方向；站上后会被持续推向一侧，到达边缘会掉落，需注意逆向行走或及时跳开。</li>
         </ul>
       </div>
       <div class="guide-card">
@@ -1778,9 +1785,31 @@ const GameAudio = (function () {
   }
 
   function playSfxRespawn() {
-    beep(330, 0.08, 'sine', 0.1);
-    beep(495, 0.1, 'sine', 0.12);
-    beep(660, 0.12, 'triangle', 0.1);
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    const notes = [
+      [330, 0.10, 'sine',     0.10, 0],
+      [440, 0.10, 'sine',     0.11, 0.08],
+      [550, 0.10, 'triangle', 0.11, 0.16],
+      [660, 0.14, 'sine',     0.12, 0.24],
+      [880, 0.20, 'triangle', 0.10, 0.32],
+    ];
+    for (const [f, d, ty, pk, off] of notes) {
+      beep(f, d, ty, pk, t0 + off);
+    }
+    const sweep = c.createOscillator();
+    sweep.type = 'sine';
+    sweep.frequency.setValueAtTime(220, t0);
+    sweep.frequency.exponentialRampToValueAtTime(880, t0 + 0.4);
+    const sg = c.createGain();
+    sg.gain.setValueAtTime(0.03, t0);
+    sg.gain.linearRampToValueAtTime(0.04, t0 + 0.15);
+    sg.gain.exponentialRampToValueAtTime(0.001, t0 + 0.45);
+    sweep.connect(sg);
+    sg.connect(sfxGain);
+    sweep.start(t0);
+    sweep.stop(t0 + 0.5);
   }
 
   function playSfxEventWarning() {
@@ -2040,6 +2069,42 @@ const GameAudio = (function () {
     beep(90, 0.08, 'triangle', 0.05, t0 + 0.06);
   }
 
+  function playSfxNetThrow() {
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    const osc = c.createOscillator();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(520, t0);
+    osc.frequency.exponentialRampToValueAtTime(280, t0 + 0.12);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.09, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.15);
+    osc.connect(g);
+    g.connect(sfxGain);
+    osc.start(t0);
+    osc.stop(t0 + 0.18);
+    beep(660, 0.04, 'sine', 0.06, t0);
+  }
+
+  function playSfxNetLand() {
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    const osc = c.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(340, t0);
+    osc.frequency.exponentialRampToValueAtTime(160, t0 + 0.1);
+    const g = c.createGain();
+    g.gain.setValueAtTime(0.07, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.12);
+    osc.connect(g);
+    g.connect(sfxGain);
+    osc.start(t0);
+    osc.stop(t0 + 0.15);
+    beep(200, 0.06, 'triangle', 0.05, t0 + 0.02);
+  }
+
   // ---- 状态循环音效（飞行 / 加速） ----
   let _flyLoopNodes = null;
   let _speedLoopNodes = null;
@@ -2070,6 +2135,10 @@ const GameAudio = (function () {
     stopLoopFly();
     stopLoopSpeed();
     stopLoopInvincible();
+  }
+
+  function stopAllLoopsAndEvent() {
+    stopAllLoops();
     stopLoopEvent();
   }
 
@@ -2595,6 +2664,8 @@ const GameAudio = (function () {
     playSfxStep,
     playSfxShoot,
     playSfxTrap,
+    playSfxNetThrow,
+    playSfxNetLand,
     startLoopFly,
     stopLoopFly,
     startLoopSpeed,
@@ -2602,6 +2673,7 @@ const GameAudio = (function () {
     startLoopInvincible,
     stopLoopInvincible,
     stopAllLoops,
+    stopAllLoopsAndEvent,
     startLoopCoinRain,
     startLoopSlowdown,
     stopLoopEvent,
@@ -3066,6 +3138,7 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
         let platH = 18;
         if (tr > 0.82) type = 'ice';
         else if (tr > 0.65 && p > 0) type = 'moving';
+        else if (tr > 0.55 && p > 0) type = 'conveyor';
 
         let moving = null;
         if (type === 'moving') {
@@ -3076,7 +3149,11 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
           };
         }
 
-        out.push({ x: px, y: lcy, w, h: platH, type, moving, laneRoute: true });
+        const laneObj = { x: px, y: lcy, w, h: platH, type, moving, laneRoute: true };
+        if (type === 'conveyor') {
+          laneObj.conveyorSpeed = (rng() > 0.5 ? 1 : -1) * (2.0 + rng() * 2.5) * (1 + stageDiff * 0.3);
+        }
+        out.push(laneObj);
       }
 
       const entryY = clamp(Math.round((firstRef.y + firstRef.y + baseOff) / 2), 50, 780);
@@ -3169,6 +3246,7 @@ function generateMap(seed, envTheme, stageOpts) {
     else if (i > 14 && r > 0.874 - haz) { type = 'oneway'; platH = 14; }
     else if (i > 5 && r > 0.80 - haz) type = 'ice';
     else if (i > 15 && r > 0.76 - haz) type = 'moving';
+    else if (i > 7 && r > 0.72 - haz) type = 'conveyor';
 
     let moving = null;
     if (type === 'moving') {
@@ -3180,6 +3258,9 @@ function generateMap(seed, envTheme, stageOpts) {
     }
 
     const platObj = { x: Math.round(cx), y: Math.round(cy), w: Math.round(w), h: platH, type, moving };
+    if (type === 'conveyor') {
+      platObj.conveyorSpeed = (rng() > 0.5 ? 1 : -1) * (2.0 + rng() * 2.5) * (1 + stageDiff * 0.3);
+    }
     if (type === 'launchpad') {
       platObj.launchVy = -(18.2 + rng() * 2.6) * (1 + stageDiff * 0.12);
       platObj.launchVx = (rng() - 0.5) * 4.5 * (1 + stageDiff * 0.15);
@@ -4141,7 +4222,7 @@ function tryThrowNet() {
   const vx = dir * NET_SPEED;
   const vy = NET_VY_INIT;
   localNets.push({ x: nx, y: ny, vx, vy, age: 0, ownerId: myId });
-
+  GameAudio.playSfxNetThrow();
   addFloatingText(p.x + PW / 2, p.y - 30, '发射逮捕网!', '#ff6348', 14);
   if (ws && ws.readyState === 1) {
     ws.send(JSON.stringify({ type: 'throwNet', x: nx, y: ny, vx, vy }));
@@ -4214,6 +4295,7 @@ function updateNets() {
           const trapObj = { x: n.x, y: plat.y, id: nextDroppedTrapId++, triggered: false };
           droppedTraps.push(trapObj);
           netArr.splice(i, 1);
+          GameAudio.playSfxNetLand();
           if (isLocal && ws && ws.readyState === 1) {
             ws.send(JSON.stringify({ type: 'netLanded', x: trapObj.x, y: trapObj.y, id: trapObj.id }));
           }
@@ -4510,7 +4592,7 @@ function mkPlayer(id, name, color, x, y) {
 
 function isRespawnPlatformSafe(plat) {
   if (!plat) return false;
-  if (plat.type === 'oneway' || plat.type === 'launchpad' || plat.type === 'bounce') return false;
+  if (plat.type === 'oneway' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'conveyor') return false;
   if (plat.flicker) return false; // 不在周期性消失的平台复活
   return true;
 }
@@ -4655,6 +4737,9 @@ function updateLocalPlayer() {
         p.y = plat.y - p.h;
         p.vy = 0;
         p.onGround = true;
+        if (plat.type === 'conveyor' && plat.conveyorSpeed) {
+          p.x += plat.conveyorSpeed;
+        }
         if (plat.moving && _prevUpdateGameT >= 0) {
           p.x += getPlatX(plat, arrestT) - getPlatX(plat, _prevUpdateGameT);
         }
@@ -4816,6 +4901,9 @@ function updateLocalPlayer() {
         p.vy = 0;
         p.onGround = true;
         if (plat.type === 'ice') p.onIce = true;
+        if (plat.type === 'conveyor' && plat.conveyorSpeed) {
+          p.x += plat.conveyorSpeed;
+        }
         if (plat.moving && _prevUpdateGameT >= 0) {
           p.x += getPlatX(plat, t) - getPlatX(plat, _prevUpdateGameT);
         }
@@ -5834,6 +5922,65 @@ function drawPlatform(ctx, plat, px, t) {
     // Glow
     ctx.strokeStyle = 'rgba(178,100,255,0.4)'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.roundRect(px, y, w, h, 4); ctx.stroke();
+  } else if (type === 'conveyor') {
+    const spd = plat.conveyorSpeed || 2;
+    const dir = spd > 0 ? 1 : -1;
+    const grad = ctx.createLinearGradient(0, y, 0, y + h);
+    grad.addColorStop(0, '#5a5a6e');
+    grad.addColorStop(0.5, '#44445a');
+    grad.addColorStop(1, '#3a3a4e');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.roundRect(px, y, w, h, 3); ctx.fill();
+
+    ctx.save();
+    ctx.beginPath(); ctx.roundRect(px, y, w, h, 3); ctx.clip();
+    const stripeW = 14;
+    const offset = ((t * Math.abs(spd) * 28) % stripeW) * dir;
+    for (let sx = -stripeW; sx < w + stripeW * 2; sx += stripeW) {
+      const stripe_x = px + sx + offset;
+      ctx.fillStyle = Math.floor((sx + stripeW) / stripeW) % 2 === 0
+        ? 'rgba(255,180,60,0.35)' : 'rgba(255,220,120,0.12)';
+      ctx.beginPath();
+      ctx.moveTo(stripe_x, y);
+      ctx.lineTo(stripe_x + stripeW * 0.6, y);
+      ctx.lineTo(stripe_x + stripeW * 0.6 - h * 0.4, y + h);
+      ctx.lineTo(stripe_x - h * 0.4, y + h);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+
+    const rollerR = Math.min(h / 2 + 1, 10);
+    ctx.fillStyle = '#888';
+    ctx.strokeStyle = '#666';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(px + rollerR, y + h / 2, rollerR, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(px + w - rollerR, y + h / 2, rollerR, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    const spokeAngle = t * Math.abs(spd) * 4 * dir;
+    ctx.strokeStyle = '#555'; ctx.lineWidth = 1.2;
+    for (let ri = 0; ri < 2; ri++) {
+      const rcx = ri === 0 ? px + rollerR : px + w - rollerR;
+      const rcy = y + h / 2;
+      for (let s = 0; s < 3; s++) {
+        const a = spokeAngle + s * Math.PI * 2 / 3;
+        ctx.beginPath();
+        ctx.moveTo(rcx, rcy);
+        ctx.lineTo(rcx + Math.cos(a) * (rollerR - 1.5), rcy + Math.sin(a) * (rollerR - 1.5));
+        ctx.stroke();
+      }
+    }
+
+    ctx.strokeStyle = 'rgba(255,180,60,0.5)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.roundRect(px, y, w, h, 3); ctx.stroke();
+
+    ctx.fillStyle = 'rgba(255,220,120,0.7)';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'center';
+    const arrowCount = Math.max(1, Math.floor(w / 50));
+    for (let ai = 0; ai < arrowCount; ai++) {
+      const ax = px + w * (ai + 0.5) / arrowCount;
+      ctx.fillText(dir > 0 ? '▸▸' : '◂◂', ax, y - 4);
+    }
   } else if (type === 'oneway') {
     ctx.fillStyle = 'rgba(100, 180, 255, 0.32)';
     ctx.beginPath(); ctx.roundRect(px, y, w, h, 3); ctx.fill();
@@ -6571,7 +6718,7 @@ function advanceOfflineSoloStage() {
   applyExclusivePowerupSnapshot([]);
   deadMonsters = new Set();
   activeEffects = [];
-  GameAudio.stopAllLoops();
+  GameAudio.stopAllLoopsAndEvent();
   localNets = []; peerNets = []; droppedTraps = [];
   particles = [];
   floatingTexts = [];
@@ -7036,7 +7183,7 @@ function enterGameScreenForCountdown(roomPlayers) {
   deadMonsters = new Set();
   playerScores = {};
   activeEffects = [];
-  GameAudio.stopAllLoops();
+  GameAudio.stopAllLoopsAndEvent();
   localNets = []; peerNets = []; droppedTraps = [];
   ghostRecordingBuffer = [];
   lastGhostSampleAt = 0;
@@ -7131,7 +7278,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     deadMonsters = new Set();
     playerScores = {};
     activeEffects = [];
-    GameAudio.stopAllLoops();
+    GameAudio.stopAllLoopsAndEvent();
     localNets = []; peerNets = []; droppedTraps = [];
     gameStartTime = startTimestamp;
     gameRunning = true;
@@ -7177,7 +7324,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     deadMonsters = new Set();
     playerScores = {};
     activeEffects = [];
-    GameAudio.stopAllLoops();
+    GameAudio.stopAllLoopsAndEvent();
     localNets = []; peerNets = []; droppedTraps = [];
     finishOrder = [];
     gameStartTime = startTimestamp;
@@ -7219,7 +7366,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
 
 function stopGame() {
   GameAudio.stopBgm();
-  GameAudio.stopAllLoops();
+  GameAudio.stopAllLoopsAndEvent();
   gameRunning = false;
   updateMobileModeUI();
   raceInputLocked = false;
@@ -7276,7 +7423,7 @@ function returnToRoomAfterGame(players) {
   deadMonsters = new Set();
   playerScores = {};
   activeEffects = [];
-  GameAudio.stopAllLoops();
+  GameAudio.stopAllLoopsAndEvent();
   localNets = []; peerNets = []; droppedTraps = [];
   floatingTexts = [];
   particles = [];
@@ -7629,6 +7776,8 @@ function updateMobileModeUI() {
   resetBtn.style.display = showPanel ? 'inline-block' : 'none';
   scaleBtn.className = viewportScalePanelOpen ? 'btn btn-success btn-small' : 'btn btn-secondary btn-small';
   wrap.style.opacity = mobileControlMode ? '1' : '0.88';
+  const bgmCtrl = document.getElementById('bgm-control');
+  if (bgmCtrl) bgmCtrl.style.display = showPanel ? 'none' : 'flex';
   updateFullscreenButtonUI();
   updateViewportScaleUI();
 }
