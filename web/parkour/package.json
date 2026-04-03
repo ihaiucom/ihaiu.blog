@@ -1,0 +1,12 @@
+{
+    "name": "parkour-battle",
+    "version": "1.0.0",
+    "description": "多人跑酷对战游戏 - 随机地图生成 + 观战模式",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "ws": "^8.18.0"
+    }
+  }

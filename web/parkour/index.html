@@ -739,11 +739,11 @@ input[type="text"]:focus { border-color: #6c63ff; }
 }
 #mobile-controls.show { display: block; }
 .mobile-dpad {
-  width: 140px;
-  height: 140px;
   position: absolute;
-  left: 14px;
-  bottom: 10px;
+  left: 0;
+  bottom: 0;
+  width: 52vw;
+  height: 46vh;
   pointer-events: auto;
   touch-action: none;
 }
@@ -756,7 +756,9 @@ input[type="text"]:focus { border-color: #6c63ff; }
   pointer-events: auto;
   touch-action: none;
 }
-#mobile-controls.layout-edit .mobile-dpad,
+#mobile-controls.layout-edit .mobile-dpad {
+  pointer-events: none;
+}
 #mobile-controls.layout-edit .mobile-actions {
   outline: 1px dashed rgba(255,255,255,0.45);
   border-radius: 12px;
@@ -779,6 +781,12 @@ input[type="text"]:focus { border-color: #6c63ff; }
     radial-gradient(circle at center, rgba(70,120,220,0.16) 0%, rgba(10,18,40,0.72) 68%, rgba(10,18,40,0.82) 100%);
   backdrop-filter: blur(4px);
   touch-action: none;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.1s ease-out;
+}
+.mjoy-base.active {
+  opacity: 1;
 }
 .mjoy-stick {
   position: absolute;
@@ -792,7 +800,11 @@ input[type="text"]:focus { border-color: #6c63ff; }
   box-shadow: 0 4px 14px rgba(20,40,90,0.52);
   touch-action: none;
   pointer-events: none;
-  transition: transform 0.05s linear;
+  opacity: 0;
+  transition: transform 0.05s linear, opacity 0.1s ease-out;
+}
+.mjoy-stick.active {
+  opacity: 1;
 }
 .mjoy-axis {
   position: absolute;
@@ -1124,8 +1136,8 @@ body.game-touch-lock * {
     <div class="mobile-dpad">
       <div id="mjoy-base" class="mjoy-base" aria-label="移动摇杆">
         <div class="mjoy-axis">↑↓ ←→</div>
+        <div id="mjoy-stick" class="mjoy-stick"></div>
       </div>
-      <div id="mjoy-stick" class="mjoy-stick"></div>
     </div>
     <div class="mobile-actions">
       <button id="mact-jump" class="mact-btn mact-jump" type="button">跳</button>
@@ -1748,9 +1760,29 @@ const GameAudio = (function () {
 })();
 
 (function bindAudioUnlock() {
+  let iosUnlocked = false;
+  // iOS Safari 将 Web Audio 归入 ringer 类别，静音开关会导致外放无声。
+  // 通过播放一个 <audio> 元素把音频会话切换到 playback 类别，绕过静音开关。
+  function unlockIOSAudio() {
+    if (iosUnlocked) return;
+    iosUnlocked = true;
+    try {
+      const silentDataUri = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA';
+      const a = new Audio(silentDataUri);
+      a.controls = false;
+      a.loop = false;
+      a.volume = 0.01;
+      a.setAttribute('playsinline', '');
+      a.play().then(() => { setTimeout(() => { a.pause(); a.remove(); }, 200); })
+        .catch(() => { iosUnlocked = false; });
+    } catch (_) { iosUnlocked = false; }
+  }
   const unlock = () => {
+    unlockIOSAudio();
     GameAudio.resume();
   };
+  document.addEventListener('touchstart', unlock, { capture: true, passive: true });
+  document.addEventListener('touchend', unlock, { capture: true, passive: true });
   document.addEventListener('pointerdown', unlock, { capture: true, passive: true });
   document.addEventListener('keydown', unlock, { capture: true, passive: true });
 })();
@@ -1772,8 +1804,6 @@ const MOBILE_LAYOUT_STORAGE_KEY = 'parkour_mobile_layout_v1';
 const VIEWPORT_SCALE_STORAGE_KEY = 'parkour_viewport_scale_v1';
 const MOBILE_TOPBAR_COLLAPSED_KEY = 'parkour_mobile_topbar_collapsed_v1';
 let mobileControlLayout = {
-  dpadLeft: 14,
-  dpadBottom: 10,
   actionsRight: 14,
   actionsBottom: 10
 };
@@ -6240,19 +6270,16 @@ function clearMobileHeldKeys() {
   keys[' '] = false;
   mobileJoyPointerId = null;
   const stick = document.getElementById('mjoy-stick');
-  if (stick) stick.style.transform = 'translate(0px, 0px)';
+  const base = document.getElementById('mjoy-base');
+  if (stick) { stick.style.transform = 'translate(0px, 0px)'; stick.classList.remove('active'); }
+  if (base) base.classList.remove('active');
   document.querySelectorAll('.mact-btn.pressed').forEach(el => el.classList.remove('pressed'));
 }
 
 function clampMobileControlLayout() {
-  const dpadEl = document.querySelector('.mobile-dpad');
   const actionsEl = document.querySelector('.mobile-actions');
-  const dpadW = dpadEl?.offsetWidth || 164;
-  const dpadH = dpadEl?.offsetHeight || 164;
   const actW = actionsEl?.offsetWidth || 84;
   const actH = actionsEl?.offsetHeight || 188;
-  mobileControlLayout.dpadLeft = clamp(mobileControlLayout.dpadLeft, 0, Math.max(0, window.innerWidth - dpadW));
-  mobileControlLayout.dpadBottom = clamp(mobileControlLayout.dpadBottom, 0, Math.max(0, window.innerHeight - dpadH));
   mobileControlLayout.actionsRight = clamp(mobileControlLayout.actionsRight, 0, Math.max(0, window.innerWidth - actW));
   mobileControlLayout.actionsBottom = clamp(mobileControlLayout.actionsBottom, 0, Math.max(0, window.innerHeight - actH));
 }
@@ -6347,12 +6374,7 @@ function toggleMobileTopbar(forceValue) {
 
 function applyMobileControlLayout() {
   clampMobileControlLayout();
-  const dpadEl = document.querySelector('.mobile-dpad');
   const actionsEl = document.querySelector('.mobile-actions');
-  if (dpadEl) {
-    dpadEl.style.left = `${Math.round(mobileControlLayout.dpadLeft)}px`;
-    dpadEl.style.bottom = `${Math.round(mobileControlLayout.dpadBottom)}px`;
-  }
   if (actionsEl) {
     actionsEl.style.right = `${Math.round(mobileControlLayout.actionsRight)}px`;
     actionsEl.style.bottom = `${Math.round(mobileControlLayout.actionsBottom)}px`;
@@ -6371,15 +6393,13 @@ function loadMobileControlLayout() {
     if (!raw) return;
     const parsed = JSON.parse(raw);
     if (!parsed || typeof parsed !== 'object') return;
-    mobileControlLayout.dpadLeft = Number.isFinite(parsed.dpadLeft) ? parsed.dpadLeft : mobileControlLayout.dpadLeft;
-    mobileControlLayout.dpadBottom = Number.isFinite(parsed.dpadBottom) ? parsed.dpadBottom : mobileControlLayout.dpadBottom;
     mobileControlLayout.actionsRight = Number.isFinite(parsed.actionsRight) ? parsed.actionsRight : mobileControlLayout.actionsRight;
     mobileControlLayout.actionsBottom = Number.isFinite(parsed.actionsBottom) ? parsed.actionsBottom : mobileControlLayout.actionsBottom;
   } catch (_) {}
 }
 
 function resetMobileControlLayout() {
-  mobileControlLayout = { dpadLeft: 14, dpadBottom: 10, actionsRight: 14, actionsBottom: 10 };
+  mobileControlLayout = { actionsRight: 14, actionsBottom: 10 };
   applyMobileControlLayout();
   saveMobileControlLayout();
 }
@@ -6391,7 +6411,7 @@ function toggleMobileLayoutEdit(forceValue) {
   updateMobileModeUI();
 }
 
-function bindMobileLayoutDrag(targetSelector, mode) {
+function bindMobileLayoutDrag(targetSelector) {
   const el = document.querySelector(targetSelector);
   if (!el) return;
   let dragging = null;
@@ -6400,13 +6420,8 @@ function bindMobileLayoutDrag(targetSelector, mode) {
     e.preventDefault();
     const dx = e.clientX - dragging.startX;
     const dy = e.clientY - dragging.startY;
-    if (mode === 'dpad') {
-      mobileControlLayout.dpadLeft = dragging.baseMain + dx;
-      mobileControlLayout.dpadBottom = dragging.baseCross - dy;
-    } else {
-      mobileControlLayout.actionsRight = dragging.baseMain - dx;
-      mobileControlLayout.actionsBottom = dragging.baseCross - dy;
-    }
+    mobileControlLayout.actionsRight = dragging.baseRight - dx;
+    mobileControlLayout.actionsBottom = dragging.baseBottom - dy;
     applyMobileControlLayout();
   };
   const endDrag = () => {
@@ -6420,8 +6435,8 @@ function bindMobileLayoutDrag(targetSelector, mode) {
     dragging = {
       startX: e.clientX,
       startY: e.clientY,
-      baseMain: mode === 'dpad' ? mobileControlLayout.dpadLeft : mobileControlLayout.actionsRight,
-      baseCross: mode === 'dpad' ? mobileControlLayout.dpadBottom : mobileControlLayout.actionsBottom
+      baseRight: mobileControlLayout.actionsRight,
+      baseBottom: mobileControlLayout.actionsBottom
     };
   });
   window.addEventListener('pointermove', onMove, { passive: false });
@@ -6554,10 +6569,12 @@ function bindHoldButton(el, onDown, onUp) {
 }
 
 function bindMobileControls() {
+  const dpadEl = document.querySelector('.mobile-dpad');
   const joyBase = document.getElementById('mjoy-base');
   const joyStick = document.getElementById('mjoy-stick');
   const DEAD_ZONE = 0.22;
   const DIR_THRESHOLD = 0.32;
+  const BASE_SIZE = 140;
 
   const applyJoy = (clientX, clientY) => {
     if (!joyBase || !joyStick) return;
@@ -6592,16 +6609,27 @@ function bindMobileControls() {
     if (gameRunning) lastGameInputAt = Date.now();
   };
 
-  if (joyBase && joyStick) {
-    joyBase.addEventListener('pointerdown', e => {
+  if (dpadEl && joyBase && joyStick) {
+    dpadEl.addEventListener('pointerdown', e => {
       if (mobileLayoutEdit) return;
       e.preventDefault();
       e.stopPropagation();
       mobileJoyPointerId = e.pointerId;
-      try { joyBase.setPointerCapture(e.pointerId); } catch (_) {}
+      try { dpadEl.setPointerCapture(e.pointerId); } catch (_) {}
+
+      const dpadRect = dpadEl.getBoundingClientRect();
+      let bx = e.clientX - dpadRect.left - BASE_SIZE / 2;
+      let by = e.clientY - dpadRect.top - BASE_SIZE / 2;
+      bx = Math.max(0, Math.min(dpadRect.width - BASE_SIZE, bx));
+      by = Math.max(0, Math.min(dpadRect.height - BASE_SIZE, by));
+      joyBase.style.left = bx + 'px';
+      joyBase.style.top = by + 'px';
+      joyStick.style.transform = 'translate(0px, 0px)';
+      joyBase.classList.add('active');
+      joyStick.classList.add('active');
       applyJoy(e.clientX, e.clientY);
     });
-    joyBase.addEventListener('pointermove', e => {
+    dpadEl.addEventListener('pointermove', e => {
       if (mobileLayoutEdit) return;
       if (mobileJoyPointerId !== e.pointerId) return;
       e.preventDefault();
@@ -6616,9 +6644,11 @@ function bindMobileControls() {
       keys.ArrowUp = false;
       keys.ArrowDown = false;
       joyStick.style.transform = 'translate(0px, 0px)';
+      joyBase.classList.remove('active');
+      joyStick.classList.remove('active');
     };
-    joyBase.addEventListener('pointerup', releaseJoy);
-    joyBase.addEventListener('pointercancel', releaseJoy);
+    dpadEl.addEventListener('pointerup', releaseJoy);
+    dpadEl.addEventListener('pointercancel', releaseJoy);
   }
 
   bindHoldButton(
@@ -6666,8 +6696,7 @@ function bindMobileControls() {
   }
 
   window.addEventListener('blur', clearMobileHeldKeys);
-  bindMobileLayoutDrag('.mobile-dpad', 'dpad');
-  bindMobileLayoutDrag('.mobile-actions', 'actions');
+  bindMobileLayoutDrag('.mobile-actions');
 }
 
 // ===================== INPUT =====================
