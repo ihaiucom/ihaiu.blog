@@ -1483,6 +1483,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
           <li><b>闪烁平台</b>：部分普通/冰面会周期性消失；消失时无碰撞，仅留虚线轮廓，注意节奏落脚。</li>
           <li><b>单向门</b>：半透明蓝薄板，可从下方向上穿过，从上方落下时可踩踏。</li>
           <li><b>履带平台</b>：灰色金属传送带，两端有滚轮、表面条纹滚动指示方向；站上后会被持续推向一侧，到达边缘会掉落，需注意逆向行走或及时跳开。</li>
+          <li><b>上下移动平台</b>：青绿色平台（带 ▲/▼ 箭头），沿垂直方向上下往复运动，两侧有虚线轨道提示移动范围；站上后会随平台一起上下移动，注意跳离时机。</li>
           <li><b>火焰旋转</b>：固定在平台上的旋转火球链（类似超级玛丽），触碰任何火球即死；注意观察旋转节奏，趁间隙通过（无敌状态可免疫）。</li>
           <li><b>碎裂平台</b>：褐色带裂纹的平台，踩上去后开始剧烈抖动（1~2秒），随后碎裂掉落！碎裂后一段时间会自动重生。需要快速通过，不可久留。</li>
           <li><b>砸落石块</b>：悬浮在空中的愤怒面孔石块（类似超级玛丽 Thwomp），玩家靠近时猛砸下来，底部带尖刺；砸落后停顿片刻再缓慢升回，需要观察节奏趁其上升时通过（无敌状态可免疫）。</li>
@@ -3513,8 +3514,9 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
         let platH = 18;
         if (tr > 0.82) type = 'ice';
         else if (tr > 0.65 && p > 0) type = 'moving';
-        else if (tr > 0.55 && p > 0) type = 'conveyor';
-        else if (tr > 0.45 && p > 0) type = 'crumble';
+        else if (tr > 0.58 && p > 0) type = 'vmove';
+        else if (tr > 0.50 && p > 0) type = 'conveyor';
+        else if (tr > 0.42 && p > 0) type = 'crumble';
 
         let moving = null;
         if (type === 'moving') {
@@ -3526,6 +3528,13 @@ function buildMultiLaneZones(mainSpine, seed, stageDiff) {
         }
 
         const laneObj = { x: px, y: lcy, w, h: platH, type, moving, laneRoute: true };
+        if (type === 'vmove') {
+          laneObj.vmove = {
+            speed: (rng() > 0.5 ? 1 : -1) * (1.0 + rng() * 1.5) * (1 + stageDiff * 0.2),
+            range: 40 + rng() * 55,
+            phase: rng() * Math.PI * 2
+          };
+        }
         if (type === 'conveyor') {
           laneObj.conveyorSpeed = (rng() > 0.5 ? 1 : -1) * (2.0 + rng() * 2.5) * (1 + stageDiff * 0.3);
         }
@@ -3626,9 +3635,10 @@ function generateMap(seed, envTheme, stageOpts) {
     else if (i > 14 && r > 0.874 - haz) { type = 'oneway'; platH = 14; }
     else if (i > 5 && r > 0.80 - haz) type = 'ice';
     else if (i > 15 && r > 0.76 - haz) type = 'moving';
-    else if (i > 7 && r > 0.72 - haz) type = 'conveyor';
-    else if (i > 4 && r > 0.68 - haz) type = 'crumble';
-    else if (i > 6 && r > 0.64 - haz) type = 'pendulum';
+    else if (i > 10 && r > 0.73 - haz) type = 'vmove';
+    else if (i > 7 && r > 0.69 - haz) type = 'conveyor';
+    else if (i > 4 && r > 0.65 - haz) type = 'crumble';
+    else if (i > 6 && r > 0.61 - haz) type = 'pendulum';
 
     let moving = null;
     if (type === 'moving') {
@@ -3655,6 +3665,13 @@ function generateMap(seed, envTheme, stageOpts) {
         ropeLength: ropeLen,
         maxAngle: 0.5 + rng() * 0.35,
         speed: 1.2 + rng() * 0.8 + stageDiff * 0.3,
+        phase: rng() * Math.PI * 2
+      };
+    }
+    if (type === 'vmove') {
+      platObj.vmove = {
+        speed: (rng() > 0.5 ? 1 : -1) * (1.0 + rng() * 1.5) * (1 + stageDiff * 0.2),
+        range: 50 + rng() * 70,
         phase: rng() * Math.PI * 2
       };
     }
@@ -3791,9 +3808,9 @@ function generateMap(seed, envTheme, stageOpts) {
   const pwRng = mulberry32(seed + 777);
   const powerups = [];
   let pwId = 0;
-  const PW_TYPES_BASE = ['speed2', 'invincible', 'fly', 'invincible_fly', 'extra_jump', 'life', 'life', 'energy_full'];
-  const PW_TYPES = offlineSoloMode ? [...PW_TYPES_BASE, 'magnet', 'magnet'] : PW_TYPES_BASE;
-  const PW_TYPES_RISK = ['invincible_fly', 'life', 'fly', 'invincible', 'energy_full', 'speed2', 'extra_jump'];
+  const PW_TYPES_BASE = ['speed2', 'invincible', 'fly', 'invincible_fly', 'extra_jump', 'life', 'life', 'energy_full', 'magnet', 'magnet'];
+  const PW_TYPES = PW_TYPES_BASE;
+  const PW_TYPES_RISK = ['invincible_fly', 'life', 'fly', 'invincible', 'energy_full', 'speed2', 'extra_jump', 'magnet'];
 
   for (let i = 3; i < finishIdx; i++) {
     const plat = platforms[i];
@@ -3836,7 +3853,7 @@ function generateMap(seed, envTheme, stageOpts) {
   const spikeZones = [];
   for (let i = 4; i < finishIdx; i++) {
     const plat = platforms[i];
-    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'oneway' || plat.type === 'pendulum') continue;
+    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'oneway' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
     if (plat.flicker || plat.moving || plat.type === 'crumble') continue;
     if (plat.w < 80) continue;
     const prog = i / Math.max(1, finishIdx);
@@ -3854,7 +3871,7 @@ function generateMap(seed, envTheme, stageOpts) {
 
   for (let i = 2; i < mainLen; i++) {
     const plat = mainSpine[i];
-    if (plat.type === 'finish' || plat.type === 'pendulum' || plat.w < 65) continue;
+    if (plat.type === 'finish' || plat.type === 'pendulum' || plat.type === 'vmove' || plat.w < 65) continue;
     if (plat.flicker) continue;
 
     const prog = (i - 2) / Math.max(1, mainLen - 3);
@@ -3942,7 +3959,7 @@ function generateMap(seed, envTheme, stageOpts) {
   const fireBars = [];
   for (let i = 5; i < finishIdx; i++) {
     const plat = platforms[i];
-    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'pendulum') continue;
+    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
     if (plat.flicker || plat.w < 70) continue;
     const prog = i / Math.max(1, finishIdx);
     if (fbRng() > 0.08 + prog * 0.06 + stageDiff * 0.04) continue;
@@ -3966,7 +3983,7 @@ function generateMap(seed, envTheme, stageOpts) {
   const thwomps = [];
   for (let i = 6; i < finishIdx; i++) {
     const plat = platforms[i];
-    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'crumble' || plat.type === 'pendulum') continue;
+    if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'crumble' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
     if (plat.flicker || plat.w < 80) continue;
     if (plat.moving) continue;
     const prog = i / Math.max(1, finishIdx);
@@ -4025,7 +4042,7 @@ function generateMap(seed, envTheme, stageOpts) {
     const plat = platforms[i];
     if (plat.type !== 'normal' && plat.type !== 'ice') continue;
     if (plat.flicker || plat.moving || plat.w < 70) continue;
-    if (plat.type === 'crumble' || plat.type === 'pendulum') continue;
+    if (plat.type === 'crumble' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
     const prog = i / Math.max(1, finishIdx);
     if (ppRng() > 0.07 + prog * 0.05 + stageDiff * 0.04) continue;
     const side = ppRng() > 0.5 ? 'left' : 'right';
@@ -4098,6 +4115,9 @@ function getPlatY(plat, t) {
     const pnd = plat.pendulum;
     const angle = pnd.maxAngle * Math.sin(t * pnd.speed + pnd.phase);
     return pnd.pivotY + Math.cos(angle) * pnd.ropeLength;
+  }
+  if (plat.vmove) {
+    return plat.y + Math.sin(t * plat.vmove.speed + plat.vmove.phase) * plat.vmove.range;
   }
   return plat.y;
 }
@@ -6038,7 +6058,7 @@ function mkPlayer(id, name, color, x, y) {
 
 function isRespawnPlatformSafe(plat) {
   if (!plat) return false;
-  if (plat.type === 'oneway' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'conveyor' || plat.type === 'crumble' || plat.type === 'pendulum') return false;
+  if (plat.type === 'oneway' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'conveyor' || plat.type === 'crumble' || plat.type === 'pendulum' || plat.type === 'vmove') return false;
   if (plat.flicker) return false; // 不在周期性消失的平台复活
   return true;
 }
@@ -6199,6 +6219,9 @@ function updateLocalPlayer() {
         }
         if ((plat.moving || plat.pendulum) && _prevUpdateGameT >= 0) {
           p.x += getPlatX(plat, arrestT) - getPlatX(plat, _prevUpdateGameT);
+        }
+        if ((plat.vmove || plat.pendulum) && _prevUpdateGameT >= 0) {
+          p.y += getPlatY(plat, arrestT) - getPlatY(plat, _prevUpdateGameT);
         }
       }
     }
@@ -6381,6 +6404,10 @@ function updateLocalPlayer() {
         }
         if ((plat.moving || plat.pendulum) && _prevUpdateGameT >= 0) {
           p.x += getPlatX(plat, t) - getPlatX(plat, _prevUpdateGameT);
+        }
+        if ((plat.vmove || plat.pendulum) && _prevUpdateGameT >= 0) {
+          const dyCarry = getPlatY(plat, t) - getPlatY(plat, _prevUpdateGameT);
+          p.y += dyCarry;
         }
       }
       break;
@@ -7534,15 +7561,34 @@ function drawPlatform(ctx, plat, px, py, t, platIdx) {
     grad.addColorStop(1, '#5e35b1');
     ctx.fillStyle = grad;
     ctx.beginPath(); ctx.roundRect(px, y, w, h, 4); ctx.fill();
-    // Arrow indicator
     const dir = plat.moving.speed > 0 ? 1 : -1;
     ctx.fillStyle = 'rgba(255,255,255,0.5)';
     ctx.font = '12px Arial';
     ctx.textAlign = 'center';
     ctx.fillText(dir > 0 ? '►' : '◄', px + w / 2, y + h / 2 + 4);
-    // Glow
     ctx.strokeStyle = 'rgba(178,100,255,0.4)'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.roundRect(px, y, w, h, 4); ctx.stroke();
+  } else if (type === 'vmove') {
+    const grad = ctx.createLinearGradient(0, y, 0, y + h);
+    grad.addColorStop(0, '#00bfa5');
+    grad.addColorStop(1, '#00897b');
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.roundRect(px, y, w, h, 4); ctx.fill();
+    const vdir = plat.vmove.speed > 0 ? 1 : -1;
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.font = '12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText(vdir > 0 ? '▼' : '▲', px + w / 2, y + h / 2 + 4);
+    ctx.strokeStyle = 'rgba(0,191,165,0.4)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.roundRect(px, y, w, h, 4); ctx.stroke();
+    const railX = px + w / 2;
+    const railTop = y - plat.vmove.range - 8;
+    const railBot = y + h + plat.vmove.range + 8;
+    ctx.strokeStyle = 'rgba(0,191,165,0.18)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(railX, railTop); ctx.lineTo(railX, railBot); ctx.stroke();
+    ctx.setLineDash([]);
   } else if (type === 'conveyor') {
     const spd = plat.conveyorSpeed || 2;
     const dir = spd > 0 ? 1 : -1;
