@@ -153,7 +153,7 @@ function maybeSpawnDynamicPowerupFromCoin(room, atX, atY, isStar) {
 
   const id = room.dynamicPowerupSeq++;
   const rng = mulberry32((room.seed ^ id ^ 0x51ed) >>> 0);
-  const pool = ['speed2', 'speed2', 'energy_full', 'life', 'extra_jump', 'invincible', 'fly', 'speed3', 'life', 'energy_full', 'speed2', 'invincible'];
+  const pool = ['speed2', 'speed2', 'energy_full', 'life', 'extra_jump', 'fly', 'fly', 'speed3', 'life', 'energy_full', 'speed2', 'speed3'];
   const ptype = pool[(rng() * pool.length) | 0];
   const exclusive = powerupExclusiveMultiplayer(room.seed, id);
   const jx = (rng() - 0.5) * 48;

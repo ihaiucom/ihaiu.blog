@@ -1521,11 +1521,9 @@ body.game-touch-lock #mobile-toggle-wrap * {
       <div class="guide-card guide-powerups">
         <h4>道具一览</h4>
         <ul>
-          <li><b>⚡ 加速×2</b>：移动速度提升到 2 倍，持续 8 秒。</li>
-          <li><b>⚡⚡ 加速×3</b>：移动速度提升到 3 倍，持续 8 秒。</li>
-          <li><b>🛡️ 无敌</b>：免疫怪物/子弹伤害，持续 5 秒。</li>
-          <li><b>🪽 飞行</b>：短时飞行，持续 5 秒，结束前 2 秒会预警。</li>
-          <li><b>🌟 无敌+飞行</b>：同时获得无敌与飞行，持续 5 秒。</li>
+          <li><b>⚡ 加速×2</b>：移动速度提升到 2 倍，持续 8 秒，期间附带无敌，结束后额外 2 秒无敌保护。</li>
+          <li><b>⚡⚡ 加速×3</b>：移动速度提升到 3 倍，持续 8 秒，期间附带无敌，结束后额外 2 秒无敌保护。</li>
+          <li><b>🪽 飞行</b>：短时飞行，持续 5 秒，期间附带无敌，结束后额外 2 秒无敌保护，飞行结束前 2 秒会预警。</li>
           <li><b>🦘 连跳+1</b>：额外增加 1 次连跳次数（长期生效）。</li>
           <li><b>❤️+1 生命</b>：立即恢复 1 条生命。</li>
           <li><b>🔋 能量补满</b>：能量条立刻回满，可马上冲刺。</li>
@@ -3364,6 +3362,96 @@ function applyEnvThemeFromServer(v) {
 }
 
 // ===================== MAP GENERATION =====================
+
+/**
+ * 在主线上生成蹬墙跳竖井（两面高墙 + 中间通道 + 引导金币），
+ * 作为可选的垂直攀升捷径，奖励更高。
+ */
+function buildWallJumpSections(mainSpine, seed, stageDiff) {
+  const rng = mulberry32(seed + 31415);
+  const wallPlats = [];
+  const wallCoins = [];
+  const len = mainSpine.length;
+  if (len < 18) return { platforms: wallPlats, coins: wallCoins };
+
+  const sectionCount = 2 + Math.floor(rng() * 2);
+  const usedIndices = new Set();
+  let placed = 0;
+
+  for (let attempt = 0; attempt < 60 && placed < sectionCount; attempt++) {
+    const idx = 6 + Math.floor(rng() * (len - 12));
+
+    let skip = false;
+    for (let k = idx - 2; k <= idx + 2; k++) {
+      if (usedIndices.has(k)) { skip = true; break; }
+    }
+    if (skip) continue;
+
+    const refPlat = mainSpine[idx];
+    if (refPlat.type !== 'normal' && refPlat.type !== 'ice') continue;
+    if (refPlat.moving || refPlat.vmove || refPlat.flicker || refPlat.pendulum) continue;
+    if (refPlat.w < 80) continue;
+
+    for (let k = idx - 2; k <= idx + 2; k++) usedIndices.add(k);
+
+    const wallH = 220 + Math.floor(rng() * 100);
+    const wallW = 48 + Math.floor(rng() * 14);
+    const gapW  = 100 + Math.floor(rng() * 30);
+    const totalW = wallW * 2 + gapW;
+
+    const chimneyMidX = refPlat.x + refPlat.w / 2;
+    const leftWallX  = Math.round(chimneyMidX - gapW / 2 - wallW);
+    const rightWallX = Math.round(chimneyMidX + gapW / 2);
+    const wallTopY    = Math.round(refPlat.y - wallH);
+    const wallBottomY = Math.round(refPlat.y + 6);
+
+    wallPlats.push({
+      x: leftWallX, y: wallTopY,
+      w: wallW, h: wallBottomY - wallTopY,
+      type: 'normal', wallJump: true, wallJumpSide: 'left',
+      wallJumpGapW: gapW, wallJumpEntry: true
+    });
+    wallPlats.push({
+      x: rightWallX, y: wallTopY,
+      w: wallW, h: wallBottomY - wallTopY,
+      type: 'normal', wallJump: true, wallJumpSide: 'right'
+    });
+
+    wallPlats.push({
+      x: Math.round(leftWallX + wallW), y: wallTopY - 10,
+      w: Math.round(gapW), h: 20,
+      type: 'normal', wallJumpReward: true
+    });
+
+    const coinSteps = 5 + Math.floor(rng() * 3);
+    const coinStartY = wallBottomY - 44;
+    const coinEndY   = wallTopY + 28;
+    const coinStepY  = (coinStartY - coinEndY) / Math.max(1, coinSteps - 1);
+
+    for (let c = 0; c < coinSteps; c++) {
+      const zigzag = c % 2 === 0 ? -0.28 : 0.28;
+      wallCoins.push({
+        x: Math.round(chimneyMidX + zigzag * gapW),
+        y: Math.round(coinStartY - c * coinStepY),
+        type: c === coinSteps - 1 ? 'star' : 'coin',
+        value: c === coinSteps - 1 ? 5 : 1,
+        phase: rng() * Math.PI * 2
+      });
+    }
+
+    wallCoins.push({
+      x: Math.round(chimneyMidX),
+      y: Math.round(wallTopY - 10 - 34),
+      type: 'star', value: 5,
+      phase: rng() * Math.PI * 2
+    });
+
+    placed++;
+  }
+
+  return { platforms: wallPlats, coins: wallCoins };
+}
+
 /** 在主线两平台之间的大空隙上方生成窄「高风险空中路线」，金币/道具更密集 */
 function buildRiskSkyBranches(mainSpine, seed, stageDiff = 0) {
   const rng = mulberry32(seed + 90210);
@@ -3695,7 +3783,8 @@ function generateMap(seed, envTheme, stageOpts) {
 
   const riskBranches = stageGate >= 0.20 ? buildRiskSkyBranches(mainSpine, seed, stageDiff) : [];
   const multiLanes = stageGate >= 0.10 ? buildMultiLaneZones(mainSpine, seed, stageDiff) : [];
-  const platforms = mainSpine.concat(riskBranches, multiLanes);
+  const wallJumpData = stageGate >= 0.15 ? buildWallJumpSections(mainSpine, seed, stageDiff) : { platforms: [], coins: [] };
+  const platforms = mainSpine.concat(riskBranches, multiLanes, wallJumpData.platforms);
 
   // Finish platform（必须始终在数组末尾，供金币等逻辑排除）
   cx += 200;
@@ -3731,6 +3820,7 @@ function generateMap(seed, envTheme, stageOpts) {
     const plat = platforms[i];
     if (plat.type === 'finish') continue;
     if (plat.flicker) continue;
+    if (plat.wallJump) continue;
 
     const isRisk = !!plat.riskRoute;
     const isLane = !!plat.laneRoute;
@@ -3807,18 +3897,23 @@ function generateMap(seed, envTheme, stageOpts) {
     }
   }
 
+  // 蹬墙跳竖井内引导金币
+  for (const wc of wallJumpData.coins) {
+    coins.push({ ...wc, id: cid++ });
+  }
+
   // ---- 道具生成 ----
   const pwRng = mulberry32(seed + 777);
   const powerups = [];
   let pwId = 0;
-  const PW_TYPES_BASE = ['speed2', 'invincible', 'fly', 'invincible_fly', 'extra_jump', 'life', 'life', 'energy_full', 'magnet', 'magnet'];
+  const PW_TYPES_BASE = ['speed2', 'speed3', 'fly', 'fly', 'extra_jump', 'life', 'life', 'energy_full', 'magnet', 'magnet'];
   const PW_TYPES = PW_TYPES_BASE;
-  const PW_TYPES_RISK = ['invincible_fly', 'life', 'fly', 'invincible', 'energy_full', 'speed2', 'extra_jump', 'magnet'];
+  const PW_TYPES_RISK = ['fly', 'life', 'fly', 'speed3', 'energy_full', 'speed2', 'extra_jump', 'magnet'];
 
   for (let i = 3; i < finishIdx; i++) {
     const plat = platforms[i];
     if (plat.type === 'finish' || plat.w < 50) continue;
-    if (plat.flicker) continue;
+    if (plat.flicker || plat.wallJump) continue;
     const isRisk = !!plat.riskRoute;
     const isLane = !!plat.laneRoute;
     if (pwRng() > ((isRisk || isLane) ? 0.055 : 0.14)) continue;
@@ -3845,7 +3940,7 @@ function generateMap(seed, envTheme, stageOpts) {
     if (stageGate < 0.20) break;
     const plat = platforms[i];
     if (plat.type === 'finish' || plat.w < 60) continue;
-    if (plat.flicker) continue;
+    if (plat.flicker || plat.wallJump || plat.wallJumpReward) continue;
     if (hazardUsed.has(i)) continue;
     if (trapRng() > 0.10) continue;
     hazardUsed.add(i);
@@ -3865,6 +3960,7 @@ function generateMap(seed, envTheme, stageOpts) {
     const plat = platforms[i];
     if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'oneway' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
     if (plat.flicker || plat.moving || plat.type === 'crumble') continue;
+    if (plat.wallJump || plat.wallJumpReward) continue;
     if (plat.w < 80) continue;
     if (hazardUsed.has(i)) continue;
     const prog = i / Math.max(1, finishIdx);
@@ -3973,7 +4069,7 @@ function generateMap(seed, envTheme, stageOpts) {
     if (stageGate < 0.40) break;
     const plat = platforms[i];
     if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
-    if (plat.flicker || plat.w < 70) continue;
+    if (plat.flicker || plat.wallJump || plat.wallJumpReward || plat.w < 70) continue;
     if (hazardUsed.has(i)) continue;
     const prog = i / Math.max(1, finishIdx);
     if (fbRng() > 0.08 + prog * 0.06 + stageDiff * 0.04) continue;
@@ -4000,7 +4096,7 @@ function generateMap(seed, envTheme, stageOpts) {
     if (stageGate < 0.50) break;
     const plat = platforms[i];
     if (plat.type === 'finish' || plat.type === 'launchpad' || plat.type === 'bounce' || plat.type === 'crumble' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
-    if (plat.flicker || plat.w < 80) continue;
+    if (plat.flicker || plat.wallJump || plat.wallJumpReward || plat.w < 80) continue;
     if (plat.moving) continue;
     if (hazardUsed.has(i)) continue;
     const prog = i / Math.max(1, finishIdx);
@@ -4063,7 +4159,7 @@ function generateMap(seed, envTheme, stageOpts) {
     if (stageGate < 0.60) break;
     const plat = platforms[i];
     if (plat.type !== 'normal' && plat.type !== 'ice') continue;
-    if (plat.flicker || plat.moving || plat.w < 70) continue;
+    if (plat.flicker || plat.moving || plat.wallJump || plat.wallJumpReward || plat.w < 70) continue;
     if (plat.type === 'crumble' || plat.type === 'pendulum' || plat.type === 'vmove') continue;
     if (hazardUsed.has(i)) continue;
     const prog = i / Math.max(1, finishIdx);
@@ -4090,7 +4186,7 @@ function generateMap(seed, envTheme, stageOpts) {
   for (let i = 4; i < finishIdx; i++) {
     const plat = platforms[i];
     if (plat.type !== 'normal' && plat.type !== 'ice') continue;
-    if (plat.flicker || plat.moving || plat.w < 60) continue;
+    if (plat.flicker || plat.moving || plat.wallJump || plat.wallJumpReward || plat.w < 60) continue;
     const prog = i / Math.max(1, finishIdx);
     if (mushRng() > 0.08 + prog * 0.04 + stageDiff * 0.03) continue;
     springMushrooms.push({
@@ -4412,10 +4508,10 @@ function checkCoinCollection(p) {
 
 // ===================== POWERUP SYSTEM =====================
 const POWERUP_DEFS = {
-  speed2:          { label: '加速×2',     icon: '⚡', color: '#00bfff', duration: 0, bgColor: 'rgba(0,191,255,0.15)' },
-  speed3:          { label: '加速×3',     icon: '⚡⚡', color: '#ff4500', duration: 0, bgColor: 'rgba(255,69,0,0.15)' },
+  speed2:          { label: '加速×2+🛡️',  icon: '⚡', color: '#00bfff', duration: 0, bgColor: 'rgba(0,191,255,0.15)' },
+  speed3:          { label: '加速×3+🛡️',  icon: '⚡⚡', color: '#ff4500', duration: 0, bgColor: 'rgba(255,69,0,0.15)' },
   invincible:      { label: '无敌',       icon: '🛡️', color: '#ffd700', duration: 5000, bgColor: 'rgba(255,215,0,0.15)' },
-  fly:             { label: '飞行',       icon: '🪽', color: '#da70d6', duration: 5000, bgColor: 'rgba(218,112,214,0.15)' },
+  fly:             { label: '飞行+🛡️',    icon: '🪽', color: '#da70d6', duration: 5000, bgColor: 'rgba(218,112,214,0.15)' },
   invincible_fly:  { label: '无敌+飞行',  icon: '🌟', color: '#ff69b4', duration: 5000, bgColor: 'rgba(255,105,180,0.15)' },
   extra_jump:      { label: '连跳+1',     icon: '🦘', color: '#7cfc00', duration: 15000, bgColor: 'rgba(124,252,0,0.15)' },
   life:            { label: '❤️+1',      icon: '❤️', color: '#ff4444', duration: 0, bgColor: 'rgba(255,68,68,0.15)' },
@@ -4451,10 +4547,15 @@ function activatePowerup(ptype) {
   if (!def) return;
 
   if (ptype === 'speed2' || ptype === 'speed3') {
-    // 加速效果：8秒
+    const dur = 8000;
     activeEffects = activeEffects.filter(e => e.ptype !== 'speed2' && e.ptype !== 'speed3');
-    activeEffects.push({ ptype, endsAt: Date.now() + 8000 });
+    activeEffects.push({ ptype, endsAt: Date.now() + dur });
+    const invEnd = Date.now() + dur + 2000;
+    const existInv = activeEffects.find(e => e.ptype === 'invincible');
+    if (existInv) existInv.endsAt = Math.max(existInv.endsAt, invEnd);
+    else activeEffects.push({ ptype: 'invincible', endsAt: invEnd });
     GameAudio.startLoopSpeed();
+    GameAudio.startLoopInvincible();
   } else if (ptype === 'extra_jump') {
     activeEffects = activeEffects.filter(e => e.ptype !== 'extra_jump');
     activeEffects.push({ ptype, endsAt: Date.now() + def.duration });
@@ -4466,10 +4567,23 @@ function activatePowerup(ptype) {
   } else if (ptype === 'life') {
     if (localPlayer) localPlayer.lives++;
   } else {
-    // 有持续时间的效果
     activeEffects.push({ ptype, endsAt: Date.now() + def.duration });
-    if (ptype === 'invincible' || ptype === 'invincible_fly') GameAudio.startLoopInvincible();
-    else if (ptype === 'fly') GameAudio.startLoopFly();
+    if (ptype === 'invincible') {
+      GameAudio.startLoopInvincible();
+    } else if (ptype === 'invincible_fly') {
+      GameAudio.startLoopInvincible();
+      const invEnd = Date.now() + def.duration + 2000;
+      const existInv = activeEffects.find(e => e.ptype === 'invincible');
+      if (existInv) existInv.endsAt = Math.max(existInv.endsAt, invEnd);
+      else activeEffects.push({ ptype: 'invincible', endsAt: invEnd });
+    } else if (ptype === 'fly') {
+      GameAudio.startLoopFly();
+      const invEnd = Date.now() + def.duration + 2000;
+      const existInv = activeEffects.find(e => e.ptype === 'invincible');
+      if (existInv) existInv.endsAt = Math.max(existInv.endsAt, invEnd);
+      else activeEffects.push({ ptype: 'invincible', endsAt: invEnd });
+      GameAudio.startLoopInvincible();
+    }
   }
 }
 
@@ -6456,16 +6570,19 @@ function updateLocalPlayer() {
         const wpy = getPlatY(plat, t);
         if (p.y + p.h <= wpy + 4 || p.y >= wpy + plat.h - 4) continue;
         if (plat.h < 18) continue;
+        const isWallPlat = !!plat.wallJump;
+        const nearW = isWallPlat ? 4 : 3;
+        const farW  = isWallPlat ? 10 : 8;
         if (moveDir > 0) {
           const wallLeft = wpx;
-          if (p.x + p.w >= wallLeft - 2 && p.x + p.w <= wallLeft + 6) {
+          if (p.x + p.w >= wallLeft - nearW && p.x + p.w <= wallLeft + farW) {
             p.wallSlide = -1;
             p.x = wallLeft - p.w;
             break;
           }
         } else {
           const wallRight = wpx + plat.w;
-          if (p.x <= wallRight + 2 && p.x >= wallRight - 6) {
+          if (p.x <= wallRight + nearW && p.x >= wallRight - farW) {
             p.wallSlide = 1;
             p.x = wallRight;
             break;
@@ -7520,10 +7637,89 @@ function drawPlatform(ctx, plat, px, py, t, platIdx) {
   }
 
   // Shadow
-  ctx.fillStyle = 'rgba(0,0,0,0.3)';
-  ctx.beginPath();
-  ctx.ellipse(px + w / 2, y + h + 8, w / 2 * 0.9, 6, 0, 0, Math.PI * 2);
-  ctx.fill();
+  if (!plat.wallJump) {
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.ellipse(px + w / 2, y + h + 8, w / 2 * 0.9, 6, 0, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // ---- 蹬墙跳墙壁（砖石风格） ----
+  if (plat.wallJump) {
+    const grad = ctx.createLinearGradient(px, y, px, y + h);
+    grad.addColorStop(0, '#7a7a8d');
+    grad.addColorStop(0.35, '#686878');
+    grad.addColorStop(1, '#555568');
+    ctx.fillStyle = grad;
+    ctx.fillRect(px, y, w, h);
+
+    ctx.strokeStyle = 'rgba(0,0,0,0.16)';
+    ctx.lineWidth = 1;
+    const brickH = 18;
+    const brickW = w * 0.5;
+    for (let row = 0; row * brickH < h; row++) {
+      const by = y + row * brickH;
+      const clampH = Math.min(brickH, y + h - by);
+      ctx.beginPath(); ctx.moveTo(px, by); ctx.lineTo(px + w, by); ctx.stroke();
+      const off = (row % 2) * (brickW * 0.5);
+      for (let bx = off; bx < w; bx += brickW) {
+        if (bx > 0.5) {
+          ctx.beginPath();
+          ctx.moveTo(px + bx, by);
+          ctx.lineTo(px + bx, by + clampH);
+          ctx.stroke();
+        }
+      }
+    }
+
+    ctx.fillStyle = 'rgba(255,255,255,0.07)';
+    ctx.fillRect(px, y, 3, h);
+    ctx.fillStyle = 'rgba(0,0,0,0.13)';
+    ctx.fillRect(px + w - 3, y, 3, h);
+
+    ctx.fillStyle = '#8a8a9a';
+    ctx.fillRect(px - 2, y, w + 4, 5);
+
+    const arrowAlpha = 0.3 + 0.15 * Math.sin(t * 3.0 + px * 0.02);
+    ctx.fillStyle = `rgba(255, 230, 100, ${arrowAlpha})`;
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    const midY = y + h * 0.55;
+    if (plat.wallJumpSide === 'left') {
+      ctx.fillText('▸', px + w - 10, midY);
+      ctx.fillText('▸', px + w - 10, midY - 40);
+      ctx.fillText('▸', px + w - 10, midY + 40);
+    } else {
+      ctx.fillText('◂', px + 10, midY);
+      ctx.fillText('◂', px + 10, midY - 40);
+      ctx.fillText('◂', px + 10, midY + 40);
+    }
+
+    if (plat.wallJumpEntry && plat.wallJumpGapW) {
+      const gapX = px + w;
+      const gapCX = gapX + plat.wallJumpGapW / 2;
+      const entryY = y + h;
+
+      const glowAlpha = 0.12 + 0.08 * Math.sin(t * 2.5 + px * 0.01);
+      const grd = ctx.createLinearGradient(gapX, entryY - 60, gapX, entryY);
+      grd.addColorStop(0, `rgba(255, 230, 100, 0)`);
+      grd.addColorStop(1, `rgba(255, 230, 100, ${glowAlpha})`);
+      ctx.fillStyle = grd;
+      ctx.fillRect(gapX, entryY - 60, plat.wallJumpGapW, 60);
+
+      const bob = Math.sin(t * 3.0 + px * 0.015) * 2.5;
+      ctx.save();
+      ctx.fillStyle = 'rgba(255, 215, 80, 0.92)';
+      ctx.font = 'bold 11px system-ui, "Segoe UI", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('蹬墙跳 ↑', gapCX, entryY - 14 + bob);
+      ctx.restore();
+    }
+
+    if (type === 'crumble') ctx.restore();
+    return;
+  }
 
   if (type === 'normal') {
     // Body (dirt)
