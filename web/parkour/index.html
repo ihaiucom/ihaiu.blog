@@ -63,20 +63,21 @@ input[type="text"]:focus { border-color: #6c63ff; }
 .btn {
   padding: 10px 20px; border: none; border-radius: 8px;
   cursor: pointer; font-size: 14px; font-weight: 600;
-  transition: all 0.2s; white-space: nowrap;
+  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s, background 0.15s;
+  white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
 }
 .btn-primary { background: linear-gradient(135deg, #6c63ff, #9b5de5); color: #fff; }
 .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(108,99,255,0.4); }
-.btn-primary:active { transform: scale(0.95); filter: brightness(0.85); box-shadow: none; }
+.btn-primary:active { filter: brightness(0.78); box-shadow: 0 0 0 3px rgba(108,99,255,0.45); }
 .btn-secondary { background: rgba(255,255,255,0.1); color: #ddd; border: 1px solid rgba(255,255,255,0.15); }
 .btn-secondary:hover { background: rgba(255,255,255,0.15); }
-.btn-secondary:active { transform: scale(0.95); background: rgba(255,255,255,0.22); }
+.btn-secondary:active { filter: brightness(1.3); box-shadow: 0 0 0 2px rgba(255,255,255,0.18); }
 .btn-success { background: linear-gradient(135deg, #00b894, #00cec9); color: #fff; }
 .btn-success:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,184,148,0.4); }
-.btn-success:active { transform: scale(0.95); filter: brightness(0.85); box-shadow: none; }
+.btn-success:active { filter: brightness(0.78); box-shadow: 0 0 0 3px rgba(0,184,148,0.45); }
 .btn-warn { background: linear-gradient(135deg, #fd9644, #e17055); color: #fff; }
-.btn-warn:active { transform: scale(0.95); filter: brightness(0.85); }
+.btn-warn:active { filter: brightness(0.78); box-shadow: 0 0 0 3px rgba(253,150,68,0.45); }
 .btn-small { padding: 6px 14px; font-size: 12px; }
 .lobby-bottom { display: flex; gap: 16px; width: 100%; max-width: 1000px; }
 .room-list-area { min-width: 0; }
@@ -102,11 +103,11 @@ input[type="text"]:focus { border-color: #6c63ff; }
 .lb-tab {
   flex: 1; padding: 6px 4px; border: none; border-radius: 6px; cursor: pointer;
   font-size: 12px; font-weight: 600; background: rgba(255,255,255,0.06);
-  color: #888; transition: all 0.15s;
+  color: #888; transition: background 0.15s, color 0.15s, filter 0.15s;
 }
 .lb-tab.active { background: rgba(108,99,255,0.25); color: #6c63ff; }
 .lb-tab:hover { background: rgba(255,255,255,0.1); }
-.lb-tab:active { transform: scale(0.95); background: rgba(255,255,255,0.18); }
+.lb-tab:active { filter: brightness(1.3); background: rgba(255,255,255,0.18); }
 .lb-content { max-height: 300px; overflow-y: auto; }
 .lb-row {
   display: flex; align-items: center; gap: 8px;
@@ -2105,6 +2106,118 @@ const GameAudio = (function () {
     beep(200, 0.06, 'triangle', 0.05, t0 + 0.02);
   }
 
+  // ---- 游戏节奏循环（Mario 风格 chiptune） ----
+  let _gameRhythmNodes = null;
+
+  function startLoopGameRhythm() {
+    if (_gameRhythmNodes) return;
+    const c = ensure();
+    if (!c) return;
+
+    const masterGain = c.createGain();
+    masterGain.gain.setValueAtTime(0, c.currentTime);
+    masterGain.gain.linearRampToValueAtTime(1, c.currentTime + 0.5);
+    masterGain.connect(sfxGain);
+
+    const STEP = 60 / 170 / 2;
+    const stepMs = Math.round(STEP * 1000);
+
+    const bass = [
+      131,0,98,0, 131,165,196,0, 131,0,165,0, 98,110,123,0,
+      175,0,131,0, 175,220,262,0, 196,0,147,0, 98,110,123,131
+    ];
+    const mel = [
+      523,0,659,784, 0,0,659,392, 523,0,587,0, 784,0,659,0,
+      698,0,880,1047, 0,0,880,698, 784,0,988,0, 523,587,659,0
+    ];
+    const perc = [
+      1,0,3,0, 2,0,3,0, 1,1,3,0, 2,0,3,3,
+      1,0,3,0, 2,0,3,0, 1,0,3,0, 2,3,0,1
+    ];
+
+    let step = 0;
+    let stopped = false;
+
+    function tick() {
+      if (stopped) return;
+      const t0 = c.currentTime;
+      const i = step % 32;
+      step++;
+
+      const bf = bass[i];
+      if (bf > 0) {
+        const o = c.createOscillator();
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(bf, t0);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.02, t0);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + STEP * 0.85);
+        o.connect(g); g.connect(masterGain);
+        o.start(t0); o.stop(t0 + STEP);
+      }
+
+      const mf = mel[i];
+      if (mf > 0) {
+        const o = c.createOscillator();
+        o.type = 'square';
+        o.frequency.setValueAtTime(mf, t0);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.006, t0);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + STEP * 0.65);
+        o.connect(g); g.connect(masterGain);
+        o.start(t0); o.stop(t0 + STEP * 0.75);
+      }
+
+      const pk = perc[i];
+      if (pk === 1) {
+        const o = c.createOscillator();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(150, t0);
+        o.frequency.exponentialRampToValueAtTime(50, t0 + 0.08);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.025, t0);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.1);
+        o.connect(g); g.connect(masterGain);
+        o.start(t0); o.stop(t0 + 0.12);
+      } else if (pk === 2) {
+        const o = c.createOscillator();
+        o.type = 'square';
+        o.frequency.setValueAtTime(250, t0);
+        o.frequency.linearRampToValueAtTime(180, t0 + 0.03);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.018, t0);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.07);
+        o.connect(g); g.connect(masterGain);
+        o.start(t0); o.stop(t0 + 0.09);
+      } else if (pk === 3) {
+        const o = c.createOscillator();
+        o.type = 'square';
+        o.frequency.setValueAtTime(900, t0);
+        const g = c.createGain();
+        g.gain.setValueAtTime(0.005, t0);
+        g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.025);
+        o.connect(g); g.connect(masterGain);
+        o.start(t0); o.stop(t0 + 0.035);
+      }
+    }
+
+    const tid = setInterval(tick, stepMs);
+    tick();
+
+    _gameRhythmNodes = {
+      gain: masterGain,
+      stop() {
+        stopped = true;
+        clearInterval(tid);
+      }
+    };
+  }
+
+  function stopLoopGameRhythm() {
+    _stopLoop(_gameRhythmNodes);
+    _gameRhythmNodes = null;
+  }
+
   // ---- 状态循环音效（飞行 / 加速） ----
   let _flyLoopNodes = null;
   let _speedLoopNodes = null;
@@ -2440,28 +2553,38 @@ const GameAudio = (function () {
 
     const masterGain = c.createGain();
     masterGain.gain.setValueAtTime(0, c.currentTime);
-    masterGain.gain.linearRampToValueAtTime(1, c.currentTime + 0.5);
+    masterGain.gain.linearRampToValueAtTime(1, c.currentTime + 0.4);
     masterGain.connect(sfxGain);
 
     const drone = c.createOscillator();
-    drone.type = 'sine';
-    drone.frequency.setValueAtTime(130, c.currentTime);
-    const droneLfo = c.createOscillator();
-    droneLfo.type = 'sine';
-    droneLfo.frequency.setValueAtTime(0.4, c.currentTime);
-    const droneLfoGain = c.createGain();
-    droneLfoGain.gain.setValueAtTime(8, c.currentTime);
-    droneLfo.connect(droneLfoGain);
-    droneLfoGain.connect(drone.frequency);
+    drone.type = 'triangle';
+    drone.frequency.setValueAtTime(165, c.currentTime);
     const droneGain = c.createGain();
     droneGain.gain.setValueAtTime(0, c.currentTime);
-    droneGain.gain.linearRampToValueAtTime(0.018, c.currentTime + 0.6);
+    droneGain.gain.linearRampToValueAtTime(0.025, c.currentTime + 0.5);
     drone.connect(droneGain);
     droneGain.connect(masterGain);
     drone.start(c.currentTime);
-    droneLfo.start(c.currentTime);
 
-    const waveNotes = [262, 247, 220, 196, 220, 247];
+    const wobble = c.createOscillator();
+    wobble.type = 'sine';
+    wobble.frequency.setValueAtTime(248, c.currentTime);
+    const wobbleLfo = c.createOscillator();
+    wobbleLfo.type = 'sine';
+    wobbleLfo.frequency.setValueAtTime(1.5, c.currentTime);
+    const wobbleLfoGain = c.createGain();
+    wobbleLfoGain.gain.setValueAtTime(15, c.currentTime);
+    wobbleLfo.connect(wobbleLfoGain);
+    wobbleLfoGain.connect(wobble.frequency);
+    const wobbleGain = c.createGain();
+    wobbleGain.gain.setValueAtTime(0, c.currentTime);
+    wobbleGain.gain.linearRampToValueAtTime(0.02, c.currentTime + 0.5);
+    wobble.connect(wobbleGain);
+    wobbleGain.connect(masterGain);
+    wobble.start(c.currentTime);
+    wobbleLfo.start(c.currentTime);
+
+    const waveNotes = [330, 294, 262, 220, 196, 220, 262, 294];
     let idx = 0;
     let stopped = false;
 
@@ -2470,22 +2593,36 @@ const GameAudio = (function () {
       const freq = waveNotes[idx % waveNotes.length];
       idx++;
       const t0 = c.currentTime;
+
       const o = c.createOscillator();
-      o.type = 'sine';
+      o.type = 'triangle';
       o.frequency.setValueAtTime(freq, t0);
-      o.frequency.linearRampToValueAtTime(freq * 0.94, t0 + 0.5);
+      o.frequency.linearRampToValueAtTime(freq * 0.88, t0 + 0.45);
       const ng = c.createGain();
       ng.gain.setValueAtTime(0, t0);
-      ng.gain.linearRampToValueAtTime(0.016, t0 + 0.08);
-      ng.gain.linearRampToValueAtTime(0.012, t0 + 0.3);
-      ng.gain.exponentialRampToValueAtTime(0.001, t0 + 0.52);
+      ng.gain.linearRampToValueAtTime(0.028, t0 + 0.06);
+      ng.gain.linearRampToValueAtTime(0.02, t0 + 0.25);
+      ng.gain.exponentialRampToValueAtTime(0.001, t0 + 0.48);
       o.connect(ng);
       ng.connect(masterGain);
       o.start(t0);
-      o.stop(t0 + 0.55);
+      o.stop(t0 + 0.5);
+
+      const sub = c.createOscillator();
+      sub.type = 'sine';
+      sub.frequency.setValueAtTime(freq * 0.5, t0);
+      sub.frequency.linearRampToValueAtTime(freq * 0.42, t0 + 0.35);
+      const sg = c.createGain();
+      sg.gain.setValueAtTime(0, t0);
+      sg.gain.linearRampToValueAtTime(0.018, t0 + 0.05);
+      sg.gain.exponentialRampToValueAtTime(0.001, t0 + 0.38);
+      sub.connect(sg);
+      sg.connect(masterGain);
+      sub.start(t0);
+      sub.stop(t0 + 0.4);
     }
 
-    const tid = setInterval(playTone, 550);
+    const tid = setInterval(playTone, 500);
     playTone();
 
     _eventLoopNodes = {
@@ -2493,7 +2630,7 @@ const GameAudio = (function () {
       stop() {
         stopped = true;
         clearInterval(tid);
-        try { drone.stop(); droneLfo.stop(); } catch (_) {}
+        try { drone.stop(); wobble.stop(); wobbleLfo.stop(); } catch (_) {}
       }
     };
   }
@@ -2677,6 +2814,8 @@ const GameAudio = (function () {
     startLoopCoinRain,
     startLoopSlowdown,
     stopLoopEvent,
+    startLoopGameRhythm,
+    stopLoopGameRhythm,
     startBgm,
     stopBgm,
     tickBgm,
@@ -7230,6 +7369,7 @@ function enterGameScreenForCountdown(roomPlayers) {
   if (syncTimer) { clearInterval(syncTimer); syncTimer = null; }
 
   GameAudio.startBgm();
+  GameAudio.startLoopGameRhythm();
   animReqId = requestAnimationFrame(renderGame);
 }
 
@@ -7361,11 +7501,13 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
 
   GameAudio.resume();
   GameAudio.startBgm();
+  GameAudio.startLoopGameRhythm();
   updateStageHUD();
 }
 
 function stopGame() {
   GameAudio.stopBgm();
+  GameAudio.stopLoopGameRhythm();
   GameAudio.stopAllLoopsAndEvent();
   gameRunning = false;
   updateMobileModeUI();
@@ -7399,6 +7541,7 @@ function endGameClient(order, stayInRoom, stageWinners) {
 
 function returnToRoomAfterGame(players) {
   GameAudio.stopBgm();
+  GameAudio.stopLoopGameRhythm();
   setScreen('room');
   document.getElementById('roomCodeDisplay').textContent = roomId;
   document.getElementById('hostBadge').style.display = isHost ? 'inline' : 'none';
@@ -8023,6 +8166,9 @@ function setScreen(name) {
     } else {
       strip.style.display = 'none';
     }
+  }
+  if (name !== 'game') {
+    document.body.classList.remove('game-touch-lock');
   }
   if (name === 'lobby' || name === 'room') {
     GameAudio.startLobbyBgm();
