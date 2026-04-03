@@ -19,5 +19,14 @@
       "date": 1775222868589
     }
   ],
-  "lastGame": []
+  "lastGame": [
+    {
+      "name": "冰霜兔子448",
+      "color": "#FF6B6B",
+      "time": null,
+      "coins": 33,
+      "rank": null,
+      "date": 1775241562494
+    }
+  ]
 }

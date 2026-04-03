@@ -837,11 +837,12 @@ input[type="text"]:focus { border-color: #6c63ff; }
   padding: 5px 9px;
 }
 #bgm-control {
+  display: none !important;
   position: fixed;
   top: 10px;
   right: 14px;
   z-index: 3000;
-  display: flex;
+  /* display: flex; */
   align-items: center;
   gap: 7px;
   padding: 5px 12px;
@@ -2813,6 +2814,7 @@ const GameAudio = (function () {
   }
 
   function _playBgm(url, label) {
+    return; // BGM disabled
     _stopAllBgm();
     _bgmTrack = label;
     const a = new Audio(url);
@@ -2882,6 +2884,7 @@ const GameAudio = (function () {
   }
 
   function startBgm() {
+    return; // BGM disabled
     bgmActive = true;
     _playBgm('music/bgm_chiptune_adventure.mp3', '冒险曲');
   }
@@ -2897,6 +2900,7 @@ const GameAudio = (function () {
   }
 
   function startLobbyBgm() {
+    return; // BGM disabled
     if (_bgmEl && _bgmTrack === '大厅曲') return;
     _playBgm('music/bgm_free_run_marioish.mp3', '大厅曲');
   }
