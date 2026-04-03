@@ -529,11 +529,54 @@ class Room {
   }
 }
 
+const MIME_TYPES = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'application/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.gif': 'image/gif',
+  '.svg': 'image/svg+xml',
+  '.mp3': 'audio/mpeg',
+  '.ogg': 'audio/ogg',
+  '.wav': 'audio/wav',
+  '.webm': 'audio/webm',
+  '.ico': 'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2': 'font/woff2',
+};
+
 const server = http.createServer((req, res) => {
-  const filePath = path.join(__dirname, 'index.html');
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  let pathname = decodeURIComponent(url.pathname);
+  if (pathname === '/') pathname = '/index.html';
+
+  const safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
+  const filePath = path.join(__dirname, safePath);
+
+  if (!filePath.startsWith(__dirname)) {
+    res.writeHead(403); res.end('Forbidden'); return;
+  }
+
+  const ext = path.extname(filePath).toLowerCase();
+  const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+
   fs.readFile(filePath, (err, data) => {
-    if (err) { res.writeHead(404); res.end('Not found'); return; }
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    if (err) {
+      if (err.code === 'ENOENT') {
+        const fallback = path.join(__dirname, 'index.html');
+        fs.readFile(fallback, (e2, d2) => {
+          if (e2) { res.writeHead(404); res.end('Not found'); return; }
+          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+          res.end(d2);
+        });
+      } else {
+        res.writeHead(500); res.end('Server error');
+      }
+      return;
+    }
+    res.writeHead(200, { 'Content-Type': contentType });
     res.end(data);
   });
 });

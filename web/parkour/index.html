@@ -829,6 +829,46 @@ input[type="text"]:focus { border-color: #6c63ff; }
   font-size: 11px;
   padding: 5px 9px;
 }
+#bgm-control {
+  position: fixed;
+  top: 10px;
+  right: 14px;
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  background: rgba(10,18,40,0.82);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.15);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  font-size: 12px;
+  color: #cfe8ff;
+  user-select: none;
+}
+#bgmToggleBtn {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+}
+#bgmVolume {
+  width: 70px;
+  height: 4px;
+  accent-color: #6ec6ff;
+  cursor: pointer;
+}
+#bgmTrackName {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  color: #8ba8cc;
+}
 #mobile-controls {
   position: fixed;
   inset: 0;
@@ -1116,6 +1156,13 @@ body.game-touch-lock * {
   </div>
 </div>
 
+<!-- ===== BGM CONTROL ===== -->
+<div id="bgm-control">
+  <button id="bgmToggleBtn" type="button" onclick="toggleBgm()" title="播放/暂停背景音乐">🔇</button>
+  <input id="bgmVolume" type="range" min="0" max="100" value="40" oninput="onBgmVolumeChange(this.value)" title="BGM 音量">
+  <span id="bgmTrackName">--</span>
+</div>
+
 <!-- ===== LOBBY ===== -->
 <div id="lobby" class="screen active">
   <div class="logo">跑酷大乱斗</div>
@@ -1394,10 +1441,10 @@ body.game-touch-lock * {
         <ul>
           <li>移动：← → / A D</li>
           <li>跳跃：空格（可连跳）</li>
-          <li>能量条在头顶自动回复；每次冲刺消耗 1/3 能量，满能量可连续冲刺 3 次。<strong>双击任意方向键</strong>可冲刺，并支持方向组合（例如按住右+上可冲向右上 45°）；鼠标双击左右键仍可水平冲刺。</li>
+          <li>能量条在头顶自动回复；每次冲刺消耗 1/3 能量，满能量可连续冲刺 3 次。按 <strong>G 键</strong>冲刺，冲刺方向由当前按住的方向键决定（例如按住右+上再按 G 可冲向右上 45°），无方向键时朝面朝方向冲刺。</li>
           <li>手机端默认开启虚拟按键（方向 / 跳 / 冲 / 网）；桌面端可点左上角「📱 手机模式」按钮预览触屏操作。</li>
-          <li>飞行状态可按 ↓ / S 下降，T 打开聊天。</li>
-          <li>对局中约 <strong>1 分钟</strong>无任何方向/跳跃操作（含鼠标双击冲刺）时，其他玩家会看到你为<strong>暂离</strong>（半透明、昵称带标记）；任意游戏操作即可恢复。<strong>已冲线</strong>或<strong>观战位加入</strong>的玩家不参与该判定。</li>
+          <li>飞行状态可按 ↑ / W / 空格 上升，↓ / S 下降，T 打开聊天。</li>
+          <li>对局中约 <strong>1 分钟</strong>无任何方向/跳跃/冲刺操作时，其他玩家会看到你为<strong>暂离</strong>（半透明、昵称带标记）；任意游戏操作即可恢复。<strong>已冲线</strong>或<strong>观战位加入</strong>的玩家不参与该判定。</li>
         </ul>
       </div>
       <div class="guide-card guide-powerups">
@@ -1614,8 +1661,6 @@ const GameAudio = (function () {
   let sfxGain = null;
   let bgmGain = null;
   let bgmActive = false;
-  let bgmNextAt = 0;
-  let bgmStep = 0;
   let _rainSfxT = 0;
 
   function ensure() {
@@ -1626,11 +1671,12 @@ const GameAudio = (function () {
       return ctx;
     }
     ctx = new AC();
+    ctx.onstatechange = () => {};
     master = ctx.createGain();
-    master.gain.value = 0.72;
+    master.gain.value = 1.0;
     master.connect(ctx.destination);
     sfxGain = ctx.createGain();
-    sfxGain.gain.value = 0.9;
+    sfxGain.gain.value = 1.0;
     sfxGain.connect(master);
     bgmGain = ctx.createGain();
     bgmGain.gain.value = 0.55;
@@ -1818,57 +1864,88 @@ const GameAudio = (function () {
     beep(95, 0.11, 'sine', 0.055, t0 + 0.16);
   }
 
-  const BGM_ROOT = 110;
-  const BGM_PATTERN = [0, 3, 7, 5, 7, 10, 7, 5];
-  const BGM_STEP_MS = 380;
+  let _bgmEl = null;
+  let _bgmVol = 0.4;
+  let _bgmTrack = '';
+  let _bgmUserPaused = false;
 
-  function stopBgm() {
-    bgmActive = false;
-    bgmNextAt = 0;
+  function _updateBgmUI() {
+    const btn = document.getElementById('bgmToggleBtn');
+    const name = document.getElementById('bgmTrackName');
+    const vol = document.getElementById('bgmVolume');
+    if (btn) btn.textContent = (_bgmEl && !_bgmEl.paused) ? '🔊' : '🔇';
+    if (name) name.textContent = _bgmTrack || '--';
+    if (vol) vol.value = Math.round(_bgmVol * 100);
   }
 
-  /** 与 renderGame 同帧驱动：避免 setInterval 在后台/未解锁时被节流导致几乎无声 */
-  function tickBgm(nowMs) {
-    if (!bgmActive) return;
-    if (!gameRunning) {
-      stopBgm();
-      return;
+  function _playBgm(url, label) {
+    _stopAllBgm();
+    _bgmTrack = label;
+    _bgmUserPaused = false;
+    const a = new Audio(url);
+    a.loop = true;
+    a.volume = _bgmVol;
+    a.addEventListener('playing', _updateBgmUI);
+    a.addEventListener('pause', _updateBgmUI);
+    a.addEventListener('error', () => {
+      _bgmTrack = label + ' (加载失败)';
+      _updateBgmUI();
+    });
+    _bgmEl = a;
+    a.play().then(() => _updateBgmUI()).catch(() => _updateBgmUI());
+  }
+
+  function _stopAllBgm() {
+    if (_bgmEl) {
+      _bgmEl.pause();
+      _bgmEl.currentTime = 0;
+      _bgmEl.removeEventListener('playing', _updateBgmUI);
+      _bgmEl.removeEventListener('pause', _updateBgmUI);
+      _bgmEl = null;
     }
-    const c = ctx;
-    if (!c) return;
-    if (c.state === 'suspended') {
-      c.resume().catch(() => {});
-      return;
+    _bgmTrack = '';
+    _updateBgmUI();
+  }
+
+  function setBgmVolume(v) {
+    _bgmVol = Math.max(0, Math.min(1, v));
+    if (_bgmEl) _bgmEl.volume = _bgmVol;
+  }
+
+  function toggleBgmPause() {
+    if (!_bgmEl) return;
+    if (_bgmEl.paused) {
+      _bgmUserPaused = false;
+      _bgmEl.play().catch(() => {});
+    } else {
+      _bgmUserPaused = true;
+      _bgmEl.pause();
     }
-    if (bgmNextAt <= 0) bgmNextAt = nowMs;
-    if (nowMs < bgmNextAt) return;
-    while (nowMs >= bgmNextAt) bgmNextAt += BGM_STEP_MS;
-    const semis = BGM_PATTERN[bgmStep % BGM_PATTERN.length];
-    const f = BGM_ROOT * Math.pow(2, semis / 12);
-    const t0 = c.currentTime;
-    const osc = c.createOscillator();
-    const g = c.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(f, t0);
-    g.gain.setValueAtTime(0, t0);
-    g.gain.linearRampToValueAtTime(0.26, t0 + 0.028);
-    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.34);
-    osc.connect(g);
-    g.connect(bgmGain);
-    osc.start(t0);
-    osc.stop(t0 + 0.38);
-    bgmStep++;
+    _updateBgmUI();
   }
 
   function startBgm() {
-    stopBgm();
-    const c = ensure();
-    if (!c) return;
-    bgmStep = 0;
-    bgmNextAt = 0;
-    if (bgmGain) bgmGain.gain.value = 0.72;
     bgmActive = true;
-    if (c.state === 'suspended') c.resume().catch(() => {});
+    _playBgm('music/bgm_chiptune_adventure.mp3', '冒险曲');
+  }
+
+  function stopBgm() {
+    bgmActive = false;
+    _stopAllBgm();
+  }
+
+  function tickBgm(_nowMs) {
+    if (!bgmActive) return;
+    if (!gameRunning) { stopBgm(); return; }
+  }
+
+  function startLobbyBgm() {
+    if (_bgmEl && !_bgmEl.paused && _bgmTrack === '大厅曲') return;
+    _playBgm('music/bgm_free_run_marioish.mp3', '大厅曲');
+  }
+
+  function stopLobbyBgm() {
+    _stopAllBgm();
   }
 
   return {
@@ -1890,37 +1967,50 @@ const GameAudio = (function () {
     playSfxMonsterDie,
     startBgm,
     stopBgm,
-    tickBgm
+    tickBgm,
+    startLobbyBgm,
+    stopLobbyBgm,
+    setBgmVolume,
+    toggleBgmPause
   };
 })();
 
 (function bindAudioUnlock() {
   let audioFullyUnlocked = false;
   let unlockAttempts = 0;
+  let silentLoop = null;
   const isStandalone = window.navigator.standalone === true ||
     window.matchMedia('(display-mode: standalone)').matches;
   const SILENT_MP3 = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA';
 
+  // 持久静音 <audio> 循环：维持 iOS 音频会话在 playback 类别，绕过静音开关
+  function ensureSilentLoop() {
+    try {
+      if (silentLoop) {
+        if (silentLoop.paused) silentLoop.play().catch(() => {});
+        return;
+      }
+      silentLoop = new Audio(SILENT_MP3);
+      silentLoop.controls = false;
+      silentLoop.loop = true;
+      silentLoop.volume = 0.01;
+      silentLoop.setAttribute('playsinline', '');
+      silentLoop.play().catch(() => {});
+    } catch (_) {}
+  }
+
   // iOS (Safari + 独立模式) 将 Web Audio 归入 ringer 类别。
-  // 播放 <audio> 元素将音频会话切到 playback 类别，绕过静音开关；
+  // 持久播放 <audio> 循环将音频会话切到 playback 类别，绕过静音开关；
   // 独立模式下更严格，需要多次尝试并验证 AudioContext 真正 running。
   function tryUnlock() {
     if (audioFullyUnlocked) return;
     unlockAttempts++;
 
-    // 1. 播放静音 <audio> 切换 iOS 音频会话类别
-    try {
-      const a = new Audio(SILENT_MP3);
-      a.controls = false;
-      a.loop = false;
-      a.volume = 0.01;
-      a.setAttribute('playsinline', '');
-      a.play().then(() => { setTimeout(() => { a.pause(); a.remove(); }, 250); }).catch(() => {});
-    } catch (_) {}
+    // 1. 启动/维持静音循环切换并保持 iOS playback 音频会话
+    ensureSilentLoop();
 
     // 2. 确保 AudioContext 在用户手势中创建/恢复
     GameAudio.resume().then(() => {
-      // 3. 播一个极短静音振荡器，彻底激活音频管线
       try {
         const c = GameAudio._ctx();
         if (c && c.state === 'running') {
@@ -1937,8 +2027,24 @@ const GameAudio = (function () {
     }).catch(() => {});
   }
 
+  let lobbyBgmTriggered = false;
   const unlock = () => {
-    if (audioFullyUnlocked && unlockAttempts > 2) return;
+    try {
+      const c = GameAudio._ctx();
+      if (c && c.state === 'suspended') {
+        audioFullyUnlocked = false;
+        c.resume().catch(() => {});
+      }
+    } catch (_) {}
+    ensureSilentLoop();
+    if (!lobbyBgmTriggered) {
+      const lobbyEl = document.getElementById('lobby');
+      if (lobbyEl && lobbyEl.classList.contains('active')) {
+        lobbyBgmTriggered = true;
+        GameAudio.startLobbyBgm();
+      }
+    }
+    if (audioFullyUnlocked) return;
     tryUnlock();
   };
   const unlockAndFullscreen = () => {
@@ -1960,7 +2066,6 @@ let jumpBuf = 0, coyoteT = 0;
 let jumpDown = false, dblJumped = false;
 let chatOpen = false;
 let pendingDashVec = null;
-let _lastDblTapLeft = 0, _lastDblTapRight = 0, _lastDblTapUp = 0, _lastDblTapDown = 0;
 let _lastMouseLeftDown = 0, _lastMouseRightDown = 0;
 let _gameCanvasInputBound = false;
 let mobileControlMode = false;
@@ -3843,6 +3948,7 @@ function tryConsumeDash(p) {
 }
 
 // ===================== PHYSICS =====================
+let _prevUpdateGameT = -1;
 function updateLocalPlayer() {
   const p = localPlayer;
   if (!p || !p.isAlive || p.finished || !gMap) return;
@@ -3868,20 +3974,26 @@ function updateLocalPlayer() {
 
   if (p.arrestedUntil && Date.now() < p.arrestedUntil) {
     p.vx = 0;
+    const arrestT = gameRunning ? (Date.now() - gameStartTime) / 1000 : 0;
     p.vy = Math.min(p.vy + GRAVITY, MAX_FALL);
     p.y += p.vy;
     for (const plat of gMap.platforms) {
-      if (plat.type === 'oneway' || (plat.flicker && !isFlickerPlatformVisible(plat, (Date.now() - gameStartTime) / 1000))) continue;
-      if (p.x + p.w > plat.x && p.x < plat.x + plat.w &&
+      if (plat.type === 'oneway' || (plat.flicker && !isFlickerPlatformVisible(plat, arrestT))) continue;
+      const apx = getPlatX(plat, arrestT);
+      if (p.x + p.w > apx && p.x < apx + plat.w &&
           p.y + p.h > plat.y && p.y + p.h < plat.y + plat.h + 12 && p.vy >= 0) {
         p.y = plat.y - p.h;
         p.vy = 0;
         p.onGround = true;
+        if (plat.moving && _prevUpdateGameT >= 0) {
+          p.x += getPlatX(plat, arrestT) - getPlatX(plat, _prevUpdateGameT);
+        }
       }
     }
     checkTrapCollisions(p);
     recordGhostSampleIfNeeded();
     prevKeys = { ...keys };
+    _prevUpdateGameT = arrestT;
     return;
   }
   if (p.arrestedUntil && Date.now() >= p.arrestedUntil) {
@@ -3897,11 +4009,12 @@ function updateLocalPlayer() {
 
   const left = !chatOpen && (keys['ArrowLeft'] || keys['a'] || keys['A']);
   const right = !chatOpen && (keys['ArrowRight'] || keys['d'] || keys['D']);
+  const upKey = !chatOpen && (keys['ArrowUp'] || keys['w'] || keys['W']);
   const jumpKey = !chatOpen && !!keys[' '];
   const downKey = !chatOpen && (keys['ArrowDown'] || keys['s'] || keys['S']);
   const jumpJustPressed = jumpKey && !prevKeys[' '];
 
-  if (!isSpectator && !raceInputLocked && !chatOpen && (left || right || jumpKey || downKey)) {
+  if (!isSpectator && !raceInputLocked && !chatOpen && (left || right || upKey || jumpKey || downKey)) {
     lastGameInputAt = Date.now();
   }
 
@@ -3948,10 +4061,10 @@ function updateLocalPlayer() {
     }
   }
 
-  // Flying: up key = ascend, down key = descend
+  // Flying: up/space = ascend, down = descend
   if (flying) {
     const fm = Math.max(0.5, eventMul);
-    if (jumpKey) p.vy = -6 * fm;
+    if (jumpKey || upKey) p.vy = -6 * fm;
     else if (downKey) p.vy = Math.min(p.vy + 0.8 * fm, 6 * fm);
     else p.vy *= 0.88; // 缓慢下坠
   }
@@ -4028,9 +4141,8 @@ function updateLocalPlayer() {
         p.vy = 0;
         p.onGround = true;
         if (plat.type === 'ice') p.onIce = true;
-        if (plat.moving) {
-          const vel = plat.moving.speed * Math.cos(t * plat.moving.speed + plat.moving.phase);
-          p.x += vel * (SYNC_RATE / 1000);
+        if (plat.moving && _prevUpdateGameT >= 0) {
+          p.x += getPlatX(plat, t) - getPlatX(plat, _prevUpdateGameT);
         }
       }
       break;
@@ -4134,6 +4246,7 @@ function updateLocalPlayer() {
 
   recordGhostSampleIfNeeded();
   prevKeys = { ...keys };
+  _prevUpdateGameT = t;
 }
 
 // ===================== PEER INTERPOLATION =====================
@@ -6177,6 +6290,7 @@ function enterGameScreenForCountdown(roomPlayers) {
 
   gameStartTime = Date.now();
   gameRunning = true;
+  _prevUpdateGameT = -1;
   updateMobileModeUI();
   gameEnvTheme = roomEnvTheme;
   lastGameInputAt = Date.now();
@@ -6214,6 +6328,7 @@ function enterGameScreenForCountdown(roomPlayers) {
   if (animReqId) cancelAnimationFrame(animReqId);
   if (syncTimer) { clearInterval(syncTimer); syncTimer = null; }
 
+  GameAudio.startBgm();
   animReqId = requestAnimationFrame(renderGame);
 }
 
@@ -6265,6 +6380,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     localNets = []; peerNets = []; droppedTraps = [];
     gameStartTime = startTimestamp;
     gameRunning = true;
+    _prevUpdateGameT = -1;
     updateMobileModeUI();
     ghostRecordingBuffer = [];
     lastGhostSampleAt = 0;
@@ -6309,6 +6425,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     localNets = []; peerNets = []; droppedTraps = [];
     finishOrder = [];
     gameStartTime = startTimestamp;
+    _prevUpdateGameT = -1;
     ghostRecordingBuffer = [];
     lastGhostSampleAt = 0;
     pbGhostPlayback = loadPbGhostFromStorage(gameSeed);
@@ -6340,7 +6457,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
   }, 950);
 
   GameAudio.resume();
-  if (!mergingAfterCountdown) GameAudio.startBgm();
+  GameAudio.startBgm();
   updateStageHUD();
 }
 
@@ -6663,6 +6780,13 @@ async function toggleFullscreenMode() {
   }
 }
 
+function toggleBgm() {
+  GameAudio.toggleBgmPause();
+}
+function onBgmVolumeChange(v) {
+  GameAudio.setBgmVolume(parseFloat(v) / 100);
+}
+
 let _mobileAutoFullscreenDone = false;
 function tryMobileAutoFullscreen() {
   if (_mobileAutoFullscreenDone) return;
@@ -6906,31 +7030,15 @@ document.addEventListener('keydown', e => {
 
   if (!chatOpen && gameRunning && !raceInputLocked && !isSpectator && localPlayer && localPlayer.isAlive && !localPlayer.finished) {
     const gk = e.key;
-    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'a', 'A', 'd', 'D', 'w', 'W', 's', 'S'].includes(gk)) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', ' ', 'a', 'A', 'd', 'D', 'w', 'W', 's', 'S', 'g', 'G'].includes(gk)) {
       lastGameInputAt = Date.now();
     }
   }
   if (!chatOpen && gameRunning && !raceInputLocked && !isSpectator && localPlayer && localPlayer.isAlive && !localPlayer.finished && !e.repeat) {
-    const now = Date.now();
-    const tapLeft = e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A';
-    const tapRight = e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D';
-    const tapUp = e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W';
-    const tapDown = e.key === 'ArrowDown' || e.key === 's' || e.key === 'S';
-    if (tapLeft) {
-      if (now - _lastDblTapLeft < DOUBLE_TAP_MS) requestDash(-1, 0);
-      _lastDblTapLeft = now;
-    }
-    if (tapRight) {
-      if (now - _lastDblTapRight < DOUBLE_TAP_MS) requestDash(1, 0);
-      _lastDblTapRight = now;
-    }
-    if (tapUp) {
-      if (now - _lastDblTapUp < DOUBLE_TAP_MS) requestDash(0, -1);
-      _lastDblTapUp = now;
-    }
-    if (tapDown) {
-      if (now - _lastDblTapDown < DOUBLE_TAP_MS) requestDash(0, 1);
-      _lastDblTapDown = now;
+    if (e.key === 'g' || e.key === 'G') {
+      const fallbackX = localPlayer?.facing || 1;
+      requestDash(fallbackX, 0);
+      lastGameInputAt = Date.now();
     }
   }
 
@@ -6996,6 +7104,11 @@ function setScreen(name) {
       strip.style.display = 'none';
     }
   }
+  if (name === 'lobby' || name === 'room') {
+    GameAudio.startLobbyBgm();
+  } else if (name !== 'game') {
+    GameAudio.stopLobbyBgm();
+  }
   updateMobileModeUI();
 }
 
@@ -7006,15 +7119,6 @@ function onGameCanvasMouseDown(e) {
   const p = localPlayer;
   if (!p || !p.isAlive || p.finished) return;
   lastGameInputAt = Date.now();
-  const now = Date.now();
-  if (e.button === 0) {
-    if (now - _lastMouseLeftDown < DOUBLE_TAP_MS) requestDash(-1);
-    _lastMouseLeftDown = now;
-  } else if (e.button === 2) {
-    e.preventDefault();
-    if (now - _lastMouseRightDown < DOUBLE_TAP_MS) requestDash(1);
-    _lastMouseRightDown = now;
-  }
 }
 
 function bindGameCanvasInput() {
@@ -7060,6 +7164,30 @@ window.addEventListener('resize', () => {
   if (document.getElementById('game').classList.contains('active')) resizeCanvas();
   applyMobileControlLayout();
 });
+
+// iOS 竖屏→横屏旋转时，状态栏空间不会立即释放，导致顶部黑边。
+// 通过强制滚动+延迟重算视口来解决。
+(function () {
+  if (!(/iPhone|iPad|iPod/i.test(navigator.userAgent))) return;
+  function forceViewportRefresh() {
+    window.scrollTo(0, 0);
+    document.documentElement.style.height = '100.1vh';
+    setTimeout(() => {
+      document.documentElement.style.height = '';
+      window.scrollTo(0, 0);
+      if (document.getElementById('game').classList.contains('active')) resizeCanvas();
+      applyMobileControlLayout();
+    }, 120);
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      if (document.getElementById('game').classList.contains('active')) resizeCanvas();
+    }, 350);
+  }
+  window.addEventListener('orientationchange', forceViewportRefresh);
+  if (screen.orientation) {
+    screen.orientation.addEventListener('change', forceViewportRefresh);
+  }
+})();
 
 // ===================== LOBBY ACTIONS =====================
 function saveName() {
