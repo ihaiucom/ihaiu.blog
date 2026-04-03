@@ -1756,7 +1756,7 @@ const GameAudio = (function () {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
     if (ctx) {
-      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+      if (ctx.state !== 'running' && ctx.state !== 'closed') ctx.resume().catch(() => {});
       return ctx;
     }
     ctx = new AC();
@@ -1775,7 +1775,7 @@ const GameAudio = (function () {
 
   function resume() {
     const c = ensure();
-    if (c && c.state === 'suspended') return c.resume().catch(() => {});
+    if (c && c.state !== 'running' && c.state !== 'closed') return c.resume().catch(() => {});
     return Promise.resolve();
   }
 
@@ -3072,6 +3072,8 @@ document.addEventListener('click', function (e) {
   let audioFullyUnlocked = false;
   let unlockAttempts = 0;
   let silentLoop = null;
+  let unlockRetryTimer = null;
+  let unlockRetryUntil = 0;
   const isStandalone = window.navigator.standalone === true ||
     window.matchMedia('(display-mode: standalone)').matches;
   const SILENT_MP3 = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoMQmRAAAAAAAAAAAAAAAAAAAA';
@@ -3115,16 +3117,35 @@ document.addEventListener('click', function (e) {
           osc.start(0);
           osc.stop(c.currentTime + 0.001);
           audioFullyUnlocked = true;
+          if (unlockRetryTimer) {
+            clearInterval(unlockRetryTimer);
+            unlockRetryTimer = null;
+          }
         }
       } catch (_) {}
     }).catch(() => {});
+  }
+
+  function startUnlockRetryWindow() {
+    const now = Date.now();
+    const nextUntil = now + 12000;
+    if (nextUntil > unlockRetryUntil) unlockRetryUntil = nextUntil;
+    if (unlockRetryTimer) return;
+    unlockRetryTimer = setInterval(() => {
+      if (audioFullyUnlocked || Date.now() > unlockRetryUntil) {
+        clearInterval(unlockRetryTimer);
+        unlockRetryTimer = null;
+        return;
+      }
+      tryUnlock();
+    }, 400);
   }
 
   let lobbyBgmTriggered = false;
   const unlock = () => {
     try {
       const c = GameAudio._ctx();
-      if (c && c.state === 'suspended') {
+      if (c && c.state !== 'running' && c.state !== 'closed') {
         audioFullyUnlocked = false;
         c.resume().catch(() => {});
       }
@@ -3138,6 +3159,7 @@ document.addEventListener('click', function (e) {
       }
     }
     if (audioFullyUnlocked) return;
+    startUnlockRetryWindow();
     tryUnlock();
   };
   const unlockAndFullscreen = () => {
@@ -3150,6 +3172,18 @@ document.addEventListener('click', function (e) {
   document.addEventListener('pointerdown', unlock, { capture: true, passive: true });
   document.addEventListener('click', unlockAndFullscreen, { capture: true, passive: true });
   document.addEventListener('keydown', unlock, { capture: true, passive: true });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      audioFullyUnlocked = false;
+      startUnlockRetryWindow();
+      tryUnlock();
+    }
+  });
+  window.addEventListener('pageshow', () => {
+    audioFullyUnlocked = false;
+    startUnlockRetryWindow();
+    tryUnlock();
+  });
 })();
 
 // Input
