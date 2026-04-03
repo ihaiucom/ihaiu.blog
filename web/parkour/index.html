@@ -1514,8 +1514,8 @@ const DBL_JUMP_HORIZ_HELD = 2.35;
 const DBL_JUMP_HORIZ_NEUTRAL = 1.05;
 const WALK_SPEED = 5.5;
 const ENERGY_MAX = 100;
-const ENERGY_REGEN = 0.48; // 每帧回复，约 3～4 秒从空到满（60fps）
-const DASH_CHARGES_MAX = 3;
+const ENERGY_REGEN = 0.096; // 每帧回复，约 17～18 秒从空到满（60fps）
+const DASH_CHARGES_MAX = 2;
 const DASH_ENERGY_COST = ENERGY_MAX / DASH_CHARGES_MAX;
 const DASH_SPEED = 15.5;
 const DASH_FRAMES = 16;
@@ -1988,6 +1988,159 @@ const GameAudio = (function () {
     beep(90, 0.08, 'triangle', 0.05, t0 + 0.06);
   }
 
+  // ---- 状态循环音效（飞行 / 加速） ----
+  let _flyLoopNodes = null;
+  let _speedLoopNodes = null;
+
+  function _startLoop(createFn) {
+    const c = ensure();
+    if (!c) return null;
+    return createFn(c, c.currentTime);
+  }
+
+  function _stopLoop(nodes) {
+    if (!nodes) return;
+    try {
+      const c = ensure();
+      if (!c) { nodes.stop(); return; }
+      const now = c.currentTime;
+      if (nodes.gain) {
+        nodes.gain.gain.cancelScheduledValues(now);
+        nodes.gain.gain.setValueAtTime(nodes.gain.gain.value, now);
+        nodes.gain.gain.linearRampToValueAtTime(0, now + 0.15);
+      }
+      setTimeout(() => { try { nodes.stop(); } catch (_) {} }, 200);
+    } catch (_) { try { nodes.stop(); } catch (_e) {} }
+  }
+
+  function stopAllLoops() {
+    stopLoopFly();
+    stopLoopSpeed();
+  }
+
+  function startLoopFly() {
+    if (_flyLoopNodes) return;
+    stopLoopSpeed();
+    const c = ensure();
+    if (!c) return;
+
+    const masterGain = c.createGain();
+    masterGain.gain.setValueAtTime(0, c.currentTime);
+    masterGain.gain.linearRampToValueAtTime(1, c.currentTime + 0.5);
+    masterGain.connect(sfxGain);
+
+    const pad = c.createOscillator();
+    pad.type = 'sine';
+    pad.frequency.setValueAtTime(196, c.currentTime);
+    const padGain = c.createGain();
+    padGain.gain.setValueAtTime(0, c.currentTime);
+    padGain.gain.linearRampToValueAtTime(0.01, c.currentTime + 0.6);
+    pad.connect(padGain);
+    padGain.connect(masterGain);
+    pad.start(c.currentTime);
+
+    const pad2 = c.createOscillator();
+    pad2.type = 'sine';
+    pad2.frequency.setValueAtTime(294, c.currentTime);
+    const pad2Gain = c.createGain();
+    pad2Gain.gain.setValueAtTime(0, c.currentTime);
+    pad2Gain.gain.linearRampToValueAtTime(0.006, c.currentTime + 0.6);
+    pad2.connect(pad2Gain);
+    pad2Gain.connect(masterGain);
+    pad2.start(c.currentTime);
+
+    const arpNotes = [392, 494, 587, 784, 587, 494, 392, 494];
+    let idx = 0;
+    let stopped = false;
+
+    function playNote() {
+      if (stopped) return;
+      const freq = arpNotes[idx % arpNotes.length];
+      idx++;
+      const t0 = c.currentTime;
+      const o = c.createOscillator();
+      o.type = 'sine';
+      o.frequency.setValueAtTime(freq, t0);
+      const ng = c.createGain();
+      ng.gain.setValueAtTime(0, t0);
+      ng.gain.linearRampToValueAtTime(0.018, t0 + 0.04);
+      ng.gain.exponentialRampToValueAtTime(0.001, t0 + 0.24);
+      o.connect(ng);
+      ng.connect(masterGain);
+      o.start(t0);
+      o.stop(t0 + 0.26);
+    }
+
+    const tid = setInterval(playNote, 280);
+    playNote();
+
+    _flyLoopNodes = {
+      gain: masterGain,
+      stop() { stopped = true; clearInterval(tid); try { pad.stop(); pad2.stop(); } catch (_) {} }
+    };
+  }
+
+  function stopLoopFly() {
+    _stopLoop(_flyLoopNodes);
+    _flyLoopNodes = null;
+  }
+
+  function startLoopSpeed() {
+    if (_speedLoopNodes) return;
+    stopLoopFly();
+    const c = ensure();
+    if (!c) return;
+
+    const masterGain = c.createGain();
+    masterGain.gain.setValueAtTime(0, c.currentTime);
+    masterGain.gain.linearRampToValueAtTime(1, c.currentTime + 0.4);
+    masterGain.connect(sfxGain);
+
+    const pad = c.createOscillator();
+    pad.type = 'sine';
+    pad.frequency.setValueAtTime(165, c.currentTime);
+    const padGain = c.createGain();
+    padGain.gain.setValueAtTime(0, c.currentTime);
+    padGain.gain.linearRampToValueAtTime(0.012, c.currentTime + 0.5);
+    pad.connect(padGain);
+    padGain.connect(masterGain);
+    pad.start(c.currentTime);
+
+    const arpNotes = [659, 784, 988, 1319, 988, 784];
+    let idx = 0;
+    let stopped = false;
+
+    function playNote() {
+      if (stopped) return;
+      const freq = arpNotes[idx % arpNotes.length];
+      idx++;
+      const t0 = c.currentTime;
+      const o = c.createOscillator();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(freq, t0);
+      const ng = c.createGain();
+      ng.gain.setValueAtTime(0.022, t0);
+      ng.gain.exponentialRampToValueAtTime(0.001, t0 + 0.11);
+      o.connect(ng);
+      ng.connect(masterGain);
+      o.start(t0);
+      o.stop(t0 + 0.12);
+    }
+
+    const tid = setInterval(playNote, 125);
+    playNote();
+
+    _speedLoopNodes = {
+      gain: masterGain,
+      stop() { stopped = true; clearInterval(tid); try { pad.stop(); } catch (_) {} }
+    };
+  }
+
+  function stopLoopSpeed() {
+    _stopLoop(_speedLoopNodes);
+    _speedLoopNodes = null;
+  }
+
   const BGM_STORAGE_KEY = 'parkour_bgm_settings_v1';
   let _bgmEl = null;
   let _bgmVol = 0.25;
@@ -2147,6 +2300,11 @@ const GameAudio = (function () {
     playSfxStep,
     playSfxShoot,
     playSfxTrap,
+    startLoopFly,
+    stopLoopFly,
+    startLoopSpeed,
+    stopLoopSpeed,
+    stopAllLoops,
     startBgm,
     stopBgm,
     tickBgm,
@@ -3257,6 +3415,7 @@ function activatePowerup(ptype) {
     // 加速效果：8秒
     activeEffects = activeEffects.filter(e => e.ptype !== 'speed2' && e.ptype !== 'speed3');
     activeEffects.push({ ptype, endsAt: Date.now() + 8000 });
+    GameAudio.startLoopSpeed();
   } else if (ptype === 'extra_jump') {
     activeEffects = activeEffects.filter(e => e.ptype !== 'extra_jump');
     activeEffects.push({ ptype, endsAt: Date.now() + def.duration });
@@ -3267,6 +3426,7 @@ function activatePowerup(ptype) {
   } else {
     // 有持续时间的效果
     activeEffects.push({ ptype, endsAt: Date.now() + def.duration });
+    if (ptype === 'fly' || ptype === 'invincible_fly') GameAudio.startLoopFly();
   }
 }
 
@@ -3283,7 +3443,17 @@ function cleanExpiredEffects() {
   } else {
     _flyWarnShown = false;
   }
+  const prev = activeEffects;
   activeEffects = activeEffects.filter(e => e.endsAt > now);
+  if (prev.length !== activeEffects.length) {
+    if (!isFlying() && !hasAnySpeed()) {
+      GameAudio.stopAllLoops();
+    } else if (!isFlying()) {
+      GameAudio.stopLoopFly();
+    } else if (!hasAnySpeed()) {
+      GameAudio.stopLoopSpeed();
+    }
+  }
 }
 
 function applyPowerupClaimsSnapshot(claims, playerId) {
@@ -4077,6 +4247,7 @@ function killLocalPlayer(reason) {
   p.lives--;
   spawnParticles(p.x + PW / 2, p.y + PH / 2, 'death');
   activeEffects = [];
+  GameAudio.stopAllLoops();
   p.arrestedUntil = 0;
 
   if (p.lives <= 0) {
@@ -4085,7 +4256,7 @@ function killLocalPlayer(reason) {
     if (ws && ws.readyState === 1) ws.send(JSON.stringify({ type: 'died', lives: 0 }));
     if (offlineSoloMode) {
       showFinishBanner('生命耗尽！');
-      setTimeout(() => { if (gameRunning) endGameClient(finishOrder, false, []); }, 2000);
+      setTimeout(() => { if (gameRunning) endGameClient(finishOrder, false, offlineSoloStageWinners); }, 2000);
     } else {
       showFinishBanner('生命耗尽！观战中...');
     }
@@ -4442,10 +4613,14 @@ function updateLocalPlayer() {
       specAutoMode = true;
       showSpecBar(true);
       if (offlineSoloMode) {
-        setTimeout(() => { if (gameRunning) endGameClient(finishOrder, false, []); }, 2000);
+        setTimeout(() => { if (gameRunning) endGameClient(finishOrder, false, offlineSoloStageWinners); }, 2000);
       }
     } else {
       showFinishBanner(`🏁 抢先冲线！即将全员复活进入第 ${sessionStageCurrent + 1} 关…`);
+      if (offlineSoloMode) {
+        offlineSoloStageWinners.push({ stage: sessionStageCurrent, name: p.name, time: elapsed });
+        setTimeout(() => { if (gameRunning) advanceOfflineSoloStage(); }, 2000);
+      }
     }
     spawnParticles(p.x + PW / 2, p.y + PH / 2, 'finish');
     GameAudio.playSfxFinish();
@@ -6026,6 +6201,8 @@ function renderOfflineLobbyHint() {
   }
 }
 
+let offlineSoloStageWinners = [];
+
 function startOfflineSoloGame() {
   const name = saveName();
   myName = name;
@@ -6035,14 +6212,18 @@ function startOfflineSoloGame() {
   isHost = true;
   isSpectator = false;
   myReady = true;
-  roomStageTotal = 1;
-  sessionStageTotal = 1;
+  initLobbyStageSelect();
+  const stSel = document.getElementById('lobbyStageTotalSelect');
+  const stRaw = stSel ? parseInt(stSel.value, 10) : 1;
+  roomStageTotal = Number.isFinite(stRaw) ? Math.max(1, Math.min(15, stRaw)) : 1;
+  sessionStageTotal = roomStageTotal;
   sessionStageCurrent = 1;
   roomRaceMode = false;
   gameSeed = (Date.now() & 0x7fffffff) || 1;
   gameEnvTheme = roomEnvTheme;
   offlineSoloMode = true;
   serverUnavailable = true;
+  offlineSoloStageWinners = [];
 
   startGameClient(
     [{ id: myId, name: myName, color: myColor, x: 180, y: 400, ready: true }],
@@ -6052,6 +6233,61 @@ function startOfflineSoloGame() {
     []
   );
   showFinishBanner('离线单机模式');
+}
+
+function advanceOfflineSoloStage() {
+  if (!gameRunning || !localPlayer) return;
+  sessionStageCurrent++;
+  gameSeed = (Date.now() & 0x7fffffff) || 1;
+
+  gMap = generateMap(gameSeed, gameEnvTheme, { stageIndex: sessionStageCurrent, stageTotal: sessionStageTotal });
+  riskBranchHinted.clear();
+  resetRunChapterClientState();
+  mapSeedAtGenerate = gameSeed;
+
+  localPlayer.x = gMap.spawnX ?? 180;
+  localPlayer.y = (gMap.spawnY ?? 400) - PH - 10;
+  localPlayer.vx = 0;
+  localPlayer.vy = 0;
+  localPlayer.onGround = false;
+  localPlayer.jumpCount = 0;
+  localPlayer.isAlive = true;
+  localPlayer.finished = false;
+  localPlayer.finishTime = null;
+  localPlayer.lives = START_LIVES;
+  localPlayer.energy = ENERGY_MAX;
+  localPlayer.dashTimer = 0;
+  localPlayer.respawnTimer = 0;
+  localPlayer.respawnCountdownUntil = 0;
+
+  finishOrder = [];
+  collectedCoins = new Set();
+  myCollectedPowerups = new Set();
+  applyExclusivePowerupSnapshot([]);
+  deadMonsters = new Set();
+  activeEffects = [];
+  GameAudio.stopAllLoops();
+  localNets = []; peerNets = []; droppedTraps = [];
+  particles = [];
+  floatingTexts = [];
+
+  gameStartTime = Date.now();
+  _prevUpdateGameT = -1;
+  ghostRecordingBuffer = [];
+  lastGhostSampleAt = 0;
+  pbGhostPlayback = loadPbGhostFromStorage(gameSeed);
+
+  cam.x = (gMap.spawnX ?? 180) - CW * 0.35;
+  cam.y = (gMap.spawnY ?? 400) - CH * 0.55;
+
+  showSpecBar(false);
+  specAutoMode = false;
+  raceInputLocked = false;
+  lastGameInputAt = Date.now();
+
+  updateStageHUD();
+  showFinishBanner(`第 ${sessionStageCurrent} / ${sessionStageTotal} 关`);
+  GameAudio.playSfxRespawn();
 }
 
 function connect(cb, onFail) {
@@ -6495,6 +6731,7 @@ function enterGameScreenForCountdown(roomPlayers) {
   deadMonsters = new Set();
   playerScores = {};
   activeEffects = [];
+  GameAudio.stopAllLoops();
   localNets = []; peerNets = []; droppedTraps = [];
   ghostRecordingBuffer = [];
   lastGhostSampleAt = 0;
@@ -6589,6 +6826,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     deadMonsters = new Set();
     playerScores = {};
     activeEffects = [];
+    GameAudio.stopAllLoops();
     localNets = []; peerNets = []; droppedTraps = [];
     gameStartTime = startTimestamp;
     gameRunning = true;
@@ -6634,6 +6872,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
     deadMonsters = new Set();
     playerScores = {};
     activeEffects = [];
+    GameAudio.stopAllLoops();
     localNets = []; peerNets = []; droppedTraps = [];
     finishOrder = [];
     gameStartTime = startTimestamp;
@@ -6675,6 +6914,7 @@ function startGameClient(players, startTimestamp, collectedCoinsFromServer, powe
 
 function stopGame() {
   GameAudio.stopBgm();
+  GameAudio.stopAllLoops();
   gameRunning = false;
   updateMobileModeUI();
   raceInputLocked = false;
@@ -6725,6 +6965,7 @@ function returnToRoomAfterGame(players) {
   deadMonsters = new Set();
   playerScores = {};
   activeEffects = [];
+  GameAudio.stopAllLoops();
   localNets = []; peerNets = []; droppedTraps = [];
   floatingTexts = [];
   particles = [];
@@ -8069,6 +8310,7 @@ function gmFly() {
   }
   activeEffects = activeEffects.filter(e => e.ptype !== 'fly');
   activeEffects.push({ ptype: 'fly', endsAt: Date.now() + GM_DURATION });
+  GameAudio.startLoopFly();
   gmMsg('🪽 飞行 5分钟', '#da70d6');
 }
 
@@ -8078,6 +8320,7 @@ function gmSpeed2() {
   }
   activeEffects = activeEffects.filter(e => e.ptype !== 'speed2' && e.ptype !== 'speed3');
   activeEffects.push({ ptype: 'speed2', endsAt: Date.now() + GM_DURATION });
+  GameAudio.startLoopSpeed();
   gmMsg('⚡ 速度×2 5分钟', '#00cec9');
 }
 
@@ -8087,6 +8330,7 @@ function gmSpeed3() {
   }
   activeEffects = activeEffects.filter(e => e.ptype !== 'speed2' && e.ptype !== 'speed3');
   activeEffects.push({ ptype: 'speed3', endsAt: Date.now() + GM_DURATION });
+  GameAudio.startLoopSpeed();
   gmMsg('🔥 速度×3 5分钟', '#fd9644');
 }
 
