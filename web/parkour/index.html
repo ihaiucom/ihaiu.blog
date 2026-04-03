@@ -3940,9 +3940,9 @@ function generateMap(seed, envTheme, stageOpts) {
   const pwRng = mulberry32(seed + 777);
   const powerups = [];
   let pwId = 0;
-  const PW_TYPES_BASE = ['speed2', 'speed2', 'fly', 'fly', 'extra_jump', 'life', 'life', 'energy_full', 'magnet', 'magnet'];
+  const PW_TYPES_BASE = ['speed2', 'fly', 'extra_jump', 'life', 'life', 'energy_full', 'magnet', 'magnet'];
   const PW_TYPES = PW_TYPES_BASE;
-  const PW_TYPES_RISK = ['fly', 'life', 'fly', 'speed2', 'energy_full', 'speed2', 'extra_jump', 'magnet'];
+  const PW_TYPES_RISK = ['fly', 'life', 'speed2', 'energy_full', 'extra_jump', 'magnet'];
 
   for (let i = 3; i < finishIdx; i++) {
     const plat = platforms[i];
