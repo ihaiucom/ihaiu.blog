@@ -1489,6 +1489,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
           <li><b>滚石</b>：从平台一端周期性滚出的巨石（类似冒险岛），优先出现在下坡长平台；需跳过或躲避，产生点有 ⚠ 警告标记（无敌状态可免疫）。</li>
           <li><b>摆锤平台</b>：悬挂在链条上像钟摆一样左右摆动的木质平台（类似超级玛丽），需要看准时机跳上跳下，站在上面会跟随平台一起移动。</li>
           <li><b>弹簧蘑菇</b>：红色蘑菇头+弹簧底座（类似超级玛丽），踩上去可以获得超高弹跳（比普通弹跳板强很多）！但每个蘑菇只能使用一次，踩后会压扁消失。</li>
+          <li><b>食人花</b>：平台边缘绿色管道中周期性伸出的植物（类似超级玛丽 Piranha Plant），张着大嘴带尖牙；伸出时碰到即死，缩回管道中时安全通过。需要观察伸缩节奏（无敌状态可免疫）。</li>
         </ul>
       </div>
       <div class="guide-card">
@@ -4017,6 +4018,30 @@ function generateMap(seed, envTheme, stageOpts) {
     });
   }
 
+  // ---- 食人花生成 (Piranha Plant) ----
+  const ppRng = mulberry32(seed + 2222);
+  const piranhaPlants = [];
+  for (let i = 5; i < finishIdx; i++) {
+    const plat = platforms[i];
+    if (plat.type !== 'normal' && plat.type !== 'ice') continue;
+    if (plat.flicker || plat.moving || plat.w < 70) continue;
+    if (plat.type === 'crumble' || plat.type === 'pendulum') continue;
+    const prog = i / Math.max(1, finishIdx);
+    if (ppRng() > 0.07 + prog * 0.05 + stageDiff * 0.04) continue;
+    const side = ppRng() > 0.5 ? 'left' : 'right';
+    const px = side === 'left' ? plat.x + 8 : plat.x + plat.w - 8;
+    piranhaPlants.push({
+      x: px,
+      y: plat.y,
+      side,
+      stemHeight: 36 + ppRng() * 18,
+      period: 3.0 + ppRng() * 2.0,
+      duty: 0.45 + ppRng() * 0.1,
+      phase: ppRng() * Math.PI * 2,
+      headSize: 14 + ppRng() * 4
+    });
+  }
+
   // ---- 弹簧蘑菇生成 ----
   const mushRng = mulberry32(seed + 1111);
   const springMushrooms = [];
@@ -4048,6 +4073,7 @@ function generateMap(seed, envTheme, stageOpts) {
     thwomps: roomRaceMode ? [] : thwomps,
     boulderSpawners: roomRaceMode ? [] : boulderSpawners,
     springMushrooms,
+    piranhaPlants: roomRaceMode ? [] : piranhaPlants,
     mapWidth: mapW,
     finishX,
     spawnX: 180,
@@ -5347,6 +5373,139 @@ function drawBoulders(ctx, t) {
   }
 }
 
+// ---- 食人花 (Piranha Plant) ----
+
+function getPiranhaExtension(pp, t) {
+  const cycle = ((t + pp.phase) % pp.period) / pp.period;
+  if (cycle < pp.duty) {
+    const riseT = cycle / pp.duty;
+    if (riseT < 0.2) return riseT / 0.2;
+    if (riseT > 0.8) return (1 - riseT) / 0.2;
+    return 1;
+  }
+  return 0;
+}
+
+function checkPiranhaCollisions(p, t) {
+  if (!gMap?.piranhaPlants?.length || !p.isAlive || p.finished) return;
+  if (p.respawnTimer > 0) return;
+  if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
+
+  for (const pp of gMap.piranhaPlants) {
+    const ext = getPiranhaExtension(pp, t);
+    if (ext < 0.15) continue;
+    const headY = pp.y - ext * pp.stemHeight;
+    const hs = pp.headSize;
+    if (p.x + p.w > pp.x - hs && p.x < pp.x + hs &&
+        p.y + p.h > headY - hs && p.y < headY + hs * 0.5) {
+      killLocalPlayer('被食人花咬了！');
+      return;
+    }
+  }
+}
+
+function drawPiranhaPlants(ctx, t) {
+  if (!gMap?.piranhaPlants?.length) return;
+
+  for (const pp of gMap.piranhaPlants) {
+    if (pp.x < cam.x - 40 || pp.x > cam.x + CW + 40) continue;
+    const ext = getPiranhaExtension(pp, t);
+    const stemH = ext * pp.stemHeight;
+    const hs = pp.headSize;
+
+    ctx.save();
+
+    const pipeW = 18, pipeH = 22;
+    const pipeGrad = ctx.createLinearGradient(pp.x - pipeW / 2, 0, pp.x + pipeW / 2, 0);
+    pipeGrad.addColorStop(0, '#2a7a2a');
+    pipeGrad.addColorStop(0.3, '#3cb03c');
+    pipeGrad.addColorStop(0.7, '#3cb03c');
+    pipeGrad.addColorStop(1, '#1a5a1a');
+    ctx.fillStyle = pipeGrad;
+    ctx.fillRect(pp.x - pipeW / 2, pp.y - pipeH, pipeW, pipeH);
+    const rimGrad = ctx.createLinearGradient(pp.x - pipeW / 2 - 3, 0, pp.x + pipeW / 2 + 3, 0);
+    rimGrad.addColorStop(0, '#1e6e1e');
+    rimGrad.addColorStop(0.3, '#44bb44');
+    rimGrad.addColorStop(0.7, '#44bb44');
+    rimGrad.addColorStop(1, '#145a14');
+    ctx.fillStyle = rimGrad;
+    ctx.fillRect(pp.x - pipeW / 2 - 3, pp.y - pipeH, pipeW + 6, 6);
+
+    if (ext > 0.01) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(pp.x - pipeW / 2, pp.y - 200, pipeW, 200 - pipeH + 4);
+      ctx.clip();
+
+      const headY = pp.y - pipeH + 4 - (stemH - pipeH + 4) * (stemH > pipeH ? 1 : stemH / pipeH);
+      const actualHeadY = pp.y - stemH;
+
+      const stemGrad = ctx.createLinearGradient(pp.x - 4, 0, pp.x + 4, 0);
+      stemGrad.addColorStop(0, '#1a6a1a');
+      stemGrad.addColorStop(0.5, '#2a9a2a');
+      stemGrad.addColorStop(1, '#1a6a1a');
+      ctx.fillStyle = stemGrad;
+      ctx.fillRect(pp.x - 4, actualHeadY + hs * 0.3, 8, pp.y - pipeH + 4 - actualHeadY - hs * 0.3);
+
+      const headCx = pp.x;
+      const headCy = actualHeadY;
+      const jawOpen = 0.15 + Math.sin(t * 5 + pp.phase) * 0.1;
+
+      ctx.fillStyle = '#cc2244';
+      ctx.beginPath();
+      ctx.ellipse(headCx, headCy + hs * 0.1, hs * 0.8, hs * 0.4, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const topGrad = ctx.createRadialGradient(headCx, headCy - hs * 0.15, 2, headCx, headCy - hs * 0.1, hs);
+      topGrad.addColorStop(0, '#44cc44');
+      topGrad.addColorStop(0.6, '#228822');
+      topGrad.addColorStop(1, '#115511');
+      ctx.fillStyle = topGrad;
+      ctx.beginPath();
+      ctx.ellipse(headCx, headCy - jawOpen * hs, hs * 0.85, hs * 0.55, 0, Math.PI, 0);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      const teethCount = 5;
+      for (let i = 0; i < teethCount; i++) {
+        const ta = Math.PI + (i + 0.5) / teethCount * Math.PI;
+        const tx = headCx + Math.cos(ta) * hs * 0.7;
+        const ty = headCy - jawOpen * hs + Math.sin(ta) * hs * 0.35;
+        ctx.beginPath();
+        ctx.moveTo(tx - 2, ty);
+        ctx.lineTo(tx, ty + 5);
+        ctx.lineTo(tx + 2, ty);
+        ctx.fill();
+      }
+
+      const bottomGrad = ctx.createRadialGradient(headCx, headCy + hs * 0.15, 2, headCx, headCy + hs * 0.1, hs);
+      bottomGrad.addColorStop(0, '#44cc44');
+      bottomGrad.addColorStop(0.6, '#228822');
+      bottomGrad.addColorStop(1, '#115511');
+      ctx.fillStyle = bottomGrad;
+      ctx.beginPath();
+      ctx.ellipse(headCx, headCy + jawOpen * hs, hs * 0.8, hs * 0.45, 0, 0, Math.PI);
+      ctx.fill();
+
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(headCx - 4, headCy - hs * 0.35, 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(headCx + 4, headCy - hs * 0.35, 3.5, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#111';
+      ctx.beginPath(); ctx.arc(headCx - 4, headCy - hs * 0.33, 1.8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(headCx + 4, headCy - hs * 0.33, 1.8, 0, Math.PI * 2); ctx.fill();
+
+      const spotAlpha = 0.3 + ext * 0.3;
+      ctx.fillStyle = `rgba(255,255,200,${spotAlpha})`;
+      ctx.beginPath(); ctx.arc(headCx - hs * 0.4, headCy - hs * 0.5, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(headCx + hs * 0.35, headCy - hs * 0.45, 2.5, 0, Math.PI * 2); ctx.fill();
+
+      ctx.restore();
+    }
+
+    ctx.restore();
+  }
+}
+
 // ---- 逮捕网渲染 ----
 
 function drawNets(ctx) {
@@ -6325,6 +6484,7 @@ function updateLocalPlayer() {
     checkFireBarCollisions(p, t);
     checkThwompCollisions(p, t);
     checkBoulderCollisions(p, t);
+    checkPiranhaCollisions(p, t);
     checkSpikeCollisions(p);
   }
 
@@ -7089,6 +7249,7 @@ function renderGame(timestamp) {
   drawFireBars(ctx, t);
   drawThwomps(ctx, t);
   drawBoulders(ctx, t);
+  drawPiranhaPlants(ctx, t);
   drawTraps(ctx);
   drawNets(ctx);
 
