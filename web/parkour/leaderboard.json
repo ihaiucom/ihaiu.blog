@@ -31,14 +31,5 @@
       "date": 1775222868589
     }
   ],
-  "lastGame": [
-    {
-      "name": "狂暴松鼠500",
-      "color": "#FF6B6B",
-      "time": null,
-      "coins": 96,
-      "rank": null,
-      "date": 1775279482980
-    }
-  ]
+  "lastGame": []
 }
