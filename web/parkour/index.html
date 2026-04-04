@@ -1047,12 +1047,49 @@ body.game-touch-lock #mobile-toggle-wrap * {
   user-select: none;
   -webkit-user-select: none;
   cursor: pointer;
+  overflow: hidden;
 }
 .mact-btn:active,
 .mact-btn.pressed {
   transform: scale(0.96);
   background: rgba(80,120,220,0.78);
 }
+.mact-label {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1;
+  pointer-events: none;
+}
+.mact-main {
+  font-size: 21px;
+  font-weight: 800;
+}
+.mact-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.92);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  min-height: 12px;
+}
+.mact-cd-ring {
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  background: conic-gradient(var(--cd-color, #81ecec) calc(var(--cd-progress, 0) * 1%), rgba(255,255,255,0.08) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+  transition: opacity 0.12s ease;
+}
+.mact-btn.on-cd .mact-cd-ring { opacity: 1; }
+.mact-btn.on-cd .mact-count { color: #ffe4a8; }
 .mact-jump {
   right: 6px;
   bottom: 6px;
@@ -1067,6 +1104,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
   width: 72px;
   height: 72px;
   color: #81ecec;
+  --cd-color: #81ecec;
 }
 .mact-net {
   right: 116px;
@@ -1074,6 +1112,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
   width: 64px;
   height: 64px;
   color: #ffb8b8;
+  --cd-color: #ff6b6b;
 }
 
 /* Scrollbar */
@@ -1401,9 +1440,9 @@ body.game-touch-lock #mobile-toggle-wrap * {
       </div>
     </div>
     <div class="mobile-actions">
-      <button id="mact-jump" class="mact-btn mact-jump" type="button">跳</button>
-      <button id="mact-dash" class="mact-btn mact-dash" type="button">冲</button>
-      <button id="mact-net" class="mact-btn mact-net" type="button">网</button>
+      <button id="mact-jump" class="mact-btn mact-jump" type="button"><span class="mact-label"><span class="mact-main">跳</span><span class="mact-count">-</span></span><span class="mact-cd-ring" aria-hidden="true"></span></button>
+      <button id="mact-dash" class="mact-btn mact-dash" type="button"><span class="mact-label"><span class="mact-main">冲</span><span class="mact-count">-</span></span><span class="mact-cd-ring" aria-hidden="true"></span></button>
+      <button id="mact-net" class="mact-btn mact-net" type="button"><span class="mact-label"><span class="mact-main">网</span><span class="mact-count">-</span></span><span class="mact-cd-ring" aria-hidden="true"></span></button>
     </div>
   </div>
 </div>
@@ -1611,6 +1650,7 @@ const ENERGY_MAX = 100;
 const ENERGY_REGEN = 0.096; // 每帧回复，约 17～18 秒从空到满（60fps）
 const DASH_CHARGES_MAX = 2;
 const DASH_ENERGY_COST = ENERGY_MAX / DASH_CHARGES_MAX;
+const DASH_ONE_CHARGE_CD_MS = (DASH_ENERGY_COST / (ENERGY_REGEN * 60)) * 1000;
 const DASH_SPEED = 15.5;
 const DASH_FRAMES = 16;
 const DOUBLE_TAP_MS = 380;
@@ -2057,6 +2097,15 @@ const GameAudio = (function () {
   function playSfxClick() {
     beep(660, 0.035, 'sine', 0.06);
     beep(880, 0.03, 'triangle', 0.04);
+  }
+
+  /** 操作失败：短促下行提示音 */
+  function playSfxFail() {
+    const c = ensure();
+    if (!c) return;
+    const t0 = c.currentTime;
+    beep(520, 0.035, 'square', 0.06, t0);
+    beep(360, 0.06, 'triangle', 0.055, t0 + 0.03);
   }
 
   /** 拾取道具：明亮上升琶音，比金币更丰满 */
@@ -3029,6 +3078,7 @@ const GameAudio = (function () {
     playSfxStomp,
     playSfxMonsterDie,
     playSfxClick,
+    playSfxFail,
     playSfxPowerup,
     playSfxJump,
     playSfxDoubleJump,
@@ -8691,7 +8741,63 @@ function updateHUD(t) {
     updateProximityOvertakeHints();
   }
 
+  updateMobileActionButtons();
   updateFinishProgressHUD();
+}
+
+function setMobileActionBtnState(btn, countText, cdProgressPct, onCd, titleText) {
+  if (!btn) return;
+  const countEl = btn.querySelector('.mact-count');
+  if (countEl) countEl.textContent = countText;
+  const clampedPct = Math.max(0, Math.min(100, Number(cdProgressPct) || 0));
+  btn.style.setProperty('--cd-progress', clampedPct.toFixed(2));
+  btn.classList.toggle('on-cd', !!onCd);
+  if (titleText) btn.title = titleText;
+  else btn.removeAttribute('title');
+}
+
+function updateMobileActionButtons() {
+  const jumpBtn = document.getElementById('mact-jump');
+  const dashBtn = document.getElementById('mact-dash');
+  const netBtn = document.getElementById('mact-net');
+  if (!jumpBtn && !dashBtn && !netBtn) return;
+
+  if (!localPlayer || isSpectator || !gameRunning || !localPlayer.isAlive || localPlayer.finished || raceInputLocked) {
+    setMobileActionBtnState(jumpBtn, '-', 0, false, '');
+    setMobileActionBtnState(dashBtn, '-', 0, false, '');
+    setMobileActionBtnState(netBtn, '-', 0, false, '');
+    return;
+  }
+
+  const maxJumps = 2 + getExtraJumps();
+  const usedJumpCount = Math.max(0, localPlayer.jumpCount || 0);
+  const jumpLeft = Math.max(0, maxJumps - usedJumpCount);
+  setMobileActionBtnState(jumpBtn, `${jumpLeft}`, 0, false, `跳跃剩余 ${jumpLeft}/${maxJumps}`);
+
+  const dashEnergy = Math.max(0, Math.min(ENERGY_MAX, localPlayer.energy || 0));
+  const dashLeft = Math.max(0, Math.min(DASH_CHARGES_MAX, Math.floor((dashEnergy + 0.001) / DASH_ENERGY_COST)));
+  let dashProgressPct = 100;
+  let dashOnCd = false;
+  let dashTitle = `冲刺剩余 ${dashLeft}/${DASH_CHARGES_MAX}`;
+  if (dashLeft < DASH_CHARGES_MAX) {
+    const seg = ((dashEnergy % DASH_ENERGY_COST) + DASH_ENERGY_COST) % DASH_ENERGY_COST;
+    const ratio = Math.max(0, Math.min(1, seg / DASH_ENERGY_COST));
+    const leftSec = Math.max(0, ((1 - ratio) * DASH_ONE_CHARGE_CD_MS) / 1000);
+    dashProgressPct = ratio * 100;
+    dashOnCd = true;
+    dashTitle += ` · 下1次恢复 ${leftSec.toFixed(1)}s`;
+  }
+  setMobileActionBtnState(dashBtn, `${dashLeft}`, dashProgressPct, dashOnCd, dashTitle);
+
+  const now = Date.now();
+  const netLeftMs = Math.max(0, (localPlayer.netCooldownUntil || 0) - now);
+  const netReady = netLeftMs <= 0;
+  const netCount = netReady ? 1 : 0;
+  const netProgressPct = netReady ? 100 : Math.max(0, Math.min(100, (1 - netLeftMs / NET_COOLDOWN) * 100));
+  const netTitle = netReady
+    ? '逮捕网已就绪'
+    : `逮捕网CD ${(netLeftMs / 1000).toFixed(1)}s`;
+  setMobileActionBtnState(netBtn, `${netCount}`, netProgressPct, !netReady, netTitle);
 }
 
 function updateFinishProgressHUD() {
@@ -10189,6 +10295,16 @@ function bindMobileControls() {
   bindHoldButton(
     document.getElementById('mact-jump'),
     () => {
+      const p = localPlayer;
+      if (p && gameRunning && !raceInputLocked && !isSpectator && p.isAlive && !p.finished) {
+        const flying = isFlying();
+        const maxJumps = 2 + getExtraJumps();
+        const wallJumpReady = !flying && p.wallSlide !== 0 && p.wallJumpCooldown <= 0;
+        const jumpChargesExhausted = !flying && p.jumpCount >= maxJumps;
+        if (jumpChargesExhausted && !wallJumpReady) {
+          GameAudio.playSfxFail();
+        }
+      }
       keys[' '] = true;
       if (gameRunning) lastGameInputAt = Date.now();
     },
@@ -10201,6 +10317,11 @@ function bindMobileControls() {
       if (mobileLayoutEdit) return;
       e.preventDefault();
       dashBtn.classList.add('pressed');
+      if (localPlayer && gameRunning && !raceInputLocked && !isSpectator && localPlayer.isAlive && !localPlayer.finished) {
+        if (localPlayer.energy + 0.001 < DASH_ENERGY_COST) {
+          GameAudio.playSfxFail();
+        }
+      }
       const fallbackX = localPlayer?.facing || 1;
       requestDash(fallbackX, 0);
       if (gameRunning) lastGameInputAt = Date.now();
