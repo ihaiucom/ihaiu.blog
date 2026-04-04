@@ -5170,11 +5170,12 @@ function getPlayerBenefitHitbox(p) {
 
 function checkMonsterCollisions(p, t) {
   if (!gMap || !p.isAlive || p.finished) return;
-  if (p.respawnTimer > 0) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
+  const respawnProtected = p.respawnTimer > 0;
+  const respawnCanStomp = !respawnProtected || !!p.respawnStompArmed;
   const flyingNow = isFlying();
   const invincibleNow = isInvincible();
-  if (invincibleNow && !flyingNow) return;
+  if (invincibleNow && !flyingNow && !respawnProtected) return;
 
   for (let i = 0; i < gMap.monsters.length; i++) {
     if (deadMonsters.has(i)) continue;
@@ -5185,7 +5186,7 @@ function checkMonsterCollisions(p, t) {
     const touchHurt = rectsOverlap(hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h, mp.x, mp.y, m.w, m.h);
     const touchStomp = rectsOverlap(stompBox.x, stompBox.y, stompBox.w, stompBox.h, mp.x, mp.y, m.w, m.h);
     if (!touchHurt && !touchStomp) continue;
-    if (flyingNow) {
+    if (flyingNow && respawnCanStomp) {
       deadMonsters.add(i);
       p.stompFallGrace = 0;
       spawnParticles(mp.x + m.w / 2, mp.y + m.h / 2, 'stomp');
@@ -5208,7 +5209,7 @@ function checkMonsterCollisions(p, t) {
     const isRising = p.vy < -0.05;
     const topContact = touchStomp && prevBottom <= monsterTop + Math.max(8, m.h * 0.45) && playerBottom >= monsterTop - 2;
     const canUseFallBuffer = !isRising && fallBuffered && touchStomp;
-    if ((p.vy > 0 || canUseFallBuffer || topContact) && playerCenterY < monsterCenterY + 4) {
+    if (respawnCanStomp && (p.vy > 0 || canUseFallBuffer || topContact) && playerCenterY < monsterCenterY + 4) {
       deadMonsters.add(i);
       p.vy = JUMP_VEL * 0.85;
       p.stompFallGrace = 0;
@@ -5224,13 +5225,13 @@ function checkMonsterCollisions(p, t) {
       } else {
         GameAudio.playSfxMonsterDie();
       }
-    } else if (touchHurt) {
+    } else if (touchHurt && !respawnProtected && !invincibleNow) {
       killLocalPlayer('被怪物击中！');
       return;
     }
   }
 
-  if (!invincibleNow) {
+  if (!invincibleNow && !respawnProtected) {
     const hurtBox = getPlayerHurtHitbox(p);
     for (const b of getActiveBullets(t)) {
       if (circleRectOverlap(b.x, b.y, b.r, hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h)) {
@@ -6390,7 +6391,8 @@ function mkPlayer(id, name, color, x, y) {
     wallSlide: 0,
     wallJumpCooldown: 0,
     stompFallGrace: 0,
-    prevY: y
+    prevY: y,
+    respawnStompArmed: true
   };
 }
 
@@ -6464,6 +6466,7 @@ function killLocalPlayer(reason) {
     p.vx = 0; p.vy = 0;
     p.stompFallGrace = 0;
     p.prevY = p.y;
+    p.respawnStompArmed = false;
     p.onGround = false;
     p.jumpCount = 0;
     p.wallSlide = 0;
@@ -6540,6 +6543,7 @@ function updateLocalPlayer() {
     }
     p.respawnCountdownUntil = 0;
     p.respawnTimer = 180; // ~3秒无敌保护（与倒计时衔接）
+    p.respawnStompArmed = false;
     GameAudio.playSfxRespawn();
   }
 
@@ -6599,6 +6603,7 @@ function updateLocalPlayer() {
   const jumpKey = !chatOpen && !!keys[' '];
   const downKey = !chatOpen && (keys['ArrowDown'] || keys['s'] || keys['S']);
   const jumpJustPressed = jumpKey && !prevKeys[' '];
+  if (p.respawnTimer > 0 && jumpJustPressed) p.respawnStompArmed = true;
 
   if (!isSpectator && !raceInputLocked && !chatOpen && (left || right || upKey || jumpKey || downKey)) {
     lastGameInputAt = Date.now();

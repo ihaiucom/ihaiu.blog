@@ -13,16 +13,16 @@
       "date": 1775225013994
     },
     {
+      "name": "狂暴松鼠500",
+      "time": null,
+      "coins": 96,
+      "date": 1775279482980
+    },
+    {
       "name": "烈焰海豹433",
       "time": null,
       "coins": 78,
       "date": 1775243123221
-    },
-    {
-      "name": "狂暴松鼠500",
-      "time": null,
-      "coins": 77,
-      "date": 1775278124601
     },
     {
       "name": "冰霜企鹅601",
@@ -31,5 +31,14 @@
       "date": 1775222868589
     }
   ],
-  "lastGame": []
+  "lastGame": [
+    {
+      "name": "狂暴松鼠500",
+      "color": "#FF6B6B",
+      "time": null,
+      "coins": 96,
+      "rank": null,
+      "date": 1775279482980
+    }
+  ]
 }
