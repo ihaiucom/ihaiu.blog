@@ -5140,9 +5140,9 @@ function circleRectOverlap(cx, cy, r, rx, ry, rw, rh) {
 const PLAYER_HURT_INSET_X = 6;
 const PLAYER_HURT_INSET_TOP = 5;
 const PLAYER_HURT_INSET_BOTTOM = 6;
-const PLAYER_STOMP_INSET_X = 2;
-const PLAYER_STOMP_HEIGHT = 13;
-const PLAYER_BENEFIT_EXPAND_X = 8;
+const PLAYER_STOMP_HEIGHT = 22;
+const PLAYER_STOMP_WIDTH_SCALE = 3;
+const PLAYER_BENEFIT_EXPAND_X = 12;
 const PLAYER_BENEFIT_EXPAND_TOP = 6;
 const PLAYER_BENEFIT_EXPAND_BOTTOM = 4;
 
@@ -5154,8 +5154,8 @@ function getPlayerHurtHitbox(p) {
   return { x, y, w, h };
 }
 function getPlayerStompHitbox(p) {
-  const x = p.x + PLAYER_STOMP_INSET_X;
-  const w = Math.max(8, p.w - PLAYER_STOMP_INSET_X * 2);
+  const w = Math.max(8, p.w * PLAYER_STOMP_WIDTH_SCALE);
+  const x = p.x + (p.w - w) * 0.5;
   const h = Math.min(p.h, PLAYER_STOMP_HEIGHT);
   const y = p.y + p.h - h;
   return { x, y, w, h };
@@ -5172,6 +5172,9 @@ function checkMonsterCollisions(p, t) {
   if (!gMap || !p.isAlive || p.finished) return;
   if (p.respawnTimer > 0) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
+  const flyingNow = isFlying();
+  const invincibleNow = isInvincible();
+  if (invincibleNow && !flyingNow) return;
 
   for (let i = 0; i < gMap.monsters.length; i++) {
     if (deadMonsters.has(i)) continue;
@@ -5182,6 +5185,17 @@ function checkMonsterCollisions(p, t) {
     const touchHurt = rectsOverlap(hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h, mp.x, mp.y, m.w, m.h);
     const touchStomp = rectsOverlap(stompBox.x, stompBox.y, stompBox.w, stompBox.h, mp.x, mp.y, m.w, m.h);
     if (!touchHurt && !touchStomp) continue;
+    if (flyingNow) {
+      deadMonsters.add(i);
+      p.stompFallGrace = 0;
+      spawnParticles(mp.x + m.w / 2, mp.y + m.h / 2, 'stomp');
+      addFloatingText(mp.x + m.w / 2, mp.y - 10, '飞行击杀!', '#ffd700', 16);
+      GameAudio.playSfxMonsterDie();
+      if (ws && ws.readyState === 1) {
+        ws.send(JSON.stringify({ type: 'monsterStomped', idx: i }));
+      }
+      continue;
+    }
 
     // 踩怪判定：优先识别“从上往下压到怪物头部”
     const playerCenterY = p.y + p.h / 2;
@@ -5216,11 +5230,13 @@ function checkMonsterCollisions(p, t) {
     }
   }
 
-  const hurtBox = getPlayerHurtHitbox(p);
-  for (const b of getActiveBullets(t)) {
-    if (circleRectOverlap(b.x, b.y, b.r, hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h)) {
-      killLocalPlayer('被子弹击中！');
-      return;
+  if (!invincibleNow) {
+    const hurtBox = getPlayerHurtHitbox(p);
+    for (const b of getActiveBullets(t)) {
+      if (circleRectOverlap(b.x, b.y, b.r, hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h)) {
+        killLocalPlayer('被子弹击中！');
+        return;
+      }
     }
   }
 }
@@ -6853,9 +6869,9 @@ function updateLocalPlayer() {
     p.frame = 0; p.animT = 0;
   }
 
-  // Monster & bullet & fire bar & thwomp & boulder collision (skipped if invincible)
+  // Monster collision: 飞行状态可直接碰怪击杀
+  checkMonsterCollisions(p, t);
   if (!isInvincible()) {
-    checkMonsterCollisions(p, t);
     checkFireBarCollisions(p, t);
     checkThwompCollisions(p, t);
     checkBoulderCollisions(p, t);
