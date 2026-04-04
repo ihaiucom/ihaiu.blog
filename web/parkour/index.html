@@ -44,7 +44,21 @@ body {
 .logo-sub { color: #888; font-size: 14px; margin-bottom: 30px; letter-spacing: 2px; }
 .guide-entry { margin-top: -16px; margin-bottom: 18px; }
 .guide-entry .btn { font-size: 12px; padding: 7px 14px; }
+.network-mode-entry { display: flex; gap: 8px; align-items: center; justify-content: center; margin-top: 8px; }
+#networkModeStatus { font-size: 12px; color: #8ea0cf; min-width: 72px; text-align: left; }
 .lobby-top { display: flex; gap: 20px; width: 100%; max-width: 800px; margin-bottom: 20px; }
+#lobby.offline-layout .lobby-join-area { display: none; }
+#lobby.offline-layout .lobby-bottom { display: none; }
+.offline-mode-hint {
+  display: none;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 18px;
+  color: #9db0d3;
+  font-size: 13px;
+  line-height: 1.6;
+}
+#lobby.offline-layout .offline-mode-hint { display: block; }
 .card {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.1);
@@ -194,6 +208,7 @@ input[type="text"]:focus { border-color: #6c63ff; }
   .logo-sub { font-size: 11px; margin-bottom: 18px; letter-spacing: 1px; }
   .lobby-top { flex-direction: column; gap: 12px; }
   .lobby-bottom { flex-direction: column; gap: 12px; }
+  #networkModeStatus { min-width: 0; text-align: center; }
   .leaderboard-area { width: 100%; flex-shrink: 1; }
   .card { padding: 14px; }
   .room-list { max-height: 220px; }
@@ -1216,6 +1231,10 @@ body.game-touch-lock #mobile-toggle-wrap * {
   <div class="logo-sub">PARKOUR BATTLE · 多人对战 · 随机地图</div>
   <div class="guide-entry">
     <button class="btn btn-secondary btn-small" onclick="openGameGuide()">查看玩法说明 / 道具说明</button>
+    <div class="network-mode-entry">
+      <button id="networkModeToggle" class="btn btn-secondary btn-small" onclick="toggleLobbyNetworkMode()">离线模式</button>
+      <span id="networkModeStatus">自动检测</span>
+    </div>
   </div>
   <div class="lobby-top">
     <div class="card name-area">
@@ -1233,7 +1252,7 @@ body.game-touch-lock #mobile-toggle-wrap * {
         <span style="color:#666;font-size:11px">1=单图一局 · &gt;1 为连关</span>
       </div>
     </div>
-    <div class="card" style="flex:1">
+    <div id="lobbyJoinCard" class="card lobby-join-area" style="flex:1">
       <div class="card-title">加入房间</div>
       <div class="join-input-row">
         <input type="text" id="joinRoomId" placeholder="输入房间号..." maxlength="8" style="text-transform:uppercase">
@@ -1241,6 +1260,10 @@ body.game-touch-lock #mobile-toggle-wrap * {
         <button class="btn btn-secondary" onclick="joinRoom(true)">观战</button>
       </div>
     </div>
+  </div>
+  <div id="offlineModeHint" class="card offline-mode-hint">
+    当前是离线模式：联机大厅、加入房间、排行榜已隐藏。<br>
+    点击上方「在线模式」可尝试重新连接服务器。
   </div>
   <div class="lobby-bottom">
     <div class="card room-list-area" style="flex:1">
@@ -1631,6 +1654,8 @@ const EVENT_SLOW_MUL = 0.52;
 let ws = null;
 let serverUnavailable = false;
 let offlineSoloMode = false;
+let lobbyNetworkMode = 'auto'; // auto | offline | online
+let suppressNextWsCloseNotice = false;
 let myId = null, myColor = '#fff', myName = '玩家', roomId = null;
 const PLAYER_COLOR_OPTIONS = [
   '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F0A500',
@@ -3999,6 +4024,18 @@ function generateMap(seed, envTheme, stageOpts) {
   const PW_TYPES_BASE = ['speed2', 'fly', 'extra_jump', 'life', 'life', 'energy_full', 'magnet', 'magnet'];
   const PW_TYPES = PW_TYPES_BASE;
   const PW_TYPES_RISK = ['fly', 'life', 'speed2', 'energy_full', 'extra_jump', 'magnet'];
+  const SAME_TYPE_POWERUP_MIN_DIST = 240;
+
+  function canPlaceSameTypePowerup(ptype, x, y) {
+    const minDist2 = SAME_TYPE_POWERUP_MIN_DIST * SAME_TYPE_POWERUP_MIN_DIST;
+    for (const pw of powerups) {
+      if (pw.ptype !== ptype) continue;
+      const dx = pw.x - x;
+      const dy = pw.y - y;
+      if (dx * dx + dy * dy < minDist2) return false;
+    }
+    return true;
+  }
 
   for (let i = 3; i < finishIdx; i++) {
     const plat = platforms[i];
@@ -4009,11 +4046,22 @@ function generateMap(seed, envTheme, stageOpts) {
     if (pwRng() > ((isRisk || isLane) ? 0.055 : 0.14)) continue;
 
     const pool = (isRisk || isLane) ? PW_TYPES_RISK : PW_TYPES;
-    const ptype = pool[Math.floor(pwRng() * pool.length)];
+    const px = plat.x + 12 + pwRng() * (plat.w - 24);
+    const py = plat.y - 48;
+    const startIdx = Math.floor(pwRng() * pool.length);
+    let ptype = null;
+    for (let k = 0; k < pool.length; k++) {
+      const candidate = pool[(startIdx + k) % pool.length];
+      if (canPlaceSameTypePowerup(candidate, px, py)) {
+        ptype = candidate;
+        break;
+      }
+    }
+    if (!ptype) continue;
     powerups.push({
       id: pwId++,
-      x: plat.x + 12 + pwRng() * (plat.w - 24),
-      y: plat.y - 48,
+      x: px,
+      y: py,
       ptype,
       phase: pwRng() * Math.PI * 2
     });
@@ -8691,6 +8739,56 @@ function closeGameGuide(fromMask = false) {
 }
 
 // ===================== WEBSOCKET =====================
+function isOfflineLobbyMode() {
+  return lobbyNetworkMode === 'offline' || serverUnavailable;
+}
+
+function applyLobbyNetworkModeUI() {
+  const offline = isOfflineLobbyMode();
+  const lobbyEl = document.getElementById('lobby');
+  if (lobbyEl) lobbyEl.classList.toggle('offline-layout', offline);
+
+  const btnEl = document.getElementById('networkModeToggle');
+  if (btnEl) {
+    btnEl.textContent = offline ? '切换到在线模式' : '切换到离线模式';
+    btnEl.className = offline ? 'btn btn-success btn-small' : 'btn btn-secondary btn-small';
+  }
+  const statusEl = document.getElementById('networkModeStatus');
+  if (statusEl) {
+    statusEl.textContent = offline ? '当前：离线' : '当前：在线';
+  }
+}
+
+function toggleLobbyNetworkMode() {
+  if (isOfflineLobbyMode()) {
+    lobbyNetworkMode = 'online';
+    const roomEl = document.getElementById('roomList');
+    if (roomEl) roomEl.innerHTML = '<div class="empty-hint">正在连接服务器...</div>';
+    connect(() => {
+      applyLobbyNetworkModeUI();
+      fetchRooms();
+      fetchLeaderboard();
+    }, () => {
+      lobbyNetworkMode = 'auto';
+      applyLobbyNetworkModeUI();
+      renderOfflineLobbyHint();
+      alert('连接服务器失败，已切回离线模式。');
+    });
+    return;
+  }
+
+  lobbyNetworkMode = 'offline';
+  serverUnavailable = true;
+  offlineSoloMode = false;
+  if (ws) {
+    suppressNextWsCloseNotice = true;
+    try { ws.close(); } catch (_) {}
+    ws = null;
+  }
+  renderOfflineLobbyHint();
+  applyLobbyNetworkModeUI();
+}
+
 function renderOfflineLobbyHint() {
   const roomEl = document.getElementById('roomList');
   if (roomEl) {
@@ -8700,6 +8798,7 @@ function renderOfflineLobbyHint() {
   if (lbEl && !cachedLeaderboard) {
     lbEl.innerHTML = '<div class="empty-hint">离线模式下排行榜不可用</div>';
   }
+  applyLobbyNetworkModeUI();
 }
 
 let offlineSoloStageWinners = [];
@@ -8795,6 +8894,10 @@ function advanceOfflineSoloStage() {
 }
 
 function connect(cb, onFail) {
+  if (lobbyNetworkMode === 'offline') {
+    onFail && onFail();
+    return;
+  }
   if (ws && ws.readyState === 1) {
     cb && cb();
     return;
@@ -8808,6 +8911,8 @@ function connect(cb, onFail) {
     try { ws && ws.close(); } catch (_) {}
     ws = null;
     serverUnavailable = true;
+    if (lobbyNetworkMode !== 'offline') lobbyNetworkMode = 'auto';
+    applyLobbyNetworkModeUI();
     onFail && onFail();
   };
 
@@ -8825,6 +8930,7 @@ function connect(cb, onFail) {
     clearTimeout(connectTimer);
     serverUnavailable = false;
     offlineSoloMode = false;
+    applyLobbyNetworkModeUI();
     cb && cb();
   };
   ws.onmessage = e => handleMsg(JSON.parse(e.data));
@@ -8837,11 +8943,20 @@ function connect(cb, onFail) {
       fail();
       return;
     }
+    if (suppressNextWsCloseNotice) {
+      suppressNextWsCloseNotice = false;
+      ws = null;
+      renderOfflineLobbyHint();
+      return;
+    }
     ws = null;
     if (offlineSoloMode) return;
+    serverUnavailable = true;
+    if (lobbyNetworkMode !== 'offline') lobbyNetworkMode = 'auto';
+    applyLobbyNetworkModeUI();
     if (gameRunning) stopGame();
     setScreen('lobby');
-    addRoomChat({ type: 'system', text: '连接断开，请刷新页面重连' });
+    addRoomChat({ type: 'system', text: '连接断开，已自动切到离线模式' });
     renderOfflineLobbyHint();
   };
 }
@@ -10145,6 +10260,9 @@ function setScreen(name) {
       bgmCtrl.style.right = '14px';
     }
   }
+  if (name === 'lobby') {
+    applyLobbyNetworkModeUI();
+  }
   updateMobileModeUI();
 }
 
@@ -10358,7 +10476,7 @@ function createRoom() {
   const stRaw = stSel ? parseInt(stSel.value, 10) : 1;
   const stageTotal = Number.isFinite(stRaw) ? Math.max(1, Math.min(15, stRaw)) : 1;
   const payload = JSON.stringify({ type: 'createRoom', name, stageTotal, color: myChosenColor });
-  if (serverUnavailable) {
+  if (isOfflineLobbyMode()) {
     startOfflineSoloGame();
     return;
   }
@@ -10370,7 +10488,7 @@ function createRoom() {
 }
 
 function joinRoom(spectate = false) {
-  if (serverUnavailable) {
+  if (isOfflineLobbyMode()) {
     alert('当前为离线模式，无法加入联机房间。可点击「创建房间」进行单机游戏。');
     return;
   }
@@ -10388,7 +10506,7 @@ function joinRoomById(id, spectate) {
 
 function fetchRooms() {
   if (offlineSoloMode) return;
-  if (serverUnavailable) { renderOfflineLobbyHint(); return; }
+  if (isOfflineLobbyMode()) { renderOfflineLobbyHint(); return; }
   if (!ws || ws.readyState !== 1) {
     connect(() => ws.send(JSON.stringify({ type: 'getRooms' })), renderOfflineLobbyHint);
   } else {
@@ -10398,7 +10516,7 @@ function fetchRooms() {
 
 function fetchLeaderboard() {
   if (offlineSoloMode) return;
-  if (serverUnavailable) { renderOfflineLobbyHint(); return; }
+  if (isOfflineLobbyMode()) { renderOfflineLobbyHint(); return; }
   const name = document.getElementById('playerName').value.trim() || '玩家';
   if (!ws || ws.readyState !== 1) {
     connect(() => ws.send(JSON.stringify({ type: 'getLeaderboard', name })), renderOfflineLobbyHint);
@@ -11125,6 +11243,7 @@ window.addEventListener('load', () => {
   document.addEventListener('webkitfullscreenchange', updateFullscreenButtonUI);
   document.addEventListener('msfullscreenchange', updateFullscreenButtonUI);
   updateMobileModeUI();
+  applyLobbyNetworkModeUI();
   connect(() => { fetchRooms(); fetchLeaderboard(); }, renderOfflineLobbyHint);
   setInterval(fetchRooms, 5000);
   setInterval(fetchLeaderboard, 8000);
