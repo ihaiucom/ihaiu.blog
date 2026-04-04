@@ -6997,6 +6997,11 @@ function worldEventLabel(kind) {
   return kind === 'coinRain' ? '金币雨' : '全场减速';
 }
 
+function shouldIgnoreWorldEventKind(kind) {
+  // 离线单机不启用「全场减速」，避免影响单机节奏。
+  return offlineSoloMode && kind === 'slowdown';
+}
+
 function startEventWarningUI(kind, totalMs) {
   const el = document.getElementById('event-hint');
   if (!el) return;
@@ -7051,6 +7056,7 @@ function appendEventTacticalHint(kind, phase) {
 }
 
 function onServerEventWarning(kind, startsInMs) {
+  if (shouldIgnoreWorldEventKind(kind)) return;
   GameAudio.playSfxEventWarning();
   addGameChat({
     name: '⚡ 事件预告',
@@ -7062,6 +7068,7 @@ function onServerEventWarning(kind, startsInMs) {
 }
 
 function onServerEventBegin(kind, durationMs, silent) {
+  if (shouldIgnoreWorldEventKind(kind)) return;
   clearEventHintTimers();
   const hint = document.getElementById('event-hint');
   if (hint) {
@@ -7086,6 +7093,7 @@ function onServerEventBegin(kind, durationMs, silent) {
 }
 
 function onServerEventEnd(kind) {
+  if (shouldIgnoreWorldEventKind(kind)) return;
   const had = worldEventKind === kind;
   if (had) {
     worldEventKind = null;
@@ -7103,6 +7111,7 @@ function onServerEventEnd(kind) {
 
 function applyWorldEventSnapshot(snap) {
   if (!snap || !snap.kind) return;
+  if (shouldIgnoreWorldEventKind(snap.kind)) return;
   if (snap.phase === 'warning' && snap.remainingMs > 200) {
     GameAudio.playSfxEventWarning();
     startEventWarningUI(snap.kind, snap.remainingMs);
