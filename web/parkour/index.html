@@ -3217,6 +3217,7 @@ const keys = {};
 let prevKeys = {};
 let jumpBuf = 0, coyoteT = 0;
 let jumpDown = false, dblJumped = false;
+const STOMP_FALL_GRACE_FRAMES = 6; // 踩怪下落宽限：最近几帧刚下落也算
 let chatOpen = false;
 let pendingDashVec = null;
 let _lastMouseLeftDown = 0, _lastMouseRightDown = 0;
@@ -4620,12 +4621,11 @@ function updateMagnetAttraction(p) {
 function checkCoinCollection(p) {
   if (!gMap || !gMap.coins || !p.isAlive || p.finished) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
-  const px = p.x + PW / 2, py = p.y + PH / 2;
+  const benefitBox = getPlayerBenefitHitbox(p);
   for (const coin of gMap.coins) {
     if (collectedCoins.has(coin.id)) continue;
     const r = (coin.type === 'star' ? 22 : 16) * COIN_DRAW_SCALE;
-    const dx = px - coin.x, dy = py - coin.y;
-    if (dx * dx + dy * dy <= r * r) {
+    if (circleRectOverlap(coin.x, coin.y, r, benefitBox.x, benefitBox.y, benefitBox.w, benefitBox.h)) {
       // 乐观拾取：立即隐藏，等服务器广播回来才计分
       collectedCoins.add(coin.id);
       spawnParticles(coin.x, coin.y, 'coin');
@@ -4809,7 +4809,7 @@ function getPowerupAnchorXY(pw, tWorld) {
 function checkPowerupCollection(p) {
   if (!gMap || !gMap.powerups || !p.isAlive || p.finished) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
-  const px = p.x + PW / 2, py = p.y + PH / 2;
+  const benefitBox = getPlayerBenefitHitbox(p);
   const tWorld = getGameTime();
   for (const pw of gMap.powerups) {
     if (powerupHiddenForLocal(pw)) continue;
@@ -4817,8 +4817,7 @@ function checkPowerupCollection(p) {
     const bob = Math.sin(tWorld * 2.2 + pw.phase) * 5 * POWERUP_DRAW_SCALE;
     const cx = anchor.x;
     const cy = anchor.y + bob;
-    const dx = px - cx, dy = py - cy;
-    if (dx * dx + dy * dy <= (26 * POWERUP_DRAW_SCALE) ** 2) {
+    if (circleRectOverlap(cx, cy, 26 * POWERUP_DRAW_SCALE, benefitBox.x, benefitBox.y, benefitBox.w, benefitBox.h)) {
       myCollectedPowerups.add(pw.id);
       activatePowerup(pw.ptype);
       spawnParticles(cx, cy, 'coin');
@@ -5138,6 +5137,36 @@ function circleRectOverlap(cx, cy, r, rx, ry, rw, rh) {
   const ny = Math.max(ry, Math.min(cy, ry + rh));
   return (cx - nx) ** 2 + (cy - ny) ** 2 <= r * r;
 }
+const PLAYER_HURT_INSET_X = 6;
+const PLAYER_HURT_INSET_TOP = 5;
+const PLAYER_HURT_INSET_BOTTOM = 6;
+const PLAYER_STOMP_INSET_X = 2;
+const PLAYER_STOMP_HEIGHT = 13;
+const PLAYER_BENEFIT_EXPAND_X = 8;
+const PLAYER_BENEFIT_EXPAND_TOP = 6;
+const PLAYER_BENEFIT_EXPAND_BOTTOM = 4;
+
+function getPlayerHurtHitbox(p) {
+  const x = p.x + PLAYER_HURT_INSET_X;
+  const y = p.y + PLAYER_HURT_INSET_TOP;
+  const w = Math.max(8, p.w - PLAYER_HURT_INSET_X * 2);
+  const h = Math.max(10, p.h - PLAYER_HURT_INSET_TOP - PLAYER_HURT_INSET_BOTTOM);
+  return { x, y, w, h };
+}
+function getPlayerStompHitbox(p) {
+  const x = p.x + PLAYER_STOMP_INSET_X;
+  const w = Math.max(8, p.w - PLAYER_STOMP_INSET_X * 2);
+  const h = Math.min(p.h, PLAYER_STOMP_HEIGHT);
+  const y = p.y + p.h - h;
+  return { x, y, w, h };
+}
+function getPlayerBenefitHitbox(p) {
+  const x = p.x - PLAYER_BENEFIT_EXPAND_X;
+  const y = p.y - PLAYER_BENEFIT_EXPAND_TOP;
+  const w = p.w + PLAYER_BENEFIT_EXPAND_X * 2;
+  const h = p.h + PLAYER_BENEFIT_EXPAND_TOP + PLAYER_BENEFIT_EXPAND_BOTTOM;
+  return { x, y, w, h };
+}
 
 function checkMonsterCollisions(p, t) {
   if (!gMap || !p.isAlive || p.finished) return;
@@ -5148,17 +5177,27 @@ function checkMonsterCollisions(p, t) {
     if (deadMonsters.has(i)) continue;
     const m = gMap.monsters[i];
     const mp = getMonsterPos(m, t);
-    if (!rectsOverlap(p.x + 3, p.y + 3, p.w - 6, p.h - 4, mp.x, mp.y, m.w, m.h)) continue;
+    const hurtBox = getPlayerHurtHitbox(p);
+    const stompBox = getPlayerStompHitbox(p);
+    const touchHurt = rectsOverlap(hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h, mp.x, mp.y, m.w, m.h);
+    const touchStomp = rectsOverlap(stompBox.x, stompBox.y, stompBox.w, stompBox.h, mp.x, mp.y, m.w, m.h);
+    if (!touchHurt && !touchStomp) continue;
 
-    // 踩怪判定（宽松版）：所有类型怪物均可踩
-    //   1. 玩家正在下落（vy > 0）
-    //   2. 玩家中心在怪物中心之上（从上方接触）
+    // 踩怪判定：优先识别“从上往下压到怪物头部”
     const playerCenterY = p.y + p.h / 2;
     const monsterCenterY = mp.y + m.h / 2;
+    const playerBottom = stompBox.y + stompBox.h;
+    const monsterTop = mp.y;
+    const prevBottom = ((p.prevY != null ? p.prevY : (p.y - p.vy)) + p.h);
 
-    if (p.vy > 0 && playerCenterY < monsterCenterY) {
+    const fallBuffered = (p.stompFallGrace || 0) > 0;
+    const isRising = p.vy < -0.05;
+    const topContact = touchStomp && prevBottom <= monsterTop + Math.max(8, m.h * 0.45) && playerBottom >= monsterTop - 2;
+    const canUseFallBuffer = !isRising && fallBuffered && touchStomp;
+    if ((p.vy > 0 || canUseFallBuffer || topContact) && playerCenterY < monsterCenterY + 4) {
       deadMonsters.add(i);
       p.vy = JUMP_VEL * 0.85;
+      p.stompFallGrace = 0;
       // 踩怪刷新跳跃链：可再接完整一段跳/连跳，便于连续踩怪连跳
       p.jumpCount = 0;
       coyoteT = COYOTE;
@@ -5171,14 +5210,15 @@ function checkMonsterCollisions(p, t) {
       } else {
         GameAudio.playSfxMonsterDie();
       }
-    } else {
+    } else if (touchHurt) {
       killLocalPlayer('被怪物击中！');
       return;
     }
   }
 
+  const hurtBox = getPlayerHurtHitbox(p);
   for (const b of getActiveBullets(t)) {
-    if (circleRectOverlap(b.x, b.y, b.r, p.x + 3, p.y + 3, p.w - 6, p.h - 6)) {
+    if (circleRectOverlap(b.x, b.y, b.r, hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h)) {
       killLocalPlayer('被子弹击中！');
       return;
     }
@@ -5209,10 +5249,11 @@ function checkFireBarCollisions(p, t) {
   if (p.respawnTimer > 0) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
 
+  const hurtBox = getPlayerHurtHitbox(p);
   for (const fb of gMap.fireBars) {
     if (Math.abs(fb.cx - p.x) > fb.armLength + 60) continue;
     for (const ball of getFireBarBalls(fb, t)) {
-      if (circleRectOverlap(ball.x, ball.y, ball.r, p.x + 3, p.y + 3, p.w - 6, p.h - 6)) {
+      if (circleRectOverlap(ball.x, ball.y, ball.r, hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h)) {
         killLocalPlayer('被火焰击中！');
         return;
       }
@@ -5376,12 +5417,13 @@ function checkThwompCollisions(p, t) {
   if (p.respawnTimer > 0) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
 
+  const hurtBox = getPlayerHurtHitbox(p);
   for (let i = 0; i < gMap.thwomps.length; i++) {
     const tw = gMap.thwomps[i];
     const ts = thwompStates[i];
     if (!ts || ts.state === 'idle') continue;
     const ty = getThwompY(tw, ts, t);
-    if (rectsOverlap(p.x + 3, p.y + 3, p.w - 6, p.h - 6, tw.x, ty, tw.w, tw.h)) {
+    if (rectsOverlap(hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h, tw.x, ty, tw.w, tw.h)) {
       killLocalPlayer('被石块砸中！');
       return;
     }
@@ -5572,9 +5614,10 @@ function checkBoulderCollisions(p, t) {
   if (p.respawnTimer > 0) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
 
+  const hurtBox = getPlayerHurtHitbox(p);
   for (const b of getActiveBoulders(t)) {
     if (b.y > DEATH_Y) continue;
-    if (circleRectOverlap(b.x, b.y, b.r * 0.85, p.x + 3, p.y + 3, p.w - 6, p.h - 6)) {
+    if (circleRectOverlap(b.x, b.y, b.r * 0.85, hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h)) {
       killLocalPlayer('被巨石碾压！');
       return;
     }
@@ -5687,13 +5730,13 @@ function checkPiranhaCollisions(p, t) {
   if (p.respawnTimer > 0) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
 
+  const hurtBox = getPlayerHurtHitbox(p);
   for (const pp of gMap.piranhaPlants) {
     const ext = getPiranhaExtension(pp, t);
     if (ext < 0.15) continue;
     const headY = pp.y - ext * pp.stemHeight;
     const hs = pp.headSize;
-    if (p.x + p.w > pp.x - hs && p.x < pp.x + hs &&
-        p.y + p.h > headY - hs && p.y < headY + hs * 0.5) {
+    if (rectsOverlap(hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h, pp.x - hs, headY - hs, hs * 2, hs * 1.5)) {
       killLocalPlayer('被食人花咬了！');
       return;
     }
@@ -5926,7 +5969,8 @@ function updateNets() {
         let hit = false;
         for (const [pid, peer] of Object.entries(peers)) {
           if (!peer.isAlive || peer.finished) continue;
-          if (circleRectOverlap(n.x, n.y, NET_SIZE, peer.x + 3, peer.y + 3, peer.w - 6, peer.h - 6)) {
+          const peerHurtBox = getPlayerHurtHitbox(peer);
+          if (circleRectOverlap(n.x, n.y, NET_SIZE, peerHurtBox.x, peerHurtBox.y, peerHurtBox.w, peerHurtBox.h)) {
             netArr.splice(i, 1);
             hit = true;
             if (ws && ws.readyState === 1) {
@@ -6001,13 +6045,13 @@ function checkTrapCollisions(p) {
   const now = Date.now();
   if (p.arrestedUntil && now < p.arrestedUntil) return;
 
-  const px = p.x, py = p.y, pw = p.w, ph = p.h;
+  const hurtBox = getPlayerHurtHitbox(p);
   const trapW = 28, trapH = 10;
 
   for (const trap of gMap.arrestTraps) {
     if (trap.triggered) continue;
     const tx = trap.x - trapW / 2, ty = trap.y - trapH;
-    if (rectsOverlap(px + 3, py + 3, pw - 6, ph - 4, tx, ty, trapW, trapH)) {
+    if (rectsOverlap(hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h, tx, ty, trapW, trapH)) {
       trap.triggered = true;
       arrestPlayer(p, '踩到陷阱! 定身5秒');
       GameAudio.playSfxTrap();
@@ -6019,7 +6063,7 @@ function checkTrapCollisions(p) {
   for (const trap of droppedTraps) {
     if (trap.triggered) continue;
     const tx = trap.x - trapW / 2, ty = trap.y - trapH;
-    if (rectsOverlap(px + 3, py + 3, pw - 6, ph - 4, tx, ty, trapW, trapH)) {
+    if (rectsOverlap(hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h, tx, ty, trapW, trapH)) {
       trap.triggered = true;
       arrestPlayer(p, '踩到逮捕网! 定身5秒');
       GameAudio.playSfxTrap();
@@ -6078,10 +6122,10 @@ function checkSpikeCollisions(p) {
   if (p.respawnTimer > 0) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
   if (isInvincible()) return;
-  const px = p.x + 3, py = p.y + 3, pw = p.w - 6, ph = p.h - 4;
+  const hurtBox = getPlayerHurtHitbox(p);
   const spikeH = 10;
   for (const spike of gMap.spikeZones) {
-    if (rectsOverlap(px, py, pw, ph, spike.x, spike.y - spikeH, spike.w, spikeH)) {
+    if (rectsOverlap(hurtBox.x, hurtBox.y, hurtBox.w, hurtBox.h, spike.x, spike.y - spikeH, spike.w, spikeH)) {
       killLocalPlayer('踩到尖刺！');
       return;
     }
@@ -6328,7 +6372,9 @@ function mkPlayer(id, name, color, x, y) {
     arrestedUntil: 0,
     netCooldownUntil: 0,
     wallSlide: 0,
-    wallJumpCooldown: 0
+    wallJumpCooldown: 0,
+    stompFallGrace: 0,
+    prevY: y
   };
 }
 
@@ -6400,6 +6446,8 @@ function killLocalPlayer(reason) {
     const sp = findRespawnPoint(p.x);
     p.x = sp.x; p.y = sp.y;
     p.vx = 0; p.vy = 0;
+    p.stompFallGrace = 0;
+    p.prevY = p.y;
     p.onGround = false;
     p.jumpCount = 0;
     p.wallSlide = 0;
@@ -6632,8 +6680,15 @@ function updateLocalPlayer() {
   }
 
   // Move
+  p.prevY = p.y;
   p.x += p.vx;
   p.y += p.vy;
+
+  if (p.vy > 0.15) {
+    p.stompFallGrace = STOMP_FALL_GRACE_FRAMES;
+  } else if (p.stompFallGrace > 0) {
+    p.stompFallGrace--;
+  }
 
   // Collision
   const prevOnG = p.onGround;
@@ -6776,6 +6831,9 @@ function updateLocalPlayer() {
     if (landImpactVy > 8.8) {
       addScreenShake(Math.min(12, 2.2 + (landImpactVy - 8.8) * 0.62));
     }
+  }
+  if (p.onGround) {
+    p.stompFallGrace = 0;
   }
 
   // Walk step sfx
@@ -7167,13 +7225,11 @@ function drawRainCoins(ctx, t) {
 function checkRainCoinCollection(p) {
   if (!isCoinRainActive() || isSpectator || !p.isAlive || p.finished) return;
   if (p.respawnCountdownUntil && Date.now() < p.respawnCountdownUntil) return;
-  const px = p.x + PW / 2, py = p.y + PH / 2;
+  const benefitBox = getPlayerBenefitHitbox(p);
   const r = 18 * COIN_DRAW_SCALE;
   for (const c of rainCoins) {
     if (c.collected) continue;
-    const dy = (c.y - py);
-    const dx = (c.x - px);
-    if (dx * dx + dy * dy > r * r) continue;
+    if (!circleRectOverlap(c.x, c.y, r, benefitBox.x, benefitBox.y, benefitBox.w, benefitBox.h)) continue;
     c.collected = true;
     spawnParticles(c.x, c.y, 'coin');
     GameAudio.playSfxRainCoin();
