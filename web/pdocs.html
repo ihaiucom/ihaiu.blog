@@ -210,10 +210,32 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
       padding: 0 10px 14px;
     }
     .sidebar-heading strong { font-size: 14px; }
     .sidebar-heading span { color: var(--muted); font-size: 11px; }
+    .sidebar-tools {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .sidebar-tools button {
+      padding: 5px 7px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .sidebar-tools button:hover {
+      border-color: var(--brand);
+      color: var(--brand);
+      background: var(--brand-soft);
+    }
     .nav-section { margin: 5px 0 13px; }
     .nav-group {
       width: 100%;
@@ -836,7 +858,13 @@
     function renderSidebar() {
       const space = spaces.find(item => item.id === activeSpace);
       sidebar.innerHTML = `
-        <div class="sidebar-heading"><strong>${space.title}</strong><span>${space.groups.reduce((n, g) => n + g[1].length, 0)} 篇</span></div>
+        <div class="sidebar-heading">
+          <strong>${space.title}</strong><span>${space.groups.reduce((n, g) => n + g[1].length, 0)} 篇</span>
+          <div class="sidebar-tools">
+            <button data-nav-action="expand">＋ 展开全部</button>
+            <button data-nav-action="collapse">－ 收起全部</button>
+          </div>
+        </div>
         ${space.groups.map((group, index) => `
           <div class="nav-section">
             <button class="nav-group"><span>${group[0]}</span><span class="chevron">⌄</span></button>
@@ -911,6 +939,12 @@
       if (button) switchSpace(button.dataset.space);
     });
     sidebar.addEventListener("click", event => {
+      const action = event.target.closest("[data-nav-action]");
+      if (action) {
+        const shouldCollapse = action.dataset.navAction === "collapse";
+        sidebar.querySelectorAll(".nav-section").forEach(section => section.classList.toggle("collapsed", shouldCollapse));
+        return;
+      }
       const group = event.target.closest(".nav-group");
       if (group) group.parentElement.classList.toggle("collapsed");
       const link = event.target.closest("[data-page]");
